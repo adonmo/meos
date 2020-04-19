@@ -1,0 +1,30 @@
+{
+    "files.associations": {
+        "*.js": "javascriptreact",
+        "iosfwd": "cpp",
+        "hash_map": "cpp",
+        "stdexcept": "cpp",
+        "*.tcc": "cpp",
+        "string": "cpp",
+        "unordered_map": "cpp",
+        "unordered_set": "cpp",
+        "string_view": "cpp",
+        "iostream": "cpp",
+        "optional": "cpp",
+        "istream": "cpp",
+        "ostream": "cpp",
+        "ratio": "cpp",
+        "system_error": "cpp",
+        "array": "cpp",
+        "functional": "cpp",
+        "regex": "cpp",
+        "tuple": "cpp",
+        "type_traits": "cpp",
+        "utility": "cpp",
+        "variant": "cpp",
+        "ctime": "cpp",
+        "vector": "cpp"
+    },
+    "editor.formatOnSave": true,
+    "editor.defaultFormatter": "xaver.clang-format"
+}
