@@ -3,7 +3,17 @@ MEOS -- Mobility Engine, Open Source
 
 MEOS or libmeos is a library which makes it easy to work with temporal and spatio-temporal data. It is based on [MobilityDB](https://github.com/ULB-CoDE-WIT/MobilityDB)'s data types. MEOS's code is heavily inspired from a similar library called [GEOS](https://github.com/libgeos/geos). MEOS is written in modern C++ with bindings to python using [pybind11](https://github.com/pybind/pybind11).
 
-⚠️ Currently this library is in very early stages, and should be considered completely **experimental** - heavy changes are expected.
+⚠️ Currently this library is in very early, completely **experimental** stages - heavy changes are to be expected.
+
+# Installation
+
+The package can be installed by running:
+
+```sh
+$ pip install git+https://github.com/chaitan94/meos
+```
+
+⚠️ Note: currently only python3.6 is supported
 
 # Usage
 
