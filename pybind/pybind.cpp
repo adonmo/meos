@@ -30,7 +30,7 @@ void declare_temporal_types(py::module &m, const std::string &typesuffix) {
       .def("getInstants", &TSequence<T>::getInstants);
 }
 
-PYBIND11_MODULE(libmeos, m) {
+PYBIND11_MODULE(pymeos, m) {
   declare_temporal_types<int>(m, "Int");
   declare_temporal_types<float>(m, "Float");
 }

@@ -14,7 +14,7 @@ def epoch(year, month, day):
 
 
 def test_data_types():
-    from libmeos import TInstantInt, TInstantFloat, TInstantSetInt, TSequenceFloat
+    from pymeos import TInstantInt, TInstantFloat, TInstantSetInt, TSequenceFloat
 
 
     t = TInstantInt(10, epoch(2011, 1, 1))
@@ -33,7 +33,7 @@ def test_data_types():
 
 def test_deserialization():
     from datetime import datetime
-    from libmeos import ParserInt, ParserFloat
+    from pymeos import ParserInt, ParserFloat
 
 
     p = ParserInt("10@2011-01-01")

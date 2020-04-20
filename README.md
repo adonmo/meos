@@ -10,7 +10,7 @@ MEOS or libmeos is a library which makes it easy to work with temporal and spati
 ## Temporal data objects
 ```python
 from datetime import datetime
-from libmeos import TInstantInt, TInstantFloat, TInstantSetInt, TSequenceFloat
+from pymeos import TInstantInt, TInstantFloat, TInstantSetInt, TSequenceFloat
 
 
 # Temporal data types
@@ -38,7 +38,7 @@ False True
 ## Deserialization / parsing
 ```python
 from datetime import datetime
-from libmeos import ParserInt, ParserFloat
+from pymeos import ParserInt, ParserFloat
 
 
 # Deserialization / parsing of temporal data types
