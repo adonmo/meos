@@ -9,19 +9,22 @@ MEOS or libmeos is a library which makes it easy to work with temporal and spati
 
 ## Temporal data objects
 ```python
+import pytz
 from datetime import datetime
 from pymeos import TInstantInt, TInstantFloat, TInstantSetInt, TSequenceFloat
 
+def epoch_millis(year, month, day):
+    return int(datetime(year, month, day).replace(tzinfo=pytz.UTC).timestamp() * 1000)
 
 # Temporal data types
-t = TInstantInt(10, int(datetime(2011, 1, 1).timestamp() * 1000))
+t = TInstantInt(10, epoch_millis(2011, 1, 1))
 print(t.getValue(), t.getT())
 
 tset = TInstantSetInt({t})
 t = tset.getInstants().pop()
 print(t.getValue(), t.getT())
 
-tf = TInstantFloat(1.0, int(datetime(2011, 1, 1).timestamp() * 1000))
+tf = TInstantFloat(1.0, epoch_millis(2011, 1, 1))
 tseq = TSequenceFloat([tf], False, True)
 print(tseq.left_open, tseq.right_open)
 t = tseq.getInstants()[0]
@@ -29,10 +32,10 @@ print(t.getValue(), t.getT())
 ```
 This would output:
 ```
-10 1293820200000
-10 1293820200000
+10 1293840000000
+10 1293840000000
 False True
-1.0 1293820200000
+1.0 1293840000000
 ```
 
 ## Deserialization / parsing
