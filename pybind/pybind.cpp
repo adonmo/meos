@@ -6,26 +6,31 @@
 
 namespace py = pybind11;
 
-PYBIND11_MODULE(libmeos, m) {
-  // TODO instead of hardcoding int, make it generic
-  py::class_<Parser<int>>(m, "Parser")
+template <typename T>
+void declare_temporal_types(py::module &m, const std::string &typesuffix) {
+  py::class_<Parser<T>>(m, ("Parser" + typesuffix).c_str())
       .def(py::init<const string &>())
-      .def("parseNextTInstant", &Parser<int>::parseNextTInstant)
-      .def("parseNextTInstantSet", &Parser<int>::parseNextTInstantSet)
-      .def("parseNextTSequence", &Parser<int>::parseNextTSequence);
+      .def("parseNextTInstant", &Parser<T>::parseNextTInstant)
+      .def("parseNextTInstantSet", &Parser<T>::parseNextTInstantSet)
+      .def("parseNextTSequence", &Parser<T>::parseNextTSequence);
 
-  py::class_<TInstant<int>>(m, "TInstant")
-      .def(py::init<int, time_t>())
-      .def("getT", &TInstant<int>::getT)
-      .def("getValue", &TInstant<int>::getValue);
+  py::class_<TInstant<T>>(m, ("TInstant" + typesuffix).c_str())
+      .def(py::init<T, time_t>())
+      .def("getT", &TInstant<T>::getT)
+      .def("getValue", &TInstant<T>::getValue);
 
-  py::class_<TInstantSet<int>>(m, "TInstantSet")
-      .def(py::init<set<TInstant<int>> &>())
-      .def("getInstants", &TInstantSet<int>::getInstants);
+  py::class_<TInstantSet<T>>(m, ("TInstantSet" + typesuffix).c_str())
+      .def(py::init<set<TInstant<T>> &>())
+      .def("getInstants", &TInstantSet<T>::getInstants);
 
-  py::class_<TSequence<int>>(m, "TSequence")
-      .def(py::init<vector<TInstant<int>> &, bool, bool>())
-      .def_readonly("left_open", &TSequence<int>::left_open)
-      .def_readonly("right_open", &TSequence<int>::right_open)
-      .def("getInstants", &TSequence<int>::getInstants);
+  py::class_<TSequence<T>>(m, ("TSequence" + typesuffix).c_str())
+      .def(py::init<vector<TInstant<T>> &, bool, bool>())
+      .def_readonly("left_open", &TSequence<T>::left_open)
+      .def_readonly("right_open", &TSequence<T>::right_open)
+      .def("getInstants", &TSequence<T>::getInstants);
+}
+
+PYBIND11_MODULE(libmeos, m) {
+  declare_temporal_types<int>(m, "Int");
+  declare_temporal_types<float>(m, "Float");
 }
