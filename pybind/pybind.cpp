@@ -1,4 +1,4 @@
-#include <meos/io/Parser.hpp>
+#include <meos/io/Deserializer.hpp>
 #include <meos/types/temporal/TInstant.hpp>
 #include <meos/types/temporal/TInstantSet.hpp>
 #include <pybind11/pybind11.h>
@@ -8,11 +8,11 @@ namespace py = pybind11;
 
 template <typename T>
 void declare_temporal_types(py::module &m, const std::string &typesuffix) {
-  py::class_<Parser<T>>(m, ("Parser" + typesuffix).c_str())
+  py::class_<Deserializer<T>>(m, ("Deserializer" + typesuffix).c_str())
       .def(py::init<const string &>())
-      .def("parseNextTInstant", &Parser<T>::parseNextTInstant)
-      .def("parseNextTInstantSet", &Parser<T>::parseNextTInstantSet)
-      .def("parseNextTSequence", &Parser<T>::parseNextTSequence);
+      .def("nextTInstant", &Deserializer<T>::nextTInstant)
+      .def("nextTInstantSet", &Deserializer<T>::nextTInstantSet)
+      .def("nextTSequence", &Deserializer<T>::nextTSequence);
 
   py::class_<TInstant<T>>(m, ("TInstant" + typesuffix).c_str())
       .def(py::init<T, time_t>())

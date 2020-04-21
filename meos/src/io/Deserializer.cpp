@@ -1,38 +1,40 @@
 #include <ctime>
-#include <meos/io/ParseException.hpp>
-#include <meos/io/Parser.hpp>
+#include <meos/io/DeserializationException.hpp>
+#include <meos/io/Deserializer.hpp>
 #include <sstream>
 #include <vector>
 using namespace std;
 
-template <typename T> Parser<T>::Parser(const string &in_) : in(in_) {
+template <typename T>
+Deserializer<T>::Deserializer(const string &in_) : in(in_) {
   iter = in.begin();
 }
 
-template <typename T> unique_ptr<Temporal<T>> Parser<T>::parseNextTemporal() {
+template <typename T> unique_ptr<Temporal<T>> Deserializer<T>::nextTemporal() {
   skipWhitespaces();
   const char lookahead1 = peek(0);
   const char lookahead2 = peek(1);
   if (lookahead1 != '{' && lookahead1 != '[' && lookahead1 != '(') {
-    return parseNextTInstant();
+    return nextTInstant();
   } else if (lookahead1 == '[' || lookahead1 == '(') {
-    return parseNextTSequence();
+    return nextTSequence();
   } else if (lookahead1 == '{') {
     if (lookahead2 == '[' || lookahead2 == '(') {
-      throw new ParseException("TSequenceSet not implemented yet");
+      throw new DeserializationException("TSequenceSet not implemented yet");
       // return TSequenceSet<T>(value);
     } else {
-      return parseNextTInstantSet();
+      return nextTInstantSet();
     }
   }
-  throw new ParseException("Invalid Temporal");
+  throw new DeserializationException("Invalid Temporal");
 };
 
-template <typename T> unique_ptr<TSequence<T>> Parser<T>::parseNextTSequence() {
+template <typename T>
+unique_ptr<TSequence<T>> Deserializer<T>::nextTSequence() {
   skipWhitespaces();
 
   if (!hasNext() || !(peek(0) == '[' || peek(0) == '(')) {
-    throw ParseException("Expected either a '[' or '('");
+    throw DeserializationException("Expected either a '[' or '('");
   }
 
   const char opening = peek(0);
@@ -40,17 +42,17 @@ template <typename T> unique_ptr<TSequence<T>> Parser<T>::parseNextTSequence() {
   const bool left_open = opening == '(';
 
   vector<unique_ptr<TInstant<T>>> v = {};
-  v.push_back(parseNextTInstant());
+  v.push_back(nextTInstant());
   skipWhitespaces();
 
   while (hasNext() && peek(0) == ',') {
     consumeChar(',');
-    v.push_back(parseNextTInstant());
+    v.push_back(nextTInstant());
     skipWhitespaces();
   }
 
   if (!hasNext() || !(peek(0) == ']' || peek(0) == ')')) {
-    throw ParseException("Expected either a ']' or ')'");
+    throw DeserializationException("Expected either a ']' or ')'");
   }
 
   const char closing = peek(0);
@@ -61,36 +63,36 @@ template <typename T> unique_ptr<TSequence<T>> Parser<T>::parseNextTSequence() {
 };
 
 template <typename T>
-unique_ptr<TInstantSet<T>> Parser<T>::parseNextTInstantSet() {
+unique_ptr<TInstantSet<T>> Deserializer<T>::nextTInstantSet() {
   skipWhitespaces();
   consumeChar('{');
   set<unique_ptr<TInstant<T>>> s = {};
-  s.insert(parseNextTInstant());
+  s.insert(nextTInstant());
   skipWhitespaces();
 
   while (hasNext() && peek(0) == ',') {
     consumeChar(',');
-    s.insert(parseNextTInstant());
+    s.insert(nextTInstant());
     skipWhitespaces();
   }
 
   if (!hasNext() || peek(0) != '}') {
-    throw ParseException("Expected a '}'");
+    throw DeserializationException("Expected a '}'");
   }
   consumeChar('}');
 
   return make_unique<TInstantSet<T>>(s);
 };
 
-template <typename T> unique_ptr<TInstant<T>> Parser<T>::parseNextTInstant() {
+template <typename T> unique_ptr<TInstant<T>> Deserializer<T>::nextTInstant() {
   skipWhitespaces();
-  T value = parseNextValue();
+  T value = nextValue();
   string::size_type pos = in.find_first_of("@", iter - in.begin());
   if (pos == string::npos) {
-    throw ParseException("Invalid TInstant: needs to contain @");
+    throw DeserializationException("Invalid TInstant: needs to contain @");
   }
   consumeChar('@');
-  time_t t = parseNextTime();
+  time_t t = nextTime();
 
   return make_unique<TInstant<T>>(value, t);
 };
@@ -100,7 +102,7 @@ template <typename T> unique_ptr<TInstant<T>> Parser<T>::parseNextTInstant() {
  * Skips initial whitespaces, reads until one of ",)]}\n" is reached, and tries
  * to parse everything in between as time in ISO8601 format
  */
-template <typename T> time_t Parser<T>::parseNextTime() {
+template <typename T> time_t Deserializer<T>::nextTime() {
   // TODO add support for UTC offset/timezone
   // TODO allow strings like 2012-1-1 instead of just 2012-01-01
 
@@ -127,37 +129,39 @@ template <typename T> time_t Parser<T>::parseNextTime() {
   static_assert(expectedLength == 20, "Unexpected ISO 8601 date/time length");
 
   if (input.length() < expectedLength) {
-    throw ParseException("Empty or unexpected length for the provided ISO 8601 "
-                         "date/time string");
+    throw DeserializationException(
+        "Empty or unexpected length for the provided ISO 8601 "
+        "date/time string");
   }
 
   tm time = {0};
-  time.tm_year = parseNextValue() - 1900;
+  time.tm_year = nextValue() - 1900;
   consumeChar('-');
-  time.tm_mon = parseNextValue() - 1;
+  time.tm_mon = nextValue() - 1;
   consumeChar('-');
-  time.tm_mday = parseNextValue();
+  time.tm_mday = nextValue();
 
   int millis = 0;
 
   if (iter - in.begin() != end_pos) {
     if (*iter != ' ' && (*iter != 'T')) {
-      throw ParseException("Expected either a space or a 'T' after day");
+      throw DeserializationException(
+          "Expected either a space or a 'T' after day");
     }
     consumeChar(*iter); // skip the character
-    time.tm_hour = parseNextValue();
+    time.tm_hour = nextValue();
     consumeChar(':');
-    time.tm_min = parseNextValue();
+    time.tm_min = nextValue();
     consumeChar(':');
-    time.tm_sec = parseNextValue();
+    time.tm_sec = nextValue();
     time.tm_isdst = 0;
-    millis = input.length() > 20 ? parseNextValue() : 0;
+    millis = input.length() > 20 ? nextValue() : 0;
   }
 
   return timegm(&time) * 1000 + millis;
 }
 
-template <typename T> T Parser<T>::parseNextValue() {
+template <typename T> T Deserializer<T>::nextValue() {
   skipWhitespaces();
   try {
     string s = string(iter, in.end());
@@ -171,34 +175,36 @@ template <typename T> T Parser<T>::parseNextValue() {
       iter += length;
       return fvalue;
     }
-    throw ParseException("Unsupported type");
+    throw DeserializationException("Unsupported type");
   } catch (invalid_argument e) {
-    throw ParseException("Could not parse: invalid argument");
+    throw DeserializationException("Could not parse: invalid argument");
   } catch (out_of_range e) {
-    throw ParseException("Could not parse: out of range");
+    throw DeserializationException("Could not parse: out of range");
   }
 }
 
-template <typename T> char Parser<T>::peek(int lookahead) {
+template <typename T> char Deserializer<T>::peek(int lookahead) {
   if ((in.end() - iter) < lookahead) {
-    throw ParseException("Reached end of stream");
+    throw DeserializationException("Reached end of stream");
   };
   return *(iter + lookahead);
 }
 
-template <typename T> void Parser<T>::skipWhitespaces() { skipChars(" \t\n"); }
+template <typename T> void Deserializer<T>::skipWhitespaces() {
+  skipChars(" \t\n");
+}
 
-template <typename T> void Parser<T>::consumeChar(const char c) {
+template <typename T> void Deserializer<T>::consumeChar(const char c) {
   string::size_type current_pos = iter - in.begin();
   if (*iter != c) {
     std::stringstream error;
     error << "Expected character '" << c << "' at position " << current_pos;
-    throw ParseException(error.str());
+    throw DeserializationException(error.str());
   }
   iter += 1;
 }
 
-template <typename T> void Parser<T>::skipChars(const string &chars) {
+template <typename T> void Deserializer<T>::skipChars(const string &chars) {
   string::size_type current_pos = iter - in.begin();
   string::size_type end_pos = in.find_first_not_of(chars, current_pos);
   if (end_pos == string::npos) {
@@ -208,4 +214,6 @@ template <typename T> void Parser<T>::skipChars(const string &chars) {
   iter += length;
 }
 
-template <typename T> bool Parser<T>::hasNext() { return iter != in.end(); }
+template <typename T> bool Deserializer<T>::hasNext() {
+  return iter != in.end();
+}

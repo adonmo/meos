@@ -1,5 +1,5 @@
-#ifndef MEOS_TO_MWKTREADER_HPP
-#define MEOS_TO_MWKTREADER_HPP
+#ifndef MEOS_IO_DESERIALIZER_HPP
+#define MEOS_IO_DESERIALIZER_HPP
 
 #include <iomanip>
 #include <meos/types/temporal/TInstant.hpp>
@@ -10,19 +10,19 @@
 
 using namespace std;
 
-template <typename T> class Parser {
+template <typename T> class Deserializer {
 public:
-  Parser(const string &in);
-  unique_ptr<Temporal<T>> parseNextTemporal();
-  unique_ptr<TSequence<T>> parseNextTSequence();
-  unique_ptr<TInstantSet<T>> parseNextTInstantSet();
-  unique_ptr<TInstant<T>> parseNextTInstant();
+  Deserializer(const string &in);
+  unique_ptr<Temporal<T>> nextTemporal();
+  unique_ptr<TSequence<T>> nextTSequence();
+  unique_ptr<TInstantSet<T>> nextTInstantSet();
+  unique_ptr<TInstant<T>> nextTInstant();
 
   /**
-   * Parse time in ISO8601 format
+   * Deserialize time in ISO8601 format
    */
-  time_t parseNextTime();
-  T parseNextValue();
+  time_t nextTime();
+  T nextValue();
 
 private:
   const string in;
@@ -34,7 +34,7 @@ private:
   bool hasNext();
 };
 
-template class Parser<int>;
-template class Parser<float>;
+template class Deserializer<int>;
+template class Deserializer<float>;
 
 #endif

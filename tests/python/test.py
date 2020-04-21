@@ -33,21 +33,21 @@ def test_data_types():
 
 def test_deserialization():
     from datetime import datetime
-    from pymeos import ParserInt, ParserFloat
+    from pymeos import DeserializerInt, DeserializerFloat
 
 
-    p = ParserInt("10@2011-01-01")
-    t = p.parseNextTInstant()
+    p = DeserializerInt("10@2011-01-01")
+    t = p.nextTInstant()
     assert (t.getValue(), t.getT()) == (10, epoch(2011, 1, 1))
 
-    p = ParserFloat("{1.0@2011-01-01, 2.5@2011-01-02}")
-    tset = p.parseNextTInstantSet()
+    p = DeserializerFloat("{1.0@2011-01-01, 2.5@2011-01-02}")
+    tset = p.nextTInstantSet()
     actual = {(t.getValue(), t.getT()) for t in tset.getInstants()}
     expected = {(1.0, epoch(2011, 1, 1)), (2.5, epoch(2011, 1, 2))}
     assert actual == expected
 
-    p = ParserInt("[10@2011-01-01, 20@2011-01-02)")
-    tseq = p.parseNextTSequence()
+    p = DeserializerInt("[10@2011-01-01, 20@2011-01-02)")
+    tseq = p.nextTSequence()
     assert (tseq.left_open, tseq.right_open) == (False, True)
     actual = [(t.getValue(), t.getT()) for t in tseq.getInstants()]
     expected = [(10, epoch(2011, 1, 1)), (20, epoch(2011, 1, 2))]

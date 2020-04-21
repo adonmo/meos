@@ -51,21 +51,21 @@ False True
 ## Deserialization / parsing
 ```python
 from datetime import datetime
-from pymeos import ParserInt, ParserFloat
+from pymeos import DeserializerInt, DeserializerFloat
 
 
 # Deserialization / parsing of temporal data types
-p = ParserInt("10@2011-01-01")
-t = p.parseNextTInstant()
+p = DeserializerInt("10@2011-01-01")
+t = p.nextTInstant()
 print(t.getValue(), t.getT())
 
-p = ParserFloat("{1.0@2011-01-01, 2.5@2011-01-02}")
-tset = p.parseNextTInstantSet()
+p = DeserializerFloat("{1.0@2011-01-01, 2.5@2011-01-02}")
+tset = p.nextTInstantSet()
 for t in tset.getInstants():
     print(t.getValue(), t.getT())
 
-p = ParserInt("[10@2011-01-01, 20@2011-01-02)")
-tseq = p.parseNextTSequence()
+p = DeserializerInt("[10@2011-01-01, 20@2011-01-02)")
+tseq = p.nextTSequence()
 print(tseq.left_open, tseq.right_open)
 for t in tseq.getInstants():
     print(t.getValue(), t.getT())
