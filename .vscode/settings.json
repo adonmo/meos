@@ -23,7 +23,9 @@
         "utility": "cpp",
         "variant": "cpp",
         "ctime": "cpp",
-        "vector": "cpp"
+        "vector": "cpp",
+        "iomanip": "cpp",
+        "limits": "cpp"
     },
     "editor.formatOnSave": true,
     "editor.defaultFormatter": "xaver.clang-format"
