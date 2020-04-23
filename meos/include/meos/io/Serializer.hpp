@@ -9,13 +9,13 @@ using namespace std;
 
 template <typename T> class Serializer {
 public:
-  string write(unique_ptr<Temporal<T>> temporal);
+  string write(unique_ptr<Temporal<T>> &temporal);
 
   /**
    * Serialize time in ISO8601 format
    */
-  string write(const time_t &time);
   string write(const T &value);
+  string writeTime(const time_t &time);
 
 private:
 };

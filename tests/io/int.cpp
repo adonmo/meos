@@ -5,7 +5,7 @@
 TEST_CASE("integers are serialized", "[serializer][int]") {
   Serializer<int> w;
   SECTION("only one integer present") {
-    int i = GENERATE(0, 1, -1, 2012,
+    int i = GENERATE(0, 1, -1, 2012, 756772544,
                      take(100, random(numeric_limits<int>::min(),
                                       numeric_limits<int>::max())));
     REQUIRE(stoi(w.write(i)) == i);
