@@ -15,9 +15,9 @@ $ pip install git+https://github.com/chaitan94/meos
 
 ⚠️ Note: currently only python3.6 is supported
 
-# Usage
+# Usage (Python)
 
-## Temporal data objects
+## Using the temporal data objects
 ```python
 import pytz
 from datetime import datetime
@@ -26,7 +26,6 @@ from pymeos import TInstantInt, TInstantFloat, TInstantSetInt, TSequenceFloat
 def epoch_millis(year, month, day):
     return int(datetime(year, month, day).replace(tzinfo=pytz.UTC).timestamp() * 1000)
 
-# Temporal data types
 t = TInstantInt(10, epoch_millis(2011, 1, 1))
 print(t.getValue(), t.getT())
 
@@ -48,13 +47,42 @@ False True
 1.0 1293840000000
 ```
 
-## Deserialization / parsing
+## Serialization
+```python
+from datetime import datetime
+from pymeos import SerializerInt, SerializerFloat
+from pymeos import TInstantInt, TInstantFloat, TInstantSetInt, TSequenceFloat
+
+def epoch_millis(year, month, day):
+    return int(datetime(year, month, day).replace(tzinfo=pytz.UTC).timestamp() * 1000)
+
+si = SerializerInt()
+sf = SerializerFloat()
+
+t = TInstantInt(10, epoch_millis(2011, 1, 1))
+print(si.write(t))
+
+tset = TInstantSetInt({t})
+print(si.write(tset))
+
+tf = TInstantFloat(1.0, epoch_millis(2011, 1, 1))
+tseq = TSequenceFloat([tf], False, True)
+print(sf.write(tseq))
+
+```
+This would output:
+```
+10@2011-01-01T00:00:00+0000
+{10@2011-01-01T00:00:00+0000}
+[1.000000@2011-01-01T00:00:00+0000)
+```
+
+## Deserialization
 ```python
 from datetime import datetime
 from pymeos import DeserializerInt, DeserializerFloat
 
 
-# Deserialization / parsing of temporal data types
 p = DeserializerInt("10@2011-01-01")
 t = p.nextTInstant()
 print(t.getValue(), t.getT())
