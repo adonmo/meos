@@ -2,9 +2,30 @@
 #include "../common/utils.hpp"
 #include <iostream>
 #include <meos/io/Deserializer.hpp>
+#include <meos/io/Serializer.hpp>
 #include <meos/types/temporal/TSequence.hpp>
 
-TEMPLATE_TEST_CASE("TSequence are deserialized", "[deserializer][temporal]",
+TEMPLATE_TEST_CASE("TSequence are serialized", "[serializer][tsequence]", int,
+                   float) {
+  Serializer<TestType> w;
+  SECTION("only one value present") {
+    auto i = GENERATE(0, 1, -1, 2012, 756772544,
+                      take(10, random(numeric_limits<int>::min(),
+                                      numeric_limits<int>::max())));
+    auto left_open = GENERATE(true, false);
+    auto right_open = GENERATE(true, false);
+    auto instant = make_unique<TInstant<TestType>>(i, 1351728000000);
+    vector<unique_ptr<TInstant<TestType>>> instants;
+    instants.push_back(move(instant));
+    TSequence<TestType> sequence(instants, left_open, right_open);
+    char left = left_open ? '(' : '[';
+    char right = right_open ? ')' : ']';
+    REQUIRE(w.write(&sequence) ==
+            left + w.write(i) + "@2012-11-01T00:00:00+0000" + right);
+  }
+}
+
+TEMPLATE_TEST_CASE("TSequence are deserialized", "[deserializer][tsequence]",
                    int, float) {
   SECTION("only one TSequence present") {
     SECTION("only one inst present") {

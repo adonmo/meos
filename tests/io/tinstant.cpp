@@ -10,9 +10,10 @@ TEMPLATE_TEST_CASE("TInstants are serialized", "[serializer][tinst]", int,
     auto i = GENERATE(0, 1, -1, 2012, 756772544,
                       take(100, random(numeric_limits<int>::min(),
                                        numeric_limits<int>::max())));
-    unique_ptr<Temporal<TestType>> instant =
-        make_unique<TInstant<TestType>>(i, 1351728000000);
-    REQUIRE(w.write(instant) == w.write(i) + "@2012-11-01T00:00:00+0000");
+    TInstant<TestType> instant(i, 1351728000000);
+    REQUIRE(w.write(&instant) == w.write(i) + "@2012-11-01T00:00:00+0000");
+    Temporal<TestType> *temporal = &instant;
+    REQUIRE(w.write(temporal) == w.write(i) + "@2012-11-01T00:00:00+0000");
   }
 }
 

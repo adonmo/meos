@@ -10,18 +10,16 @@
 
 using namespace std;
 
-template <typename T>
-string Serializer<T>::write(unique_ptr<Temporal<T>> &temporal) {
+template <typename T> string Serializer<T>::write(Temporal<T> *temporal) {
   stringstream ss;
-  if (TInstant<T> *instant = static_cast<TInstant<T> *>(temporal.get())) {
-    ss << write(instant->getValue()) << "@" << writeTime(instant->getT());
-    return ss.str();
-  } else if (const TInstantSet<T> *instant_set =
-                 static_cast<TInstantSet<T> *>(temporal.get())) {
-    return "instant_set";
-  } else if (const TSequence<T> *sequence =
-                 static_cast<TSequence<T> *>(temporal.get())) {
-    return "sequence";
+  if (TInstant<T> *instant = reinterpret_cast<TInstant<T> *>(temporal)) {
+    return write(instant);
+  } else if (TInstantSet<T> *instant_set =
+                 reinterpret_cast<TInstantSet<T> *>(temporal)) {
+    return write(instant_set);
+  } else if (TSequence<T> *sequence =
+                 reinterpret_cast<TSequence<T> *>(temporal)) {
+    return write(sequence);
   }
   throw SerializationException("Unsupported type");
 }
@@ -42,4 +40,30 @@ template <typename T> string Serializer<T>::writeTime(const time_t &t) {
   tt = tt / 1000;
   textStream << put_time(gmtime(&tt), "%FT%T%z");
   return textStream.str();
+}
+
+template <typename T> string Serializer<T>::write(TInstant<T> *instant) {
+  stringstream ss;
+  ss << write(instant->getValue()) << "@" << writeTime(instant->getT());
+  return ss.str();
+}
+
+template <typename T> string Serializer<T>::write(TInstantSet<T> *instant_set) {
+  stringstream ss;
+  ss << "{";
+  for (auto const &instant : instant_set->instants) {
+    ss << write(instant.get());
+  }
+  ss << "}";
+  return ss.str();
+}
+
+template <typename T> string Serializer<T>::write(TSequence<T> *sequence) {
+  stringstream ss;
+  ss << (sequence->left_open ? "(" : "[");
+  for (auto const &instant : sequence->instants) {
+    ss << write(instant.get());
+  }
+  ss << (sequence->right_open ? ")" : "]");
+  return ss.str();
 }

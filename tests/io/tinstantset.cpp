@@ -3,7 +3,24 @@
 #include "../common/utils.hpp"
 #include <iostream>
 #include <meos/io/Deserializer.hpp>
+#include <meos/io/Serializer.hpp>
 #include <meos/types/temporal/TInstantSet.hpp>
+
+TEMPLATE_TEST_CASE("TInstantSet are serialized", "[serializer][tinstantset]",
+                   int, float) {
+  Serializer<TestType> w;
+  SECTION("only one value present") {
+    auto i = GENERATE(0, 1, -1, 2012, 756772544,
+                      take(100, random(numeric_limits<int>::min(),
+                                       numeric_limits<int>::max())));
+    auto instant = make_unique<TInstant<TestType>>(i, 1351728000000);
+    set<unique_ptr<TInstant<TestType>>> instants;
+    instants.insert(move(instant));
+    TInstantSet<TestType> instant_set(instants);
+    REQUIRE(w.write(&instant_set) ==
+            "{" + w.write(i) + "@2012-11-01T00:00:00+0000}");
+  }
+}
 
 TEMPLATE_TEST_CASE("TInstantSet are deserialized",
                    "[deserializer][tinstantset]", int, float) {
