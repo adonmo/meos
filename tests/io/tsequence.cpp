@@ -23,6 +23,35 @@ TEMPLATE_TEST_CASE("TSequence are serialized", "[serializer][tsequence]", int,
     REQUIRE(w.write(&sequence) ==
             left + w.write(i) + "@2012-11-01T00:00:00+0000" + right);
   }
+  SECTION("multiple values present") {
+    auto i = GENERATE(0, 1, -1, 2012, 756772544,
+                      take(3, random(numeric_limits<int>::min(),
+                                     numeric_limits<int>::max())));
+    auto j = GENERATE(0, 1, -1, 2012, 756772544,
+                      take(3, random(numeric_limits<int>::min(),
+                                     numeric_limits<int>::max())));
+    auto left_open = GENERATE(true, false);
+    auto right_open = GENERATE(true, false);
+    auto instant1 = make_unique<TInstant<TestType>>(i, 1351728000000);
+    auto instant2 = make_unique<TInstant<TestType>>(j, 1351728000000);
+    vector<unique_ptr<TInstant<TestType>>> instants;
+    instants.push_back(move(instant1));
+    instants.push_back(move(instant2));
+    TSequence<TestType> sequence(instants, left_open, right_open);
+    char left = left_open ? '(' : '[';
+    char right = right_open ? ')' : ']';
+    string serialized = w.write(&sequence);
+    REQUIRE(serialized.size() > 2);
+    REQUIRE(serialized[0] == left);
+    REQUIRE(serialized[serialized.size() - 1] == right);
+    vector<string> actual =
+        split(serialized.substr(1, serialized.size() - 2), ", ");
+    vector<string> expected = {
+        w.write(i) + "@2012-11-01T00:00:00+0000",
+        w.write(j) + "@2012-11-01T00:00:00+0000",
+    };
+    REQUIRE_THAT(actual, Catch::Matchers::Equals(expected));
+  }
 }
 
 TEMPLATE_TEST_CASE("TSequence are deserialized", "[deserializer][tsequence]",

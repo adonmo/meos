@@ -1,3 +1,6 @@
+#ifndef MEOS_TESTS_COMMON_UTILS_HPP
+#define MEOS_TESTS_COMMON_UTILS_HPP
+
 #include <iomanip>
 #include <set>
 #include <vector>
@@ -20,3 +23,9 @@ template <typename T> vector<T> unwrap(vector<unique_ptr<T>> &vp) {
   }
   return v;
 }
+
+vector<string> split(const string &str, const string &delim);
+
+set<string> split_into_set(const string &str, const string &delim);
+
+#endif

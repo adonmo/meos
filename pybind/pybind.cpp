@@ -1,4 +1,5 @@
 #include <meos/io/Deserializer.hpp>
+#include <meos/io/Serializer.hpp>
 #include <meos/types/temporal/TInstant.hpp>
 #include <meos/types/temporal/TInstantSet.hpp>
 #include <pybind11/pybind11.h>
@@ -8,6 +9,15 @@ namespace py = pybind11;
 
 template <typename T>
 void declare_temporal_types(py::module &m, const std::string &typesuffix) {
+  py::class_<Serializer<T>>(m, ("Serializer" + typesuffix).c_str())
+      .def(py::init<>())
+      .def("write",
+           (string(Serializer<T>::*)(TInstant<T> *)) & Serializer<T>::write)
+      .def("write",
+           (string(Serializer<T>::*)(TInstantSet<T> *)) & Serializer<T>::write)
+      .def("write",
+           (string(Serializer<T>::*)(TSequence<T> *)) & Serializer<T>::write);
+
   py::class_<Deserializer<T>>(m, ("Deserializer" + typesuffix).c_str())
       .def(py::init<const string &>())
       .def("nextTInstant", &Deserializer<T>::nextTInstant)

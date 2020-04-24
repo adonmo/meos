@@ -5,20 +5,48 @@
 #include <meos/io/Deserializer.hpp>
 #include <meos/io/Serializer.hpp>
 #include <meos/types/temporal/TInstantSet.hpp>
+#include <string>
+
+using namespace std;
 
 TEMPLATE_TEST_CASE("TInstantSet are serialized", "[serializer][tinstantset]",
                    int, float) {
   Serializer<TestType> w;
   SECTION("only one value present") {
     auto i = GENERATE(0, 1, -1, 2012, 756772544,
-                      take(100, random(numeric_limits<int>::min(),
-                                       numeric_limits<int>::max())));
+                      take(30, random(numeric_limits<int>::min(),
+                                      numeric_limits<int>::max())));
     auto instant = make_unique<TInstant<TestType>>(i, 1351728000000);
     set<unique_ptr<TInstant<TestType>>> instants;
     instants.insert(move(instant));
     TInstantSet<TestType> instant_set(instants);
     REQUIRE(w.write(&instant_set) ==
             "{" + w.write(i) + "@2012-11-01T00:00:00+0000}");
+  }
+  SECTION("multiple values present") {
+    auto i = GENERATE(0, 1, -1, 2012, 756772544,
+                      take(6, random(numeric_limits<int>::min(),
+                                     numeric_limits<int>::max())));
+    auto j = GENERATE(0, 1, -1, 2012, 756772544,
+                      take(6, random(numeric_limits<int>::min(),
+                                     numeric_limits<int>::max())));
+    auto instant1 = make_unique<TInstant<TestType>>(i, 1351728000000);
+    auto instant2 = make_unique<TInstant<TestType>>(j, 1351728000000);
+    set<unique_ptr<TInstant<TestType>>> instants;
+    instants.insert(move(instant1));
+    instants.insert(move(instant2));
+    TInstantSet<TestType> instant_set(instants);
+    string serialized = w.write(&instant_set);
+    REQUIRE(serialized.size() > 2);
+    REQUIRE(serialized[0] == '{');
+    REQUIRE(serialized[serialized.size() - 1] == '}');
+    set<string> actual =
+        split_into_set(serialized.substr(1, serialized.size() - 2), ", ");
+    set<string> expected = {
+        w.write(i) + "@2012-11-01T00:00:00+0000",
+        w.write(j) + "@2012-11-01T00:00:00+0000",
+    };
+    REQUIRE_THAT(actual, UnorderedEquals(expected));
   }
 }
 

@@ -31,6 +31,30 @@ def test_data_types():
     assert (t.getValue(), t.getT()) == (1.0, 1293840000000)
 
 
+def test_serialization():
+    from datetime import datetime
+    from pymeos import SerializerInt, SerializerFloat, TInstantInt, TInstantFloat, TInstantSetInt, TSequenceFloat
+
+    si = SerializerInt()
+    sf = SerializerFloat()
+
+    t1 = TInstantInt(10, epoch(2011, 1, 1))
+    t2 = TInstantInt(20, epoch(2019, 1, 1))
+    assert (si.write(t1) == "10@2011-01-01T00:00:00+0000")
+
+    tset = TInstantSetInt({t1, t2})
+    serialized = si.write(tset)
+    assert len(serialized) == 58
+    assert serialized[0] == "{"
+    assert serialized[-1] == "}"
+    assert {"10@2011-01-01T00:00:00+0000", "20@2019-01-01T00:00:00+0000"} == set(serialized[1:-1].split(", "))
+
+    tf1 = TInstantFloat(1.0, epoch(2011, 1, 1))
+    tf2 = TInstantFloat(2.5, epoch(2011, 1, 2))
+    tseq = TSequenceFloat([tf1, tf2], False, True)
+    assert (sf.write(tseq) == "[1.000000@2011-01-01T00:00:00+0000, 2.500000@2011-01-02T00:00:00+0000)")
+
+
 def test_deserialization():
     from datetime import datetime
     from pymeos import DeserializerInt, DeserializerFloat
@@ -55,5 +79,6 @@ def test_deserialization():
 
 if __name__ == "__main__":
     test_data_types()
+    test_serialization()
     test_deserialization()
     print("All tests passed")
