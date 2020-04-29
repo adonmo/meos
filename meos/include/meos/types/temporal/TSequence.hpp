@@ -26,7 +26,9 @@ protected:
 private:
 };
 
+template class TSequence<bool>;
 template class TSequence<int>;
 template class TSequence<float>;
+template class TSequence<string>;
 
 #endif

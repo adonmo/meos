@@ -1,4 +1,3 @@
-#include <iostream>
 #include <meos/io/SerializationException.hpp>
 #include <meos/io/Serializer.hpp>
 #include <meos/types/temporal/TInstant.hpp>
@@ -25,10 +24,18 @@ template <typename T> string Serializer<T>::write(Temporal<T> *temporal) {
 }
 
 template <typename T> string Serializer<T>::write(const T &value) {
-  if (const int *point = reinterpret_cast<const int *>(&value)) {
-    return to_string(value);
-  } else if (const float *point = reinterpret_cast<const float *>(&value)) {
-    return to_string(value);
+  if (std::is_same<T, bool>::value) {
+    const bool *v = reinterpret_cast<const bool *>(&value);
+    return *v ? "t" : "f";
+  } else if (std::is_same<T, int>::value) {
+    const int *v = reinterpret_cast<const int *>(&value);
+    return to_string(*v);
+  } else if (std::is_same<T, float>::value) {
+    const float *v = reinterpret_cast<const float *>(&value);
+    return to_string(*v);
+  } else if (std::is_same<T, string>::value) {
+    const string *v = reinterpret_cast<const string *>(&value);
+    return '"' + *v + '"';
   }
   throw SerializationException("Unsupported type");
 }

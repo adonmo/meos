@@ -31,7 +31,9 @@ public:
   }
 };
 
+template class TInstant<bool>;
 template class TInstant<int>;
 template class TInstant<float>;
+template class TInstant<string>;
 
 #endif

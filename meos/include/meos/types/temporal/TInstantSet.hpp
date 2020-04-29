@@ -23,7 +23,9 @@ protected:
 private:
 };
 
+template class TInstantSet<bool>;
 template class TInstantSet<int>;
 template class TInstantSet<float>;
+template class TInstantSet<string>;
 
 #endif

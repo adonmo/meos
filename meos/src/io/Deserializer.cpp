@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <ctime>
 #include <meos/io/DeserializationException.hpp>
 #include <meos/io/Deserializer.hpp>
@@ -135,11 +136,11 @@ template <typename T> time_t Deserializer<T>::nextTime() {
   }
 
   tm time = {0};
-  time.tm_year = nextValue() - 1900;
+  time.tm_year = nextInt() - 1900;
   consumeChar('-');
-  time.tm_mon = nextValue() - 1;
+  time.tm_mon = nextInt() - 1;
   consumeChar('-');
-  time.tm_mday = nextValue();
+  time.tm_mday = nextInt();
 
   int millis = 0;
 
@@ -149,13 +150,13 @@ template <typename T> time_t Deserializer<T>::nextTime() {
           "Expected either a space or a 'T' after day");
     }
     consumeChar(*iter); // skip the character
-    time.tm_hour = nextValue();
+    time.tm_hour = nextInt();
     consumeChar(':');
-    time.tm_min = nextValue();
+    time.tm_min = nextInt();
     consumeChar(':');
-    time.tm_sec = nextValue();
+    time.tm_sec = nextInt();
     time.tm_isdst = 0;
-    millis = input.length() > 20 ? nextValue() : 0;
+    millis = input.length() > 20 ? nextInt() : 0;
   }
 
   return timegm(&time) * 1000 + millis;
@@ -166,16 +167,75 @@ template <typename T> T Deserializer<T>::nextValue() {
   try {
     string s = string(iter, in.end());
     string::size_type length;
-    if (std::is_same<T, int>::value) {
-      int ivalue = stoi(s, &length, 10);
+    if (std::is_same<T, bool>::value) {
+      string::size_type current_pos = iter - in.begin();
+      string::size_type end_pos = in.find_first_of(" @\n", current_pos);
+      if (end_pos == string::npos) {
+        end_pos = in.end() - in.begin();
+      }
+      int length = end_pos - current_pos;
+      string input = in.substr(current_pos, length);
+      transform(input.begin(), input.end(), input.begin(), ::tolower);
+
+      bool value;
+      if (input == "t" || input == "true") {
+        value = true;
+      } else if (input == "f" || input == "false") {
+        value = false;
+      } else {
+        throw DeserializationException(
+            "Boolean value can only be one of (t, f, true, false), but got: " +
+            input);
+      }
+
       iter += length;
-      return ivalue;
+      return *reinterpret_cast<T *>(&value);
+    } else if (std::is_same<T, int>::value) {
+      int value = stoi(s, &length, 10);
+      iter += length;
+      return *reinterpret_cast<T *>(&value);
     } else if (std::is_same<T, float>::value) {
-      float fvalue = stof(s, &length);
+      float value = stof(s, &length);
       iter += length;
-      return fvalue;
+      return *reinterpret_cast<T *>(&value);
+    } else if (std::is_same<T, string>::value) {
+      string::size_type current_pos = iter - in.begin();
+      string::size_type end_pos = in.find_first_of("@", current_pos);
+      if (end_pos == string::npos) {
+        end_pos = in.end() - in.begin();
+      }
+      int length = end_pos - current_pos;
+      string input = in.substr(current_pos, length);
+
+      // Skip double quotes if present
+      if (length >= 2 && input[0] == '"' && input[input.length() - 1] == '"') {
+        input = input.substr(1, length - 2);
+      }
+
+      if (length <= 0) {
+        throw DeserializationException(
+            "Could not parse text: empty, unquoted value");
+      }
+
+      iter += length;
+      return *reinterpret_cast<T *>(&input);
     }
     throw DeserializationException("Unsupported type");
+  } catch (invalid_argument e) {
+    throw DeserializationException("Could not parse: invalid argument");
+  } catch (out_of_range e) {
+    throw DeserializationException("Could not parse: out of range");
+  }
+}
+
+template <typename T> int Deserializer<T>::nextInt() {
+  skipWhitespaces();
+  try {
+    string s = string(iter, in.end());
+    string::size_type length;
+    int ivalue = stoi(s, &length, 10);
+    iter += length;
+    return ivalue;
   } catch (invalid_argument e) {
     throw DeserializationException("Could not parse: invalid argument");
   } catch (out_of_range e) {

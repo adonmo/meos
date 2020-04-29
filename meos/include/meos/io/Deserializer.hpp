@@ -27,6 +27,7 @@ public:
 private:
   const string in;
   string::const_iterator iter;
+  int nextInt();
   char peek(int lookahead);
   void skipWhitespaces();
   void consumeChar(const char c);
@@ -34,7 +35,9 @@ private:
   bool hasNext();
 };
 
+template class Deserializer<bool>;
 template class Deserializer<int>;
 template class Deserializer<float>;
+template class Deserializer<string>;
 
 #endif

@@ -9,7 +9,9 @@ public:
   Temporal();
 };
 
+template class Temporal<bool>;
 template class Temporal<int>;
 template class Temporal<float>;
+template class Temporal<string>;
 
 #endif
