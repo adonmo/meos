@@ -41,6 +41,8 @@ void declare_temporal_types(py::module &m, const std::string &typesuffix) {
 }
 
 PYBIND11_MODULE(pymeos, m) {
+  declare_temporal_types<bool>(m, "Bool");
   declare_temporal_types<int>(m, "Int");
   declare_temporal_types<float>(m, "Float");
+  declare_temporal_types<string>(m, "Text");
 }
