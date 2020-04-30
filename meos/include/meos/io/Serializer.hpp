@@ -1,6 +1,7 @@
 #ifndef MEOS_IO_SERIALIZER_HPP
 #define MEOS_IO_SERIALIZER_HPP
 
+#include <geos_c.h>
 #include <iomanip>
 #include <meos/types/temporal/TInstant.hpp>
 #include <meos/types/temporal/TInstantSet.hpp>
@@ -17,10 +18,11 @@ public:
   string write(TInstantSet<T> *instant_set);
   string write(TSequence<T> *sequence);
 
+  string write(const T &value);
+
   /**
    * Serialize time in ISO8601 format
    */
-  string write(const T &value);
   string writeTime(const time_t &time);
 
 private:
@@ -30,5 +32,6 @@ template class Serializer<bool>;
 template class Serializer<int>;
 template class Serializer<float>;
 template class Serializer<string>;
+template class Serializer<GEOSGeometry *>;
 
 #endif

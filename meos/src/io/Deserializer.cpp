@@ -219,6 +219,24 @@ template <typename T> T Deserializer<T>::nextValue() {
 
       iter += length;
       return *reinterpret_cast<T *>(&input);
+    } else if (std::is_same<T, GEOSGeometry *>::value) {
+      string::size_type current_pos = iter - in.begin();
+      string::size_type end_pos = in.find_first_of("@", current_pos);
+      if (end_pos == string::npos) {
+        end_pos = in.end() - in.begin();
+      }
+      int length = end_pos - current_pos;
+      string input = in.substr(current_pos, length);
+
+      // Skip double quotes if present
+      GEOSGeometry *value = GEOSGeomFromWKT(input.c_str());
+
+      if (value == nullptr) {
+        throw DeserializationException("Could not parse geometry");
+      }
+
+      iter += length;
+      return *reinterpret_cast<T *>(&value);
     }
     throw DeserializationException("Unsupported type");
   } catch (invalid_argument e) {

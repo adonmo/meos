@@ -1,3 +1,4 @@
+#include <iostream>
 #include <meos/io/SerializationException.hpp>
 #include <meos/io/Serializer.hpp>
 #include <meos/types/temporal/TInstant.hpp>
@@ -38,6 +39,14 @@ template <typename T> string Serializer<T>::write(const T &value) {
     return '"' + *v + '"';
   }
   throw SerializationException("Unsupported type");
+}
+
+template <>
+string Serializer<GEOSGeometry *>::write(GEOSGeometry *const &value) {
+  GEOSWKTWriter *wktw_ = GEOSWKTWriter_create();
+  GEOSWKTWriter_setTrim(wktw_, 1);
+  GEOSWKTWriter_setRoundingPrecision(wktw_, 8);
+  return string(GEOSWKTWriter_write(wktw_, value));
 }
 
 template <typename T> string Serializer<T>::writeTime(const time_t &t) {

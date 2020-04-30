@@ -1,6 +1,7 @@
 #ifndef MEOS_TYPES_TEMPORAL_TINSTANT_HPP
 #define MEOS_TYPES_TEMPORAL_TINSTANT_HPP
 
+#include <geos_c.h>
 #include <meos/types/temporal/Temporal.hpp>
 
 using namespace std;
@@ -35,5 +36,6 @@ template class TInstant<bool>;
 template class TInstant<int>;
 template class TInstant<float>;
 template class TInstant<string>;
+template class TInstant<GEOSGeometry *>;
 
 #endif

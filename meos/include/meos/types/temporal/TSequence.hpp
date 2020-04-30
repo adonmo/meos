@@ -1,6 +1,7 @@
 #ifndef MEOS_TYPES_TEMPORAL_TSEQUENCE_HPP
 #define MEOS_TYPES_TEMPORAL_TSEQUENCE_HPP
 
+#include <geos_c.h>
 #include <meos/types/temporal/TInstant.hpp>
 #include <meos/types/temporal/Temporal.hpp>
 #include <vector>
@@ -30,5 +31,6 @@ template class TSequence<bool>;
 template class TSequence<int>;
 template class TSequence<float>;
 template class TSequence<string>;
+template class TSequence<GEOSGeometry *>;
 
 #endif
