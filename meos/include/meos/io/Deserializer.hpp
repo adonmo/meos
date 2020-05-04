@@ -1,8 +1,8 @@
 #ifndef MEOS_IO_DESERIALIZER_HPP
 #define MEOS_IO_DESERIALIZER_HPP
 
-#include <geos_c.h>
 #include <iomanip>
+#include <meos/types/geom/Geometry.hpp>
 #include <meos/types/temporal/TInstant.hpp>
 #include <meos/types/temporal/TInstantSet.hpp>
 #include <meos/types/temporal/TSequence.hpp>
@@ -40,6 +40,6 @@ template class Deserializer<bool>;
 template class Deserializer<int>;
 template class Deserializer<float>;
 template class Deserializer<string>;
-template class Deserializer<GEOSGeometry *>;
+template class Deserializer<Geometry>;
 
 #endif

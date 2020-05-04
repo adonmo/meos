@@ -1,8 +1,8 @@
 #ifndef MEOS_IO_SERIALIZER_HPP
 #define MEOS_IO_SERIALIZER_HPP
 
-#include <geos_c.h>
 #include <iomanip>
+#include <meos/types/geom/Geometry.hpp>
 #include <meos/types/temporal/TInstant.hpp>
 #include <meos/types/temporal/TInstantSet.hpp>
 #include <meos/types/temporal/TSequence.hpp>
@@ -32,6 +32,6 @@ template class Serializer<bool>;
 template class Serializer<int>;
 template class Serializer<float>;
 template class Serializer<string>;
-template class Serializer<GEOSGeometry *>;
+template class Serializer<Geometry>;
 
 #endif

@@ -7,7 +7,10 @@ import pytz
 from datetime import datetime
 from pathlib import Path
 sys.path.append(str(Path(__file__).absolute().parent.parent.parent / "build" / "pybind"))
-from pymeos import TInstantBool, TInstantInt, TInstantFloat, TInstantText, TInstantSetBool, TInstantSetInt, TSequenceFloat, SerializerInt, SerializerFloat, DeserializerInt, DeserializerFloat
+from pymeos import TInstantBool, TInstantInt, TInstantFloat, TInstantText, TInstantGeom,\
+    TInstantSetBool, TInstantSetInt, TSequenceFloat,\
+    SerializerInt, SerializerFloat, DeserializerInt, DeserializerFloat, \
+    Geometry, initGEOS, finishGEOS
 
 
 def epoch(year, month, day):
@@ -15,21 +18,23 @@ def epoch(year, month, day):
 
 
 def test_data_types():
-    # Example creation of the temporal instant objects (bool, int, float, text) are supported
+    # Example creation of temporal instant objects
     tb = TInstantBool(True, epoch(2011, 1, 1))
     ti = TInstantInt(10, epoch(2011, 1, 1))
     tf = TInstantFloat(1.25, epoch(2011, 1, 1))
     tt = TInstantText("testing", epoch(2011, 1, 1))
+    tg = TInstantGeom(Geometry(10.0, 15.0), epoch(2011, 1, 1))  # Spatiotemporal!
 
     # Example creation of temporal instant set
     tsetb = TInstantSetBool({tb})
 
-    # Example creation of temporal sequences
+    # Example creation of temporal sequence
     tseqf = TSequenceFloat([tf], False, True)
 
     # Let's verify what we've done
     assert (ti.getValue(), ti.getT()) == (10, 1293840000000)
     assert (tt.getValue(), tt.getT()) == ("testing", 1293840000000)
+    assert (tg.getValue().toWKT(), tg.getT()) == ("POINT (10 15)", 1293840000000)
 
     tb = tsetb.getInstants().pop()
     assert (tb.getValue(), tb.getT()) == (True, 1293840000000)
@@ -82,7 +87,9 @@ def test_deserialization():
     assert actual == expected
 
 if __name__ == "__main__":
+    initGEOS()
     test_data_types()
     test_serialization()
     test_deserialization()
+    finishGEOS()
     print("All tests passed")

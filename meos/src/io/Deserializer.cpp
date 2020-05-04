@@ -1,5 +1,6 @@
 #include <algorithm>
 #include <ctime>
+#include <iostream>
 #include <meos/io/DeserializationException.hpp>
 #include <meos/io/Deserializer.hpp>
 #include <sstream>
@@ -163,87 +164,97 @@ template <typename T> time_t Deserializer<T>::nextTime() {
 }
 
 template <typename T> T Deserializer<T>::nextValue() {
+  // Check specialized template functions below for supported types
+  throw DeserializationException("Unsupported type");
+}
+
+template <> bool Deserializer<bool>::nextValue() {
   skipWhitespaces();
-  try {
-    string s = string(iter, in.end());
-    string::size_type length;
-    if (std::is_same<T, bool>::value) {
-      string::size_type current_pos = iter - in.begin();
-      string::size_type end_pos = in.find_first_of(" @\n", current_pos);
-      if (end_pos == string::npos) {
-        end_pos = in.end() - in.begin();
-      }
-      int length = end_pos - current_pos;
-      string input = in.substr(current_pos, length);
-      transform(input.begin(), input.end(), input.begin(), ::tolower);
-
-      bool value;
-      if (input == "t" || input == "true") {
-        value = true;
-      } else if (input == "f" || input == "false") {
-        value = false;
-      } else {
-        throw DeserializationException(
-            "Boolean value can only be one of (t, f, true, false), but got: " +
-            input);
-      }
-
-      iter += length;
-      return *reinterpret_cast<T *>(&value);
-    } else if (std::is_same<T, int>::value) {
-      int value = stoi(s, &length, 10);
-      iter += length;
-      return *reinterpret_cast<T *>(&value);
-    } else if (std::is_same<T, float>::value) {
-      float value = stof(s, &length);
-      iter += length;
-      return *reinterpret_cast<T *>(&value);
-    } else if (std::is_same<T, string>::value) {
-      string::size_type current_pos = iter - in.begin();
-      string::size_type end_pos = in.find_first_of("@", current_pos);
-      if (end_pos == string::npos) {
-        end_pos = in.end() - in.begin();
-      }
-      int length = end_pos - current_pos;
-      string input = in.substr(current_pos, length);
-
-      // Skip double quotes if present
-      if (length >= 2 && input[0] == '"' && input[input.length() - 1] == '"') {
-        input = input.substr(1, length - 2);
-      }
-
-      if (length <= 0) {
-        throw DeserializationException(
-            "Could not parse text: empty, unquoted value");
-      }
-
-      iter += length;
-      return *reinterpret_cast<T *>(&input);
-    } else if (std::is_same<T, GEOSGeometry *>::value) {
-      string::size_type current_pos = iter - in.begin();
-      string::size_type end_pos = in.find_first_of("@", current_pos);
-      if (end_pos == string::npos) {
-        end_pos = in.end() - in.begin();
-      }
-      int length = end_pos - current_pos;
-      string input = in.substr(current_pos, length);
-
-      // Skip double quotes if present
-      GEOSGeometry *value = GEOSGeomFromWKT(input.c_str());
-
-      if (value == nullptr) {
-        throw DeserializationException("Could not parse geometry");
-      }
-
-      iter += length;
-      return *reinterpret_cast<T *>(&value);
-    }
-    throw DeserializationException("Unsupported type");
-  } catch (invalid_argument e) {
-    throw DeserializationException("Could not parse: invalid argument");
-  } catch (out_of_range e) {
-    throw DeserializationException("Could not parse: out of range");
+  string s = string(iter, in.end());
+  string::size_type current_pos = iter - in.begin();
+  string::size_type end_pos = in.find_first_of(" @\n", current_pos);
+  if (end_pos == string::npos) {
+    end_pos = in.end() - in.begin();
   }
+  int length = end_pos - current_pos;
+  string input = in.substr(current_pos, length);
+  transform(input.begin(), input.end(), input.begin(), ::tolower);
+
+  bool value;
+  if (input == "t" || input == "true") {
+    value = true;
+  } else if (input == "f" || input == "false") {
+    value = false;
+  } else {
+    throw DeserializationException(
+        "Boolean value can only be one of (t, f, true, false), but got: " +
+        input);
+  }
+
+  iter += length;
+  return value;
+}
+
+template <> int Deserializer<int>::nextValue() {
+  skipWhitespaces();
+  string s = string(iter, in.end());
+  string::size_type length;
+  int value = stoi(s, &length, 10);
+  iter += length;
+  return value;
+}
+
+template <> float Deserializer<float>::nextValue() {
+  skipWhitespaces();
+  string s = string(iter, in.end());
+  string::size_type length;
+  float value = stof(s, &length);
+  iter += length;
+  return value;
+}
+
+template <> string Deserializer<string>::nextValue() {
+  skipWhitespaces();
+  string::size_type current_pos = iter - in.begin();
+  string::size_type end_pos = in.find_first_of("@", current_pos);
+  if (end_pos == string::npos) {
+    end_pos = in.end() - in.begin();
+  }
+  int length = end_pos - current_pos;
+  string input = in.substr(current_pos, length);
+
+  // Skip double quotes if present
+  if (length >= 2 && input[0] == '"' && input[input.length() - 1] == '"') {
+    input = input.substr(1, length - 2);
+  }
+
+  if (length <= 0) {
+    throw DeserializationException(
+        "Could not parse text: empty, unquoted value");
+  }
+
+  iter += length;
+  return input;
+}
+
+template <> Geometry Deserializer<Geometry>::nextValue() {
+  skipWhitespaces();
+  string::size_type current_pos = iter - in.begin();
+  string::size_type end_pos = in.find_first_of("@", current_pos);
+  if (end_pos == string::npos) {
+    end_pos = in.end() - in.begin();
+  }
+  int length = end_pos - current_pos;
+  string input = in.substr(current_pos, length);
+
+  Geometry value(input);
+
+  if (value.geom == nullptr) {
+    throw DeserializationException("Could not parse geometry");
+  }
+
+  iter += length;
+  return value;
 }
 
 template <typename T> int Deserializer<T>::nextInt() {

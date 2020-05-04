@@ -25,28 +25,28 @@ template <typename T> string Serializer<T>::write(Temporal<T> *temporal) {
 }
 
 template <typename T> string Serializer<T>::write(const T &value) {
-  if (std::is_same<T, bool>::value) {
-    const bool *v = reinterpret_cast<const bool *>(&value);
-    return *v ? "t" : "f";
-  } else if (std::is_same<T, int>::value) {
-    const int *v = reinterpret_cast<const int *>(&value);
-    return to_string(*v);
-  } else if (std::is_same<T, float>::value) {
-    const float *v = reinterpret_cast<const float *>(&value);
-    return to_string(*v);
-  } else if (std::is_same<T, string>::value) {
-    const string *v = reinterpret_cast<const string *>(&value);
-    return '"' + *v + '"';
-  }
+  // Check specialized template functions below for supported types
   throw SerializationException("Unsupported type");
 }
 
-template <>
-string Serializer<GEOSGeometry *>::write(GEOSGeometry *const &value) {
-  GEOSWKTWriter *wktw_ = GEOSWKTWriter_create();
-  GEOSWKTWriter_setTrim(wktw_, 1);
-  GEOSWKTWriter_setRoundingPrecision(wktw_, 8);
-  return string(GEOSWKTWriter_write(wktw_, value));
+template <> string Serializer<bool>::write(bool const &value) {
+  return value ? "t" : "f";
+}
+
+template <> string Serializer<int>::write(int const &value) {
+  return to_string(value);
+}
+
+template <> string Serializer<float>::write(float const &value) {
+  return to_string(value);
+}
+
+template <> string Serializer<string>::write(string const &value) {
+  return '"' + value + '"';
+}
+
+template <> string Serializer<Geometry>::write(Geometry const &value) {
+  return value.toWKT();
 }
 
 template <typename T> string Serializer<T>::writeTime(const time_t &t) {

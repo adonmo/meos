@@ -40,9 +40,24 @@ void declare_temporal_types(py::module &m, const std::string &typesuffix) {
       .def("getInstants", &TSequence<T>::getInstants);
 }
 
+// TODO FIXME
+void notice(const char *fmt, ...) {}
+
+void GEOS_initGEOS() { initGEOS(notice, notice); }
+
 PYBIND11_MODULE(pymeos, m) {
+  py::class_<Geometry>(m, "Geometry")
+      .def(py::init<std::string>())
+      .def(py::init<double, double>())
+      .def("fromWKT", &Geometry::fromWKT)
+      .def("toWKT", &Geometry::toWKT);
+
+  m.def("initGEOS", &GEOS_initGEOS);
+  m.def("finishGEOS", &finishGEOS);
+
   declare_temporal_types<bool>(m, "Bool");
   declare_temporal_types<int>(m, "Int");
   declare_temporal_types<float>(m, "Float");
   declare_temporal_types<string>(m, "Text");
+  declare_temporal_types<Geometry>(m, "Geom");
 }
