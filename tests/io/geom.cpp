@@ -37,6 +37,34 @@ TEST_CASE("geometries are deserialized", "[deserializer][geom]") {
 
     CHECK_THROWS(r.nextValue());
   }
+  SECTION("spaces within geometry shouldn't affect") {
+    double expectedX = GENERATE(take(5, random(-100000, 100000))) / 1000.0;
+    double expectedY = GENERATE(take(5, random(-100000, 100000))) / 1000.0;
+    char buffer[256];
+
+    // clang-format off
+    const char *fmt = GENERATE(
+      "POINT (%lf %lf)",
+      "POINT(%lf %lf)",
+      "POINT(%lf    %lf)",
+      "POINT (%lf    %lf)",
+      "POINT (  %lf    %lf    )"
+    );
+    // clang-format on
+
+    sprintf(buffer, fmt, expectedX, expectedY);
+    string serialized = buffer;
+    Deserializer<Geometry> r(serialized);
+
+    Geometry g = r.nextValue();
+    double x, y;
+    GEOSGeomGetX(g.geom, &x);
+    GEOSGeomGetY(g.geom, &y);
+    REQUIRE(x == expectedX);
+    REQUIRE(y == expectedY);
+
+    CHECK_THROWS(r.nextValue());
+  }
   finishGEOS();
 }
 

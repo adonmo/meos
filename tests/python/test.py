@@ -9,12 +9,12 @@ from pathlib import Path
 sys.path.append(str(Path(__file__).absolute().parent.parent.parent / "build" / "pybind"))
 from pymeos import TInstantBool, TInstantInt, TInstantFloat, TInstantText, TInstantGeom,\
     TInstantSetBool, TInstantSetInt, TSequenceFloat,\
-    SerializerInt, SerializerFloat, DeserializerInt, DeserializerFloat, \
+    SerializerInt, SerializerFloat, DeserializerGeom, DeserializerInt, DeserializerFloat, \
     Geometry, initGEOS, finishGEOS
 
 
-def epoch(year, month, day):
-    return int(datetime(year, month, day).replace(tzinfo=pytz.UTC).timestamp() * 1000)
+def epoch(year, month, day, hour=0, minute=0):
+    return int(datetime(year, month, day, hour, minute).replace(tzinfo=pytz.UTC).timestamp() * 1000)
 
 
 def test_data_types():
@@ -79,11 +79,11 @@ def test_deserialization():
     expected = {(1.0, epoch(2011, 1, 1)), (2.5, epoch(2011, 1, 2))}
     assert actual == expected
 
-    di = DeserializerInt("[10@2011-01-01, 20@2011-01-02)")
-    tseq = di.nextTSequence()
-    assert (tseq.left_open, tseq.right_open) == (False, True)
-    actual = [(ti.getValue(), ti.getT()) for ti in tseq.getInstants()]
-    expected = [(10, epoch(2011, 1, 1)), (20, epoch(2011, 1, 2))]
+    dg = DeserializerGeom("[POINT(0 0)@2012-01-01 08:00:00+00, POINT(2 0)@2012-01-01 08:10:00+00, POINT(2 -1.98)@2012-01-01 08:15:00+00]")
+    tseq = dg.nextTSequence()
+    assert (tseq.left_open, tseq.right_open) == (False, False)
+    actual = [(tg.getValue().toWKT(), tg.getT()) for tg in tseq.getInstants()]
+    expected = [('POINT (0 0)', epoch(2012, 1, 1, 8)), ('POINT (2 0)', epoch(2012, 1, 1, 8, 10)), ('POINT (2 -1.98)', epoch(2012, 1, 1, 8, 15))]
     assert actual == expected
 
 if __name__ == "__main__":
