@@ -13,8 +13,6 @@ The package can be installed by running:
 $ pip install git+https://github.com/chaitan94/meos
 ```
 
-⚠️ Note: currently only python3.6 is supported
-
 # Usage (Python)
 
 ### For all below examples, the following imports and helpers are assumed, in the favor of brevity.
@@ -143,5 +141,5 @@ There are no strict tests yet for the python bindings. However you can run an ex
 
 After building, from the tests/python directory, run:
 ```sh
-$ python3.6 test.py
+$ python test.py
 ```

@@ -1,7 +1,3 @@
-"""
-When testing, run this with python3.6 - this is because right now pybind11 seems to compile for python3.6: https://github.com/pybind/pybind11/issues/1090
-"""
-
 import sys
 import pytz
 from datetime import datetime
