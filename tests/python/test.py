@@ -6,7 +6,7 @@ sys.path.append(str(Path(__file__).absolute().parent.parent.parent / "build" / "
 from pymeos import TInstantBool, TInstantInt, TInstantFloat, TInstantText, TInstantGeom,\
     TInstantSetBool, TInstantSetInt, TSequenceFloat,\
     SerializerInt, SerializerFloat, DeserializerGeom, DeserializerInt, DeserializerFloat, \
-    Geometry, initGEOS, finishGEOS
+    Geometry
 
 
 def epoch(year, month, day, hour=0, minute=0):
@@ -57,6 +57,7 @@ def test_serialization():
     sf = SerializerFloat()
     assert (sf.write(tseqf) == "[1.000000@2011-01-01T00:00:00+0000, 2.500000@2011-01-02T00:00:00+0000)")
 
+    # For sets, ordering might vary, so we need to check accordingly
     serialized = si.write(tseti)
     assert len(serialized) == 58
     assert serialized[0] == "{"
@@ -83,9 +84,7 @@ def test_deserialization():
     assert actual == expected
 
 if __name__ == "__main__":
-    initGEOS()
     test_data_types()
     test_serialization()
     test_deserialization()
-    finishGEOS()
     print("All tests passed")

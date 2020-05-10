@@ -21,8 +21,8 @@ import pytz
 from datetime import datetime
 from pymeos import TInstantBool, TInstantInt, TInstantFloat, TInstantText, TInstantGeom,\
     TInstantSetBool, TInstantSetInt, TSequenceFloat,\
-    SerializerInt, SerializerFloat, DeserializerInt, DeserializerFloat, \
-    Geometry, initGEOS, finishGEOS
+    SerializerInt, SerializerFloat, DeserializerGeom, DeserializerInt, DeserializerFloat, \
+    Geometry
 
 
 def epoch(year, month, day):
@@ -97,11 +97,11 @@ actual = {(tf.getValue(), tf.getT()) for tf in tset.getInstants()}
 expected = {(1.0, epoch(2011, 1, 1)), (2.5, epoch(2011, 1, 2))}
 assert actual == expected
 
-di = DeserializerInt("[10@2011-01-01, 20@2011-01-02)")
-tseq = di.nextTSequence()
-assert (tseq.left_open, tseq.right_open) == (False, True)
-actual = [(ti.getValue(), ti.getT()) for ti in tseq.getInstants()]
-expected = [(10, epoch(2011, 1, 1)), (20, epoch(2011, 1, 2))]
+dg = DeserializerGeom("[POINT(0 0)@2012-01-01 08:00:00+00, POINT(2 0)@2012-01-01 08:10:00+00, POINT(2 -1.98)@2012-01-01 08:15:00+00]")
+tseq = dg.nextTSequence()
+assert (tseq.left_open, tseq.right_open) == (False, False)
+actual = [(tg.getValue().toWKT(), tg.getT()) for tg in tseq.getInstants()]
+expected = [('POINT (0 0)', epoch(2012, 1, 1, 8)), ('POINT (2 0)', epoch(2012, 1, 1, 8, 10)), ('POINT (2 -1.98)', epoch(2012, 1, 1, 8, 15))]
 assert actual == expected
 ```
 

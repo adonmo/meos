@@ -1,7 +1,7 @@
 #ifndef MEOS_TYPES_GEOM_GEOMETRY_HPP
 #define MEOS_TYPES_GEOM_GEOMETRY_HPP
 
-#include <geos_c.h>
+#include <meos/geos.h>
 #include <string>
 
 /**

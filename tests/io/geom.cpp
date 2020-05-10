@@ -3,10 +3,7 @@
 #include <meos/io/Deserializer.hpp>
 #include <meos/io/Serializer.hpp>
 
-void notice(const char *fmt, ...) {}
-
 TEST_CASE("geometries are serialized", "[serializer][geom]") {
-  initGEOS(notice, notice);
   Serializer<Geometry> w;
   SECTION("only one geometry present") {
     int x = GENERATE(take(10, random(-1000, 1000)));
@@ -16,11 +13,9 @@ TEST_CASE("geometries are serialized", "[serializer][geom]") {
     REQUIRE(g.geom != nullptr);
     REQUIRE(w.write(g) == serialized);
   }
-  finishGEOS();
 }
 
 TEST_CASE("geometries are deserialized", "[deserializer][geom]") {
-  initGEOS(notice, notice);
   SECTION("only one geometry present") {
     double expectedX = GENERATE(take(10, random(-100000, 100000))) / 1000.0;
     double expectedY = GENERATE(take(10, random(-100000, 100000))) / 1000.0;
@@ -30,8 +25,8 @@ TEST_CASE("geometries are deserialized", "[deserializer][geom]") {
 
     Geometry g = r.nextValue();
     double x, y;
-    GEOSGeomGetX(g.geom, &x);
-    GEOSGeomGetY(g.geom, &y);
+    GEOSGeomGetX_r(geos_context, g.geom, &x);
+    GEOSGeomGetY_r(geos_context, g.geom, &y);
     REQUIRE(x == expectedX);
     REQUIRE(y == expectedY);
 
@@ -58,18 +53,16 @@ TEST_CASE("geometries are deserialized", "[deserializer][geom]") {
 
     Geometry g = r.nextValue();
     double x, y;
-    GEOSGeomGetX(g.geom, &x);
-    GEOSGeomGetY(g.geom, &y);
+    GEOSGeomGetX_r(geos_context, g.geom, &x);
+    GEOSGeomGetY_r(geos_context, g.geom, &y);
     REQUIRE(x == expectedX);
     REQUIRE(y == expectedY);
 
     CHECK_THROWS(r.nextValue());
   }
-  finishGEOS();
 }
 
 TEST_CASE("geometry serdes", "[serializer][deserializer][geom]") {
-  initGEOS(notice, notice);
   Serializer<Geometry> w;
   SECTION("only one geometry present") {
     int expectedX = GENERATE(take(10, random(-1000, 1000)));
@@ -84,10 +77,9 @@ TEST_CASE("geometry serdes", "[serializer][deserializer][geom]") {
     g = r.nextValue();
     REQUIRE(g.geom != nullptr);
     double x, y;
-    GEOSGeomGetX(g.geom, &x);
-    GEOSGeomGetY(g.geom, &y);
+    GEOSGeomGetX_r(geos_context, g.geom, &x);
+    GEOSGeomGetY_r(geos_context, g.geom, &y);
     REQUIRE(x == expectedX);
     REQUIRE(y == expectedY);
   }
-  finishGEOS();
 }

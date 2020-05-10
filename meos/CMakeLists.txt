@@ -1,4 +1,4 @@
-file(GLOB_RECURSE _sources ${CMAKE_CURRENT_LIST_DIR}/src/*.cpp)
+file(GLOB_RECURSE _sources ${CMAKE_CURRENT_LIST_DIR}/*.c ${CMAKE_CURRENT_LIST_DIR}/*.cpp)
 
 add_library(meos ${_sources})
 
