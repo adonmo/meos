@@ -99,6 +99,34 @@ template <typename T> unique_ptr<TInstant<T>> Deserializer<T>::nextTInstant() {
   return make_unique<TInstant<T>>(value, t);
 };
 
+template <typename T> unique_ptr<Period> Deserializer<T>::nextPeriod() {
+  skipWhitespaces();
+
+  if (!hasNext() || !(peek(0) == '[' || peek(0) == '(')) {
+    throw DeserializationException("Expected either a '[' or '('");
+  }
+
+  const char opening = peek(0);
+  consumeChar(opening);
+  const bool left_open = opening == '(';
+
+  auto lbound = nextTime();
+  skipWhitespaces();
+  skipWhitespaces();
+  consumeChar(',');
+  auto rbound = nextTime();
+
+  if (!hasNext() || !(peek(0) == ']' || peek(0) == ')')) {
+    throw DeserializationException("Expected either a ']' or ')'");
+  }
+
+  const char closing = peek(0);
+  consumeChar(closing);
+  const bool right_open = closing == ')';
+
+  return make_unique<Period>(lbound, rbound, left_open, right_open);
+};
+
 /**
  * Parse time in ISO8601 format
  * Skips initial whitespaces, reads until one of ",)]}\n" is reached, and tries
