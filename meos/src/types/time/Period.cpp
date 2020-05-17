@@ -5,8 +5,8 @@ Period::Period(std::time_t lower, std::time_t upper, const bool left_open,
     : m_lower(lower), m_upper(upper), m_left_open(left_open),
       m_right_open(right_open) {}
 
-std::time_t &Period::lower() { return this->m_lower; }
-std::time_t &Period::upper() { return this->m_upper; }
+const std::time_t &Period::lower() const { return this->m_lower; }
+const std::time_t &Period::upper() const { return this->m_upper; }
 
-bool &Period::isLeftOpen() { return this->m_left_open; }
-bool &Period::isRightOpen() { return this->m_right_open; }
+const bool &Period::isLeftOpen() const { return this->m_left_open; }
+const bool &Period::isRightOpen() const { return this->m_right_open; }

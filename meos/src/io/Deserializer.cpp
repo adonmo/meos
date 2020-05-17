@@ -127,6 +127,27 @@ template <typename T> unique_ptr<Period> Deserializer<T>::nextPeriod() {
   return make_unique<Period>(lbound, rbound, left_open, right_open);
 };
 
+template <typename T> unique_ptr<PeriodSet> Deserializer<T>::nextPeriodSet() {
+  skipWhitespaces();
+  consumeChar('{');
+  set<unique_ptr<Period>> s = {};
+  s.insert(nextPeriod());
+  skipWhitespaces();
+
+  while (hasNext() && peek(0) == ',') {
+    consumeChar(',');
+    s.insert(nextPeriod());
+    skipWhitespaces();
+  }
+
+  if (!hasNext() || peek(0) != '}') {
+    throw DeserializationException("Expected a '}'");
+  }
+  consumeChar('}');
+
+  return make_unique<PeriodSet>(s);
+};
+
 /**
  * Parse time in ISO8601 format
  * Skips initial whitespaces, reads until one of ",)]}\n" is reached, and tries
