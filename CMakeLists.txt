@@ -1,5 +1,6 @@
 cmake_minimum_required(VERSION 3.10)
-project(libmeos VERSION 0.0.2)
+project(libmeos)
+include(cmake/WriteVersionInfo.cmake)
 SET(BUILD_SHARED_LIBS ON)
 
 enable_testing()

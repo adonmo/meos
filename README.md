@@ -148,7 +148,7 @@ $ make
 This builds three artifacts:
  - **libmeos&#46;so** - the compiled shared object for use in C/C++ projects.
  - **meos-tests** - executable to run tests.
- - **libmeos.cpython-36m-x86_64-linux-gnu.so** - python module bindings.
+ - **libmeos.cpython-38m-x86_64-linux-gnu.so** - python module bindings.
 
 If you make any additional changes, you can just run `make` to get your changes reflected in the compiled outputs.
 

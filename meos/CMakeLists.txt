@@ -1,6 +1,7 @@
 file(GLOB_RECURSE _sources ${CMAKE_CURRENT_LIST_DIR}/*.c ${CMAKE_CURRENT_LIST_DIR}/*.cpp)
 
 add_library(meos ${_sources})
+set_target_properties(meos PROPERTIES SUFFIX "-${MEOS_VERSION}.so")
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 

@@ -8,6 +8,8 @@ from setuptools import setup, Extension, find_packages
 from setuptools.command.build_ext import build_ext
 from distutils.version import LooseVersion
 
+from tools.write_version_info import get_version_info
+
 
 class CMakeExtension(Extension):
     def __init__(self, name, sourcedir=''):
@@ -65,7 +67,7 @@ class CMakeBuild(build_ext):
 
 setup(
     name='pymeos',
-    version='0.0.1',
+    version=get_version_info()[3],
     author='Krishna Chaitanya Bommakanti',
     author_email='bkchaitan94@gmail.com',
     description='Python bindings to libmeos',
