@@ -105,6 +105,33 @@ expected = [('POINT (0 0)', epoch(2012, 1, 1, 8)), ('POINT (2 0)', epoch(2012, 1
 assert actual == expected
 ```
 
+### 4. Time Types
+```python
+# Example creation of time objects
+period_1 = Period(epoch(2011, 1, 1), epoch(2011, 1, 2), True, False)
+period_2 = Period(epoch(2011, 1, 5), epoch(2011, 1, 6), False, False)
+period_3 = Period(epoch(2011, 1, 1), epoch(2011, 1, 2), True, False)
+assert period_1 == period_3
+assert period_2 != period_1
+assert period_2 != period_3
+period_set = PeriodSet({period_1, period_2, period_3})
+
+# Let's verify what we've done
+assert period_1.lower() == 1293840000000
+assert period_1.upper() == 1293926400000
+assert period_1.isLeftOpen() == True
+assert period_1.isRightOpen() == False
+
+assert period_2.lower() == 1294185600000
+assert period_2.upper() == 1294272000000
+assert period_2.isLeftOpen() == False
+assert period_2.isRightOpen() == False
+
+assert len(period_set.getPeriods()) == 2
+assert period_1 in list(period_set.getPeriods())
+assert period_2 in list(period_set.getPeriods())
+```
+
 # Development
 
 ## Building

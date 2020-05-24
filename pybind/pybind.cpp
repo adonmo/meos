@@ -57,4 +57,25 @@ PYBIND11_MODULE(pymeos, m) {
   declare_temporal_types<float>(m, "Float");
   declare_temporal_types<string>(m, "Text");
   declare_temporal_types<Geometry>(m, "Geom");
+
+  py::class_<Period>(m, "Period")
+      .def(py::init<time_t, time_t, const bool, const bool>())
+      .def(
+          "__eq__",
+          [](Period const &self, Period const &other) { return self == other; },
+          py::is_operator())
+      .def("__hash__",
+           [](const Period &period) {
+             return py::hash(py::make_tuple(period.lower(), period.upper(),
+                                            period.isLeftOpen(),
+                                            period.isRightOpen()));
+           })
+      .def("lower", &Period::lower)
+      .def("upper", &Period::upper)
+      .def("isLeftOpen", &Period::isLeftOpen)
+      .def("isRightOpen", &Period::isRightOpen);
+
+  py::class_<PeriodSet>(m, "PeriodSet")
+      .def(py::init<set<Period> &>())
+      .def("getPeriods", &PeriodSet::getPeriods);
 }
