@@ -47,16 +47,16 @@ tseqf = TSequenceFloat([tf], False, True)
 
 ### Let's verify what we've done
 ```python
+assert (tb.getValue(), ti.getT()) == (True, 1293840000000)
 assert (ti.getValue(), ti.getT()) == (10, 1293840000000)
+assert (tf.getValue(), ti.getT()) == (1.25, 1293840000000)
 assert (tt.getValue(), tt.getT()) == ("testing", 1293840000000)
 assert (tg.getValue().toWKT(), tg.getT()) == ("POINT (10 15)", 1293840000000)
 
-tb = tsetb.getInstants().pop()
-assert (tb.getValue(), tb.getT()) == (True, 1293840000000)
+assert {tb} == tsetb.getInstants()
 
-tf = tseqf.getInstants()[0]
+assert [tf] == tseqf.getInstants()
 assert (tseqf.left_open, tseqf.right_open) == (False, True)
-assert (tf.getValue(), tf.getT()) == (1.25, 1293840000000)
 ```
 
 ## 2. Serialization
@@ -128,8 +128,7 @@ assert period_2.isLeftOpen() == False
 assert period_2.isRightOpen() == False
 
 assert len(period_set.getPeriods()) == 2
-assert period_1 in list(period_set.getPeriods())
-assert period_2 in list(period_set.getPeriods())
+assert {period_1, period_2} == period_set.getPeriods()
 ```
 
 # Development

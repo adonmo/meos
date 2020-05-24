@@ -93,16 +93,16 @@ TEMPLATE_TEST_CASE("TSequence are deserialized", "[deserializer][tsequence]",
 
     unique_ptr<TSequence<TestType>> tseq = r.nextTSequence();
     vector<TInstant<TestType>> actual = unwrap(tseq->instants);
-    vector<TInstant<TestType>> v = {TInstant<TestType>(10, 1325376000000)};
-    auto x1 = Catch::Matchers::Equals(v);
+    vector<TInstant<TestType>> v1 = {TInstant<TestType>(10, 1325376000000)};
+    auto x1 = Catch::Matchers::Equals(v1);
     REQUIRE_THAT(actual, x1);
     REQUIRE(tseq->left_open == true);
     REQUIRE(tseq->right_open == false);
 
     unique_ptr<TSequence<TestType>> tseq2 = r.nextTSequence();
     vector<TInstant<TestType>> actual2 = unwrap(tseq2->instants);
-    v = {TInstant<TestType>(12, 1333238400000)};
-    auto x2 = Catch::Matchers::Equals(v);
+    vector<TInstant<TestType>> v2 = {TInstant<TestType>(12, 1333238400000)};
+    auto x2 = Catch::Matchers::Equals(v2);
     REQUIRE_THAT(actual2, x2);
     REQUIRE(tseq2->left_open == false);
     REQUIRE(tseq2->right_open == false);

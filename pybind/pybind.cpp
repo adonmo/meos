@@ -29,6 +29,17 @@ void declare_temporal_types(py::module &m, const std::string &typesuffix) {
 
   py::class_<TInstant<T>>(m, ("TInstant" + typesuffix).c_str())
       .def(py::init<T, time_t>())
+      .def(
+          "__eq__",
+          [](TInstant<T> const &self, TInstant<T> const &other) {
+            return self == other;
+          },
+          py::is_operator())
+      .def("__hash__",
+           [](const TInstant<T> &instant) {
+             return py::hash(
+                 py::make_tuple(instant.getValue(), instant.getT()));
+           })
       .def("getT", &TInstant<T>::getT)
       .def("getValue", &TInstant<T>::getValue);
 

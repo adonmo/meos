@@ -8,13 +8,13 @@ using namespace std;
 
 template <typename T = float> class TInstant : public Temporal<T> {
 private:
-  T value;
-  time_t t;
+  const T value;
+  const time_t t;
 
 public:
   TInstant(T value, time_t t);
-  T getValue();
-  time_t &getT();
+  const T &getValue() const;
+  const time_t &getT() const;
 
   virtual unique_ptr<TInstant> clone() { return make_unique<TInstant>(*this); }
 

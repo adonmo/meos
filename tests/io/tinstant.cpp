@@ -33,13 +33,13 @@ TEMPLATE_TEST_CASE("TInstants are deserialized", "[deserializer][tinst]", int,
     Deserializer<TestType> r(
         "10@2012-01-01 00:00:00+00\n12@2012-04-01 00:00:00+00");
 
-    TInstant<TestType> tinst = *r.nextTInstant().release();
-    REQUIRE(tinst.getValue() == 10);
-    REQUIRE(tinst.getT() == 1325376000000);
+    TInstant<TestType> tinst_1 = *r.nextTInstant().release();
+    REQUIRE(tinst_1.getValue() == 10);
+    REQUIRE(tinst_1.getT() == 1325376000000);
 
-    tinst = *r.nextTInstant().release();
-    REQUIRE(tinst.getValue() == 12);
-    REQUIRE(tinst.getT() == 1333238400000);
+    TInstant<TestType> tinst_2 = *r.nextTInstant().release();
+    REQUIRE(tinst_2.getValue() == 12);
+    REQUIRE(tinst_2.getT() == 1333238400000);
 
     CHECK_THROWS(r.nextTInstant());
   }
