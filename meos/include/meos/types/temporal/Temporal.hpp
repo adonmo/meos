@@ -5,7 +5,7 @@
 
 using namespace std;
 
-template <typename T> class Temporal {
+template <typename T = float> class Temporal {
 private:
 public:
   Temporal();

@@ -13,7 +13,7 @@
 
 using namespace std;
 
-template <typename T> class Serializer {
+template <typename T = float> class Serializer {
 public:
   string write(Temporal<T> *temporal);
   string write(TInstant<T> *instant);

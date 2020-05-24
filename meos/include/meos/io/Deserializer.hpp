@@ -13,7 +13,7 @@
 
 using namespace std;
 
-template <typename T> class Deserializer {
+template <typename T = float> class Deserializer {
 public:
   Deserializer(const string &in);
   unique_ptr<Temporal<T>> nextTemporal();

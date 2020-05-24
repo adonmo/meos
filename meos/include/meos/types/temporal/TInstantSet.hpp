@@ -8,7 +8,7 @@
 
 using namespace std;
 
-template <typename T> class TInstantSet : public Temporal<T> {
+template <typename T = float> class TInstantSet : public Temporal<T> {
 public:
   set<unique_ptr<TInstant<T>>> instants;
 

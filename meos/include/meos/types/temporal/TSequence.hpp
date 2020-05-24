@@ -8,7 +8,7 @@
 
 using namespace std;
 
-template <typename T> class TSequence : public Temporal<T> {
+template <typename T = float> class TSequence : public Temporal<T> {
 public:
   vector<unique_ptr<TInstant<T>>> instants;
   bool left_open;

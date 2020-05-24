@@ -6,7 +6,7 @@
 #include <meos/types/time/Period.hpp>
 
 TEST_CASE("Periods are serialized", "[serializer][period]") {
-  Serializer<int> w;
+  Serializer<> w;
   auto left_open = GENERATE(true, false);
   auto right_open = GENERATE(true, false);
   auto period =
@@ -23,8 +23,8 @@ TEST_CASE("Periods are deserialized", "[deserializer][period]") {
     auto right_open = GENERATE(true, false);
     string left = left_open ? "(" : "[";
     string right = right_open ? ")" : "]";
-    Deserializer<int> r(left + "2012-01-01T00:00:00+0000" + ", " +
-                        "2012-04-01T00:00:00+0000" + right);
+    Deserializer<> r(left + "2012-01-01T00:00:00+0000" + ", " +
+                     "2012-04-01T00:00:00+0000" + right);
 
     unique_ptr<Period> period = r.nextPeriod();
     REQUIRE(period->isLeftOpen() == left_open);
@@ -45,7 +45,7 @@ TEST_CASE("Periods are deserialized", "[deserializer][period]") {
     string period_str_2 =
         string(left_open_2 ? "(" : "[") + "2012-01-01T00:00:00+0000" + ", " +
         "2012-04-01T00:00:00+0000" + string(right_open_2 ? ")" : "]");
-    Deserializer<int> r(period_str_1 + period_str_2);
+    Deserializer<> r(period_str_1 + period_str_2);
 
     unique_ptr<Period> period_1 = r.nextPeriod();
     REQUIRE(period_1->isLeftOpen() == left_open_1);

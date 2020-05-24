@@ -6,7 +6,7 @@
 
 using namespace std;
 
-template <typename T> class TInstant : public Temporal<T> {
+template <typename T = float> class TInstant : public Temporal<T> {
 private:
   T value;
   time_t t;

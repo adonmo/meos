@@ -35,7 +35,7 @@ set<string> split_period_set_into_periods(const string &period_set_str) {
 }
 
 TEST_CASE("PeriodSets are serialized", "[serializer][periodset]") {
-  Serializer<int> w;
+  Serializer<> w;
   SECTION("empty set") {
     string expected = "{}";
 
@@ -98,7 +98,7 @@ TEST_CASE("PeriodSets are serialized", "[serializer][periodset]") {
 TEST_CASE("PeriodSets are deserialized", "[deserializer][periodset]") {
   SECTION("only one PeriodSet present") {
     SECTION("only one inst present") {
-      Deserializer<int> r("{[2012-11-01, 2012-04-01]}");
+      Deserializer<> r("{[2012-11-01, 2012-04-01]}");
 
       unique_ptr<PeriodSet> period_set = r.nextPeriodSet();
       set<Period> actual = unwrap(period_set->periods);
@@ -112,8 +112,8 @@ TEST_CASE("PeriodSets are deserialized", "[deserializer][periodset]") {
     }
 
     SECTION("multiple inst present") {
-      Deserializer<int> r("{(2012-01-01 00:00:00+00, 2012-04-01 00:00:00+00), "
-                          "[2012-01-01 00:00:00+00, 2012-04-01 00:00:00+00)}");
+      Deserializer<> r("{(2012-01-01 00:00:00+00, 2012-04-01 00:00:00+00), "
+                       "[2012-01-01 00:00:00+00, 2012-04-01 00:00:00+00)}");
 
       unique_ptr<PeriodSet> period_set = r.nextPeriodSet();
       set<Period> actual = unwrap(period_set->periods);
@@ -129,7 +129,7 @@ TEST_CASE("PeriodSets are deserialized", "[deserializer][periodset]") {
   }
 
   SECTION("multiple PeriodSets present") {
-    Deserializer<int> r(
+    Deserializer<> r(
         "{(2012-01-01 00:00:00+00, 2012-04-01 00:00:00+00)}{[2012-01-01 "
         "00:00:00+00, 2012-04-01 00:00:00+00)}");
 
