@@ -1,5 +1,6 @@
 #include "../catch.hpp"
 #include "../common/matchers.hpp"
+#include "../common/time_utils.hpp"
 #include "../common/utils.hpp"
 #include <iostream>
 #include <meos/io/Deserializer.hpp>
@@ -18,7 +19,7 @@ TEMPLATE_TEST_CASE("Temporal are deserialized", "[deserializer][temporal]", int,
         unique_ptr<Temporal<TestType>> temporal = r.nextTemporal();
         auto casted = (static_cast<TInstant<TestType> *>(temporal.get()));
         REQUIRE(casted->getValue() == 10);
-        REQUIRE(casted->getT() == 1351728000000);
+        REQUIRE(casted->getT() == unix_time(2012, 11, 1));
 
         CHECK_THROWS(r.nextTemporal());
       }
@@ -28,7 +29,8 @@ TEMPLATE_TEST_CASE("Temporal are deserialized", "[deserializer][temporal]", int,
         unique_ptr<Temporal<TestType>> temporal = r.nextTemporal();
         auto casted = (static_cast<TInstantSet<TestType> *>(temporal.get()));
         set<TInstant<TestType>> actual = unwrap(casted->instants);
-        set<TInstant<TestType>> s = {TInstant<TestType>(10, 1351728000000)};
+        set<TInstant<TestType>> s = {
+            TInstant<TestType>(10, unix_time(2012, 11, 1))};
         auto x = UnorderedEquals(s);
         REQUIRE_THAT(actual, x);
 
@@ -40,7 +42,8 @@ TEMPLATE_TEST_CASE("Temporal are deserialized", "[deserializer][temporal]", int,
         unique_ptr<Temporal<TestType>> temporal = r.nextTemporal();
         auto casted = (static_cast<TSequence<TestType> *>(temporal.get()));
         vector<TInstant<TestType>> actual = unwrap(casted->instants);
-        vector<TInstant<TestType>> v = {TInstant<TestType>(10, 1351728000000)};
+        vector<TInstant<TestType>> v = {
+            TInstant<TestType>(10, unix_time(2012, 11, 1))};
         auto x = Catch::Matchers::Equals(v);
         REQUIRE_THAT(actual, x);
         REQUIRE(casted->left_open == false);
@@ -64,8 +67,9 @@ TEMPLATE_TEST_CASE("Temporal are deserialized", "[deserializer][temporal]", int,
       unique_ptr<Temporal<TestType>> temporal = r.nextTemporal();
       auto casted = (static_cast<TInstantSet<TestType> *>(temporal.get()));
       set<TInstant<TestType>> actual = unwrap(casted->instants);
-      set<TInstant<TestType>> v = {TInstant<TestType>(10, 1325376000000),
-                                   TInstant<TestType>(12, 1333238400000)};
+      set<TInstant<TestType>> v = {
+          TInstant<TestType>(10, unix_time(2012, 1, 1)),
+          TInstant<TestType>(12, unix_time(2012, 4, 1))};
       auto x = UnorderedEquals(v);
       REQUIRE_THAT(actual, x);
 
@@ -80,26 +84,17 @@ TEMPLATE_TEST_CASE("Temporal are deserialized", "[deserializer][temporal]", int,
     unique_ptr<Temporal<TestType>> temporal = r.nextTemporal();
     auto casted = (static_cast<TInstantSet<TestType> *>(temporal.get()));
     set<TInstant<TestType>> actual = unwrap(casted->instants);
-    set<TInstant<TestType>> v = {TInstant<TestType>(10, 1325376000000)};
+    set<TInstant<TestType>> v = {TInstant<TestType>(10, unix_time(2012, 1, 1))};
     auto x1 = UnorderedEquals(v);
     REQUIRE_THAT(actual, x1);
 
     unique_ptr<Temporal<TestType>> temporal2 = r.nextTemporal();
     auto casted2 = (static_cast<TInstantSet<TestType> *>(temporal2.get()));
     set<TInstant<TestType>> actual2 = unwrap(casted2->instants);
-    v = {TInstant<TestType>(12, 1333238400000)};
+    v = {TInstant<TestType>(12, unix_time(2012, 4, 1))};
     auto x2 = UnorderedEquals(v);
     REQUIRE_THAT(actual2, x2);
 
     CHECK_THROWS(r.nextTemporal());
   }
 }
-
-// r.read("10@2012-01-01 00:00:00+00");
-// r.read("[10@2012-01-01 00:00:00+00, 12@2012-04-01 00:00:00+00]");
-// r.read("[10@2012-01-01 00:00:00+00, 12@2012-04-01 00:00:00+00)");
-// DONE r.read("{10@2012-01-01 00:00:00+00, 12@2012-04-01 00:00:00+00}");
-// r.read("{[10@2012-01-01 00:00:00+00, 12@2012-04-01 00:00:00+00],
-// (10@2012-01-01 00:00:00+00, 12@2012-04-01 00:00:00+00)}");
-
-// DONE r.read("10.1@2012-01-01 00:00:00+00");

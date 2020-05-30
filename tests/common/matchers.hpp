@@ -1,3 +1,6 @@
+#ifndef MEOS_TESTS_COMMON_MATCHERS_HPP
+#define MEOS_TESTS_COMMON_MATCHERS_HPP
+
 #include <set>
 
 namespace Set {
@@ -27,3 +30,5 @@ template <typename T>
 Set::UnorderedEqualsMatcher<T> UnorderedEquals(std::set<T> const &target) {
   return Set::UnorderedEqualsMatcher<T>(target);
 }
+
+#endif

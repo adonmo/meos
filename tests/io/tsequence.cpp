@@ -1,4 +1,5 @@
 #include "../catch.hpp"
+#include "../common/time_utils.hpp"
 #include "../common/utils.hpp"
 #include <iostream>
 #include <meos/io/Deserializer.hpp>
@@ -14,7 +15,7 @@ TEMPLATE_TEST_CASE("TSequence are serialized", "[serializer][tsequence]", int,
                                       numeric_limits<int>::max())));
     auto left_open = GENERATE(true, false);
     auto right_open = GENERATE(true, false);
-    auto instant = make_unique<TInstant<TestType>>(i, 1351728000000);
+    auto instant = make_unique<TInstant<TestType>>(i, unix_time(2012, 11, 1));
     vector<unique_ptr<TInstant<TestType>>> instants;
     instants.push_back(move(instant));
     TSequence<TestType> sequence(instants, left_open, right_open);
@@ -32,8 +33,8 @@ TEMPLATE_TEST_CASE("TSequence are serialized", "[serializer][tsequence]", int,
                                      numeric_limits<int>::max())));
     auto left_open = GENERATE(true, false);
     auto right_open = GENERATE(true, false);
-    auto instant1 = make_unique<TInstant<TestType>>(i, 1351728000000);
-    auto instant2 = make_unique<TInstant<TestType>>(j, 1351728000000);
+    auto instant1 = make_unique<TInstant<TestType>>(i, unix_time(2012, 11, 1));
+    auto instant2 = make_unique<TInstant<TestType>>(j, unix_time(2012, 11, 1));
     vector<unique_ptr<TInstant<TestType>>> instants;
     instants.push_back(move(instant1));
     instants.push_back(move(instant2));
@@ -62,7 +63,8 @@ TEMPLATE_TEST_CASE("TSequence are deserialized", "[deserializer][tsequence]",
 
       unique_ptr<TSequence<TestType>> tseq = r.nextTSequence();
       vector<TInstant<TestType>> actual = unwrap(tseq->instants);
-      vector<TInstant<TestType>> v = {TInstant<TestType>(10, 1351728000000)};
+      vector<TInstant<TestType>> v = {
+          TInstant<TestType>(10, unix_time(2012, 11, 1))};
       auto x = Catch::Matchers::Equals(v);
       REQUIRE_THAT(actual, x);
       REQUIRE(tseq->left_open == false);
@@ -76,8 +78,9 @@ TEMPLATE_TEST_CASE("TSequence are deserialized", "[deserializer][tsequence]",
 
       unique_ptr<TSequence<TestType>> tseq = r.nextTSequence();
       vector<TInstant<TestType>> actual = unwrap(tseq->instants);
-      vector<TInstant<TestType>> v = {TInstant<TestType>(10, 1325376000000),
-                                      TInstant<TestType>(12, 1333238400000)};
+      vector<TInstant<TestType>> v = {
+          TInstant<TestType>(10, unix_time(2012, 1, 1)),
+          TInstant<TestType>(12, unix_time(2012, 4, 1))};
       auto x = Catch::Matchers::Equals(v);
       REQUIRE_THAT(actual, x);
       REQUIRE(tseq->left_open == true);
@@ -93,7 +96,8 @@ TEMPLATE_TEST_CASE("TSequence are deserialized", "[deserializer][tsequence]",
 
     unique_ptr<TSequence<TestType>> tseq = r.nextTSequence();
     vector<TInstant<TestType>> actual = unwrap(tseq->instants);
-    vector<TInstant<TestType>> v1 = {TInstant<TestType>(10, 1325376000000)};
+    vector<TInstant<TestType>> v1 = {
+        TInstant<TestType>(10, unix_time(2012, 1, 1))};
     auto x1 = Catch::Matchers::Equals(v1);
     REQUIRE_THAT(actual, x1);
     REQUIRE(tseq->left_open == true);
@@ -101,7 +105,8 @@ TEMPLATE_TEST_CASE("TSequence are deserialized", "[deserializer][tsequence]",
 
     unique_ptr<TSequence<TestType>> tseq2 = r.nextTSequence();
     vector<TInstant<TestType>> actual2 = unwrap(tseq2->instants);
-    vector<TInstant<TestType>> v2 = {TInstant<TestType>(12, 1333238400000)};
+    vector<TInstant<TestType>> v2 = {
+        TInstant<TestType>(12, unix_time(2012, 4, 1))};
     auto x2 = Catch::Matchers::Equals(v2);
     REQUIRE_THAT(actual2, x2);
     REQUIRE(tseq2->left_open == false);

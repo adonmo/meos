@@ -1,5 +1,6 @@
 #include "../catch.hpp"
 #include "../common/matchers.hpp"
+#include "../common/time_utils.hpp"
 #include "../common/utils.hpp"
 #include <iostream>
 #include <meos/io/Deserializer.hpp>
@@ -16,7 +17,7 @@ TEMPLATE_TEST_CASE("TInstantSet are serialized", "[serializer][tinstantset]",
     auto i = GENERATE(0, 1, -1, 2012, 756772544,
                       take(30, random(numeric_limits<int>::min(),
                                       numeric_limits<int>::max())));
-    auto instant = make_unique<TInstant<TestType>>(i, 1351728000000);
+    auto instant = make_unique<TInstant<TestType>>(i, unix_time(2012, 11, 1));
     set<unique_ptr<TInstant<TestType>>> instants;
     instants.insert(move(instant));
     TInstantSet<TestType> instant_set(instants);
@@ -30,8 +31,8 @@ TEMPLATE_TEST_CASE("TInstantSet are serialized", "[serializer][tinstantset]",
     auto j = GENERATE(0, 1, -1, 2012, 756772544,
                       take(6, random(numeric_limits<int>::min(),
                                      numeric_limits<int>::max())));
-    auto instant1 = make_unique<TInstant<TestType>>(i, 1351728000000);
-    auto instant2 = make_unique<TInstant<TestType>>(j, 1351728000000);
+    auto instant1 = make_unique<TInstant<TestType>>(i, unix_time(2012, 11, 1));
+    auto instant2 = make_unique<TInstant<TestType>>(j, unix_time(2012, 11, 1));
     set<unique_ptr<TInstant<TestType>>> instants;
     instants.insert(move(instant1));
     instants.insert(move(instant2));
@@ -59,7 +60,7 @@ TEMPLATE_TEST_CASE("TInstantSet are deserialized",
       unique_ptr<TInstantSet<TestType>> instantSet = r.nextTInstantSet();
       set<TInstant<TestType>> actual = unwrap(instantSet->instants);
       set<TInstant<TestType>> expected = {
-          TInstant<TestType>(10, 1351728000000)};
+          TInstant<TestType>(10, unix_time(2012, 11, 1))};
       auto x = UnorderedEquals(expected);
       REQUIRE_THAT(actual, x);
 
@@ -72,8 +73,8 @@ TEMPLATE_TEST_CASE("TInstantSet are deserialized",
       unique_ptr<TInstantSet<TestType>> instantSet = r.nextTInstantSet();
       set<TInstant<TestType>> actual = unwrap(instantSet->instants);
       set<TInstant<TestType>> expected = {
-          TInstant<TestType>(10, 1325376000000),
-          TInstant<TestType>(12, 1333238400000)};
+          TInstant<TestType>(10, unix_time(2012, 1, 1)),
+          TInstant<TestType>(12, unix_time(2012, 4, 1))};
       auto x = UnorderedEquals(expected);
       REQUIRE_THAT(actual, x);
 
@@ -87,13 +88,14 @@ TEMPLATE_TEST_CASE("TInstantSet are deserialized",
 
     unique_ptr<TInstantSet<TestType>> instantSet = r.nextTInstantSet();
     set<TInstant<TestType>> actual = unwrap(instantSet->instants);
-    set<TInstant<TestType>> expected = {TInstant<TestType>(10, 1325376000000)};
+    set<TInstant<TestType>> expected = {
+        TInstant<TestType>(10, unix_time(2012, 1, 1))};
     auto x1 = UnorderedEquals(expected);
     REQUIRE_THAT(actual, x1);
 
     unique_ptr<TInstantSet<TestType>> instantSet2 = r.nextTInstantSet();
     set<TInstant<TestType>> actual2 = unwrap(instantSet2->instants);
-    expected = {TInstant<TestType>(12, 1333238400000)};
+    expected = {TInstant<TestType>(12, unix_time(2012, 4, 1))};
     auto x2 = UnorderedEquals(expected);
     REQUIRE_THAT(actual2, x2);
 
