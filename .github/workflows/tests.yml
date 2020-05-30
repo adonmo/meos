@@ -1,0 +1,49 @@
+name: Tests
+
+on: [push, pull_request]
+
+env:
+  CMAKE_VERSION: 3.16.2
+  BUILD_TYPE: Release
+
+jobs:
+  build:
+
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+
+    steps:
+    - uses: actions/checkout@v1
+
+    - name: Set up conda path
+      # Using this would mean we should use bash -l {0} in all the other steps instead
+      # of just bash for the conda (and its packages) path to properly reflected
+      uses: goanpeca/setup-miniconda@v1
+
+    - name: Download Pybind11
+      run: conda install pybind11 -c conda-forge
+      # Use a bash shell so we can use the same syntax for environment variable
+      # access regardless of the host operating system
+      shell: bash -l {0}
+
+    - name: Install GEOS
+      shell: bash -l {0}
+      working-directory: ${{runner.workspace}}/meos
+      run: sudo apt-get -y update && sudo apt-get -y install libgeos-dev
+
+    - name: Configure CMake
+      shell: bash -l {0}
+      working-directory: ${{runner.workspace}}/meos
+      run: cmake -B build -S . -DCMAKE_BUILD_TYPE=$BUILD_TYPE
+
+    - name: Build
+      working-directory: ${{runner.workspace}}/meos
+      shell: bash -l {0}
+      run: cmake --build build --config $BUILD_TYPE
+
+    - name: Test
+      working-directory: ${{runner.workspace}}/meos/build
+      shell: bash -l {0}
+      run: ctest --output-on-failure -C $BUILD_TYPE
