@@ -15,7 +15,10 @@ Geometry::~Geometry() { free(); }
 
 void Geometry::point(double x, double y) {
   free();
-  geom = GEOSGeom_createPointFromXY_r(geos_context, x, y);
+  auto seq = GEOSCoordSeq_create_r(geos_context, 1, 2);
+  GEOSCoordSeq_setX_r(geos_context, seq, 0, x);
+  GEOSCoordSeq_setY_r(geos_context, seq, 0, y);
+  geom = GEOSGeom_createPoint_r(geos_context, seq);
 }
 
 void Geometry::fromWKT(std::string wkt) {

@@ -30,7 +30,6 @@ jobs:
 
     - name: Install GEOS
       shell: bash -l {0}
-      working-directory: ${{runner.workspace}}/meos
       run: sudo apt-get -y update && sudo apt-get -y install libgeos-dev
 
     - name: Configure CMake
