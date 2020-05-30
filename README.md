@@ -138,10 +138,8 @@ assert {period_1, period_2} == period_set.getPeriods()
 MEOS uses the [CMake](https://cmake.org/) build system. Follow these steps to build the project:
 
 ```sh
-$ mkdir build
-$ cd build
-$ cmake ..
-$ make
+$ cmake -B build -S .
+$ cmake --build build
 ```
 
 This builds three artifacts:

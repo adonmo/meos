@@ -39,10 +39,11 @@ public:
 
   virtual unique_ptr<Period> clone() { return make_unique<Period>(*this); }
 
-  const time_t &lower() const;
-  const time_t &upper() const;
-  const bool &isLeftOpen() const;
-  const bool &isRightOpen() const;
+  const time_t lower() const;
+  const time_t upper() const;
+  const bool isLeftOpen() const;
+  const bool isRightOpen() const;
+  const bool overlap(const Period &p) const;
 
   friend bool operator==(const Period &lhs, const Period &rhs) {
     return lhs.compare(rhs) == 0;

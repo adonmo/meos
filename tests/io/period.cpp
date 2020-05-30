@@ -62,3 +62,40 @@ TEST_CASE("Periods are deserialized", "[deserializer][period]") {
     CHECK_THROWS(r.nextPeriod());
   }
 }
+
+TEST_CASE("Period overlap", "[period]") {
+  SECTION("clear overlap") {
+    auto left_open = GENERATE(true, false);
+    auto right_open = GENERATE(true, false);
+    auto period_1 = *make_unique<Period>(1325376000000, 1333238400000,
+                                         left_open, right_open)
+                         .get();
+    auto period_2 = *make_unique<Period>(1328054400000, 1335830400000,
+                                         left_open, right_open)
+                         .get();
+    REQUIRE(period_1.overlap(period_2));
+  }
+  SECTION("clearly no overlap") {
+    auto left_open = GENERATE(true, false);
+    auto right_open = GENERATE(true, false);
+    auto period_1 = *make_unique<Period>(1325376000000, 1328054400000,
+                                         left_open, right_open)
+                         .get();
+    auto period_2 = *make_unique<Period>(1333238400000, 1335830400000,
+                                         left_open, right_open)
+                         .get();
+    REQUIRE(!period_1.overlap(period_2));
+  }
+  SECTION("borderline overlap case when only both periods are inclusive") {
+    auto left_open = GENERATE(true, false);
+    auto right_open = GENERATE(true, false);
+    auto period_1 = *make_unique<Period>(1325376000000, 1330560000000,
+                                         left_open, right_open)
+                         .get();
+    auto period_2 = *make_unique<Period>(1330560000000, 1335830400000,
+                                         left_open, right_open)
+                         .get();
+    bool expected = !period_1.isRightOpen() && !period_2.isLeftOpen();
+    REQUIRE(period_1.overlap(period_2) == expected);
+  }
+}
