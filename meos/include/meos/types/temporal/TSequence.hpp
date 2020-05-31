@@ -11,13 +11,13 @@ using namespace std;
 template <typename T = float> class TSequence : public Temporal<T> {
 public:
   vector<unique_ptr<TInstant<T>>> instants;
-  bool left_open;
-  bool right_open;
+  bool lower_inc;
+  bool upper_inc;
 
-  TSequence(vector<unique_ptr<TInstant<T>>> &instants_, bool left_open,
-            bool right_open);
+  TSequence(vector<unique_ptr<TInstant<T>>> &instants_, bool lower_inc,
+            bool upper_inc);
 
-  TSequence(vector<TInstant<T>> &instants_, bool left_open, bool right_open);
+  TSequence(vector<TInstant<T>> &instants_, bool lower_inc, bool upper_inc);
 
   vector<TInstant<T>> getInstants();
 

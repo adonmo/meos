@@ -37,7 +37,7 @@ def test_data_types():
     assert {tb} == tsetb.getInstants()
 
     assert [tf] == tseqf.getInstants()
-    assert (tseqf.left_open, tseqf.right_open) == (False, True)
+    assert (tseqf.lower_inc, tseqf.upper_inc) == (False, True)
 
 
 def test_serialization():
@@ -48,7 +48,7 @@ def test_serialization():
 
     tf1 = TInstantFloat(1.0, epoch(2011, 1, 1))
     tf2 = TInstantFloat(2.5, epoch(2011, 1, 2))
-    tseqf = TSequenceFloat([tf1, tf2], False, True)
+    tseqf = TSequenceFloat([tf1, tf2], True, False)
 
     # Example serialization of these objects
     si = SerializerInt()
@@ -78,7 +78,7 @@ def test_deserialization():
 
     dg = DeserializerGeom("[POINT(0 0)@2012-01-01 08:00:00+00, POINT(2 0)@2012-01-01 08:10:00+00, POINT(2 -1.98)@2012-01-01 08:15:00+00]")
     tseq = dg.nextTSequence()
-    assert (tseq.left_open, tseq.right_open) == (False, False)
+    assert (tseq.lower_inc, tseq.upper_inc) == (True, True)
     actual = [(tg.getValue().toWKT(), tg.getT()) for tg in tseq.getInstants()]
     expected = [('POINT (0 0)', epoch(2012, 1, 1, 8)), ('POINT (2 0)', epoch(2012, 1, 1, 8, 10)), ('POINT (2 -1.98)', epoch(2012, 1, 1, 8, 15))]
     assert actual == expected

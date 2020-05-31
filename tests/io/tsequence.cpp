@@ -12,14 +12,14 @@ TEMPLATE_TEST_CASE("TSequence are serialized", "[serializer][tsequence]", int,
     auto i = GENERATE(0, 1, -1, 2012, 756772544,
                       take(10, random(numeric_limits<int>::min(),
                                       numeric_limits<int>::max())));
-    auto left_open = GENERATE(true, false);
-    auto right_open = GENERATE(true, false);
+    auto lower_inc = GENERATE(true, false);
+    auto upper_inc = GENERATE(true, false);
     auto instant = make_unique<TInstant<TestType>>(i, unix_time(2012, 11, 1));
     vector<unique_ptr<TInstant<TestType>>> instants;
     instants.push_back(move(instant));
-    TSequence<TestType> sequence(instants, left_open, right_open);
-    char left = left_open ? '(' : '[';
-    char right = right_open ? ')' : ']';
+    TSequence<TestType> sequence(instants, lower_inc, upper_inc);
+    char left = lower_inc ? '[' : '(';
+    char right = upper_inc ? ']' : ')';
     REQUIRE(w.write(&sequence) ==
             left + w.write(i) + "@2012-11-01T00:00:00+0000" + right);
   }
@@ -30,16 +30,16 @@ TEMPLATE_TEST_CASE("TSequence are serialized", "[serializer][tsequence]", int,
     auto j = GENERATE(0, 1, -1, 2012, 756772544,
                       take(3, random(numeric_limits<int>::min(),
                                      numeric_limits<int>::max())));
-    auto left_open = GENERATE(true, false);
-    auto right_open = GENERATE(true, false);
+    auto lower_inc = GENERATE(true, false);
+    auto upper_inc = GENERATE(true, false);
     auto instant1 = make_unique<TInstant<TestType>>(i, unix_time(2012, 11, 1));
     auto instant2 = make_unique<TInstant<TestType>>(j, unix_time(2012, 11, 1));
     vector<unique_ptr<TInstant<TestType>>> instants;
     instants.push_back(move(instant1));
     instants.push_back(move(instant2));
-    TSequence<TestType> sequence(instants, left_open, right_open);
-    char left = left_open ? '(' : '[';
-    char right = right_open ? ')' : ']';
+    TSequence<TestType> sequence(instants, lower_inc, upper_inc);
+    char left = lower_inc ? '[' : '(';
+    char right = upper_inc ? ']' : ')';
     string serialized = w.write(&sequence);
     REQUIRE(serialized.size() > 2);
     REQUIRE(serialized[0] == left);
@@ -66,8 +66,8 @@ TEMPLATE_TEST_CASE("TSequence are deserialized", "[deserializer][tsequence]",
           TInstant<TestType>(10, unix_time(2012, 11, 1))};
       auto x = Catch::Matchers::Equals(v);
       REQUIRE_THAT(actual, x);
-      REQUIRE(tseq->left_open == false);
-      REQUIRE(tseq->right_open == true);
+      REQUIRE(tseq->lower_inc == true);
+      REQUIRE(tseq->upper_inc == false);
 
       CHECK_THROWS(r.nextTSequence());
     }
@@ -82,8 +82,8 @@ TEMPLATE_TEST_CASE("TSequence are deserialized", "[deserializer][tsequence]",
           TInstant<TestType>(12, unix_time(2012, 4, 1))};
       auto x = Catch::Matchers::Equals(v);
       REQUIRE_THAT(actual, x);
-      REQUIRE(tseq->left_open == true);
-      REQUIRE(tseq->right_open == true);
+      REQUIRE(tseq->lower_inc == false);
+      REQUIRE(tseq->upper_inc == false);
 
       CHECK_THROWS(r.nextTSequence());
     }
@@ -99,8 +99,8 @@ TEMPLATE_TEST_CASE("TSequence are deserialized", "[deserializer][tsequence]",
         TInstant<TestType>(10, unix_time(2012, 1, 1))};
     auto x1 = Catch::Matchers::Equals(v1);
     REQUIRE_THAT(actual, x1);
-    REQUIRE(tseq->left_open == true);
-    REQUIRE(tseq->right_open == false);
+    REQUIRE(tseq->lower_inc == false);
+    REQUIRE(tseq->upper_inc == true);
 
     unique_ptr<TSequence<TestType>> tseq2 = r.nextTSequence();
     vector<TInstant<TestType>> actual2 = unwrap(tseq2->instants);
@@ -108,8 +108,8 @@ TEMPLATE_TEST_CASE("TSequence are deserialized", "[deserializer][tsequence]",
         TInstant<TestType>(12, unix_time(2012, 4, 1))};
     auto x2 = Catch::Matchers::Equals(v2);
     REQUIRE_THAT(actual2, x2);
-    REQUIRE(tseq2->left_open == false);
-    REQUIRE(tseq2->right_open == false);
+    REQUIRE(tseq2->lower_inc == true);
+    REQUIRE(tseq2->upper_inc == true);
 
     CHECK_THROWS(r.nextTSequence());
   }

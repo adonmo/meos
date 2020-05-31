@@ -3,17 +3,17 @@
 
 template <typename T>
 TSequence<T>::TSequence(vector<unique_ptr<TInstant<T>>> &instants_,
-                        bool left_open_, bool right_open_)
-    : left_open(left_open_), right_open(right_open_) {
+                        bool lower_inc_, bool upper_inc_)
+    : lower_inc(lower_inc_), upper_inc(upper_inc_) {
   instants.reserve(instants_.size());
   for (const auto &e : instants_)
     instants.push_back(e->clone());
 }
 
 template <typename T>
-TSequence<T>::TSequence(vector<TInstant<T>> &instants_, bool left_open_,
-                        bool right_open_)
-    : left_open(left_open_), right_open(right_open_) {
+TSequence<T>::TSequence(vector<TInstant<T>> &instants_, bool lower_inc_,
+                        bool upper_inc_)
+    : lower_inc(lower_inc_), upper_inc(upper_inc_) {
   instants.reserve(instants_.size());
   for (auto e : instants_)
     instants.push_back(e.clone());
@@ -21,7 +21,7 @@ TSequence<T>::TSequence(vector<TInstant<T>> &instants_, bool left_open_,
 
 template <typename T>
 TSequence<T>::TSequence(const TSequence &t)
-    : left_open(t.left_open), right_open(t.right_open) {
+    : lower_inc(t.lower_inc), upper_inc(t.upper_inc) {
   instants.reserve(t.instants.size());
   for (const auto &e : t.instants)
     instants.push_back(e->clone());

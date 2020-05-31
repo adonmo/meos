@@ -49,8 +49,8 @@ void declare_temporal_types(py::module &m, const std::string &typesuffix) {
 
   py::class_<TSequence<T>>(m, ("TSequence" + typesuffix).c_str())
       .def(py::init<vector<TInstant<T>> &, bool, bool>())
-      .def_readonly("left_open", &TSequence<T>::left_open)
-      .def_readonly("right_open", &TSequence<T>::right_open)
+      .def_readonly("lower_inc", &TSequence<T>::lower_inc)
+      .def_readonly("upper_inc", &TSequence<T>::upper_inc)
       .def("getInstants", &TSequence<T>::getInstants);
 }
 

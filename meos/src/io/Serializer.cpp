@@ -81,7 +81,7 @@ template <typename T> string Serializer<T>::write(TInstantSet<T> *instant_set) {
 template <typename T> string Serializer<T>::write(TSequence<T> *sequence) {
   stringstream ss;
   bool first = true;
-  ss << (sequence->left_open ? "(" : "[");
+  ss << (sequence->lower_inc ? "[" : "(");
   for (auto const &instant : sequence->instants) {
     if (first)
       first = false;
@@ -89,7 +89,7 @@ template <typename T> string Serializer<T>::write(TSequence<T> *sequence) {
       ss << ", ";
     ss << write(instant.get());
   }
-  ss << (sequence->right_open ? ")" : "]");
+  ss << (sequence->upper_inc ? "]" : ")");
   return ss.str();
 }
 
