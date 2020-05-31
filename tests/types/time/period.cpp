@@ -5,6 +5,19 @@
 #include <meos/io/Serializer.hpp>
 #include <meos/types/time/Period.hpp>
 
+TEST_CASE("Period timespan", "[period]") {
+  auto left_open = GENERATE(true, false);
+  auto right_open = GENERATE(true, false);
+  auto left =
+      GENERATE(take(4, random(unix_time(2012, 1, 1), unix_time(2020, 1, 1))));
+  const time_t minute = 60;
+  const time_t year = 365 * 24 * 60 * 60;
+  auto duration = GENERATE(take(4, random(minute, year)));
+  auto period =
+      *make_unique<Period>(left, left + duration, left_open, right_open).get();
+  REQUIRE(period.timespan() == duration);
+}
+
 TEST_CASE("Period overlap", "[period]") {
   SECTION("clear overlap") {
     auto left_open = GENERATE(true, false);

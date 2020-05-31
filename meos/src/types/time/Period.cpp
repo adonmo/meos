@@ -10,6 +10,7 @@ const std::time_t Period::upper() const { return this->m_upper; }
 
 const bool Period::isLeftOpen() const { return this->m_left_open; }
 const bool Period::isRightOpen() const { return this->m_right_open; }
+const time_t Period::timespan() const { return this->upper() - this->lower(); }
 
 const bool Period::overlap(const Period &p) const {
   const time_t o =

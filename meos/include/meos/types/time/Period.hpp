@@ -43,6 +43,7 @@ public:
   const time_t upper() const;
   const bool isLeftOpen() const;
   const bool isRightOpen() const;
+  const time_t timespan() const;
   const bool overlap(const Period &p) const;
   const bool contains_timestamp(time_t t) const;
 
