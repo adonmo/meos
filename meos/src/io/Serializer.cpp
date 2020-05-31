@@ -96,11 +96,11 @@ template <typename T> string Serializer<T>::write(TSequence<T> *sequence) {
 template <typename T> string Serializer<T>::write(Period *period) {
   stringstream ss;
   bool first = true;
-  ss << (period->isLeftOpen() ? "(" : "[");
+  ss << (period->lower_inc() ? "[" : "(");
   ss << writeTime(period->lower());
   ss << ", ";
   ss << writeTime(period->upper());
-  ss << (period->isRightOpen() ? ")" : "]");
+  ss << (period->upper_inc() ? "]" : ")");
   return ss.str();
 }
 

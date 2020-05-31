@@ -107,7 +107,7 @@ template <typename T> unique_ptr<Period> Deserializer<T>::nextPeriod() {
 
   const char opening = peek(0);
   consumeChar(opening);
-  const bool left_open = opening == '(';
+  const bool lower_inc = opening == '[';
 
   auto lbound = nextTime();
   skipWhitespaces();
@@ -121,9 +121,9 @@ template <typename T> unique_ptr<Period> Deserializer<T>::nextPeriod() {
 
   const char closing = peek(0);
   consumeChar(closing);
-  const bool right_open = closing == ')';
+  const bool upper_inc = closing == ']';
 
-  return make_unique<Period>(lbound, rbound, left_open, right_open);
+  return make_unique<Period>(lbound, rbound, lower_inc, upper_inc);
 };
 
 template <typename T> unique_ptr<PeriodSet> Deserializer<T>::nextPeriodSet() {

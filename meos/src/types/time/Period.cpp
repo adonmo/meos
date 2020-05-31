@@ -1,21 +1,21 @@
 #include <meos/types/time/Period.hpp>
 
-Period::Period(std::time_t lower, std::time_t upper, const bool left_open,
-               const bool right_open)
-    : m_lower(lower), m_upper(upper), m_left_open(left_open),
-      m_right_open(right_open) {}
+Period::Period(std::time_t lower, std::time_t upper, const bool lower_inc,
+               const bool upper_inc)
+    : m_lower(lower), m_upper(upper), m_lower_inc(lower_inc),
+      m_upper_inc(upper_inc) {}
 
 const std::time_t Period::lower() const { return this->m_lower; }
 const std::time_t Period::upper() const { return this->m_upper; }
 
-const bool Period::isLeftOpen() const { return this->m_left_open; }
-const bool Period::isRightOpen() const { return this->m_right_open; }
+const bool Period::lower_inc() const { return this->m_lower_inc; }
+const bool Period::upper_inc() const { return this->m_upper_inc; }
 const time_t Period::timespan() const { return this->upper() - this->lower(); }
 
 const unique_ptr<Period> Period::shift(const time_t timedelta) const {
   return make_unique<Period>(this->lower() + timedelta,
-                             this->upper() + timedelta, this->isLeftOpen(),
-                             this->isRightOpen());
+                             this->upper() + timedelta, this->lower_inc(),
+                             this->upper_inc());
 }
 
 const bool Period::overlap(const Period &p) const {
@@ -25,12 +25,12 @@ const bool Period::overlap(const Period &p) const {
     return true;
   if (o < 0)
     return false;
-  return this->lower() < p.lower() ? !this->isRightOpen() && !p.isLeftOpen()
-                                   : !p.isRightOpen() && !this->isLeftOpen();
+  return this->lower() < p.lower() ? this->upper_inc() && p.lower_inc()
+                                   : p.upper_inc() && this->lower_inc();
 };
 
 const bool Period::contains_timestamp(const time_t t) const {
   return ((this->lower() < t && t < this->upper()) ||
-          (!this->isLeftOpen() && this->lower() == t) ||
-          (!this->isRightOpen() && this->upper() == t));
+          (this->lower_inc() && this->lower() == t) ||
+          (this->upper_inc() && this->upper() == t));
 }

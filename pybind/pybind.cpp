@@ -78,13 +78,13 @@ PYBIND11_MODULE(pymeos, m) {
       .def("__hash__",
            [](const Period &period) {
              return py::hash(py::make_tuple(period.lower(), period.upper(),
-                                            period.isLeftOpen(),
-                                            period.isRightOpen()));
+                                            period.lower_inc(),
+                                            period.upper_inc()));
            })
       .def("lower", &Period::lower)
       .def("upper", &Period::upper)
-      .def("isLeftOpen", &Period::isLeftOpen)
-      .def("isRightOpen", &Period::isRightOpen);
+      .def("lower_inc", &Period::lower_inc)
+      .def("upper_inc", &Period::upper_inc);
 
   py::class_<PeriodSet>(m, "PeriodSet")
       .def(py::init<set<Period> &>())

@@ -10,8 +10,8 @@ class Period {
 private:
   const time_t m_lower;
   const time_t m_upper;
-  const bool m_left_open;
-  const bool m_right_open;
+  const bool m_lower_inc;
+  const bool m_upper_inc;
 
   const int compare(const Period &other) const {
     if (lower() < other.lower())
@@ -22,27 +22,27 @@ private:
       return -1;
     else if (upper() > other.upper())
       return 1;
-    else if (!isLeftOpen() && other.isLeftOpen())
+    else if (lower_inc() && !other.lower_inc())
       return -1;
-    else if (isLeftOpen() && !other.isLeftOpen())
+    else if (!lower_inc() && other.lower_inc())
       return 1;
-    else if (!isRightOpen() && other.isRightOpen())
+    else if (upper_inc() && !other.upper_inc())
       return -1;
-    else if (isRightOpen() && !other.isRightOpen())
+    else if (!upper_inc() && other.upper_inc())
       return 1;
     return 0;
   }
 
 public:
-  Period(time_t lower, time_t upper, const bool left_open = false,
-         const bool right_open = false);
+  Period(time_t lower, time_t upper, const bool lower_inc = false,
+         const bool upper_inc = false);
 
   virtual unique_ptr<Period> clone() { return make_unique<Period>(*this); }
 
   const time_t lower() const;
   const time_t upper() const;
-  const bool isLeftOpen() const;
-  const bool isRightOpen() const;
+  const bool lower_inc() const;
+  const bool upper_inc() const;
   const time_t timespan() const;
   const unique_ptr<Period> shift(const time_t timedelta) const;
   const bool overlap(const Period &p) const;

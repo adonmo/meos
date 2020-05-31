@@ -97,13 +97,13 @@ def test_time_types():
     # Let's verify what we've done
     assert period_1.lower() == 1293840000000
     assert period_1.upper() == 1293926400000
-    assert period_1.isLeftOpen() == True
-    assert period_1.isRightOpen() == False
+    assert period_1.lower_inc() == True
+    assert period_1.upper_inc() == False
 
     assert period_2.lower() == 1294185600000
     assert period_2.upper() == 1294272000000
-    assert period_2.isLeftOpen() == False
-    assert period_2.isRightOpen() == False
+    assert period_2.lower_inc() == False
+    assert period_2.upper_inc() == False
 
     assert len(period_set.getPeriods()) == 2
     assert {period_1, period_2} == period_set.getPeriods()
