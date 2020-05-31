@@ -21,3 +21,9 @@ const bool Period::overlap(const Period &p) const {
   return this->lower() < p.lower() ? !this->isRightOpen() && !p.isLeftOpen()
                                    : !p.isRightOpen() && !this->isLeftOpen();
 };
+
+const bool Period::contains_timestamp(time_t t) const {
+  return ((this->lower() < t && t < this->upper()) ||
+          (!this->isLeftOpen() && this->lower() == t) ||
+          (!this->isRightOpen() && this->upper() == t));
+}

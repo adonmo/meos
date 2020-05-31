@@ -44,6 +44,7 @@ public:
   const bool isLeftOpen() const;
   const bool isRightOpen() const;
   const bool overlap(const Period &p) const;
+  const bool contains_timestamp(time_t t) const;
 
   friend bool operator==(const Period &lhs, const Period &rhs) {
     return lhs.compare(rhs) == 0;
