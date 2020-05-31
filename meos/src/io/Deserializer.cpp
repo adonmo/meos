@@ -1,6 +1,5 @@
 #include <algorithm>
 #include <ctime>
-#include <iostream>
 #include <meos/io/DeserializationException.hpp>
 #include <meos/io/Deserializer.hpp>
 #include <sstream>

@@ -2,7 +2,6 @@
 #include "../common/matchers.hpp"
 #include "../common/time_utils.hpp"
 #include "../common/utils.hpp"
-#include <iostream>
 #include <meos/io/Deserializer.hpp>
 #include <meos/io/Serializer.hpp>
 #include <meos/types/time/PeriodSet.hpp>

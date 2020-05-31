@@ -1,4 +1,3 @@
-#include <iostream>
 #include <meos/io/SerializationException.hpp>
 #include <meos/io/Serializer.hpp>
 #include <meos/types/temporal/TInstant.hpp>

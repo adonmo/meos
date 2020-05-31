@@ -1,5 +1,4 @@
 #include "../catch.hpp"
-#include <iostream>
 #include <meos/io/Deserializer.hpp>
 #include <meos/io/Serializer.hpp>
 
