@@ -12,6 +12,12 @@ const bool Period::isLeftOpen() const { return this->m_left_open; }
 const bool Period::isRightOpen() const { return this->m_right_open; }
 const time_t Period::timespan() const { return this->upper() - this->lower(); }
 
+const unique_ptr<Period> Period::shift(const time_t timedelta) const {
+  return make_unique<Period>(this->lower() + timedelta,
+                             this->upper() + timedelta, this->isLeftOpen(),
+                             this->isRightOpen());
+}
+
 const bool Period::overlap(const Period &p) const {
   const time_t o =
       min(this->upper(), p.upper()) - max(this->lower(), p.lower());
@@ -23,7 +29,7 @@ const bool Period::overlap(const Period &p) const {
                                    : !p.isRightOpen() && !this->isLeftOpen();
 };
 
-const bool Period::contains_timestamp(time_t t) const {
+const bool Period::contains_timestamp(const time_t t) const {
   return ((this->lower() < t && t < this->upper()) ||
           (!this->isLeftOpen() && this->lower() == t) ||
           (!this->isRightOpen() && this->upper() == t));
