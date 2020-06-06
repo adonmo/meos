@@ -9,13 +9,15 @@ using namespace std;
 
 class PeriodSet {
 public:
-  set<unique_ptr<Period>> periods;
-
   PeriodSet(set<unique_ptr<Period>> &periods_);
 
   PeriodSet(set<Period> &periods_);
 
-  set<Period> getPeriods();
+  set<Period> periods();
+  int numPeriods();
+  Period startPeriod();
+  Period endPeriod();
+  Period periodN(int n);
 
   const time_t timespan();
   unique_ptr<PeriodSet> shift(const time_t timedelta);
@@ -27,6 +29,8 @@ public:
   time_t timestampN(int n);
 
 protected:
+  set<unique_ptr<Period>> m_periods;
+
   PeriodSet(const PeriodSet &t);
 };
 

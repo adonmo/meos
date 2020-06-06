@@ -88,5 +88,5 @@ PYBIND11_MODULE(pymeos, m) {
 
   py::class_<PeriodSet>(m, "PeriodSet")
       .def(py::init<set<Period> &>())
-      .def("getPeriods", &PeriodSet::getPeriods);
+      .def("periods", &PeriodSet::periods);
 }

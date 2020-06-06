@@ -105,8 +105,8 @@ def test_time_types():
     assert period_2.lower_inc() == False
     assert period_2.upper_inc() == False
 
-    assert len(period_set.getPeriods()) == 2
-    assert {period_1, period_2} == period_set.getPeriods()
+    assert len(period_set.periods()) == 2
+    assert {period_1, period_2} == period_set.periods()
 
 
 if __name__ == "__main__":

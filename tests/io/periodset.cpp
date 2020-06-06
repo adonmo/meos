@@ -101,7 +101,7 @@ TEST_CASE("PeriodSets are deserialized", "[deserializer][periodset]") {
       Deserializer<> r("{[2012-11-01, 2012-04-01]}");
 
       unique_ptr<PeriodSet> period_set = r.nextPeriodSet();
-      set<Period> actual = unwrap(period_set->periods);
+      set<Period> actual = period_set->periods();
       set<Period> expected = {
           Period(unix_time(2012, 11, 1), unix_time(2012, 4, 1), true, true)};
       auto x = UnorderedEquals(expected);
@@ -116,7 +116,7 @@ TEST_CASE("PeriodSets are deserialized", "[deserializer][periodset]") {
                        "[2012-01-01 00:00:00+00, 2012-04-01 00:00:00+00)}");
 
       unique_ptr<PeriodSet> period_set = r.nextPeriodSet();
-      set<Period> actual = unwrap(period_set->periods);
+      set<Period> actual = period_set->periods();
       set<Period> expected = {
           Period(unix_time(2012, 1, 1), unix_time(2012, 4, 1), false, false),
           Period(unix_time(2012, 1, 1), unix_time(2012, 4, 1), true, false),
@@ -134,7 +134,7 @@ TEST_CASE("PeriodSets are deserialized", "[deserializer][periodset]") {
         "00:00:00+00, 2012-04-01 00:00:00+00)}");
 
     unique_ptr<PeriodSet> period_set_1 = r.nextPeriodSet();
-    set<Period> actual_1 = unwrap(period_set_1->periods);
+    set<Period> actual_1 = period_set_1->periods();
     set<Period> expected_1 = {
         Period(unix_time(2012, 1, 1), unix_time(2012, 4, 1), false, false),
     };
@@ -142,7 +142,7 @@ TEST_CASE("PeriodSets are deserialized", "[deserializer][periodset]") {
     REQUIRE_THAT(actual_1, x_1);
 
     unique_ptr<PeriodSet> period_set_2 = r.nextPeriodSet();
-    set<Period> actual_2 = unwrap(period_set_2->periods);
+    set<Period> actual_2 = period_set_2->periods();
     set<Period> expected_2 = {
         Period(unix_time(2012, 1, 1), unix_time(2012, 4, 1), true, false),
     };

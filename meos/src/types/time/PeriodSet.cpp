@@ -3,72 +3,98 @@
 
 PeriodSet::PeriodSet(set<unique_ptr<Period>> &periods_) {
   for (const auto &e : periods_)
-    periods.insert(e->clone());
+    m_periods.insert(e->clone());
 }
 
 PeriodSet::PeriodSet(set<Period> &periods_) {
   for (auto e : periods_)
-    periods.insert(e.clone());
+    m_periods.insert(e.clone());
 }
 
 PeriodSet::PeriodSet(const PeriodSet &t) {
-  for (const auto &e : t.periods)
-    periods.insert(e->clone());
+  for (const auto &e : t.m_periods)
+    m_periods.insert(e->clone());
 }
 
-set<Period> PeriodSet::getPeriods() {
-  set<Period> s = {};
-  for (const unique_ptr<Period> &e : periods) {
+set<Period> PeriodSet::periods() {
+  set<Period> s;
+  for (const auto &e : m_periods) {
     s.insert(*e.get());
   }
   return s;
 }
 
+int PeriodSet::numPeriods() { return periods().size(); }
+
+Period PeriodSet::startPeriod() {
+  set<Period> s = periods();
+  if (s.size() <= 0) {
+    throw "At least one period expected";
+  }
+  return *s.begin();
+}
+
+Period PeriodSet::endPeriod() {
+  set<Period> s = periods();
+  if (s.size() <= 0) {
+    throw "At least one period expected";
+  }
+  return *s.rbegin();
+}
+
+Period PeriodSet::periodN(int n) {
+  set<Period> s = periods();
+  if (s.size() < n) {
+    throw "At least " + to_string(n) + " period(s) expected";
+  }
+  return *next(s.begin(), n);
+}
+
 const time_t PeriodSet::timespan() {
   time_t result = 0;
-  for (const unique_ptr<Period> &period : periods)
+  for (const unique_ptr<Period> &period : m_periods)
     result += period->timespan();
   return result;
 }
 
 unique_ptr<PeriodSet> PeriodSet::shift(const time_t timedelta) {
   set<unique_ptr<Period>> pset;
-  for (const auto &e : periods)
+  for (const auto &e : m_periods)
     pset.insert(e->shift(timedelta));
   return make_unique<PeriodSet>(pset);
 }
 
 set<time_t> PeriodSet::timestamps() {
-  set<time_t> tset;
-  for (const auto &e : periods) {
-    tset.insert(e->lower());
-    tset.insert(e->upper());
+  set<time_t> s;
+  for (const auto &e : m_periods) {
+    s.insert(e->lower());
+    s.insert(e->upper());
   }
-  return tset;
+  return s;
 }
 
 int PeriodSet::numTimestamps() { return timestamps().size(); }
 
 time_t PeriodSet::startTimestamp() {
-  set<time_t> tset = timestamps();
-  if (tset.size() <= 0) {
+  set<time_t> s = timestamps();
+  if (s.size() <= 0) {
     throw "At least one timestamp expected";
   }
-  return *tset.begin();
+  return *s.begin();
 }
 
 time_t PeriodSet::endTimestamp() {
-  set<time_t> tset = timestamps();
-  if (tset.size() <= 0) {
+  set<time_t> s = timestamps();
+  if (s.size() <= 0) {
     throw "At least one timestamp expected";
   }
-  return *tset.rbegin();
+  return *s.rbegin();
 }
 
 time_t PeriodSet::timestampN(int n) {
-  set<time_t> tset = timestamps();
-  if (tset.size() < n) {
+  set<time_t> s = timestamps();
+  if (s.size() < n) {
     throw "At least " + to_string(n) + " timestamp(s) expected";
   }
-  return *next(tset.begin(), n);
+  return *next(s.begin(), n);
 }

@@ -11,6 +11,35 @@ const time_t minute = 60 * 1000L;
 const time_t day = 24 * 60 * 60 * 1000L;
 const time_t year = 365 * 24 * 60 * 60 * 1000L;
 
+TEST_CASE("PeriodSet period functions", "[periodset]") {
+  auto lower_inc = GENERATE(true, false);
+  auto upper_inc = GENERATE(true, false);
+  auto size = GENERATE(0, take(4, random(1, 100)));
+
+  set<Period> periods;
+  set<Period> expected_periods;
+
+  for (size_t i = 0; i < size; i++) {
+    long lbound = unix_time(2012, 1, 1) + 10 * 365 * (random() % day);
+    long duration = day + 6 * (random() % day);
+    auto rbound = lbound + duration; // This is to make sure lbound <= rbound
+    auto period = Period(lbound, rbound, lower_inc, upper_inc);
+    expected_periods.insert(period);
+    periods.insert(period);
+  }
+
+  PeriodSet actual(periods);
+  REQUIRE(actual.numPeriods() == expected_periods.size());
+  REQUIRE_THAT(actual.periods(), UnorderedEquals(expected_periods));
+  if (size > 0) {
+    REQUIRE(actual.startPeriod() == *expected_periods.begin());
+    REQUIRE(actual.endPeriod() == *expected_periods.rbegin());
+  } else {
+    CHECK_THROWS(actual.startPeriod());
+    CHECK_THROWS(actual.endPeriod());
+  }
+}
+
 TEST_CASE("PeriodSet timespan", "[periodset]") {
   auto lower_inc = GENERATE(true, false);
   auto upper_inc = GENERATE(true, false);
@@ -53,7 +82,7 @@ TEST_CASE("PeriodSet shift", "[periodset]") {
 
   PeriodSet actual(actual_periods);
   PeriodSet expected(expected_periods);
-  REQUIRE_THAT(actual.getPeriods(), UnorderedEquals(expected.getPeriods()));
+  REQUIRE_THAT(actual.periods(), UnorderedEquals(expected.periods()));
 }
 
 TEST_CASE("PeriodSet timestamp functions", "[periodset]") {

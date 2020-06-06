@@ -108,12 +108,12 @@ template <typename T> string Serializer<T>::write(PeriodSet *period_set) {
   stringstream ss;
   bool first = true;
   ss << "{";
-  for (auto const &period : period_set->periods) {
+  for (auto period : period_set->periods()) {
     if (first)
       first = false;
     else
       ss << ", ";
-    ss << write(period.get());
+    ss << write(&period);
   }
   ss << "}";
   return ss.str();
