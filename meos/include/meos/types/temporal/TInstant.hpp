@@ -3,6 +3,7 @@
 
 #include <meos/types/geom/Geometry.hpp>
 #include <meos/types/temporal/Temporal.hpp>
+#include <meos/types/time/Period.hpp>
 
 using namespace std;
 
@@ -14,7 +15,7 @@ private:
 public:
   TInstant(T value, time_t t);
   const T &getValue() const;
-  const time_t &getT() const;
+  const time_t &getTimestamp() const;
 
   virtual unique_ptr<TInstant> clone() { return make_unique<TInstant>(*this); }
 
@@ -30,6 +31,10 @@ public:
     return (lhs.value < rhs.value) ||
            ((lhs.value == rhs.value) && (lhs.t < rhs.t));
   }
+
+  const time_t timespan() const;
+  const Period period() const;
+  unique_ptr<TInstant<T>> shift(const time_t timedelta) const;
 };
 
 template class TInstant<bool>;

@@ -28,11 +28,11 @@ def test_data_types():
     tseqf = TSequenceFloat([tf], False, True)
 
     # Let's verify what we've done
-    assert (tb.getValue(), ti.getT()) == (True, 1293840000000)
-    assert (ti.getValue(), ti.getT()) == (10, 1293840000000)
-    assert (tf.getValue(), ti.getT()) == (1.25, 1293840000000)
-    assert (tt.getValue(), tt.getT()) == ("testing", 1293840000000)
-    assert (tg.getValue().toWKT(), tg.getT()) == ("POINT (10 15)", 1293840000000)
+    assert (tb.getValue(), ti.getTimestamp()) == (True, 1293840000000)
+    assert (ti.getValue(), ti.getTimestamp()) == (10, 1293840000000)
+    assert (tf.getValue(), ti.getTimestamp()) == (1.25, 1293840000000)
+    assert (tt.getValue(), tt.getTimestamp()) == ("testing", 1293840000000)
+    assert (tg.getValue().toWKT(), tg.getTimestamp()) == ("POINT (10 15)", 1293840000000)
 
     assert {tb} == tsetb.getInstants()
 
@@ -68,18 +68,18 @@ def test_serialization():
 def test_deserialization():
     di = DeserializerInt("10@2011-01-01")
     ti = di.nextTInstant()
-    assert (ti.getValue(), ti.getT()) == (10, epoch(2011, 1, 1))
+    assert (ti.getValue(), ti.getTimestamp()) == (10, epoch(2011, 1, 1))
 
     df = DeserializerFloat("{1.0@2011-01-01, 2.5@2011-01-02}")
     tset = df.nextTInstantSet()
-    actual = {(tf.getValue(), tf.getT()) for tf in tset.getInstants()}
+    actual = {(tf.getValue(), tf.getTimestamp()) for tf in tset.getInstants()}
     expected = {(1.0, epoch(2011, 1, 1)), (2.5, epoch(2011, 1, 2))}
     assert actual == expected
 
     dg = DeserializerGeom("[POINT(0 0)@2012-01-01 08:00:00+00, POINT(2 0)@2012-01-01 08:10:00+00, POINT(2 -1.98)@2012-01-01 08:15:00+00]")
     tseq = dg.nextTSequence()
     assert (tseq.lower_inc, tseq.upper_inc) == (True, True)
-    actual = [(tg.getValue().toWKT(), tg.getT()) for tg in tseq.getInstants()]
+    actual = [(tg.getValue().toWKT(), tg.getTimestamp()) for tg in tseq.getInstants()]
     expected = [('POINT (0 0)', epoch(2012, 1, 1, 8)), ('POINT (2 0)', epoch(2012, 1, 1, 8, 10)), ('POINT (2 -1.98)', epoch(2012, 1, 1, 8, 15))]
     assert actual == expected
 

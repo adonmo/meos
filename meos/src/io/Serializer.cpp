@@ -59,7 +59,7 @@ template <typename T> string Serializer<T>::writeTime(const time_t &t) {
 
 template <typename T> string Serializer<T>::write(TInstant<T> *instant) {
   stringstream ss;
-  ss << write(instant->getValue()) << "@" << writeTime(instant->getT());
+  ss << write(instant->getValue()) << "@" << writeTime(instant->getTimestamp());
   return ss.str();
 }
 

@@ -38,9 +38,9 @@ void declare_temporal_types(py::module &m, const std::string &typesuffix) {
       .def("__hash__",
            [](const TInstant<T> &instant) {
              return py::hash(
-                 py::make_tuple(instant.getValue(), instant.getT()));
+                 py::make_tuple(instant.getValue(), instant.getTimestamp()));
            })
-      .def("getT", &TInstant<T>::getT)
+      .def("getTimestamp", &TInstant<T>::getTimestamp)
       .def("getValue", &TInstant<T>::getValue);
 
   py::class_<TInstantSet<T>>(m, ("TInstantSet" + typesuffix).c_str())

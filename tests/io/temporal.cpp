@@ -18,7 +18,7 @@ TEMPLATE_TEST_CASE("Temporal are deserialized", "[deserializer][temporal]", int,
         unique_ptr<Temporal<TestType>> temporal = r.nextTemporal();
         auto casted = (static_cast<TInstant<TestType> *>(temporal.get()));
         REQUIRE(casted->getValue() == 10);
-        REQUIRE(casted->getT() == unix_time(2012, 11, 1));
+        REQUIRE(casted->getTimestamp() == unix_time(2012, 11, 1));
 
         CHECK_THROWS(r.nextTemporal());
       }
