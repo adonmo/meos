@@ -17,6 +17,9 @@ public:
 
   set<Period> getPeriods();
 
+  const time_t timespan();
+  unique_ptr<PeriodSet> shift(const time_t timedelta);
+
 protected:
   PeriodSet(const PeriodSet &t);
 };

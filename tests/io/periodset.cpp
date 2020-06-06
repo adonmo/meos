@@ -63,7 +63,7 @@ TEST_CASE("PeriodSets are serialized", "[serializer][periodset]") {
     REQUIRE(w.write(&period_set) == expected);
   }
 
-  SECTION("set with only multiple values") {
+  SECTION("set with multiple values") {
     auto lower_inc = GENERATE(true, false);
     auto upper_inc = GENERATE(true, false);
     auto size = GENERATE(take(4, random(1, 2)));

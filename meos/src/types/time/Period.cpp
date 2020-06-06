@@ -12,7 +12,7 @@ const bool Period::lower_inc() const { return this->m_lower_inc; }
 const bool Period::upper_inc() const { return this->m_upper_inc; }
 const time_t Period::timespan() const { return this->upper() - this->lower(); }
 
-const unique_ptr<Period> Period::shift(const time_t timedelta) const {
+unique_ptr<Period> Period::shift(const time_t timedelta) const {
   return make_unique<Period>(this->lower() + timedelta,
                              this->upper() + timedelta, this->lower_inc(),
                              this->upper_inc());

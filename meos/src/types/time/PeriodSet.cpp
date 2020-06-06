@@ -23,3 +23,17 @@ set<Period> PeriodSet::getPeriods() {
   }
   return s;
 }
+
+const time_t PeriodSet::timespan() {
+  time_t result = 0;
+  for (const unique_ptr<Period> &period : periods)
+    result += period->timespan();
+  return result;
+}
+
+unique_ptr<PeriodSet> PeriodSet::shift(const time_t timedelta) {
+  set<unique_ptr<Period>> pset;
+  for (const auto &e : periods)
+    pset.insert(e->shift(timedelta));
+  return make_unique<PeriodSet>(pset);
+}

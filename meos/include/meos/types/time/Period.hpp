@@ -44,7 +44,7 @@ public:
   const bool lower_inc() const;
   const bool upper_inc() const;
   const time_t timespan() const;
-  const unique_ptr<Period> shift(const time_t timedelta) const;
+  unique_ptr<Period> shift(const time_t timedelta) const;
   const bool overlap(const Period &p) const;
   const bool contains_timestamp(const time_t t) const;
 
