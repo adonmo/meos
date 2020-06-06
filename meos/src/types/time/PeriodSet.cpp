@@ -37,3 +37,38 @@ unique_ptr<PeriodSet> PeriodSet::shift(const time_t timedelta) {
     pset.insert(e->shift(timedelta));
   return make_unique<PeriodSet>(pset);
 }
+
+set<time_t> PeriodSet::timestamps() {
+  set<time_t> tset;
+  for (const auto &e : periods) {
+    tset.insert(e->lower());
+    tset.insert(e->upper());
+  }
+  return tset;
+}
+
+int PeriodSet::numTimestamps() { return timestamps().size(); }
+
+time_t PeriodSet::startTimestamp() {
+  set<time_t> tset = timestamps();
+  if (tset.size() <= 0) {
+    throw "At least one timestamp expected";
+  }
+  return *tset.begin();
+}
+
+time_t PeriodSet::endTimestamp() {
+  set<time_t> tset = timestamps();
+  if (tset.size() <= 0) {
+    throw "At least one timestamp expected";
+  }
+  return *tset.rbegin();
+}
+
+time_t PeriodSet::timestampN(int n) {
+  set<time_t> tset = timestamps();
+  if (tset.size() < n) {
+    throw "At least " + to_string(n) + " timestamp(s) expected";
+  }
+  return *next(tset.begin(), n);
+}

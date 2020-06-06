@@ -20,6 +20,12 @@ public:
   const time_t timespan();
   unique_ptr<PeriodSet> shift(const time_t timedelta);
 
+  set<time_t> timestamps();
+  int numTimestamps();
+  time_t startTimestamp();
+  time_t endTimestamp();
+  time_t timestampN(int n);
+
 protected:
   PeriodSet(const PeriodSet &t);
 };

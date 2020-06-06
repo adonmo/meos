@@ -7,7 +7,7 @@
 #include <meos/types/time/Period.hpp>
 #include <meos/types/time/PeriodSet.hpp>
 
-const time_t minute = 60 * 1000;
+const time_t minute = 60 * 1000L;
 const time_t day = 24 * 60 * 60 * 1000L;
 const time_t year = 365 * 24 * 60 * 60 * 1000L;
 
@@ -41,9 +41,8 @@ TEST_CASE("PeriodSet shift", "[periodset]") {
   auto shift = GENERATE(take(4, random(minute, day)));
 
   for (size_t i = 0; i < size; i++) {
-    long lbound = GENERATE(0L, unix_time(2012, 1, 1),
-                           take(4, random(0L, 4102488000000L)));
-    long duration = GENERATE(take(4, random(0L, 10 * 365 * day)));
+    long lbound = unix_time(2012, 1, 1) + 10 * 365 * (random() % day);
+    long duration = day + 10 * 365 * (random() % day);
     auto rbound = lbound + duration; // This is to make sure lbound <= rbound
     auto period = make_unique<Period>(lbound, rbound, lower_inc, upper_inc);
     actual_periods.insert(period->shift(shift));
@@ -55,4 +54,34 @@ TEST_CASE("PeriodSet shift", "[periodset]") {
   PeriodSet actual(actual_periods);
   PeriodSet expected(expected_periods);
   REQUIRE_THAT(actual.getPeriods(), UnorderedEquals(expected.getPeriods()));
+}
+
+TEST_CASE("PeriodSet timestamp functions", "[periodset]") {
+  auto lower_inc = GENERATE(true, false);
+  auto upper_inc = GENERATE(true, false);
+  auto size = GENERATE(0, take(4, random(1, 100)));
+
+  set<unique_ptr<Period>> periods;
+  set<time_t> expected_timestamps;
+
+  for (size_t i = 0; i < size; i++) {
+    long lbound = unix_time(2012, 1, 1) + 10 * 365 * (random() % day);
+    long duration = day + 6 * (random() % day);
+    auto rbound = lbound + duration; // This is to make sure lbound <= rbound
+    auto period = make_unique<Period>(lbound, rbound, lower_inc, upper_inc);
+    expected_timestamps.insert(lbound);
+    expected_timestamps.insert(rbound);
+    periods.insert(move(period));
+  }
+
+  PeriodSet actual(periods);
+  REQUIRE(actual.numTimestamps() == expected_timestamps.size());
+  REQUIRE_THAT(actual.timestamps(), UnorderedEquals(expected_timestamps));
+  if (size > 0) {
+    REQUIRE(actual.startTimestamp() == *expected_timestamps.begin());
+    REQUIRE(actual.endTimestamp() == *expected_timestamps.rbegin());
+  } else {
+    CHECK_THROWS(actual.startTimestamp());
+    CHECK_THROWS(actual.endTimestamp());
+  }
 }
