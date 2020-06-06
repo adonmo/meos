@@ -24,6 +24,12 @@ set<Period> PeriodSet::periods() {
   return s;
 }
 
+Period PeriodSet::period() {
+  Period start = startPeriod();
+  Period end = endPeriod();
+  return Period(start.lower(), end.upper(), start.lower_inc(), end.upper_inc());
+}
+
 int PeriodSet::numPeriods() { return periods().size(); }
 
 Period PeriodSet::startPeriod() {

@@ -12,14 +12,14 @@ const time_t day = 24 * 60 * 60 * 1000L;
 const time_t year = 365 * 24 * 60 * 60 * 1000L;
 
 TEST_CASE("PeriodSet period functions", "[periodset]") {
-  auto lower_inc = GENERATE(true, false);
-  auto upper_inc = GENERATE(true, false);
-  auto size = GENERATE(0, take(4, random(1, 100)));
-
   set<Period> periods;
   set<Period> expected_periods;
 
+  auto size = GENERATE(0, take(4, random(1, 100)));
+
   for (size_t i = 0; i < size; i++) {
+    bool lower_inc = random() % 2;
+    bool upper_inc = random() % 2;
     long lbound = unix_time(2012, 1, 1) + 10 * 365 * (random() % day);
     long duration = day + 6 * (random() % day);
     auto rbound = lbound + duration; // This is to make sure lbound <= rbound
@@ -34,10 +34,29 @@ TEST_CASE("PeriodSet period functions", "[periodset]") {
   if (size > 0) {
     REQUIRE(actual.startPeriod() == *expected_periods.begin());
     REQUIRE(actual.endPeriod() == *expected_periods.rbegin());
+    Period p = actual.period();
+    REQUIRE(p.lower() == actual.startPeriod().lower());
+    REQUIRE(p.upper() == actual.endPeriod().upper());
+    REQUIRE(p.lower_inc() == actual.startPeriod().lower_inc());
+    REQUIRE(p.upper_inc() == actual.endPeriod().upper_inc());
   } else {
     CHECK_THROWS(actual.startPeriod());
     CHECK_THROWS(actual.endPeriod());
+    CHECK_THROWS(actual.period());
   }
+}
+
+TEST_CASE("PeriodSet period gaps are ignored", "[periodset]") {
+  auto lower_inc = GENERATE(true, false);
+  auto upper_inc = GENERATE(true, false);
+  set<Period> periods = {
+      Period(unix_time(2012, 1, 1), unix_time(2012, 1, 2), lower_inc, true),
+      Period(unix_time(2012, 1, 6), unix_time(2012, 1, 7), true, upper_inc),
+  };
+  PeriodSet period_set(periods);
+  Period expected = Period(unix_time(2012, 1, 1), unix_time(2012, 1, 7),
+                           lower_inc, upper_inc);
+  REQUIRE(period_set.period() == expected);
 }
 
 TEST_CASE("PeriodSet timespan", "[periodset]") {
@@ -61,15 +80,14 @@ TEST_CASE("PeriodSet timespan", "[periodset]") {
 }
 
 TEST_CASE("PeriodSet shift", "[periodset]") {
-  auto lower_inc = GENERATE(true, false);
-  auto upper_inc = GENERATE(true, false);
-  auto size = GENERATE(take(4, random(1, 2)));
-
   set<unique_ptr<Period>> expected_periods;
   set<unique_ptr<Period>> actual_periods;
+  auto size = GENERATE(take(4, random(1, 2)));
   auto shift = GENERATE(take(4, random(minute, day)));
 
   for (size_t i = 0; i < size; i++) {
+    bool lower_inc = random() % 2;
+    bool upper_inc = random() % 2;
     long lbound = unix_time(2012, 1, 1) + 10 * 365 * (random() % day);
     long duration = day + 10 * 365 * (random() % day);
     auto rbound = lbound + duration; // This is to make sure lbound <= rbound
@@ -86,14 +104,13 @@ TEST_CASE("PeriodSet shift", "[periodset]") {
 }
 
 TEST_CASE("PeriodSet timestamp functions", "[periodset]") {
-  auto lower_inc = GENERATE(true, false);
-  auto upper_inc = GENERATE(true, false);
-  auto size = GENERATE(0, take(4, random(1, 100)));
-
   set<unique_ptr<Period>> periods;
   set<time_t> expected_timestamps;
+  auto size = GENERATE(0, take(4, random(1, 100)));
 
   for (size_t i = 0; i < size; i++) {
+    bool lower_inc = random() % 2;
+    bool upper_inc = random() % 2;
     long lbound = unix_time(2012, 1, 1) + 10 * 365 * (random() % day);
     long duration = day + 6 * (random() % day);
     auto rbound = lbound + duration; // This is to make sure lbound <= rbound

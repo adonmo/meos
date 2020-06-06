@@ -14,6 +14,7 @@ public:
   PeriodSet(set<Period> &periods_);
 
   set<Period> periods();
+  Period period();
   int numPeriods();
   Period startPeriod();
   Period endPeriod();
