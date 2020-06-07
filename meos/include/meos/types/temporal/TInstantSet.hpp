@@ -16,7 +16,10 @@ public:
 
   TInstantSet(set<TInstant<T>> &instants_);
 
-  set<TInstant<T>> getInstants();
+  set<TInstant<T>> getInstants() const;
+
+  set<time_t> timestamps() const override;
+  const Period period() const override;
 
 protected:
   TInstantSet(const TInstantSet &t);

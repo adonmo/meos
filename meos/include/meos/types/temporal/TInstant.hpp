@@ -32,8 +32,8 @@ public:
            ((lhs.value == rhs.value) && (lhs.t < rhs.t));
   }
 
-  const time_t timespan() const;
-  const Period period() const;
+  set<time_t> timestamps() const override;
+  const Period period() const override;
   unique_ptr<TInstant<T>> shift(const time_t timedelta) const;
 };
 

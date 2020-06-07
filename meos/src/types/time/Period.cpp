@@ -1,12 +1,12 @@
 #include <meos/types/time/Period.hpp>
 
-Period::Period(std::time_t lower, std::time_t upper, const bool lower_inc,
+Period::Period(const time_t lower, const time_t upper, const bool lower_inc,
                const bool upper_inc)
     : m_lower(lower), m_upper(upper), m_lower_inc(lower_inc),
       m_upper_inc(upper_inc) {}
 
-const std::time_t Period::lower() const { return this->m_lower; }
-const std::time_t Period::upper() const { return this->m_upper; }
+const time_t Period::lower() const { return this->m_lower; }
+const time_t Period::upper() const { return this->m_upper; }
 
 const bool Period::lower_inc() const { return this->m_lower_inc; }
 const bool Period::upper_inc() const { return this->m_upper_inc; }

@@ -27,10 +27,23 @@ TSequence<T>::TSequence(const TSequence &t)
     instants.push_back(e->clone());
 }
 
-template <typename T> vector<TInstant<T>> TSequence<T>::getInstants() {
+template <typename T> vector<TInstant<T>> TSequence<T>::getInstants() const {
   vector<TInstant<T>> s = {};
   for (const unique_ptr<TInstant<T>> &e : instants) {
     s.push_back(*e.get());
   }
   return s;
 }
+
+template <typename T> set<time_t> TSequence<T>::timestamps() const {
+  set<time_t> s = {};
+  for (const unique_ptr<TInstant<T>> &e : instants) {
+    s.insert(e.get()->getTimestamp());
+  }
+  return s;
+}
+
+template <typename T> const Period TSequence<T>::period() const {
+  return Period(this->startTimestamp(), this->endTimestamp(), lower_inc,
+                upper_inc);
+};

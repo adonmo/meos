@@ -19,7 +19,10 @@ public:
 
   TSequence(vector<TInstant<T>> &instants_, bool lower_inc, bool upper_inc);
 
-  vector<TInstant<T>> getInstants();
+  vector<TInstant<T>> getInstants() const;
+
+  set<time_t> timestamps() const override;
+  const Period period() const override;
 
 protected:
   TSequence(const TSequence &t);

@@ -34,7 +34,7 @@ private:
   }
 
 public:
-  Period(time_t lower, time_t upper, const bool lower_inc = false,
+  Period(const time_t lower, const time_t upper, const bool lower_inc = false,
          const bool upper_inc = false);
 
   virtual unique_ptr<Period> clone() { return make_unique<Period>(*this); }
