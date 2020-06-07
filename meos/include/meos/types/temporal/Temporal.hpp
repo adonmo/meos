@@ -8,7 +8,6 @@
 using namespace std;
 
 template <typename T = float> class Temporal {
-private:
 public:
   Temporal();
 
@@ -46,6 +45,14 @@ public:
    * Set of timestamps.
    */
   virtual set<time_t> timestamps() const = 0;
+
+  /**
+   * Shift the temporal value by a time interval
+   */
+  unique_ptr<Temporal<T>> shift(const time_t timedelta) const;
+
+private:
+  virtual Temporal<T> *shift_impl(const time_t timedelta) const = 0;
 };
 
 template class Temporal<bool>;

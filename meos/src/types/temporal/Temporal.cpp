@@ -35,3 +35,8 @@ template <typename T> const time_t Temporal<T>::timespan() const {
   Period p = period();
   return p.upper() - p.lower();
 }
+
+template <typename T>
+unique_ptr<Temporal<T>> Temporal<T>::shift(const time_t timedelta) const {
+  return unique_ptr<Temporal<T>>(this->shift_impl(timedelta));
+}

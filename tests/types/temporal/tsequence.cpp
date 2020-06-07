@@ -73,3 +73,27 @@ TEMPLATE_TEST_CASE("TSequence timespan", "[tsequence]", int, float) {
   REQUIRE(instant_set.timespan() ==
           instant_set.endTimestamp() - instant_set.startTimestamp());
 }
+
+TEMPLATE_TEST_CASE("TSequence shift", "[tsequence]", int, float) {
+  auto lower_inc = GENERATE(true, false);
+  auto upper_inc = GENERATE(true, false);
+
+  vector<unique_ptr<TInstant<TestType>>> expected_instants;
+  vector<unique_ptr<TInstant<TestType>>> actual_instants;
+  auto size = GENERATE(take(4, random(1, 2)));
+  auto shift = GENERATE(take(4, random(minute, day)));
+
+  for (size_t i = 0; i < size; i++) {
+    TestType v = random() % 1000;
+    long t = unix_time(2012, 1, 1) + 10 * 365 * (random() % day);
+    auto instant = make_unique<TInstant<TestType>>(v, t);
+    actual_instants.push_back(instant->shift(shift));
+    auto expected_instant = make_unique<TInstant<TestType>>(v, t + shift);
+    expected_instants.push_back(move(expected_instant));
+  }
+
+  TSequence<TestType> actual(actual_instants, lower_inc, upper_inc);
+  TSequence<TestType> expected(expected_instants, lower_inc, upper_inc);
+  REQUIRE_THAT(actual.getInstants(),
+               Catch::Matchers::Equals(expected.getInstants()));
+}

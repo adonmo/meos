@@ -28,7 +28,7 @@ TSequence<T>::TSequence(const TSequence &t)
 }
 
 template <typename T> vector<TInstant<T>> TSequence<T>::getInstants() const {
-  vector<TInstant<T>> s = {};
+  vector<TInstant<T>> s;
   for (const unique_ptr<TInstant<T>> &e : instants) {
     s.push_back(*e.get());
   }
@@ -36,7 +36,7 @@ template <typename T> vector<TInstant<T>> TSequence<T>::getInstants() const {
 }
 
 template <typename T> set<time_t> TSequence<T>::timestamps() const {
-  set<time_t> s = {};
+  set<time_t> s;
   for (const unique_ptr<TInstant<T>> &e : instants) {
     s.insert(e.get()->getTimestamp());
   }
@@ -46,4 +46,18 @@ template <typename T> set<time_t> TSequence<T>::timestamps() const {
 template <typename T> const Period TSequence<T>::period() const {
   return Period(this->startTimestamp(), this->endTimestamp(), lower_inc,
                 upper_inc);
-};
+}
+
+template <typename T>
+unique_ptr<TSequence<T>> TSequence<T>::shift(const time_t timedelta) const {
+  return unique_ptr<TSequence<T>>(this->shift_impl(timedelta));
+}
+
+template <typename T>
+TSequence<T> *TSequence<T>::shift_impl(const time_t timedelta) const {
+  vector<TInstant<T>> s;
+  for (const unique_ptr<TInstant<T>> &e : instants) {
+    s.push_back(TInstant<T>(e->getValue(), e->getTimestamp() + timedelta));
+  }
+  return new TSequence<T>(s, lower_inc, upper_inc);
+}

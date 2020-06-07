@@ -35,6 +35,7 @@ public:
   set<time_t> timestamps() const override;
   const Period period() const override;
   unique_ptr<TInstant<T>> shift(const time_t timedelta) const;
+  TInstant<T> *shift_impl(const time_t timedelta) const override;
 };
 
 template class TInstant<bool>;

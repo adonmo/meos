@@ -68,3 +68,23 @@ TEMPLATE_TEST_CASE("TInstantSet timespan", "[tinstantset]", int, float) {
   REQUIRE(instant_set.timespan() ==
           instant_set.endTimestamp() - instant_set.startTimestamp());
 }
+
+TEMPLATE_TEST_CASE("TInstantSet shift", "[tinstantset]", int, float) {
+  set<unique_ptr<TInstant<TestType>>> expected_instants;
+  set<unique_ptr<TInstant<TestType>>> actual_instants;
+  auto size = GENERATE(take(4, random(1, 2)));
+  auto shift = GENERATE(take(4, random(minute, day)));
+
+  for (size_t i = 0; i < size; i++) {
+    TestType v = random() % 1000;
+    long t = unix_time(2012, 1, 1) + 10 * 365 * (random() % day);
+    auto instant = make_unique<TInstant<TestType>>(v, t);
+    actual_instants.insert(instant->shift(shift));
+    auto expected_instant = make_unique<TInstant<TestType>>(v, t + shift);
+    expected_instants.insert(move(expected_instant));
+  }
+
+  TInstantSet<TestType> actual(actual_instants);
+  TInstantSet<TestType> expected(expected_instants);
+  REQUIRE_THAT(actual.getInstants(), UnorderedEquals(expected.getInstants()));
+}

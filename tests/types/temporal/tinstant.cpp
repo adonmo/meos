@@ -28,6 +28,6 @@ TEMPLATE_TEST_CASE("TInstant shift", "[tinst]", int, float) {
                                      numeric_limits<int>::max())));
   TInstant<TestType> instant(i, unix_time(2012, 11, 1));
   const time_t day = 24 * 60 * 60 * 1000L;
-  auto shifted = instant.shift(day);
+  unique_ptr<TInstant<TestType>> shifted = instant.shift(day);
   REQUIRE(shifted->getTimestamp() == unix_time(2012, 11, 2));
 }

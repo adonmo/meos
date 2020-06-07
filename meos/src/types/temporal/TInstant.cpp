@@ -22,6 +22,10 @@ template <typename T> const Period TInstant<T>::period() const {
 
 template <typename T>
 unique_ptr<TInstant<T>> TInstant<T>::shift(const time_t timedelta) const {
-  return make_unique<TInstant<T>>(this->getValue(),
-                                  this->getTimestamp() + timedelta);
+  return unique_ptr<TInstant<T>>(this->shift_impl(timedelta));
+}
+
+template <typename T>
+TInstant<T> *TInstant<T>::shift_impl(const time_t timedelta) const {
+  return new TInstant<T>(this->getValue(), this->getTimestamp() + timedelta);
 }
