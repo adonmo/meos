@@ -11,6 +11,10 @@ template <typename T = float> class Temporal {
 public:
   Temporal();
 
+  unique_ptr<Temporal<T>> clone() const {
+    return unique_ptr<Temporal<T>>(this->clone_impl());
+  };
+
   /**
    * Interval on which the temporal value is defined.
    */
@@ -52,6 +56,8 @@ public:
   unique_ptr<Temporal<T>> shift(const time_t timedelta) const;
 
 private:
+  virtual Temporal<T> *clone_impl() const = 0;
+
   virtual Temporal<T> *shift_impl(const time_t timedelta) const = 0;
 };
 

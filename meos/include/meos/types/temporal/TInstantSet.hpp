@@ -3,20 +3,32 @@
 
 #include <meos/types/geom/Geometry.hpp>
 #include <meos/types/temporal/TInstant.hpp>
+#include <meos/types/temporal/TInstantFunctions.hpp>
 #include <meos/types/temporal/Temporal.hpp>
 #include <set>
 
 using namespace std;
 
-template <typename T = float> class TInstantSet : public Temporal<T> {
+template <typename T = float>
+class TInstantSet : public Temporal<T>,
+                    public TInstantFunctions<TInstantSet<T>, TInstant<T>> {
 public:
-  set<unique_ptr<TInstant<T>>> instants;
+  set<unique_ptr<TInstant<T>>> m_instants;
 
   TInstantSet(set<unique_ptr<TInstant<T>>> &instants_);
 
   TInstantSet(set<TInstant<T>> &instants_);
 
+  unique_ptr<TInstantSet<T>> clone() const {
+    return std::unique_ptr<TInstantSet<T>>(this->clone_impl());
+  }
+
   set<TInstant<T>> getInstants() const;
+
+  /**
+   * Set of instants.
+   */
+  set<TInstant<T>> instants() const;
 
   set<time_t> timestamps() const override;
   const Period period() const override;
@@ -27,6 +39,9 @@ protected:
   TInstantSet(const TInstantSet &t);
 
 private:
+  TInstantSet<T> *clone_impl() const override {
+    return new TInstantSet<T>(*this);
+  };
 };
 
 template class TInstantSet<bool>;

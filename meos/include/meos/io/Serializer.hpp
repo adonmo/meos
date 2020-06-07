@@ -15,10 +15,10 @@ using namespace std;
 
 template <typename T = float> class Serializer {
 public:
-  string write(Temporal<T> *temporal);
-  string write(TInstant<T> *instant);
-  string write(TInstantSet<T> *instant_set);
-  string write(TSequence<T> *sequence);
+  string write(const Temporal<T> *temporal);
+  string write(const TInstant<T> *instant);
+  string write(const TInstantSet<T> *instant_set);
+  string write(const TSequence<T> *sequence);
 
   string write(Period *period);
   string write(PeriodSet *period_set);

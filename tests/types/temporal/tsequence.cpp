@@ -1,13 +1,39 @@
 #include "../../catch.hpp"
+#include "../../common/matchers.hpp"
 #include "../../common/time_utils.hpp"
-#include "../../common/utils.hpp"
-#include <meos/io/Deserializer.hpp>
-#include <meos/io/Serializer.hpp>
 #include <meos/types/temporal/TSequence.hpp>
 
 const time_t minute = 60 * 1000L;
 const time_t day = 24 * 60 * 60 * 1000L;
 const time_t year = 365 * 24 * 60 * 60 * 1000L;
+
+TEMPLATE_TEST_CASE("TSequence instant functions", "[tsequence]", int, float) {
+  auto lower_inc = GENERATE(true, false);
+  auto upper_inc = GENERATE(true, false);
+  vector<TInstant<TestType>> instants;
+  set<TInstant<TestType>> expected_instants;
+
+  auto size = GENERATE(0, take(4, random(1, 100)));
+
+  for (size_t i = 0; i < size; i++) {
+    TestType v = random() % 1000;
+    long t = unix_time(2012, 1, 1) + 10 * 365 * (random() % day);
+    auto instant = TInstant<TestType>(v, t);
+    instants.push_back(instant);
+    expected_instants.insert(instant);
+  }
+
+  TSequence<TestType> actual(instants, lower_inc, upper_inc);
+  REQUIRE(actual.numInstants() == expected_instants.size());
+  REQUIRE_THAT(actual.instants(), UnorderedEquals(expected_instants));
+  if (size > 0) {
+    REQUIRE(actual.startInstant() == *expected_instants.begin());
+    REQUIRE(actual.endInstant() == *expected_instants.rbegin());
+  } else {
+    CHECK_THROWS(actual.startInstant());
+    CHECK_THROWS(actual.endInstant());
+  }
+}
 
 TEMPLATE_TEST_CASE("TSequence period and timestamp related functions",
                    "[tsequence]", int, float) {

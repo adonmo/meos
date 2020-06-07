@@ -57,7 +57,7 @@ TEMPLATE_TEST_CASE("TInstantSet are deserialized",
       Deserializer<TestType> r("{10@2012-11-01}");
 
       unique_ptr<TInstantSet<TestType>> instantSet = r.nextTInstantSet();
-      set<TInstant<TestType>> actual = unwrap(instantSet->instants);
+      set<TInstant<TestType>> actual = unwrap(instantSet->m_instants);
       set<TInstant<TestType>> expected = {
           TInstant<TestType>(10, unix_time(2012, 11, 1))};
       auto x = UnorderedEquals(expected);
@@ -70,7 +70,7 @@ TEMPLATE_TEST_CASE("TInstantSet are deserialized",
           "{10@2012-01-01 00:00:00+00, 12@2012-04-01 00:00:00+00}");
 
       unique_ptr<TInstantSet<TestType>> instantSet = r.nextTInstantSet();
-      set<TInstant<TestType>> actual = unwrap(instantSet->instants);
+      set<TInstant<TestType>> actual = unwrap(instantSet->m_instants);
       set<TInstant<TestType>> expected = {
           TInstant<TestType>(10, unix_time(2012, 1, 1)),
           TInstant<TestType>(12, unix_time(2012, 4, 1))};
@@ -86,14 +86,14 @@ TEMPLATE_TEST_CASE("TInstantSet are deserialized",
         "{10@2012-01-01 00:00:00+00} {12@2012-04-01 00:00:00+00}");
 
     unique_ptr<TInstantSet<TestType>> instantSet = r.nextTInstantSet();
-    set<TInstant<TestType>> actual = unwrap(instantSet->instants);
+    set<TInstant<TestType>> actual = unwrap(instantSet->m_instants);
     set<TInstant<TestType>> expected = {
         TInstant<TestType>(10, unix_time(2012, 1, 1))};
     auto x1 = UnorderedEquals(expected);
     REQUIRE_THAT(actual, x1);
 
     unique_ptr<TInstantSet<TestType>> instantSet2 = r.nextTInstantSet();
-    set<TInstant<TestType>> actual2 = unwrap(instantSet2->instants);
+    set<TInstant<TestType>> actual2 = unwrap(instantSet2->m_instants);
     expected = {TInstant<TestType>(12, unix_time(2012, 4, 1))};
     auto x2 = UnorderedEquals(expected);
     REQUIRE_THAT(actual2, x2);

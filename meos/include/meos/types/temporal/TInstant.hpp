@@ -2,22 +2,23 @@
 #define MEOS_TYPES_TEMPORAL_TINSTANT_HPP
 
 #include <meos/types/geom/Geometry.hpp>
+#include <meos/types/temporal/TInstantFunctions.hpp>
 #include <meos/types/temporal/Temporal.hpp>
 #include <meos/types/time/Period.hpp>
 
 using namespace std;
 
-template <typename T = float> class TInstant : public Temporal<T> {
-private:
-  const T value;
-  const time_t t;
-
+template <typename T>
+class TInstant : public Temporal<T>,
+                 public TInstantFunctions<TInstant<T>, TInstant<T>> {
 public:
   TInstant(T value, time_t t);
   const T &getValue() const;
   const time_t &getTimestamp() const;
 
-  virtual unique_ptr<TInstant> clone() { return make_unique<TInstant>(*this); }
+  unique_ptr<TInstant<T>> clone() const {
+    return std::unique_ptr<TInstant<T>>(this->clone_impl());
+  }
 
   friend bool operator==(const TInstant<T> &lhs, const TInstant<T> &rhs) {
     return (lhs.value == rhs.value) && (lhs.t == rhs.t);
@@ -28,13 +29,31 @@ public:
   }
 
   friend bool operator<(const TInstant<T> &lhs, const TInstant<T> &rhs) {
-    return (lhs.value < rhs.value) ||
-           ((lhs.value == rhs.value) && (lhs.t < rhs.t));
+    return (lhs.t < rhs.t) || ((lhs.t == rhs.t) && (lhs.value < rhs.value));
   }
+
+  friend ostream &operator<<(ostream &os, const TInstant<T> &instant) {
+    os << instant.getValue() << "@" << instant.getTimestamp();
+    return os;
+  }
+
+  /**
+   * Set of instants.
+   */
+  set<TInstant> instants() const;
 
   set<time_t> timestamps() const override;
   const Period period() const override;
   unique_ptr<TInstant<T>> shift(const time_t timedelta) const;
+
+private:
+  const T value;
+  const time_t t;
+
+  TInstant<T> *clone_impl() const override {
+    return new TInstant<T>(this->value, this->t);
+  };
+
   TInstant<T> *shift_impl(const time_t timedelta) const override;
 };
 

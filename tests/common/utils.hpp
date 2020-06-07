@@ -8,7 +8,7 @@
 using namespace std;
 
 template <typename T> set<T> unwrap(set<unique_ptr<T>> &sp) {
-  set<T> s = {};
+  set<T> s;
   for (const unique_ptr<T> &e : sp) {
     s.insert(*e.get());
   }

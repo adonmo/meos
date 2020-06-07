@@ -12,6 +12,10 @@ template <typename T> const std::time_t &TInstant<T>::getTimestamp() const {
   return this->t;
 }
 
+template <typename T> set<TInstant<T>> TInstant<T>::instants() const {
+  return {*this};
+}
+
 template <typename T> set<time_t> TInstant<T>::timestamps() const {
   return {getTimestamp()};
 }

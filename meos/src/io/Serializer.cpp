@@ -9,21 +9,22 @@
 
 using namespace std;
 
-template <typename T> string Serializer<T>::write(Temporal<T> *temporal) {
+template <typename T> string Serializer<T>::write(Temporal<T> const *temporal) {
   stringstream ss;
-  if (TInstant<T> *instant = reinterpret_cast<TInstant<T> *>(temporal)) {
+  if (TInstant<T> const *instant =
+          reinterpret_cast<TInstant<T> const *>(temporal)) {
     return write(instant);
-  } else if (TInstantSet<T> *instant_set =
-                 reinterpret_cast<TInstantSet<T> *>(temporal)) {
+  } else if (TInstantSet<T> const *instant_set =
+                 reinterpret_cast<TInstantSet<T> const *>(temporal)) {
     return write(instant_set);
-  } else if (TSequence<T> *sequence =
-                 reinterpret_cast<TSequence<T> *>(temporal)) {
+  } else if (TSequence<T> const *sequence =
+                 reinterpret_cast<TSequence<T> const *>(temporal)) {
     return write(sequence);
   }
   throw SerializationException("Unsupported type");
 }
 
-template <typename T> string Serializer<T>::write(const T &value) {
+template <typename T> string Serializer<T>::write(T const &value) {
   // Check specialized template functions below for supported types
   throw SerializationException("Unsupported type");
 }
@@ -57,37 +58,39 @@ template <typename T> string Serializer<T>::writeTime(const time_t &t) {
   return textStream.str();
 }
 
-template <typename T> string Serializer<T>::write(TInstant<T> *instant) {
+template <typename T> string Serializer<T>::write(TInstant<T> const *instant) {
   stringstream ss;
   ss << write(instant->getValue()) << "@" << writeTime(instant->getTimestamp());
   return ss.str();
 }
 
-template <typename T> string Serializer<T>::write(TInstantSet<T> *instant_set) {
+template <typename T>
+string Serializer<T>::write(TInstantSet<T> const *instant_set) {
   stringstream ss;
   bool first = true;
   ss << "{";
-  for (auto const &instant : instant_set->instants) {
+  for (auto const &instant : instant_set->getInstants()) {
     if (first)
       first = false;
     else
       ss << ", ";
-    ss << write(instant.get());
+    ss << write(&instant);
   }
   ss << "}";
   return ss.str();
 }
 
-template <typename T> string Serializer<T>::write(TSequence<T> *sequence) {
+template <typename T>
+string Serializer<T>::write(TSequence<T> const *sequence) {
   stringstream ss;
   bool first = true;
   ss << (sequence->lower_inc ? "[" : "(");
-  for (auto const &instant : sequence->instants) {
+  for (auto const &instant : sequence->getInstants()) {
     if (first)
       first = false;
     else
       ss << ", ";
-    ss << write(instant.get());
+    ss << write(&instant);
   }
   ss << (sequence->upper_inc ? "]" : ")");
   return ss.str();
