@@ -34,6 +34,30 @@ TEMPLATE_TEST_CASE("TInstantSet instant functions", "[tinstantset]", int,
   }
 }
 
+TEMPLATE_TEST_CASE("TInstantSet getTime", "[tinstantset]", int, float) {
+  TestType v1 = GENERATE(take(2, random(0, 1000)));
+  TestType v2 = GENERATE(take(2, random(0, 1000)));
+  auto t1 =
+      GENERATE(take(2, random(unix_time(2012, 1, 1), unix_time(2020, 1, 1))));
+  auto t2 =
+      GENERATE(take(2, random(unix_time(2012, 1, 1), unix_time(2020, 1, 1))));
+  auto instant_1 = make_unique<TInstant<TestType>>(v1, t1);
+  auto instant_2 = make_unique<TInstant<TestType>>(v2, t2);
+
+  auto period_1 = instant_1->period();
+  auto period_2 = instant_2->period();
+  set<Period> periods = {period_1, period_2};
+  PeriodSet expected(periods);
+
+  set<unique_ptr<TInstant<TestType>>> instants;
+  instants.insert(move(instant_1));
+  instants.insert(move(instant_2));
+  TInstantSet<TestType> instant_set(instants);
+
+  REQUIRE(instant_set.timespan() ==
+          instant_set.endTimestamp() - instant_set.startTimestamp());
+}
+
 TEMPLATE_TEST_CASE("TInstantSet period and timestamp related functions",
                    "[tinstantset]", int, float) {
   set<TInstant<TestType>> instants;
@@ -81,12 +105,12 @@ TEMPLATE_TEST_CASE("TInstantSet timespan", "[tinstantset]", int, float) {
       GENERATE(take(2, random(unix_time(2012, 1, 1), unix_time(2020, 1, 1))));
   auto t2 =
       GENERATE(take(2, random(unix_time(2012, 1, 1), unix_time(2020, 1, 1))));
-  auto period_1 = make_unique<TInstant<TestType>>(v1, t1);
-  auto period_2 = make_unique<TInstant<TestType>>(v2, t2);
+  auto instant_1 = make_unique<TInstant<TestType>>(v1, t1);
+  auto instant_2 = make_unique<TInstant<TestType>>(v2, t2);
 
   set<unique_ptr<TInstant<TestType>>> instants;
-  instants.insert(move(period_1));
-  instants.insert(move(period_2));
+  instants.insert(move(instant_1));
+  instants.insert(move(instant_2));
   TInstantSet<TestType> instant_set(instants);
 
   REQUIRE(instant_set.timespan() ==

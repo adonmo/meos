@@ -34,6 +34,7 @@ public:
   set<TInstant<T>> instants() const;
 
   set<time_t> timestamps() const override;
+  const PeriodSet getTime() const;
   const Period period() const override;
   unique_ptr<TSequence<T>> shift(const time_t timedelta) const;
   TSequence<T> *shift_impl(const time_t timedelta) const override;

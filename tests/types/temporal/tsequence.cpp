@@ -35,6 +35,30 @@ TEMPLATE_TEST_CASE("TSequence instant functions", "[tsequence]", int, float) {
   }
 }
 
+TEMPLATE_TEST_CASE("TSequence getTime", "[tsequence]", int, float) {
+  auto lower_inc = GENERATE(true, false);
+  auto upper_inc = GENERATE(true, false);
+  TestType v1 = GENERATE(take(2, random(0, 1000)));
+  TestType v2 = GENERATE(take(2, random(0, 1000)));
+  auto t1 =
+      GENERATE(take(2, random(unix_time(2012, 1, 1), unix_time(2020, 1, 1))));
+  auto t2 =
+      GENERATE(take(2, random(unix_time(2012, 1, 1), unix_time(2020, 1, 1))));
+  auto instant_1 = make_unique<TInstant<TestType>>(v1, t1);
+  auto instant_2 = make_unique<TInstant<TestType>>(v2, t2);
+
+  vector<unique_ptr<TInstant<TestType>>> instants;
+  instants.push_back(move(instant_1));
+  instants.push_back(move(instant_2));
+  TSequence<TestType> instant_set(instants, lower_inc, upper_inc);
+
+  auto period = instant_set.period();
+  set<Period> periods = {period};
+  PeriodSet expected(periods);
+
+  REQUIRE(instant_set.getTime() == expected);
+}
+
 TEMPLATE_TEST_CASE("TSequence period and timestamp related functions",
                    "[tsequence]", int, float) {
   auto lower_inc = GENERATE(true, false);
@@ -88,12 +112,12 @@ TEMPLATE_TEST_CASE("TSequence timespan", "[tsequence]", int, float) {
       GENERATE(take(2, random(unix_time(2012, 1, 1), unix_time(2020, 1, 1))));
   auto t2 =
       GENERATE(take(2, random(unix_time(2012, 1, 1), unix_time(2020, 1, 1))));
-  auto period_1 = make_unique<TInstant<TestType>>(v1, t1);
-  auto period_2 = make_unique<TInstant<TestType>>(v2, t2);
+  auto instant_1 = make_unique<TInstant<TestType>>(v1, t1);
+  auto instant_2 = make_unique<TInstant<TestType>>(v2, t2);
 
   vector<unique_ptr<TInstant<TestType>>> instants;
-  instants.push_back(move(period_1));
-  instants.push_back(move(period_2));
+  instants.push_back(move(instant_1));
+  instants.push_back(move(instant_2));
   TSequence<TestType> instant_set(instants, lower_inc, upper_inc);
 
   REQUIRE(instant_set.timespan() ==

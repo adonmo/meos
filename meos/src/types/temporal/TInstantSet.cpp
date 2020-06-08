@@ -41,6 +41,14 @@ template <typename T> set<time_t> TInstantSet<T>::timestamps() const {
   return s;
 }
 
+template <typename T> const PeriodSet TInstantSet<T>::getTime() const {
+  set<Period> s;
+  for (auto const &e : instants()) {
+    s.insert(e.period());
+  }
+  return PeriodSet(s);
+}
+
 template <typename T> const Period TInstantSet<T>::period() const {
   return Period(this->startTimestamp(), this->endTimestamp(), true, true);
 }

@@ -16,7 +16,7 @@ PeriodSet::PeriodSet(const PeriodSet &t) {
     m_periods.insert(e->clone());
 }
 
-set<Period> PeriodSet::periods() {
+set<Period> PeriodSet::periods() const {
   set<Period> s;
   for (const auto &e : m_periods) {
     s.insert(*e.get());
@@ -24,15 +24,15 @@ set<Period> PeriodSet::periods() {
   return s;
 }
 
-Period PeriodSet::period() {
+Period PeriodSet::period() const {
   Period start = startPeriod();
   Period end = endPeriod();
   return Period(start.lower(), end.upper(), start.lower_inc(), end.upper_inc());
 }
 
-int PeriodSet::numPeriods() { return periods().size(); }
+int PeriodSet::numPeriods() const { return periods().size(); }
 
-Period PeriodSet::startPeriod() {
+Period PeriodSet::startPeriod() const {
   set<Period> s = periods();
   if (s.size() <= 0) {
     throw "At least one period expected";
@@ -40,7 +40,7 @@ Period PeriodSet::startPeriod() {
   return *s.begin();
 }
 
-Period PeriodSet::endPeriod() {
+Period PeriodSet::endPeriod() const {
   set<Period> s = periods();
   if (s.size() <= 0) {
     throw "At least one period expected";
@@ -48,7 +48,7 @@ Period PeriodSet::endPeriod() {
   return *s.rbegin();
 }
 
-Period PeriodSet::periodN(int n) {
+Period PeriodSet::periodN(int n) const {
   set<Period> s = periods();
   if (s.size() < n) {
     throw "At least " + to_string(n) + " period(s) expected";
@@ -56,21 +56,21 @@ Period PeriodSet::periodN(int n) {
   return *next(s.begin(), n);
 }
 
-const time_t PeriodSet::timespan() {
+const time_t PeriodSet::timespan() const {
   time_t result = 0;
   for (const unique_ptr<Period> &period : m_periods)
     result += period->timespan();
   return result;
 }
 
-unique_ptr<PeriodSet> PeriodSet::shift(const time_t timedelta) {
+unique_ptr<PeriodSet> PeriodSet::shift(const time_t timedelta) const {
   set<unique_ptr<Period>> pset;
   for (const auto &e : m_periods)
     pset.insert(e->shift(timedelta));
   return make_unique<PeriodSet>(pset);
 }
 
-set<time_t> PeriodSet::timestamps() {
+set<time_t> PeriodSet::timestamps() const {
   set<time_t> s;
   for (const auto &e : m_periods) {
     s.insert(e->lower());
@@ -79,9 +79,9 @@ set<time_t> PeriodSet::timestamps() {
   return s;
 }
 
-int PeriodSet::numTimestamps() { return timestamps().size(); }
+int PeriodSet::numTimestamps() const { return timestamps().size(); }
 
-time_t PeriodSet::startTimestamp() {
+time_t PeriodSet::startTimestamp() const {
   set<time_t> s = timestamps();
   if (s.size() <= 0) {
     throw "At least one timestamp expected";
@@ -89,7 +89,7 @@ time_t PeriodSet::startTimestamp() {
   return *s.begin();
 }
 
-time_t PeriodSet::endTimestamp() {
+time_t PeriodSet::endTimestamp() const {
   set<time_t> s = timestamps();
   if (s.size() <= 0) {
     throw "At least one timestamp expected";
@@ -97,7 +97,7 @@ time_t PeriodSet::endTimestamp() {
   return *s.rbegin();
 }
 
-time_t PeriodSet::timestampN(int n) {
+time_t PeriodSet::timestampN(int n) const {
   set<time_t> s = timestamps();
   if (s.size() < n) {
     throw "At least " + to_string(n) + " timestamp(s) expected";

@@ -51,6 +51,11 @@ template <typename T> set<time_t> TSequence<T>::timestamps() const {
   return s;
 }
 
+template <typename T> const PeriodSet TSequence<T>::getTime() const {
+  set<Period> s = {this->period()};
+  return PeriodSet(s);
+}
+
 template <typename T> const Period TSequence<T>::period() const {
   return Period(this->startTimestamp(), this->endTimestamp(), lower_inc,
                 upper_inc);

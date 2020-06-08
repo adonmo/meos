@@ -28,6 +28,17 @@ TEMPLATE_TEST_CASE("TInstant timespan", "[tinst]", int, float) {
   REQUIRE(instant.timespan() == 0);
 }
 
+TEMPLATE_TEST_CASE("TInstant getTime", "[tinst]", int, float) {
+  auto i = GENERATE(0, 1, -1, 2012, 756772544,
+                    take(100, random(numeric_limits<int>::min(),
+                                     numeric_limits<int>::max())));
+  TInstant<TestType> instant(i, unix_time(2012, 11, 1));
+  Period p(unix_time(2012, 11, 1), unix_time(2012, 11, 1), true, true);
+  set<Period> periods = {p};
+  PeriodSet expected(periods);
+  REQUIRE(instant.getTime() == expected);
+}
+
 TEMPLATE_TEST_CASE("TInstant period", "[tinst]", int, float) {
   auto i = GENERATE(0, 1, -1, 2012, 756772544,
                     take(100, random(numeric_limits<int>::min(),

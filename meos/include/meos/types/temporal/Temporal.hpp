@@ -16,6 +16,11 @@ public:
   };
 
   /**
+   * Period set on which the temporal value is defined.
+   */
+  virtual const PeriodSet getTime() const = 0;
+
+  /**
    * Interval on which the temporal value is defined.
    */
   const time_t timespan() const;
@@ -24,6 +29,11 @@ public:
    * Period on which the temporal value is defined ignoring potential time gaps.
    */
   virtual const Period period() const = 0;
+
+  /**
+   * Set of instants.
+   */
+  set<Temporal> instants() const;
 
   /**
    * Number of distinct timestamps.

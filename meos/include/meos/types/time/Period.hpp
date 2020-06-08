@@ -59,6 +59,13 @@ public:
   friend bool operator<(const Period &lhs, const Period &rhs) {
     return lhs.compare(rhs) == -1;
   }
+
+  friend ostream &operator<<(ostream &os, const Period &period) {
+    auto opening = period.lower_inc() ? "[" : "(";
+    auto closing = period.upper_inc() ? "]" : ")";
+    os << opening << period.lower() << ", " << period.upper() << closing;
+    return os;
+  }
 };
 
 #endif

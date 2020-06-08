@@ -20,6 +20,11 @@ template <typename T> set<time_t> TInstant<T>::timestamps() const {
   return {getTimestamp()};
 }
 
+template <typename T> const PeriodSet TInstant<T>::getTime() const {
+  set<Period> s = {this->period()};
+  return PeriodSet(s);
+}
+
 template <typename T> const Period TInstant<T>::period() const {
   return Period(this->getTimestamp(), this->getTimestamp(), true, true);
 };
