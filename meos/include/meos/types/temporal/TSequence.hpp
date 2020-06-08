@@ -28,6 +28,8 @@ public:
 
   vector<TInstant<T>> getInstants() const;
 
+  string duration() const { return "Sequence"; };
+
   /**
    * Set of instants.
    */

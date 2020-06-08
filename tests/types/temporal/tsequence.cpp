@@ -7,6 +7,15 @@ const time_t minute = 60 * 1000L;
 const time_t day = 24 * 60 * 60 * 1000L;
 const time_t year = 365 * 24 * 60 * 60 * 1000L;
 
+TEMPLATE_TEST_CASE("TSequence duration function returns Sequence",
+                   "[tsequence]", int, float, bool, string, Geometry) {
+  auto lower_inc = GENERATE(true, false);
+  auto upper_inc = GENERATE(true, false);
+  vector<TInstant<TestType>> v;
+  TSequence<TestType> sequence(v, lower_inc, upper_inc);
+  REQUIRE(sequence.duration() == "Sequence");
+}
+
 TEMPLATE_TEST_CASE("TSequence instant functions", "[tsequence]", int, float) {
   auto lower_inc = GENERATE(true, false);
   auto upper_inc = GENERATE(true, false);

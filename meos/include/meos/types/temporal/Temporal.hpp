@@ -16,6 +16,12 @@ public:
   };
 
   /**
+   * Duration of the temporal value, that is, one of Instant, InstantSet,
+   * Sequence, or SequenceSet.
+   */
+  virtual string duration() const { return "Temporal"; };
+
+  /**
    * Period set on which the temporal value is defined.
    */
   virtual const PeriodSet getTime() const = 0;

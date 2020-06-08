@@ -7,6 +7,13 @@ const time_t minute = 60 * 1000L;
 const time_t day = 24 * 60 * 60 * 1000L;
 const time_t year = 365 * 24 * 60 * 60 * 1000L;
 
+TEMPLATE_TEST_CASE("TInstantSet duration function returns InstantSet",
+                   "[tinstantset]", int, float, bool, string, Geometry) {
+  set<TInstant<TestType>> s;
+  TInstantSet<TestType> instant_set(s);
+  REQUIRE(instant_set.duration() == "InstantSet");
+}
+
 TEMPLATE_TEST_CASE("TInstantSet instant functions", "[tinstantset]", int,
                    float) {
   set<TInstant<TestType>> instants;

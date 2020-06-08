@@ -37,6 +37,8 @@ public:
     return os;
   }
 
+  string duration() const { return "Instant"; };
+
   /**
    * Set of instants.
    */

@@ -25,6 +25,8 @@ public:
 
   set<TInstant<T>> getInstants() const;
 
+  string duration() const { return "InstantSet"; };
+
   /**
    * Set of instants.
    */

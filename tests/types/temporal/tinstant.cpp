@@ -5,6 +5,12 @@
 
 const time_t day = 24 * 60 * 60 * 1000L;
 
+TEMPLATE_TEST_CASE("TInstant duration function returns Instant", "[tinst]", int,
+                   float, bool) {
+  TInstant<TestType> instant(1, unix_time(2012, 1, 1));
+  REQUIRE(instant.duration() == "Instant");
+}
+
 TEMPLATE_TEST_CASE("TInstant instant functions", "[tinst]", int, float) {
   TestType v = random() % 1000;
   long t = unix_time(2012, 1, 1) + 10 * 365 * (random() % day);
