@@ -59,13 +59,13 @@ TEMPLATE_TEST_CASE("TSequence getTime", "[tsequence]", int, float) {
   vector<unique_ptr<TInstant<TestType>>> instants;
   instants.push_back(move(instant_1));
   instants.push_back(move(instant_2));
-  TSequence<TestType> instant_set(instants, lower_inc, upper_inc);
+  TSequence<TestType> sequence(instants, lower_inc, upper_inc);
 
-  auto period = instant_set.period();
+  auto period = sequence.period();
   set<Period> periods = {period};
   PeriodSet expected(periods);
 
-  REQUIRE(instant_set.getTime() == expected);
+  REQUIRE(sequence.getTime() == expected);
 }
 
 TEMPLATE_TEST_CASE("TSequence period and timestamp related functions",
@@ -106,10 +106,10 @@ TEMPLATE_TEST_CASE("TSequence.period() - gaps are ignored", "[tsequence]", int,
       TInstant<TestType>(3, unix_time(2012, 1, 6)),
       TInstant<TestType>(4, unix_time(2012, 1, 7)),
   };
-  TSequence<TestType> instant_set(instants, lower_inc, upper_inc);
+  TSequence<TestType> sequence(instants, lower_inc, upper_inc);
   Period expected = Period(unix_time(2012, 1, 1), unix_time(2012, 1, 7),
                            lower_inc, upper_inc);
-  REQUIRE(instant_set.period() == expected);
+  REQUIRE(sequence.period() == expected);
 }
 
 TEMPLATE_TEST_CASE("TSequence timespan", "[tsequence]", int, float) {
@@ -127,10 +127,10 @@ TEMPLATE_TEST_CASE("TSequence timespan", "[tsequence]", int, float) {
   vector<unique_ptr<TInstant<TestType>>> instants;
   instants.push_back(move(instant_1));
   instants.push_back(move(instant_2));
-  TSequence<TestType> instant_set(instants, lower_inc, upper_inc);
+  TSequence<TestType> sequence(instants, lower_inc, upper_inc);
 
-  REQUIRE(instant_set.timespan() ==
-          instant_set.endTimestamp() - instant_set.startTimestamp());
+  REQUIRE(sequence.timespan() ==
+          sequence.endTimestamp() - sequence.startTimestamp());
 }
 
 TEMPLATE_TEST_CASE("TSequence shift", "[tsequence]", int, float) {
@@ -155,4 +155,76 @@ TEMPLATE_TEST_CASE("TSequence shift", "[tsequence]", int, float) {
   TSequence<TestType> expected(expected_instants, lower_inc, upper_inc);
   REQUIRE_THAT(actual.getInstants(),
                Catch::Matchers::Equals(expected.getInstants()));
+}
+
+TEMPLATE_TEST_CASE("TSequence intersection functions", "[tsequence]", int,
+                   float) {
+  vector<TInstant<TestType>> instants = {
+      TInstant<TestType>(10, unix_time(2012, 1, 2)),
+      TInstant<TestType>(20, unix_time(2012, 1, 3)),
+      TInstant<TestType>(30, unix_time(2012, 1, 4)),
+  };
+  TSequence<TestType> sequence(instants, true, true);
+
+  SECTION("intersectsTimestamp") {
+    // Positive cases
+    REQUIRE(sequence.intersectsTimestamp(unix_time(2012, 1, 2)) == true);
+    REQUIRE(sequence.intersectsTimestamp(unix_time(2012, 1, 2, 1)) == true);
+    REQUIRE(sequence.intersectsTimestamp(unix_time(2012, 1, 3)) == true);
+    REQUIRE(sequence.intersectsTimestamp(unix_time(2012, 1, 4)) == true);
+
+    // Negative cases
+    REQUIRE(sequence.intersectsTimestamp(unix_time(2012, 1, 1)) == false);
+    REQUIRE(sequence.intersectsTimestamp(unix_time(2012, 1, 4, 1)) == false);
+    REQUIRE(sequence.intersectsTimestamp(unix_time(2012, 1, 5)) == false);
+    REQUIRE(sequence.intersectsTimestamp(unix_time(2012, 2, 1)) == false);
+  }
+
+  // clang-format off
+  SECTION("intersectsPeriod") {
+    // Positive cases
+    REQUIRE(sequence.intersectsPeriod(Period(unix_time(2012, 1, 2), unix_time(2012, 1, 3), true, true)) == true);
+    REQUIRE(sequence.intersectsPeriod(Period(unix_time(2012, 1, 2), unix_time(2012, 1, 5), true, true)) == true);
+    REQUIRE(sequence.intersectsPeriod(Period(unix_time(2012, 1, 1, 12), unix_time(2012, 1, 2, 12), true, true)) == true);
+    REQUIRE(sequence.intersectsPeriod(Period(unix_time(2012, 1, 2), unix_time(2012, 1, 3), true, false)) == true);
+    REQUIRE(sequence.intersectsPeriod(Period(unix_time(2012, 1, 2), unix_time(2012, 1, 3), false, true)) == true);
+    REQUIRE(sequence.intersectsPeriod(Period(unix_time(2012, 1, 2), unix_time(2012, 1, 3), false, false)) == true);
+
+    // Negative cases
+    REQUIRE(sequence.intersectsPeriod(Period(unix_time(2012, 2, 2), unix_time(2012, 2, 3), true, true)) == false);
+  }
+  // clang-format on
+
+  SECTION("intersectsTimestampSet") {
+    // Positive cases
+    set<time_t> s = {unix_time(2012, 1, 2)};
+    REQUIRE(sequence.intersectsTimestampSet(TimestampSet(s)) == true);
+    s = {unix_time(2012, 1, 2, 1)};
+    REQUIRE(sequence.intersectsTimestampSet(TimestampSet(s)) == true);
+    s = {unix_time(2012, 1, 3), unix_time(2012, 1, 5)};
+    REQUIRE(sequence.intersectsTimestampSet(TimestampSet(s)) == true);
+
+    // Negative cases
+    s = {unix_time(2012, 1, 1)};
+    REQUIRE(sequence.intersectsTimestampSet(TimestampSet(s)) == false);
+    s = {unix_time(2012, 1, 4, 1), unix_time(2012, 2, 2)};
+    REQUIRE(sequence.intersectsTimestampSet(TimestampSet(s)) == false);
+  }
+
+  SECTION("intersectsPeriodSet") {
+    // Positive cases
+    set<Period> s = {
+        Period(unix_time(2012, 1, 2), unix_time(2012, 1, 3), true, true)};
+    REQUIRE(sequence.intersectsPeriodSet(PeriodSet(s)) == true);
+    s = {Period(unix_time(2012, 1, 2), unix_time(2012, 1, 5), true, true)};
+    REQUIRE(sequence.intersectsPeriodSet(PeriodSet(s)) == true);
+    s = {Period(unix_time(2012, 1, 2), unix_time(2012, 1, 5), true, true),
+         Period(unix_time(2012, 2, 2), unix_time(2012, 2, 3), true, true)};
+    s = {Period(unix_time(2012, 1, 3), unix_time(2012, 1, 5), true, true)};
+    REQUIRE(sequence.intersectsPeriodSet(PeriodSet(s)) == true);
+
+    // Negative cases
+    s = {Period(unix_time(2012, 2, 2), unix_time(2012, 2, 3), true, true)};
+    REQUIRE(sequence.intersectsPeriodSet(PeriodSet(s)) == false);
+  }
 }

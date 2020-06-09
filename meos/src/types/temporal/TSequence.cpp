@@ -74,3 +74,13 @@ TSequence<T> *TSequence<T>::shift_impl(const time_t timedelta) const {
   }
   return new TSequence<T>(s, lower_inc, upper_inc);
 }
+
+template <typename T>
+bool TSequence<T>::intersectsTimestamp(const time_t datetime) const {
+  return this->period().contains_timestamp(datetime);
+};
+
+template <typename T>
+bool TSequence<T>::intersectsPeriod(const Period period) const {
+  return this->period().overlap(period);
+};

@@ -66,3 +66,23 @@ TInstantSet<T> *TInstantSet<T>::shift_impl(const time_t timedelta) const {
   }
   return new TInstantSet<T>(s);
 }
+
+template <typename T>
+bool TInstantSet<T>::intersectsTimestamp(const time_t datetime) const {
+  for (auto const &t : this->timestamps()) {
+    if (t == datetime) {
+      return true;
+    }
+  }
+  return false;
+};
+
+template <typename T>
+bool TInstantSet<T>::intersectsPeriod(const Period period) const {
+  for (auto const &t : this->timestamps()) {
+    if (period.contains_timestamp(t)) {
+      return true;
+    }
+  }
+  return false;
+};

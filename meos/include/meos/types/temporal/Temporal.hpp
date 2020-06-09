@@ -4,6 +4,7 @@
 #include <meos/types/geom/Geometry.hpp>
 #include <meos/types/time/Period.hpp>
 #include <meos/types/time/PeriodSet.hpp>
+#include <meos/types/time/TimestampSet.hpp>
 
 using namespace std;
 
@@ -20,6 +21,31 @@ public:
    * Sequence, or SequenceSet.
    */
   virtual string duration() const { return "Temporal"; };
+
+  // /**
+  //  * Set of values taken by the temporal value.
+  //  */
+  // virtual set<unique_ptr<T>> getValues() const;
+
+  // /**
+  //  * Start value.
+  //  */
+  // virtual unique_ptr<T> startValue() const;
+
+  // /**
+  //  * End value.
+  //  */
+  // virtual unique_ptr<T> endValue() const;
+
+  // /**
+  //  * Minimum value.
+  //  */
+  // virtual unique_ptr<T> minValue() const;
+
+  // /**
+  //  * Maximum value.
+  //  */
+  // virtual unique_ptr<T> maxValue() const;
 
   /**
    * Period set on which the temporal value is defined.
@@ -70,6 +96,26 @@ public:
    * Shift the temporal value by a time interval
    */
   unique_ptr<Temporal<T>> shift(const time_t timedelta) const;
+
+  /**
+   * Does the temporal value intersect the timestamp?
+   */
+  virtual bool intersectsTimestamp(const time_t datetime) const = 0;
+
+  /**
+   * Does the temporal value intersect the timestamp set?
+   */
+  bool intersectsTimestampSet(const TimestampSet timestampset) const;
+
+  /**
+   * Does the temporal value intersect the period?
+   */
+  virtual bool intersectsPeriod(const Period period) const = 0;
+
+  /**
+   * Does the temporal value intersect the period set?
+   */
+  bool intersectsPeriodSet(const PeriodSet periodset) const;
 
 private:
   virtual Temporal<T> *clone_impl() const = 0;

@@ -41,6 +41,8 @@ public:
   const Period period() const override;
   unique_ptr<TSequence<T>> shift(const time_t timedelta) const;
   TSequence<T> *shift_impl(const time_t timedelta) const override;
+  bool intersectsTimestamp(const time_t datetime) const override;
+  bool intersectsPeriod(const Period period) const override;
 
   friend ostream &operator<<(ostream &os, const TSequence<T> &sequence) {
     bool first = true;

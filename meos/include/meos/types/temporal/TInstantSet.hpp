@@ -38,6 +38,8 @@ public:
   const Period period() const override;
   unique_ptr<TInstantSet<T>> shift(const time_t timedelta) const;
   TInstantSet<T> *shift_impl(const time_t timedelta) const override;
+  bool intersectsTimestamp(const time_t datetime) const override;
+  bool intersectsPeriod(const Period period) const override;
 
   friend ostream &operator<<(ostream &os, const TInstantSet<T> &instant_set) {
     bool first = true;

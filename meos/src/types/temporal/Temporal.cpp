@@ -40,3 +40,24 @@ template <typename T>
 unique_ptr<Temporal<T>> Temporal<T>::shift(const time_t timedelta) const {
   return unique_ptr<Temporal<T>>(this->shift_impl(timedelta));
 }
+
+template <typename T>
+bool Temporal<T>::intersectsTimestampSet(
+    const TimestampSet timestampset) const {
+  for (auto const &t : timestampset.timestamps()) {
+    if (intersectsTimestamp(t)) {
+      return true;
+    }
+  }
+  return false;
+}
+
+template <typename T>
+bool Temporal<T>::intersectsPeriodSet(const PeriodSet periodset) const {
+  for (auto const &p : periodset.periods()) {
+    if (intersectsPeriod(p)) {
+      return true;
+    }
+  }
+  return false;
+}

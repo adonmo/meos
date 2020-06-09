@@ -143,3 +143,75 @@ TEMPLATE_TEST_CASE("TInstantSet shift", "[tinstantset]", int, float) {
   TInstantSet<TestType> expected(expected_instants);
   REQUIRE_THAT(actual.getInstants(), UnorderedEquals(expected.getInstants()));
 }
+
+TEMPLATE_TEST_CASE("TInstantSet intersection functions", "[tinstantset]", int,
+                   float) {
+  set<TInstant<TestType>> instants = {
+      TInstant<TestType>(10, unix_time(2012, 1, 2)),
+      TInstant<TestType>(20, unix_time(2012, 1, 3)),
+      TInstant<TestType>(30, unix_time(2012, 1, 4)),
+  };
+  TInstantSet<TestType> iset(instants);
+
+  SECTION("intersectsTimestamp") {
+    // Positive cases
+    REQUIRE(iset.intersectsTimestamp(unix_time(2012, 1, 2)) == true);
+    REQUIRE(iset.intersectsTimestamp(unix_time(2012, 1, 3)) == true);
+    REQUIRE(iset.intersectsTimestamp(unix_time(2012, 1, 4)) == true);
+
+    // Negative cases
+    REQUIRE(iset.intersectsTimestamp(unix_time(2012, 1, 1)) == false);
+    REQUIRE(iset.intersectsTimestamp(unix_time(2012, 1, 2, 1)) == false);
+    REQUIRE(iset.intersectsTimestamp(unix_time(2012, 1, 4, 1)) == false);
+    REQUIRE(iset.intersectsTimestamp(unix_time(2012, 1, 5)) == false);
+    REQUIRE(iset.intersectsTimestamp(unix_time(2012, 2, 1)) == false);
+  }
+
+  // clang-format off
+  SECTION("intersectsPeriod") {
+    // Positive cases
+    REQUIRE(iset.intersectsPeriod(Period(unix_time(2012, 1, 2), unix_time(2012, 1, 3), true, true)) == true);
+    REQUIRE(iset.intersectsPeriod(Period(unix_time(2012, 1, 2), unix_time(2012, 1, 5), true, true)) == true);
+    REQUIRE(iset.intersectsPeriod(Period(unix_time(2012, 1, 1, 12), unix_time(2012, 1, 2, 12), true, true)) == true);
+    REQUIRE(iset.intersectsPeriod(Period(unix_time(2012, 1, 2), unix_time(2012, 1, 3), true, false)) == true);
+    REQUIRE(iset.intersectsPeriod(Period(unix_time(2012, 1, 2), unix_time(2012, 1, 3), false, true)) == true);
+
+    // Negative cases
+    REQUIRE(iset.intersectsPeriod(Period(unix_time(2012, 1, 2), unix_time(2012, 1, 3), false, false)) == false);
+    REQUIRE(iset.intersectsPeriod(Period(unix_time(2012, 2, 2), unix_time(2012, 2, 3), true, true)) == false);
+  }
+  // clang-format on
+
+  SECTION("intersectsTimestampSet") {
+    // Positive cases
+    set<time_t> s = {unix_time(2012, 1, 2)};
+    REQUIRE(iset.intersectsTimestampSet(TimestampSet(s)) == true);
+    s = {unix_time(2012, 1, 3), unix_time(2012, 1, 5)};
+    REQUIRE(iset.intersectsTimestampSet(TimestampSet(s)) == true);
+
+    // Negative cases
+    s = {unix_time(2012, 1, 1)};
+    REQUIRE(iset.intersectsTimestampSet(TimestampSet(s)) == false);
+    s = {unix_time(2012, 1, 2, 1)};
+    REQUIRE(iset.intersectsTimestampSet(TimestampSet(s)) == false);
+    s = {unix_time(2012, 1, 4, 1), unix_time(2012, 2, 2)};
+    REQUIRE(iset.intersectsTimestampSet(TimestampSet(s)) == false);
+  }
+
+  SECTION("intersectsPeriodSet") {
+    // Positive cases
+    set<Period> s = {
+        Period(unix_time(2012, 1, 2), unix_time(2012, 1, 3), true, true)};
+    REQUIRE(iset.intersectsPeriodSet(PeriodSet(s)) == true);
+    s = {Period(unix_time(2012, 1, 2), unix_time(2012, 1, 5), true, true)};
+    REQUIRE(iset.intersectsPeriodSet(PeriodSet(s)) == true);
+    s = {Period(unix_time(2012, 1, 2), unix_time(2012, 1, 5), true, true),
+         Period(unix_time(2012, 2, 2), unix_time(2012, 2, 3), true, true)};
+    s = {Period(unix_time(2012, 1, 3), unix_time(2012, 1, 5), true, true)};
+    REQUIRE(iset.intersectsPeriodSet(PeriodSet(s)) == true);
+
+    // Negative cases
+    s = {Period(unix_time(2012, 2, 2), unix_time(2012, 2, 3), true, true)};
+    REQUIRE(iset.intersectsPeriodSet(PeriodSet(s)) == false);
+  }
+}

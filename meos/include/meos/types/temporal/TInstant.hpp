@@ -49,6 +49,8 @@ public:
   const PeriodSet getTime() const;
   const Period period() const override;
   unique_ptr<TInstant<T>> shift(const time_t timedelta) const;
+  bool intersectsTimestamp(const time_t datetime) const override;
+  bool intersectsPeriod(const Period period) const override;
 
 private:
   const T value;

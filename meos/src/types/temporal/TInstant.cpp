@@ -38,3 +38,13 @@ template <typename T>
 TInstant<T> *TInstant<T>::shift_impl(const time_t timedelta) const {
   return new TInstant<T>(this->getValue(), this->getTimestamp() + timedelta);
 }
+
+template <typename T>
+bool TInstant<T>::intersectsTimestamp(const time_t datetime) const {
+  return datetime == this->t;
+};
+
+template <typename T>
+bool TInstant<T>::intersectsPeriod(const Period period) const {
+  return period.contains_timestamp(this->t);
+};

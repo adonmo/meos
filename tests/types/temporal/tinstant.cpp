@@ -62,3 +62,64 @@ TEMPLATE_TEST_CASE("TInstant shift", "[tinst]", int, float) {
   unique_ptr<TInstant<TestType>> shifted = instant.shift(day);
   REQUIRE(shifted->getTimestamp() == unix_time(2012, 11, 2));
 }
+
+TEMPLATE_TEST_CASE("TInstant intersection functions", "[tinstantset]", int,
+                   float) {
+  TInstant<TestType> instant(10, unix_time(2012, 1, 2));
+
+  SECTION("intersectsTimestamp") {
+    // Positive cases
+    REQUIRE(instant.intersectsTimestamp(unix_time(2012, 1, 2)) == true);
+
+    // Negative cases
+    REQUIRE(instant.intersectsTimestamp(unix_time(2012, 1, 1)) == false);
+    REQUIRE(instant.intersectsTimestamp(unix_time(2012, 1, 2, 1)) == false);
+    REQUIRE(instant.intersectsTimestamp(unix_time(2012, 2, 2)) == false);
+  }
+
+  // clang-format off
+  SECTION("intersectsPeriod") {
+    // Positive cases
+    REQUIRE(instant.intersectsPeriod(Period(unix_time(2012, 1, 2), unix_time(2012, 1, 3), true, true)) == true);
+    REQUIRE(instant.intersectsPeriod(Period(unix_time(2012, 1, 2), unix_time(2012, 1, 5), true, true)) == true);
+    REQUIRE(instant.intersectsPeriod(Period(unix_time(2012, 1, 1, 12), unix_time(2012, 1, 2, 12), true, true)) == true);
+    REQUIRE(instant.intersectsPeriod(Period(unix_time(2012, 1, 2), unix_time(2012, 1, 3), true, false)) == true);
+
+    // Negative cases
+    REQUIRE(instant.intersectsPeriod(Period(unix_time(2012, 1, 2), unix_time(2012, 1, 3), false, true)) == false);
+    REQUIRE(instant.intersectsPeriod(Period(unix_time(2012, 1, 2), unix_time(2012, 1, 3), false, false)) == false);
+    REQUIRE(instant.intersectsPeriod(Period(unix_time(2012, 2, 2), unix_time(2012, 2, 3), true, true)) == false);
+  }
+  // clang-format on
+
+  SECTION("intersectsTimestampSet") {
+    // Positive cases
+    set<time_t> s = {unix_time(2012, 1, 2)};
+    REQUIRE(instant.intersectsTimestampSet(TimestampSet(s)) == true);
+    s = {unix_time(2012, 1, 2), unix_time(2012, 1, 5)};
+    REQUIRE(instant.intersectsTimestampSet(TimestampSet(s)) == true);
+
+    // Negative cases
+    s = {unix_time(2012, 1, 1)};
+    REQUIRE(instant.intersectsTimestampSet(TimestampSet(s)) == false);
+    s = {unix_time(2012, 1, 2, 1)};
+    REQUIRE(instant.intersectsTimestampSet(TimestampSet(s)) == false);
+    s = {unix_time(2012, 1, 4, 1), unix_time(2012, 2, 2)};
+    REQUIRE(instant.intersectsTimestampSet(TimestampSet(s)) == false);
+  }
+
+  SECTION("intersectsPeriodSet") {
+    // Positive cases
+    set<Period> s = {
+        Period(unix_time(2012, 1, 2), unix_time(2012, 1, 3), true, true)};
+    REQUIRE(instant.intersectsPeriodSet(PeriodSet(s)) == true);
+    s = {Period(unix_time(2012, 1, 2), unix_time(2012, 1, 5), true, true)};
+    REQUIRE(instant.intersectsPeriodSet(PeriodSet(s)) == true);
+    s = {Period(unix_time(2012, 1, 2), unix_time(2012, 1, 5), true, true),
+         Period(unix_time(2012, 2, 2), unix_time(2012, 2, 3), true, true)};
+
+    // Negative cases
+    s = {Period(unix_time(2012, 2, 2), unix_time(2012, 2, 3), true, true)};
+    REQUIRE(instant.intersectsPeriodSet(PeriodSet(s)) == false);
+  }
+}
