@@ -5,6 +5,7 @@
 #include <meos/types/temporal/TInstant.hpp>
 #include <meos/types/temporal/TInstantFunctions.hpp>
 #include <meos/types/temporal/Temporal.hpp>
+#include <meos/util/time.hpp>
 #include <vector>
 
 using namespace std;
@@ -40,6 +41,20 @@ public:
   const Period period() const override;
   unique_ptr<TSequence<T>> shift(const time_t timedelta) const;
   TSequence<T> *shift_impl(const time_t timedelta) const override;
+
+  friend ostream &operator<<(ostream &os, const TSequence<T> &sequence) {
+    bool first = true;
+    os << (sequence.lower_inc ? "[" : "(");
+    for (auto const &instant : sequence.getInstants()) {
+      if (first)
+        first = false;
+      else
+        os << ", ";
+      os << instant;
+    }
+    os << (sequence.upper_inc ? "]" : ")");
+    return os;
+  }
 
 protected:
   TSequence(const TSequence &t);

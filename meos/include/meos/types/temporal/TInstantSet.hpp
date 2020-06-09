@@ -5,6 +5,7 @@
 #include <meos/types/temporal/TInstant.hpp>
 #include <meos/types/temporal/TInstantFunctions.hpp>
 #include <meos/types/temporal/Temporal.hpp>
+#include <meos/util/time.hpp>
 #include <set>
 
 using namespace std;
@@ -37,6 +38,20 @@ public:
   const Period period() const override;
   unique_ptr<TInstantSet<T>> shift(const time_t timedelta) const;
   TInstantSet<T> *shift_impl(const time_t timedelta) const override;
+
+  friend ostream &operator<<(ostream &os, const TInstantSet<T> &instant_set) {
+    bool first = true;
+    os << "{";
+    for (auto instant : instant_set.getInstants()) {
+      if (first)
+        first = false;
+      else
+        os << ", ";
+      os << instant;
+    }
+    os << "}";
+    return os;
+  }
 
 protected:
   TInstantSet(const TInstantSet &t);

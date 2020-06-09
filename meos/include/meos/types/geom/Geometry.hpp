@@ -1,6 +1,7 @@
 #ifndef MEOS_TYPES_GEOM_GEOMETRY_HPP
 #define MEOS_TYPES_GEOM_GEOMETRY_HPP
 
+#include <iosfwd>
 #include <meos/geos.h>
 #include <string>
 
@@ -34,6 +35,11 @@ public:
   friend bool operator<(const Geometry &lhs, const Geometry &rhs) {
     // TODO fixme
     return lhs.geom < rhs.geom;
+  }
+
+  friend std::ostream &operator<<(std::ostream &os, const Geometry &g) {
+    os << g.toWKT();
+    return os;
   }
 
 private:

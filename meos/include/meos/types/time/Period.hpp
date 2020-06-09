@@ -3,6 +3,7 @@
 
 #include <ctime>
 #include <iomanip>
+#include <meos/util/time.hpp>
 
 using namespace std;
 
@@ -63,7 +64,8 @@ public:
   friend ostream &operator<<(ostream &os, const Period &period) {
     auto opening = period.lower_inc() ? "[" : "(";
     auto closing = period.upper_inc() ? "]" : ")";
-    os << opening << period.lower() << ", " << period.upper() << closing;
+    os << opening << ISO8601_time(period.lower()) << ", "
+       << ISO8601_time(period.upper()) << closing;
     return os;
   }
 };

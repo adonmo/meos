@@ -5,6 +5,7 @@
 #include <meos/types/temporal/TInstantFunctions.hpp>
 #include <meos/types/temporal/Temporal.hpp>
 #include <meos/types/time/Period.hpp>
+#include <meos/util/time.hpp>
 
 using namespace std;
 
@@ -33,7 +34,7 @@ public:
   }
 
   friend ostream &operator<<(ostream &os, const TInstant<T> &instant) {
-    os << instant.getValue() << "@" << instant.getTimestamp();
+    os << instant.getValue() << "@" << ISO8601_time(instant.getTimestamp());
     return os;
   }
 
