@@ -9,6 +9,7 @@
 #include <meos/types/temporal/Temporal.hpp>
 #include <meos/types/time/Period.hpp>
 #include <meos/types/time/PeriodSet.hpp>
+#include <meos/types/time/TimestampSet.hpp>
 #include <string>
 
 using namespace std;
@@ -20,8 +21,9 @@ public:
   string write(const TInstantSet<T> *instant_set);
   string write(const TSequence<T> *sequence);
 
-  string write(Period *period);
-  string write(PeriodSet *period_set);
+  string write(const Period *period);
+  string write(const PeriodSet *period_set);
+  string write(const TimestampSet *timestamp_set);
 
   string write(const T &value);
 

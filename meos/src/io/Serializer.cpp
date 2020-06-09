@@ -1,12 +1,6 @@
 #include <meos/io/SerializationException.hpp>
 #include <meos/io/Serializer.hpp>
-#include <meos/types/temporal/TInstant.hpp>
-#include <meos/types/temporal/TInstantSet.hpp>
-#include <meos/types/temporal/TSequence.hpp>
-#include <meos/types/temporal/Temporal.hpp>
 #include <meos/util/time.hpp>
-#include <sstream>
-#include <string>
 
 using namespace std;
 
@@ -76,14 +70,21 @@ string Serializer<T>::write(TSequence<T> const *sequence) {
   return ss.str();
 }
 
-template <typename T> string Serializer<T>::write(Period *period) {
+template <typename T> string Serializer<T>::write(const Period *period) {
   stringstream ss;
   ss << *period;
   return ss.str();
 }
 
-template <typename T> string Serializer<T>::write(PeriodSet *period_set) {
+template <typename T> string Serializer<T>::write(const PeriodSet *period_set) {
   stringstream ss;
   ss << *period_set;
+  return ss.str();
+}
+
+template <typename T>
+string Serializer<T>::write(const TimestampSet *timestamp_set) {
+  stringstream ss;
+  ss << *timestamp_set;
   return ss.str();
 }

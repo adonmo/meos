@@ -9,6 +9,7 @@
 #include <meos/types/temporal/Temporal.hpp>
 #include <meos/types/time/Period.hpp>
 #include <meos/types/time/PeriodSet.hpp>
+#include <meos/types/time/TimestampSet.hpp>
 #include <string>
 
 using namespace std;
@@ -23,6 +24,7 @@ public:
 
   unique_ptr<Period> nextPeriod();
   unique_ptr<PeriodSet> nextPeriodSet();
+  unique_ptr<TimestampSet> nextTimestampSet();
 
   /**
    * Deserialize time in ISO8601 format
