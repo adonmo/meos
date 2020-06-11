@@ -7,12 +7,12 @@ using namespace std;
 
 template <typename T> class Range {
 private:
-  const T m_lower;
-  const T m_upper;
-  const bool m_lower_inc;
-  const bool m_upper_inc;
+  T const m_lower;
+  T const m_upper;
+  bool const m_lower_inc;
+  bool const m_upper_inc;
 
-  int compare(const Range &other) const {
+  int compare(Range const &other) const {
     if (lower() < other.lower())
       return -1;
     else if (lower() > other.lower())
@@ -33,8 +33,8 @@ private:
   }
 
 public:
-  Range(const T lower, const T upper, const bool lower_inc = false,
-        const bool upper_inc = false);
+  Range(T const lower, T const upper, bool const lower_inc = false,
+        bool const upper_inc = false);
 
   virtual unique_ptr<Range> clone() { return make_unique<Range>(*this); }
 
@@ -42,23 +42,23 @@ public:
   T upper() const;
   bool lower_inc() const;
   bool upper_inc() const;
-  unique_ptr<Range> shift(const T offset) const;
-  bool overlap(const Range &p) const;
-  bool contains(const T t) const;
+  unique_ptr<Range> shift(T const offset) const;
+  bool overlap(Range const &p) const;
+  bool contains(T const t) const;
 
-  friend bool operator==(const Range &lhs, const Range &rhs) {
+  friend bool operator==(Range const &lhs, Range const &rhs) {
     return lhs.compare(rhs) == 0;
   }
 
-  friend bool operator!=(const Range &lhs, const Range &rhs) {
+  friend bool operator!=(Range const &lhs, Range const &rhs) {
     return lhs.compare(rhs) != 0;
   }
 
-  friend bool operator<(const Range &lhs, const Range &rhs) {
+  friend bool operator<(Range const &lhs, Range const &rhs) {
     return lhs.compare(rhs) == -1;
   }
 
-  friend ostream &operator<<(ostream &os, const Range &period) {
+  friend ostream &operator<<(ostream &os, Range const &period) {
     auto opening = period.lower_inc() ? "[" : "(";
     auto closing = period.upper_inc() ? "]" : ")";
     os << opening << period.lower() << ", " << period.upper() << closing;

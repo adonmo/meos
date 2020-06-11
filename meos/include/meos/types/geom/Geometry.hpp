@@ -16,28 +16,28 @@ public:
 
   Geometry(std::string wkt);
   Geometry(double x, double y);
-  Geometry(const Geometry &g);
-  void operator=(const Geometry &g);
+  Geometry(Geometry const &g);
+  void operator=(Geometry const &g);
   ~Geometry();
 
   void point(double x, double y);
   void fromWKT(std::string wkt);
   std::string toWKT() const;
 
-  friend bool operator==(const Geometry &lhs, const Geometry &rhs) {
+  friend bool operator==(Geometry const &lhs, Geometry const &rhs) {
     return lhs.geom == rhs.geom;
   }
 
-  friend bool operator!=(const Geometry &lhs, const Geometry &rhs) {
+  friend bool operator!=(Geometry const &lhs, Geometry const &rhs) {
     return !(lhs == rhs);
   }
 
-  friend bool operator<(const Geometry &lhs, const Geometry &rhs) {
+  friend bool operator<(Geometry const &lhs, Geometry const &rhs) {
     // TODO fixme
     return lhs.geom < rhs.geom;
   }
 
-  friend std::ostream &operator<<(std::ostream &os, const Geometry &g) {
+  friend std::ostream &operator<<(std::ostream &os, Geometry const &g) {
     os << g.toWKT();
     return os;
   }

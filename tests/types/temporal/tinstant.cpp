@@ -3,7 +3,7 @@
 #include "../../common/time_utils.hpp"
 #include <meos/types/temporal/TInstant.hpp>
 
-const time_t day = 24 * 60 * 60 * 1000L;
+time_t const day = 24 * 60 * 60 * 1000L;
 
 TEMPLATE_TEST_CASE("TInstant duration function returns Instant", "[tinst]", int,
                    float, bool) {

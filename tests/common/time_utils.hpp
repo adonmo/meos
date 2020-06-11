@@ -3,10 +3,10 @@
 
 #include <ctime>
 
-const int seconds_per_minute = 60;
-const int seconds_per_hour = 3600;
-const int seconds_per_day = 86400;
-const int days_of_month[12] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+int const seconds_per_minute = 60;
+int const seconds_per_hour = 3600;
+int const seconds_per_day = 86400;
+int const days_of_month[12] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
 
 bool is_leap_year(short year);
 

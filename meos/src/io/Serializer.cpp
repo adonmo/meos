@@ -46,7 +46,7 @@ template <> string Serializer<Geometry>::write(Geometry const &value) {
   return value.toWKT();
 }
 
-template <typename T> string Serializer<T>::writeTime(const time_t &t) {
+template <typename T> string Serializer<T>::writeTime(time_t const &t) {
   return ISO8601_time(t);
 }
 
@@ -70,20 +70,20 @@ string Serializer<T>::write(TSequence<T> const *sequence) {
   return ss.str();
 }
 
-template <typename T> string Serializer<T>::write(const Period *period) {
+template <typename T> string Serializer<T>::write(Period const *period) {
   stringstream ss;
   ss << *period;
   return ss.str();
 }
 
-template <typename T> string Serializer<T>::write(const PeriodSet *period_set) {
+template <typename T> string Serializer<T>::write(PeriodSet const *period_set) {
   stringstream ss;
   ss << *period_set;
   return ss.str();
 }
 
 template <typename T>
-string Serializer<T>::write(const TimestampSet *timestamp_set) {
+string Serializer<T>::write(TimestampSet const *timestamp_set) {
   stringstream ss;
   ss << *timestamp_set;
   return ss.str();

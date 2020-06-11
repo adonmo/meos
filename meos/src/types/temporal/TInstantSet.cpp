@@ -12,14 +12,14 @@ template <typename T> TInstantSet<T>::TInstantSet(set<TInstant<T>> &instants_) {
     this->m_instants.insert(e.clone());
 }
 
-template <typename T> TInstantSet<T>::TInstantSet(const TInstantSet &t) {
+template <typename T> TInstantSet<T>::TInstantSet(TInstantSet const &t) {
   for (auto const &e : t.m_instants)
     this->m_instants.insert(e->clone());
 }
 
 template <typename T> set<TInstant<T>> TInstantSet<T>::getInstants() const {
   set<TInstant<T>> s;
-  for (const unique_ptr<TInstant<T>> &e : this->m_instants) {
+  for (auto const &e : this->m_instants) {
     s.insert(*e.get());
   }
   return s;
@@ -27,7 +27,7 @@ template <typename T> set<TInstant<T>> TInstantSet<T>::getInstants() const {
 
 template <typename T> set<TInstant<T>> TInstantSet<T>::instants() const {
   set<TInstant<T>> s;
-  for (const unique_ptr<TInstant<T>> &e : this->m_instants) {
+  for (auto const &e : this->m_instants) {
     s.insert(*e.get());
   }
   return s;
@@ -35,13 +35,13 @@ template <typename T> set<TInstant<T>> TInstantSet<T>::instants() const {
 
 template <typename T> set<time_t> TInstantSet<T>::timestamps() const {
   set<time_t> s;
-  for (const unique_ptr<TInstant<T>> &e : this->m_instants) {
+  for (auto const &e : this->m_instants) {
     s.insert(e.get()->getTimestamp());
   }
   return s;
 }
 
-template <typename T> const PeriodSet TInstantSet<T>::getTime() const {
+template <typename T> PeriodSet TInstantSet<T>::getTime() const {
   set<Period> s;
   for (auto const &e : instants()) {
     s.insert(e.period());
@@ -49,26 +49,26 @@ template <typename T> const PeriodSet TInstantSet<T>::getTime() const {
   return PeriodSet(s);
 }
 
-template <typename T> const Period TInstantSet<T>::period() const {
+template <typename T> Period TInstantSet<T>::period() const {
   return Period(this->startTimestamp(), this->endTimestamp(), true, true);
 }
 
 template <typename T>
-unique_ptr<TInstantSet<T>> TInstantSet<T>::shift(const time_t timedelta) const {
+unique_ptr<TInstantSet<T>> TInstantSet<T>::shift(time_t const timedelta) const {
   return unique_ptr<TInstantSet<T>>(this->shift_impl(timedelta));
 }
 
 template <typename T>
-TInstantSet<T> *TInstantSet<T>::shift_impl(const time_t timedelta) const {
+TInstantSet<T> *TInstantSet<T>::shift_impl(time_t const timedelta) const {
   set<TInstant<T>> s;
-  for (const unique_ptr<TInstant<T>> &e : this->m_instants) {
+  for (auto const &e : this->m_instants) {
     s.insert(TInstant<T>(e->getValue(), e->getTimestamp() + timedelta));
   }
   return new TInstantSet<T>(s);
 }
 
 template <typename T>
-bool TInstantSet<T>::intersectsTimestamp(const time_t datetime) const {
+bool TInstantSet<T>::intersectsTimestamp(time_t const datetime) const {
   for (auto const &t : this->timestamps()) {
     if (t == datetime) {
       return true;
@@ -78,7 +78,7 @@ bool TInstantSet<T>::intersectsTimestamp(const time_t datetime) const {
 };
 
 template <typename T>
-bool TInstantSet<T>::intersectsPeriod(const Period period) const {
+bool TInstantSet<T>::intersectsPeriod(Period const period) const {
   for (auto const &t : this->timestamps()) {
     if (period.contains_timestamp(t)) {
       return true;

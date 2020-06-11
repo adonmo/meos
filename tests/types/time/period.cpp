@@ -8,8 +8,8 @@ TEST_CASE("Period timespan", "[period]") {
   auto upper_inc = GENERATE(true, false);
   auto left =
       GENERATE(take(4, random(unix_time(2012, 1, 1), unix_time(2020, 1, 1))));
-  const time_t minute = 60 * 1000;
-  const time_t year = 365 * 24 * 60 * 60 * 1000L;
+  time_t const minute = 60 * 1000;
+  time_t const year = 365 * 24 * 60 * 60 * 1000L;
   auto duration = GENERATE(take(4, random(minute, year)));
   auto period =
       *make_unique<Period>(left, left + duration, lower_inc, upper_inc).get();
@@ -23,7 +23,7 @@ TEST_CASE("Period shift", "[period]") {
       *make_unique<Period>(unix_time(2012, 1, 1), unix_time(2012, 1, 7),
                            lower_inc, upper_inc)
            .get();
-  const time_t day = 24 * 60 * 60 * 1000L;
+  time_t const day = 24 * 60 * 60 * 1000L;
   auto period_out = *period_in.shift(day).get();
   REQUIRE(period_out.lower() == unix_time(2012, 1, 2));
   REQUIRE(period_out.upper() == unix_time(2012, 1, 8));

@@ -1,15 +1,12 @@
 #include "../../catch.hpp"
 #include "../../common/matchers.hpp"
 #include "../../common/time_utils.hpp"
-#include "../../common/utils.hpp"
-#include <meos/io/Deserializer.hpp>
-#include <meos/io/Serializer.hpp>
 #include <meos/types/time/Period.hpp>
 #include <meos/types/time/TimestampSet.hpp>
 
-const time_t minute = 60 * 1000L;
-const time_t day = 24 * 60 * 60 * 1000L;
-const time_t year = 365 * 24 * 60 * 60 * 1000L;
+time_t const minute = 60 * 1000L;
+time_t const day = 24 * 60 * 60 * 1000L;
+time_t const year = 365 * 24 * 60 * 60 * 1000L;
 
 TEST_CASE("TimestampSet period functions", "[timestampset]") {
   set<time_t> timestamps;

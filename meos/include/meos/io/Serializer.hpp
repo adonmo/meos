@@ -16,21 +16,21 @@ using namespace std;
 
 template <typename T = float> class Serializer {
 public:
-  string write(const Temporal<T> *temporal);
-  string write(const TInstant<T> *instant);
-  string write(const TInstantSet<T> *instant_set);
-  string write(const TSequence<T> *sequence);
+  string write(Temporal<T> const *temporal);
+  string write(TInstant<T> const *instant);
+  string write(TInstantSet<T> const *instant_set);
+  string write(TSequence<T> const *sequence);
 
-  string write(const Period *period);
-  string write(const PeriodSet *period_set);
-  string write(const TimestampSet *timestamp_set);
+  string write(Period const *period);
+  string write(PeriodSet const *period_set);
+  string write(TimestampSet const *timestamp_set);
 
-  string write(const T &value);
+  string write(T const &value);
 
   /**
    * Serialize time in ISO8601 format
    */
-  string writeTime(const time_t &time);
+  string writeTime(time_t const &time);
 
 private:
 };

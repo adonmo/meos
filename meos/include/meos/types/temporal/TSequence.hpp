@@ -37,14 +37,14 @@ public:
   set<TInstant<T>> instants() const;
 
   set<time_t> timestamps() const override;
-  const PeriodSet getTime() const;
-  const Period period() const override;
-  unique_ptr<TSequence<T>> shift(const time_t timedelta) const;
-  TSequence<T> *shift_impl(const time_t timedelta) const override;
-  bool intersectsTimestamp(const time_t datetime) const override;
-  bool intersectsPeriod(const Period period) const override;
+  PeriodSet getTime() const;
+  Period period() const override;
+  unique_ptr<TSequence<T>> shift(time_t const timedelta) const;
+  TSequence<T> *shift_impl(time_t const timedelta) const override;
+  bool intersectsTimestamp(time_t const datetime) const override;
+  bool intersectsPeriod(Period const period) const override;
 
-  friend ostream &operator<<(ostream &os, const TSequence<T> &sequence) {
+  friend ostream &operator<<(ostream &os, TSequence const &sequence) {
     bool first = true;
     os << (sequence.lower_inc ? "[" : "(");
     for (auto const &instant : sequence.getInstants()) {
@@ -59,7 +59,7 @@ public:
   }
 
 protected:
-  TSequence(const TSequence &t);
+  TSequence(TSequence const &t);
 
 private:
   TSequence<T> *clone_impl() const override { return new TSequence<T>(*this); };

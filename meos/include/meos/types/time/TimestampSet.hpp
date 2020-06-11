@@ -13,7 +13,7 @@ class TimestampSet {
 public:
   TimestampSet(set<time_t> &timestamps_);
 
-  TimestampSet(const TimestampSet &t);
+  TimestampSet(TimestampSet const &t);
 
   set<Period> periods() const;
   Period period() const;
@@ -22,8 +22,8 @@ public:
   Period endPeriod() const;
   Period periodN(int n) const;
 
-  const time_t timespan() const;
-  unique_ptr<TimestampSet> shift(const time_t timedelta) const;
+  time_t timespan() const;
+  unique_ptr<TimestampSet> shift(time_t const timedelta) const;
 
   set<time_t> timestamps() const;
   int numTimestamps() const;
@@ -31,19 +31,19 @@ public:
   time_t endTimestamp() const;
   time_t timestampN(int n) const;
 
-  friend bool operator==(const TimestampSet &lhs, const TimestampSet &rhs) {
+  friend bool operator==(TimestampSet const &lhs, TimestampSet const &rhs) {
     return lhs.timestamps() == rhs.timestamps();
   }
 
-  friend bool operator!=(const TimestampSet &lhs, const TimestampSet &rhs) {
+  friend bool operator!=(TimestampSet const &lhs, TimestampSet const &rhs) {
     return lhs.timestamps() != rhs.timestamps();
   }
 
-  friend bool operator<(const TimestampSet &lhs, const TimestampSet &rhs) {
+  friend bool operator<(TimestampSet const &lhs, TimestampSet const &rhs) {
     return lhs.timestamps() < rhs.timestamps();
   }
 
-  friend ostream &operator<<(ostream &os, const TimestampSet &timestamp_set) {
+  friend ostream &operator<<(ostream &os, TimestampSet const &timestamp_set) {
     bool first = true;
     os << "{";
     for (auto t : timestamp_set.timestamps()) {

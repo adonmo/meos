@@ -2,18 +2,18 @@
 #include <meos/types/time/TimestampSet.hpp>
 
 TimestampSet::TimestampSet(set<time_t> &timestamps_) {
-  for (const auto &e : timestamps_)
+  for (auto const &e : timestamps_)
     m_timestamps.insert(e);
 }
 
-TimestampSet::TimestampSet(const TimestampSet &t) {
-  for (const auto &e : t.m_timestamps)
+TimestampSet::TimestampSet(TimestampSet const &t) {
+  for (auto const &e : t.m_timestamps)
     m_timestamps.insert(e);
 }
 
 set<Period> TimestampSet::periods() const {
   set<Period> s;
-  for (const auto &e : m_timestamps) {
+  for (auto const &e : m_timestamps) {
     s.insert(Period(e, e, true, true));
   }
   return s;
@@ -52,20 +52,20 @@ Period TimestampSet::periodN(int n) const {
 }
 
 /**
- * Note: timespan is not defined on TimestampSet officially
+ * Note: timespan is not defined on TimestampSet in official MobilityDB's spec
  */
-const time_t TimestampSet::timespan() const { return 0; }
+time_t TimestampSet::timespan() const { return 0; }
 
-unique_ptr<TimestampSet> TimestampSet::shift(const time_t timedelta) const {
+unique_ptr<TimestampSet> TimestampSet::shift(time_t const timedelta) const {
   set<time_t> pset;
-  for (const auto &e : m_timestamps)
+  for (auto const &e : m_timestamps)
     pset.insert(e + timedelta);
   return make_unique<TimestampSet>(pset);
 }
 
 set<time_t> TimestampSet::timestamps() const {
   set<time_t> s;
-  for (const auto &e : m_timestamps) {
+  for (auto const &e : m_timestamps) {
     s.insert(e);
   }
   return s;

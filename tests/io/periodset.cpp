@@ -9,15 +9,15 @@
 
 using namespace std;
 
-const long millis_in_day = 86400000L;
+long const millis_in_day = 86400000L;
 
 /**
  * Splitting a serialized period set is not straight forward.
  * This is because we can't just split based on ", " as the delimiter
  * as even periods include it.
  */
-set<string> split_period_set_into_periods(const string &period_set_str) {
-  const string delim = ", ";
+set<string> split_period_set_into_periods(string const &period_set_str) {
+  string const delim = ", ";
   set<string> tokens;
   size_t prev = 0, pos = 0;
   do {

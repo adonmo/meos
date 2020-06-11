@@ -4,6 +4,6 @@
 #include <iomanip>
 #include <sstream>
 
-std::string ISO8601_time(const time_t &t);
+std::string ISO8601_time(time_t const &t);
 
 #endif

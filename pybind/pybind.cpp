@@ -11,18 +11,18 @@ extern "C" {
 namespace py = pybind11;
 
 template <typename T>
-void declare_temporal_types(py::module &m, const std::string &typesuffix) {
+void declare_temporal_types(py::module &m, std::string const &typesuffix) {
   py::class_<Serializer<T>>(m, ("Serializer" + typesuffix).c_str())
       .def(py::init<>())
-      .def("write", (string(Serializer<T>::*)(const TInstant<T> *)) &
+      .def("write", (string(Serializer<T>::*)(TInstant<T> const *)) &
                         Serializer<T>::write)
-      .def("write", (string(Serializer<T>::*)(const TInstantSet<T> *)) &
+      .def("write", (string(Serializer<T>::*)(TInstantSet<T> const *)) &
                         Serializer<T>::write)
-      .def("write", (string(Serializer<T>::*)(const TSequence<T> *)) &
+      .def("write", (string(Serializer<T>::*)(TSequence<T> const *)) &
                         Serializer<T>::write);
 
   py::class_<Deserializer<T>>(m, ("Deserializer" + typesuffix).c_str())
-      .def(py::init<const string &>())
+      .def(py::init<string const &>())
       .def("nextTInstant", &Deserializer<T>::nextTInstant)
       .def("nextTInstantSet", &Deserializer<T>::nextTInstantSet)
       .def("nextTSequence", &Deserializer<T>::nextTSequence);
@@ -36,7 +36,7 @@ void declare_temporal_types(py::module &m, const std::string &typesuffix) {
           },
           py::is_operator())
       .def("__hash__",
-           [](const TInstant<T> &instant) {
+           [](TInstant<T> const &instant) {
              return py::hash(
                  py::make_tuple(instant.getValue(), instant.getTimestamp()));
            })
@@ -70,13 +70,13 @@ PYBIND11_MODULE(pymeos, m) {
   declare_temporal_types<Geometry>(m, "Geom");
 
   py::class_<Period>(m, "Period")
-      .def(py::init<time_t, time_t, const bool, const bool>())
+      .def(py::init<time_t, time_t, bool const, bool const>())
       .def(
           "__eq__",
           [](Period const &self, Period const &other) { return self == other; },
           py::is_operator())
       .def("__hash__",
-           [](const Period &period) {
+           [](Period const &period) {
              return py::hash(py::make_tuple(period.lower(), period.upper(),
                                             period.lower_inc(),
                                             period.upper_inc()));

@@ -4,11 +4,9 @@
 template <typename T>
 TInstant<T>::TInstant(T value_, std::time_t t_) : value(value_), t(t_) {}
 
-template <typename T> const T &TInstant<T>::getValue() const {
-  return this->value;
-}
+template <typename T> T TInstant<T>::getValue() const { return this->value; }
 
-template <typename T> const std::time_t &TInstant<T>::getTimestamp() const {
+template <typename T> std::time_t TInstant<T>::getTimestamp() const {
   return this->t;
 }
 
@@ -20,31 +18,31 @@ template <typename T> set<time_t> TInstant<T>::timestamps() const {
   return {getTimestamp()};
 }
 
-template <typename T> const PeriodSet TInstant<T>::getTime() const {
+template <typename T> PeriodSet TInstant<T>::getTime() const {
   set<Period> s = {this->period()};
   return PeriodSet(s);
 }
 
-template <typename T> const Period TInstant<T>::period() const {
+template <typename T> Period TInstant<T>::period() const {
   return Period(this->getTimestamp(), this->getTimestamp(), true, true);
 };
 
 template <typename T>
-unique_ptr<TInstant<T>> TInstant<T>::shift(const time_t timedelta) const {
+unique_ptr<TInstant<T>> TInstant<T>::shift(time_t const timedelta) const {
   return unique_ptr<TInstant<T>>(this->shift_impl(timedelta));
 }
 
 template <typename T>
-TInstant<T> *TInstant<T>::shift_impl(const time_t timedelta) const {
+TInstant<T> *TInstant<T>::shift_impl(time_t const timedelta) const {
   return new TInstant<T>(this->getValue(), this->getTimestamp() + timedelta);
 }
 
 template <typename T>
-bool TInstant<T>::intersectsTimestamp(const time_t datetime) const {
+bool TInstant<T>::intersectsTimestamp(time_t const datetime) const {
   return datetime == this->t;
 };
 
 template <typename T>
-bool TInstant<T>::intersectsPeriod(const Period period) const {
+bool TInstant<T>::intersectsPeriod(Period const period) const {
   return period.contains_timestamp(this->t);
 };

@@ -7,14 +7,14 @@
 using namespace std;
 
 template <typename T>
-Deserializer<T>::Deserializer(const string &in_) : in(in_) {
+Deserializer<T>::Deserializer(string const &in_) : in(in_) {
   iter = in.begin();
 }
 
 template <typename T> unique_ptr<Temporal<T>> Deserializer<T>::nextTemporal() {
   skipWhitespaces();
-  const char lookahead1 = peek(0);
-  const char lookahead2 = peek(1);
+  char const lookahead1 = peek(0);
+  char const lookahead2 = peek(1);
   if (lookahead1 != '{' && lookahead1 != '[' && lookahead1 != '(') {
     return nextTInstant();
   } else if (lookahead1 == '[' || lookahead1 == '(') {
@@ -38,9 +38,9 @@ unique_ptr<TSequence<T>> Deserializer<T>::nextTSequence() {
     throw DeserializationException("Expected either a '[' or '('");
   }
 
-  const char opening = peek(0);
+  char const opening = peek(0);
   consumeChar(opening);
-  const bool lower_inc = opening == '[';
+  bool const lower_inc = opening == '[';
 
   vector<unique_ptr<TInstant<T>>> v = {};
   v.push_back(nextTInstant());
@@ -56,9 +56,9 @@ unique_ptr<TSequence<T>> Deserializer<T>::nextTSequence() {
     throw DeserializationException("Expected either a ']' or ')'");
   }
 
-  const char closing = peek(0);
+  char const closing = peek(0);
   consumeChar(closing);
-  const bool upper_inc = closing == ']';
+  bool const upper_inc = closing == ']';
 
   return make_unique<TSequence<T>>(v, lower_inc, upper_inc);
 };
@@ -105,9 +105,9 @@ template <typename T> unique_ptr<Period> Deserializer<T>::nextPeriod() {
     throw DeserializationException("Expected either a '[' or '('");
   }
 
-  const char opening = peek(0);
+  char const opening = peek(0);
   consumeChar(opening);
-  const bool lower_inc = opening == '[';
+  bool const lower_inc = opening == '[';
 
   auto lbound = nextTime();
   skipWhitespaces();
@@ -119,9 +119,9 @@ template <typename T> unique_ptr<Period> Deserializer<T>::nextPeriod() {
     throw DeserializationException("Expected either a ']' or ')'");
   }
 
-  const char closing = peek(0);
+  char const closing = peek(0);
   consumeChar(closing);
-  const bool upper_inc = closing == ']';
+  bool const upper_inc = closing == ']';
 
   return make_unique<Period>(lbound, rbound, lower_inc, upper_inc);
 };
@@ -197,7 +197,7 @@ template <typename T> time_t Deserializer<T>::nextTime() {
     input += "Z";
   }
 
-  constexpr const size_t expectedLength = sizeof("1234-12-12T12:12:12Z") - 1;
+  constexpr size_t const expectedLength = sizeof("1234-12-12T12:12:12Z") - 1;
   static_assert(expectedLength == 20, "Unexpected ISO 8601 date/time length");
 
   if (input.length() < expectedLength) {
@@ -353,7 +353,7 @@ template <typename T> void Deserializer<T>::skipWhitespaces() {
   skipChars(" \t\n");
 }
 
-template <typename T> void Deserializer<T>::consumeChar(const char c) {
+template <typename T> void Deserializer<T>::consumeChar(char const c) {
   string::size_type current_pos = iter - in.begin();
   if (*iter != c) {
     std::stringstream error;
@@ -363,7 +363,7 @@ template <typename T> void Deserializer<T>::consumeChar(const char c) {
   iter += 1;
 }
 
-template <typename T> void Deserializer<T>::skipChars(const string &chars) {
+template <typename T> void Deserializer<T>::skipChars(string const &chars) {
   string::size_type current_pos = iter - in.begin();
   string::size_type end_pos = in.find_first_not_of(chars, current_pos);
   if (end_pos == string::npos) {

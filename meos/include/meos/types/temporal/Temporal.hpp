@@ -50,17 +50,17 @@ public:
   /**
    * Period set on which the temporal value is defined.
    */
-  virtual const PeriodSet getTime() const = 0;
+  virtual PeriodSet getTime() const = 0;
 
   /**
    * Interval on which the temporal value is defined.
    */
-  const time_t timespan() const;
+  time_t timespan() const;
 
   /**
    * Period on which the temporal value is defined ignoring potential time gaps.
    */
-  virtual const Period period() const = 0;
+  virtual Period period() const = 0;
 
   /**
    * Set of instants.
@@ -70,22 +70,22 @@ public:
   /**
    * Number of distinct timestamps.
    */
-  const int numTimestamps() const;
+  int numTimestamps() const;
 
   /**
    * Start timestamp.
    */
-  const time_t startTimestamp() const;
+  time_t startTimestamp() const;
 
   /**
    * End timestamp.
    */
-  const time_t endTimestamp() const;
+  time_t endTimestamp() const;
 
   /**
    * N-th timestamp.
    */
-  const time_t timestampN(int n) const;
+  time_t timestampN(int n) const;
 
   /**
    * Set of timestamps.
@@ -95,32 +95,32 @@ public:
   /**
    * Shift the temporal value by a time interval
    */
-  unique_ptr<Temporal<T>> shift(const time_t timedelta) const;
+  unique_ptr<Temporal<T>> shift(time_t const timedelta) const;
 
   /**
    * Does the temporal value intersect the timestamp?
    */
-  virtual bool intersectsTimestamp(const time_t datetime) const = 0;
+  virtual bool intersectsTimestamp(time_t const datetime) const = 0;
 
   /**
    * Does the temporal value intersect the timestamp set?
    */
-  bool intersectsTimestampSet(const TimestampSet timestampset) const;
+  bool intersectsTimestampSet(TimestampSet const timestampset) const;
 
   /**
    * Does the temporal value intersect the period?
    */
-  virtual bool intersectsPeriod(const Period period) const = 0;
+  virtual bool intersectsPeriod(Period const period) const = 0;
 
   /**
    * Does the temporal value intersect the period set?
    */
-  bool intersectsPeriodSet(const PeriodSet periodset) const;
+  bool intersectsPeriodSet(PeriodSet const periodset) const;
 
 private:
   virtual Temporal<T> *clone_impl() const = 0;
 
-  virtual Temporal<T> *shift_impl(const time_t timedelta) const = 0;
+  virtual Temporal<T> *shift_impl(time_t const timedelta) const = 0;
 };
 
 template class Temporal<bool>;

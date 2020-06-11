@@ -68,7 +68,12 @@
         "typeindex": "cpp",
         "typeinfo": "cpp",
         "valarray": "cpp",
-        "geos.h": "c"
+        "geos.h": "c",
+        "compare": "cpp",
+        "concepts": "cpp",
+        "csignal": "cpp",
+        "ranges": "cpp",
+        "stop_token": "cpp"
     },
     "editor.formatOnSave": true,
     "editor.defaultFormatter": "xaver.clang-format"

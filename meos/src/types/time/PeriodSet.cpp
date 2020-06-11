@@ -2,7 +2,7 @@
 #include <meos/types/time/PeriodSet.hpp>
 
 PeriodSet::PeriodSet(set<unique_ptr<Period>> &periods_) {
-  for (const auto &e : periods_)
+  for (auto const &e : periods_)
     m_periods.insert(e->clone());
 }
 
@@ -11,14 +11,14 @@ PeriodSet::PeriodSet(set<Period> &periods_) {
     m_periods.insert(e.clone());
 }
 
-PeriodSet::PeriodSet(const PeriodSet &t) {
-  for (const auto &e : t.m_periods)
+PeriodSet::PeriodSet(PeriodSet const &t) {
+  for (auto const &e : t.m_periods)
     m_periods.insert(e->clone());
 }
 
 set<Period> PeriodSet::periods() const {
   set<Period> s;
-  for (const auto &e : m_periods) {
+  for (auto const &e : m_periods) {
     s.insert(*e.get());
   }
   return s;
@@ -56,23 +56,23 @@ Period PeriodSet::periodN(int n) const {
   return *next(s.begin(), n);
 }
 
-const time_t PeriodSet::timespan() const {
+time_t PeriodSet::timespan() const {
   time_t result = 0;
-  for (const unique_ptr<Period> &period : m_periods)
+  for (auto const &period : m_periods)
     result += period->timespan();
   return result;
 }
 
-unique_ptr<PeriodSet> PeriodSet::shift(const time_t timedelta) const {
+unique_ptr<PeriodSet> PeriodSet::shift(time_t const timedelta) const {
   set<unique_ptr<Period>> pset;
-  for (const auto &e : m_periods)
+  for (auto const &e : m_periods)
     pset.insert(e->shift(timedelta));
   return make_unique<PeriodSet>(pset);
 }
 
 set<time_t> PeriodSet::timestamps() const {
   set<time_t> s;
-  for (const auto &e : m_periods) {
+  for (auto const &e : m_periods) {
     s.insert(e->lower());
     s.insert(e->upper());
   }

@@ -37,7 +37,7 @@ TEST_CASE("geometries are deserialized", "[deserializer][geom]") {
     char buffer[256];
 
     // clang-format off
-    const char *fmt = GENERATE(
+    char const *fmt = GENERATE(
       "POINT (%lf %lf)",
       "POINT(%lf %lf)",
       "POINT(%lf    %lf)",

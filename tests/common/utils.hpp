@@ -9,7 +9,7 @@ using namespace std;
 
 template <typename T> set<T> unwrap(set<unique_ptr<T>> &sp) {
   set<T> s;
-  for (const unique_ptr<T> &e : sp) {
+  for (auto const &e : sp) {
     s.insert(*e.get());
   }
   return s;
@@ -18,14 +18,14 @@ template <typename T> set<T> unwrap(set<unique_ptr<T>> &sp) {
 template <typename T> vector<T> unwrap(vector<unique_ptr<T>> &vp) {
   vector<T> v;
   v.reserve(vp.size());
-  for (const unique_ptr<T> &e : vp) {
+  for (auto const &e : vp) {
     v.push_back(*e.get());
   }
   return v;
 }
 
-vector<string> split(const string &str, const string &delim);
+vector<string> split(string const &str, string const &delim);
 
-set<string> split_into_set(const string &str, const string &delim);
+set<string> split_into_set(string const &str, string const &delim);
 
 #endif

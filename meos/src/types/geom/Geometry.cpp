@@ -3,11 +3,11 @@
 
 Geometry::Geometry(std::string wkt) { fromWKT(wkt); }
 Geometry::Geometry(double x, double y) { point(x, y); }
-Geometry::Geometry(const Geometry &g) {
+Geometry::Geometry(Geometry const &g) {
   free();
   geom = GEOSGeom_clone_r(geos_context, g.geom);
 }
-void Geometry::operator=(const Geometry &g) {
+void Geometry::operator=(Geometry const &g) {
   free();
   geom = GEOSGeom_clone_r(geos_context, g.geom);
 }

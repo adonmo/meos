@@ -1,6 +1,6 @@
 #include <meos/util/time.hpp>
 
-std::string ISO8601_time(const time_t &t) {
+std::string ISO8601_time(time_t const &t) {
   std::stringstream textStream;
   // TODO: FIXME as of now, milliseconds are lost
   time_t tt(t);

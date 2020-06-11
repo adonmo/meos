@@ -34,14 +34,14 @@ public:
   set<TInstant<T>> instants() const;
 
   set<time_t> timestamps() const override;
-  const PeriodSet getTime() const;
-  const Period period() const override;
-  unique_ptr<TInstantSet<T>> shift(const time_t timedelta) const;
-  TInstantSet<T> *shift_impl(const time_t timedelta) const override;
-  bool intersectsTimestamp(const time_t datetime) const override;
-  bool intersectsPeriod(const Period period) const override;
+  PeriodSet getTime() const;
+  Period period() const override;
+  unique_ptr<TInstantSet<T>> shift(time_t const timedelta) const;
+  TInstantSet<T> *shift_impl(time_t const timedelta) const override;
+  bool intersectsTimestamp(time_t const datetime) const override;
+  bool intersectsPeriod(Period const period) const override;
 
-  friend ostream &operator<<(ostream &os, const TInstantSet<T> &instant_set) {
+  friend ostream &operator<<(ostream &os, TInstantSet const &instant_set) {
     bool first = true;
     os << "{";
     for (auto instant : instant_set.getInstants()) {
@@ -56,7 +56,7 @@ public:
   }
 
 protected:
-  TInstantSet(const TInstantSet &t);
+  TInstantSet(TInstantSet const &t);
 
 private:
   TInstantSet<T> *clone_impl() const override {

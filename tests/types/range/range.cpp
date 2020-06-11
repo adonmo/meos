@@ -8,7 +8,7 @@ TEMPLATE_TEST_CASE("Range shift", "[range]", int, float) {
   TestType lower = 0;
   TestType upper = 1000;
   auto range_in = Range<TestType>(upper, lower, lower_inc, upper_inc);
-  const TestType offset = 100L;
+  TestType const offset = 100L;
   auto range_out = *range_in.shift(offset).get();
   REQUIRE(range_out.lower() == upper + offset);
   REQUIRE(range_out.upper() == lower + offset);

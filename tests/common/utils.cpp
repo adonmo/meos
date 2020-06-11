@@ -1,6 +1,6 @@
 #include "./utils.hpp"
 
-vector<string> split(const string &str, const string &delim) {
+vector<string> split(string const &str, string const &delim) {
   vector<string> tokens;
   size_t prev = 0, pos = 0;
   do {
@@ -15,7 +15,7 @@ vector<string> split(const string &str, const string &delim) {
   return tokens;
 }
 
-set<string> split_into_set(const string &str, const string &delim) {
+set<string> split_into_set(string const &str, string const &delim) {
   set<string> tokens;
   size_t prev = 0, pos = 0;
   do {

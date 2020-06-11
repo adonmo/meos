@@ -55,7 +55,7 @@ def test_serialization():
     assert (si.write(ti1) == "10@2011-01-01T00:00:00+0000")
 
     sf = SerializerFloat()
-    assert (sf.write(tseqf) == "[1.000000@2011-01-01T00:00:00+0000, 2.500000@2011-01-02T00:00:00+0000)")
+    assert (sf.write(tseqf) == "[1@2011-01-01T00:00:00+0000, 2.5@2011-01-02T00:00:00+0000)")
 
     # For sets, ordering might vary, so we need to check accordingly
     serialized = si.write(tseti)

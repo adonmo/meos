@@ -16,7 +16,7 @@ using namespace std;
 
 template <typename T = float> class Deserializer {
 public:
-  Deserializer(const string &in);
+  Deserializer(string const &in);
   unique_ptr<Temporal<T>> nextTemporal();
   unique_ptr<TSequence<T>> nextTSequence();
   unique_ptr<TInstantSet<T>> nextTInstantSet();
@@ -33,13 +33,13 @@ public:
   T nextValue();
 
 private:
-  const string in;
+  string const in;
   string::const_iterator iter;
   int nextInt();
   char peek(int lookahead);
   void skipWhitespaces();
-  void consumeChar(const char c);
-  void skipChars(const string &chars);
+  void consumeChar(char const c);
+  void skipChars(string const &chars);
   bool hasNext();
 };
 
