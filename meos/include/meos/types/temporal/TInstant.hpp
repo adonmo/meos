@@ -4,14 +4,13 @@
 #include <meos/types/geom/Geometry.hpp>
 #include <meos/types/temporal/TInstantFunctions.hpp>
 #include <meos/types/temporal/Temporal.hpp>
-#include <meos/types/time/Period.hpp>
 #include <meos/util/time.hpp>
 
 using namespace std;
 
 template <typename T>
 class TInstant : public Temporal<T>,
-                 public TInstantFunctions<TInstant<T>, TInstant<T>> {
+                 public TInstantFunctions<TInstant<T>, TInstant<T>, T> {
 public:
   TInstant(T value, time_t t);
   T getValue() const;
@@ -45,6 +44,7 @@ public:
    */
   set<TInstant> instants() const;
 
+  set<Range<T>> getValues() const override;
   set<time_t> timestamps() const override;
   PeriodSet getTime() const;
   Period period() const override;

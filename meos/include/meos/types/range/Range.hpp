@@ -2,6 +2,7 @@
 #define MEOS_TYPES_RANGE_RANGE_HPP
 
 #include <iomanip>
+#include <meos/types/geom/Geometry.hpp>
 
 using namespace std;
 
@@ -66,7 +67,10 @@ public:
   }
 };
 
+template class Range<bool>;
 template class Range<int>;
 template class Range<float>;
+template class Range<string>;
+template class Range<Geometry>;
 
 #endif

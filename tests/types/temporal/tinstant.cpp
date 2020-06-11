@@ -1,6 +1,7 @@
 #include "../../catch.hpp"
 #include "../../common/matchers.hpp"
 #include "../../common/time_utils.hpp"
+#include <meos/types/range/Range.hpp>
 #include <meos/types/temporal/TInstant.hpp>
 
 time_t const day = 24 * 60 * 60 * 1000L;
@@ -9,6 +10,20 @@ TEMPLATE_TEST_CASE("TInstant duration function returns Instant", "[tinst]", int,
                    float, bool) {
   TInstant<TestType> instant(1, unix_time(2012, 1, 1));
   REQUIRE(instant.duration() == "Instant");
+}
+
+TEMPLATE_TEST_CASE("TInstant value functions", "[tinst]", int, float, bool) {
+  TestType value = 1;
+  TInstant<TestType> instant(value, unix_time(2012, 1, 1));
+
+  set<Range<TestType>> expected = {
+      Range<TestType>(instant.getValue(), instant.getValue(), true, true)};
+
+  REQUIRE_THAT(instant.getValues(), UnorderedEquals(expected));
+  REQUIRE(instant.startValue() == value);
+  REQUIRE(instant.endValue() == value);
+  REQUIRE(instant.minValue() == value);
+  REQUIRE(instant.maxValue() == value);
 }
 
 TEMPLATE_TEST_CASE("TInstant instant functions", "[tinst]", int, float) {

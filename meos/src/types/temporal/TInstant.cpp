@@ -14,6 +14,10 @@ template <typename T> set<TInstant<T>> TInstant<T>::instants() const {
   return {*this};
 }
 
+template <typename T> set<Range<T>> TInstant<T>::getValues() const {
+  return {Range<T>(this->getValue(), this->getValue(), true, true)};
+}
+
 template <typename T> set<time_t> TInstant<T>::timestamps() const {
   return {getTimestamp()};
 }

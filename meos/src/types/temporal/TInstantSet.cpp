@@ -33,6 +33,14 @@ template <typename T> set<TInstant<T>> TInstantSet<T>::instants() const {
   return s;
 }
 
+template <typename T> set<Range<T>> TInstantSet<T>::getValues() const {
+  set<Range<T>> s;
+  for (auto const &e : this->m_instants) {
+    s.insert(Range<T>(e->getValue(), e->getValue(), true, true));
+  }
+  return s;
+}
+
 template <typename T> set<time_t> TInstantSet<T>::timestamps() const {
   set<time_t> s;
   for (auto const &e : this->m_instants) {

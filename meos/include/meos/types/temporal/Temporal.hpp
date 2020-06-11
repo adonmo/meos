@@ -2,6 +2,7 @@
 #define MEOS_TYPES_TEMPORAL_TEMPORAL_HPP
 
 #include <meos/types/geom/Geometry.hpp>
+#include <meos/types/range/Range.hpp>
 #include <meos/types/time/Period.hpp>
 #include <meos/types/time/PeriodSet.hpp>
 #include <meos/types/time/TimestampSet.hpp>
@@ -22,30 +23,26 @@ public:
    */
   virtual string duration() const { return "Temporal"; };
 
-  // /**
-  //  * Set of values taken by the temporal value.
-  //  */
-  // virtual set<unique_ptr<T>> getValues() const;
+  /**
+   * Set of values taken by the temporal value.
+   */
+  virtual set<Range<T>> getValues() const = 0;
 
-  // /**
-  //  * Start value.
-  //  */
-  // virtual unique_ptr<T> startValue() const;
+  /**
+   * Minimum value.
+   *
+   * The function does not take into account whether the bounds are inclusive or
+   * not.
+   */
+  T minValue() const;
 
-  // /**
-  //  * End value.
-  //  */
-  // virtual unique_ptr<T> endValue() const;
-
-  // /**
-  //  * Minimum value.
-  //  */
-  // virtual unique_ptr<T> minValue() const;
-
-  // /**
-  //  * Maximum value.
-  //  */
-  // virtual unique_ptr<T> maxValue() const;
+  /**
+   * Maximum value.
+   *
+   * The function does not take into account whether the bounds are inclusive or
+   * not.
+   */
+  T maxValue() const;
 
   /**
    * Period set on which the temporal value is defined.

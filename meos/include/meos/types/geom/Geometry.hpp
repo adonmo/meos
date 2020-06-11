@@ -37,6 +37,11 @@ public:
     return lhs.geom < rhs.geom;
   }
 
+  friend bool operator>(Geometry const &lhs, Geometry const &rhs) {
+    // TODO fixme
+    return lhs.geom > rhs.geom;
+  }
+
   friend std::ostream &operator<<(std::ostream &os, Geometry const &g) {
     os << g.toWKT();
     return os;

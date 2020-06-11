@@ -22,14 +22,21 @@ unique_ptr<Range<T>> Range<T>::shift(T const offset) const {
                             this->lower_inc(), this->upper_inc());
 }
 
+template <>
+unique_ptr<Range<Geometry>>
+Range<Geometry>::shift(Geometry const offset) const {
+  // TODO fixme
+  return make_unique<Range>(this->lower(), this->upper(), this->lower_inc(),
+                            this->upper_inc());
+}
+
 template <typename T> bool Range<T>::overlap(Range const &p) const {
-  T const o = min(this->upper(), p.upper()) - max(this->lower(), p.lower());
-  if (o > 0)
-    return true;
-  if (o < 0)
-    return false;
-  return this->lower() < p.lower() ? this->upper_inc() && p.lower_inc()
-                                   : p.upper_inc() && this->lower_inc();
+  auto min_upper = min(this->upper(), p.upper());
+  auto max_lower = max(this->lower(), p.lower());
+  if (min_upper == max_lower)
+    return this->lower() < p.lower() ? this->upper_inc() && p.lower_inc()
+                                     : p.upper_inc() && this->lower_inc();
+  return min_upper > max_lower;
 };
 
 template <typename T> bool Range<T>::contains(T const t) const {

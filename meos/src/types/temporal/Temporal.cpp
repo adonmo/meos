@@ -3,6 +3,22 @@
 
 template <typename T> Temporal<T>::Temporal() {}
 
+template <typename T> T Temporal<T>::minValue() const {
+  set<Range<T>> s = getValues();
+  if (s.size() <= 0) {
+    throw "At least one value expected";
+  }
+  return s.begin()->lower();
+}
+
+template <typename T> T Temporal<T>::maxValue() const {
+  set<Range<T>> s = getValues();
+  if (s.size() <= 0) {
+    throw "At least one value expected";
+  }
+  return s.rbegin()->upper();
+}
+
 template <typename T> int Temporal<T>::numTimestamps() const {
   return timestamps().size();
 }

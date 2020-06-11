@@ -43,6 +43,22 @@ template <typename T> set<TInstant<T>> TSequence<T>::instants() const {
   return s;
 }
 
+template <typename T> set<Range<T>> TSequence<T>::getValues() const {
+  if (this->m_instants.size() == 0)
+    return {};
+  T min = (*this->m_instants.begin())->getValue();
+  T max = (*this->m_instants.begin())->getValue();
+  for (auto const &e : this->m_instants) {
+    if (e->getValue() < min) {
+      min = e->getValue();
+    }
+    if (e->getValue() > max) {
+      max = e->getValue();
+    }
+  }
+  return {Range<T>(min, max, this->lower_inc, this->upper_inc)};
+}
+
 template <typename T> set<time_t> TSequence<T>::timestamps() const {
   set<time_t> s;
   for (auto const &e : this->m_instants) {

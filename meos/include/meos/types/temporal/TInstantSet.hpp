@@ -12,7 +12,7 @@ using namespace std;
 
 template <typename T = float>
 class TInstantSet : public Temporal<T>,
-                    public TInstantFunctions<TInstantSet<T>, TInstant<T>> {
+                    public TInstantFunctions<TInstantSet<T>, TInstant<T>, T> {
 public:
   set<unique_ptr<TInstant<T>>> m_instants;
 
@@ -33,6 +33,7 @@ public:
    */
   set<TInstant<T>> instants() const;
 
+  set<Range<T>> getValues() const override;
   set<time_t> timestamps() const override;
   PeriodSet getTime() const;
   Period period() const override;

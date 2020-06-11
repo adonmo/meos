@@ -16,6 +16,28 @@ TEMPLATE_TEST_CASE("TSequence duration function returns Sequence",
   REQUIRE(sequence.duration() == "Sequence");
 }
 
+TEMPLATE_TEST_CASE("TSequence value functions", "[tsequence]", int, float) {
+  auto lower_inc = GENERATE(true, false);
+  auto upper_inc = GENERATE(true, false);
+
+  vector<TInstant<TestType>> instants = {
+      TInstant<TestType>(2, unix_time(2012, 1, 1)),
+      TInstant<TestType>(1, unix_time(2012, 1, 2)),
+      TInstant<TestType>(4, unix_time(2012, 1, 3)),
+      TInstant<TestType>(3, unix_time(2012, 1, 4)),
+  };
+  TSequence<TestType> sequence(instants, lower_inc, upper_inc);
+
+  set<Range<TestType>> expected = {Range<TestType>(
+      sequence.minValue(), sequence.maxValue(), lower_inc, upper_inc)};
+
+  REQUIRE_THAT(sequence.getValues(), UnorderedEquals(expected));
+  REQUIRE(sequence.minValue() == 1);
+  REQUIRE(sequence.maxValue() == 4);
+  REQUIRE(sequence.startValue() == 2);
+  REQUIRE(sequence.endValue() == 3);
+}
+
 TEMPLATE_TEST_CASE("TSequence instant functions", "[tsequence]", int, float) {
   auto lower_inc = GENERATE(true, false);
   auto upper_inc = GENERATE(true, false);

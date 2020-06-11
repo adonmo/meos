@@ -8,8 +8,11 @@
  * following function defined on the TemporalType class:
  *
  *   set<TInstantType> TemporalType::instants() const
+ *
+ * where TemporalType == Temporal<BaseType>
+ *   and TInstantType == TInstant<BaseType>
  */
-template <typename TemporalType, typename TInstantType>
+template <typename TemporalType, typename TInstantType, typename BaseType>
 struct TInstantFunctions {
   /**
    * Number of distinct instants.
@@ -48,6 +51,24 @@ struct TInstantFunctions {
     }
     return *next(s.begin(), n);
   };
+
+  /**
+   * Start value.
+   *
+   * The function does not take into account whether the bounds are inclusive or
+   * not.
+   */
+  BaseType startValue() const {
+    return this->temporal().startInstant().getValue();
+  }
+
+  /**
+   * End value.
+   *
+   * The function does not take into account whether the bounds are inclusive or
+   * not.
+   */
+  BaseType endValue() const { return this->temporal().endInstant().getValue(); }
 
 private:
   TemporalType &temporal() { return static_cast<TemporalType &>(*this); }

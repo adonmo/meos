@@ -14,6 +14,26 @@ TEMPLATE_TEST_CASE("TInstantSet duration function returns InstantSet",
   REQUIRE(instant_set.duration() == "InstantSet");
 }
 
+TEMPLATE_TEST_CASE("TInstantSet value functions", "[tinstantset]", int, float) {
+  set<TInstant<TestType>> instants = {
+      TInstant<TestType>(2, unix_time(2012, 1, 1)),
+      TInstant<TestType>(1, unix_time(2012, 1, 2)),
+      TInstant<TestType>(4, unix_time(2012, 1, 3)),
+      TInstant<TestType>(3, unix_time(2012, 1, 4)),
+  };
+  TInstantSet<TestType> instant_set(instants);
+
+  set<Range<TestType>> expected;
+  for (auto const &e : instants)
+    expected.insert(Range<TestType>(e.getValue(), e.getValue(), true, true));
+
+  REQUIRE_THAT(instant_set.getValues(), UnorderedEquals(expected));
+  REQUIRE(instant_set.minValue() == 1);
+  REQUIRE(instant_set.maxValue() == 4);
+  REQUIRE(instant_set.startValue() == 2);
+  REQUIRE(instant_set.endValue() == 3);
+}
+
 TEMPLATE_TEST_CASE("TInstantSet instant functions", "[tinstantset]", int,
                    float) {
   set<TInstant<TestType>> instants;
