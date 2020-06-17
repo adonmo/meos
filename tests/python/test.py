@@ -108,6 +108,15 @@ def test_time_types():
     assert len(period_set.periods()) == 2
     assert {period_1, period_2} == period_set.periods()
 
+    # Serialization
+    si = SerializerInt()
+    assert (si.write(period_1) == "[2011-01-01T00:00:00+0000, 2011-01-02T00:00:00+0000)")
+
+    # Deserialization
+    di = DeserializerInt("[2011-01-01T00:00:00+0000, 2011-01-02T00:00:00+0000)")
+    period = di.nextPeriod()
+    assert period == period_1
+
 
 if __name__ == "__main__":
     test_data_types()

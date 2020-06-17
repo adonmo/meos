@@ -19,13 +19,19 @@ void declare_temporal_types(py::module &m, std::string const &typesuffix) {
       .def("write", (string(Serializer<T>::*)(TInstantSet<T> const *)) &
                         Serializer<T>::write)
       .def("write", (string(Serializer<T>::*)(TSequence<T> const *)) &
+                        Serializer<T>::write)
+      .def("write",
+           (string(Serializer<T>::*)(Period const *)) & Serializer<T>::write)
+      .def("write", (string(Serializer<T>::*)(PeriodSet const *)) &
                         Serializer<T>::write);
 
   py::class_<Deserializer<T>>(m, ("Deserializer" + typesuffix).c_str())
       .def(py::init<string const &>())
       .def("nextTInstant", &Deserializer<T>::nextTInstant)
       .def("nextTInstantSet", &Deserializer<T>::nextTInstantSet)
-      .def("nextTSequence", &Deserializer<T>::nextTSequence);
+      .def("nextTSequence", &Deserializer<T>::nextTSequence)
+      .def("nextPeriod", &Deserializer<T>::nextPeriod)
+      .def("nextPeriodSet", &Deserializer<T>::nextPeriodSet);
 
   py::class_<TInstant<T>>(m, ("TInstant" + typesuffix).c_str())
       .def(py::init<T, time_t>())
