@@ -117,6 +117,14 @@ def test_time_types():
     period = di.nextPeriod()
     assert period == period_1
 
+    di = DeserializerInt("[2019-09-02 00:00:00+00, 2019-09-03 00:00:00+01)")
+    period = di.nextPeriod()
+    print(period.lower())
+    assert period.lower() == 1567292400000
+    # assert period.upper() == 1567292400000
+    assert period.lower_inc() == True
+    assert period.upper_inc() == False
+
 
 if __name__ == "__main__":
     test_data_types()

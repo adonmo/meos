@@ -169,10 +169,77 @@ unique_ptr<TimestampSet> Deserializer<T>::nextTimestampSet() {
   return make_unique<TimestampSet>(s);
 };
 
+void validate_ISO8601(const string &s) {
+  if ((s[4] != '-') || (s[7] != '-')) {
+    throw DeserializationException("Expected date in YYYY-MM-DD format");
+  }
+
+  // TODO check 1<= month <= 12
+  // TODO check date according to year and month
+
+  if ((s[10] != ' ') && (s[10] != 'T')) {
+    throw DeserializationException(
+        "Expected either a space or a 'T' after day");
+  }
+
+  if ((s[13] != ':')) {
+    throw DeserializationException("Expected time in hh:mm format");
+  }
+
+  if ((s[16] != ':')) {
+    throw DeserializationException("Expected time in hh:mm:ss format");
+  }
+
+  if ((s[19] != '+') && (s[19] != '-')) {
+    throw DeserializationException("Expected either a '+' or a '-' after time");
+  }
+}
+
+string normalized_ISO8601(string s) {
+  auto length = s.length();
+
+  if (length < 10 || length > 24) {
+    throw DeserializationException(
+        "Empty or unexpected length for the provided ISO 8601 "
+        "date/time string");
+  }
+
+  if (length == 10) { // 1234-12-12
+    s += " 00:00:00+0000";
+  } else if (length == 16) { // 1234-12-12T12:12
+    s += ":00+0000";
+  } else if (length == 19) { // 1234-12-12T12:12:12
+    s += "+0000";
+  } else if (length == 20) { // 1234-12-12T12:12:12Z
+    if (s[19] != 'Z') {
+      throw DeserializationException("For a ISO8601 string of length 20, "
+                                     "expected 'Z' as the last character");
+    }
+    s[19] = '+';
+    s += "0000";
+  } else if (length == 22) { // 1234-12-12T12:12:12+05
+    s += "00";
+  }
+
+  validate_ISO8601(s);
+
+  return s;
+}
+
 /**
  * Parse time in ISO8601 format
  * Skips initial whitespaces, reads until one of ",)]}\n" is reached, and tries
  * to parse everything in between as time in ISO8601 format
+ *
+ * Example patterns:
+ * 1234-12-12
+ * 1234-12-12 12:12
+ * 1234-12-12T12:12
+ * 1234-12-12 12:12:12
+ * 1234-12-12T12:12:12
+ * 1234-12-12 12:12:12Z
+ * 1234-12-12 12:12:12+05
+ * 1234-12-12 12:12:12-0530  // normalized pattern
  */
 template <typename T> time_t Deserializer<T>::nextTime() {
   // TODO add support for UTC offset/timezone
@@ -185,26 +252,17 @@ template <typename T> time_t Deserializer<T>::nextTime() {
     end_pos = in.end() - in.begin();
   }
   int length = end_pos - current_pos;
-  string input = in.substr(current_pos, length);
-  if (length == 10) {
-    // 1234-12-12
-    input += "T00:00:00Z";
-  } else if (length == 16) {
-    // 1234-12-12T12:12
-    input += ":00Z";
-  } else if (length == 19) {
-    // 1234-12-12T12:12:12
-    input += "Z";
+
+  if (length != 24) {
+    // We only parse normalized patterns (length 24)
+    // If not already normalized, we normalize first and then parse
+    string input = normalized_ISO8601(in.substr(current_pos, length));
+    Deserializer<T> mini_deserializer(input);
+    iter += length;
+    return mini_deserializer.nextTime();
   }
 
-  constexpr size_t const expectedLength = sizeof("1234-12-12T12:12:12Z") - 1;
-  static_assert(expectedLength == 20, "Unexpected ISO 8601 date/time length");
-
-  if (input.length() < expectedLength) {
-    throw DeserializationException(
-        "Empty or unexpected length for the provided ISO 8601 "
-        "date/time string");
-  }
+  validate_ISO8601(in.substr(current_pos, length));
 
   tm time = {0};
   time.tm_year = nextInt() - 1900;
@@ -213,24 +271,24 @@ template <typename T> time_t Deserializer<T>::nextTime() {
   consumeChar('-');
   time.tm_mday = nextInt();
 
+  consumeChar(*iter); // skip the character
+  time.tm_hour = nextInt();
+  consumeChar(':');
+  time.tm_min = nextInt();
+  consumeChar(':');
+  time.tm_sec = nextInt();
+  time.tm_isdst = 0;
   int millis = 0;
+  // int millis = input.length() > 20 ? nextInt() : 0;
 
-  if (iter - in.begin() != end_pos) {
-    if (*iter != ' ' && (*iter != 'T')) {
-      throw DeserializationException(
-          "Expected either a space or a 'T' after day");
-    }
-    consumeChar(*iter); // skip the character
-    time.tm_hour = nextInt();
-    consumeChar(':');
-    time.tm_min = nextInt();
-    consumeChar(':');
-    time.tm_sec = nextInt();
-    time.tm_isdst = 0;
-    millis = input.length() > 20 ? nextInt() : 0;
-  }
+  int sign = *iter == '+' ? 1 : -1;
+  consumeChar(*iter); // skip the character
+  int offset = nextInt();
+  int h_offset = offset / 100;
+  int m_offset = offset % 100;
+  int tz_offset_secs = sign * (h_offset * 60 + m_offset) * 60;
 
-  return timegm(&time) * 1000 + millis;
+  return (timegm(&time) - tz_offset_secs) * 1000 + millis;
 }
 
 template <typename T> T Deserializer<T>::nextValue() {

@@ -10,6 +10,25 @@ TEST_CASE("timestamps are deserialized", "[deserializer][timestamp]") {
     CHECK_THROWS(r.nextTime());
   }
 
+  SECTION("timestamps are parsed properly") {
+    string s;
+    time_t expected;
+    std::tie(s, expected) = GENERATE(table<string, time_t>({
+        {"2012-11-01", unix_time(2012, 11, 1)},
+        {"2012-11-02", unix_time(2012, 11, 2)},
+        {"2012-11-02 00:00:00", unix_time(2012, 11, 2)},
+        {"2012-11-02 00:00:00+0000", unix_time(2012, 11, 2)},
+        {"2012-11-02 01:00:00+01", unix_time(2012, 11, 2)},
+        {"2012-11-02 01:00:00+0100", unix_time(2012, 11, 2)},
+        {"2012-11-02 01:30:00+0130", unix_time(2012, 11, 2)},
+        {"2012-11-02 00:00:00-01", unix_time(2012, 11, 2, 1)},
+        {"2012-11-02 00:00:00-0100", unix_time(2012, 11, 2, 1)},
+        {"2012-11-02 00:00:00-0130", unix_time(2012, 11, 2, 1, 30)},
+    }));
+    Deserializer<int> r(s);
+    REQUIRE(r.nextTime() == expected);
+  }
+
   SECTION("multiple timestamps present") {
     Deserializer<int> r("2012-11-01\n2012-12-02");
 
