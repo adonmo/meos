@@ -109,19 +109,17 @@ def test_time_types():
     assert {period_1, period_2} == period_set.periods()
 
     # Serialization
-    si = SerializerInt()
-    assert (si.write(period_1) == "[2011-01-01T00:00:00+0000, 2011-01-02T00:00:00+0000)")
+    assert str(period_1) == "[2011-01-01T00:00:00+0000, 2011-01-02T00:00:00+0000)"
+    assert SerializerInt().write(period_1) == "[2011-01-01T00:00:00+0000, 2011-01-02T00:00:00+0000)"
 
     # Deserialization
     di = DeserializerInt("[2011-01-01T00:00:00+0000, 2011-01-02T00:00:00+0000)")
     period = di.nextPeriod()
     assert period == period_1
 
-    di = DeserializerInt("[2019-09-02 00:00:00+00, 2019-09-03 00:00:00+01)")
+    di = DeserializerInt("[2019-09-02 01:00:00+01, 2019-09-03 00:00:00+01)")
     period = di.nextPeriod()
-    print(period.lower())
-    assert period.lower() == 1567292400000
-    # assert period.upper() == 1567292400000
+    assert period.lower() == epoch(2019, 9, 2)
     assert period.lower_inc() == True
     assert period.upper_inc() == False
 

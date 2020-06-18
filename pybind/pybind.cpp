@@ -81,16 +81,42 @@ PYBIND11_MODULE(pymeos, m) {
           "__eq__",
           [](Period const &self, Period const &other) { return self == other; },
           py::is_operator())
+      .def(
+          "__lt__",
+          [](Period const &self, Period const &other) { return self < other; },
+          py::is_operator())
+      .def(
+          "__le__",
+          [](Period const &self, Period const &other) { return self <= other; },
+          py::is_operator())
+      .def(
+          "__gt__",
+          [](Period const &self, Period const &other) { return self > other; },
+          py::is_operator())
+      .def(
+          "__ge__",
+          [](Period const &self, Period const &other) { return self >= other; },
+          py::is_operator())
       .def("__hash__",
            [](Period const &period) {
              return py::hash(py::make_tuple(period.lower(), period.upper(),
                                             period.lower_inc(),
                                             period.upper_inc()));
            })
+      .def("__str__",
+           [](Period const &self) {
+             std::ostringstream s;
+             s << self;
+             return s.str();
+           })
       .def("lower", &Period::lower)
       .def("upper", &Period::upper)
       .def("lower_inc", &Period::lower_inc)
-      .def("upper_inc", &Period::upper_inc);
+      .def("upper_inc", &Period::upper_inc)
+      .def("timespan", &Period::timespan)
+      .def("shift", &Period::shift)
+      .def("overlap", &Period::overlap)
+      .def("contains_timestamp", &Period::contains_timestamp);
 
   py::class_<PeriodSet>(m, "PeriodSet")
       .def(py::init<set<Period> &>())

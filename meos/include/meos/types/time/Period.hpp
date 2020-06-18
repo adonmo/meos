@@ -61,6 +61,18 @@ public:
     return lhs.compare(rhs) == -1;
   }
 
+  friend bool operator>(Period const &lhs, Period const &rhs) {
+    return rhs < lhs;
+  }
+
+  friend bool operator>=(Period const &lhs, Period const &rhs) {
+    return !(lhs < rhs);
+  }
+
+  friend bool operator<=(Period const &lhs, Period const &rhs) {
+    return !(rhs < lhs);
+  }
+
   friend ostream &operator<<(ostream &os, Period const &period) {
     auto opening = period.lower_inc() ? "[" : "(";
     auto closing = period.upper_inc() ? "]" : ")";
