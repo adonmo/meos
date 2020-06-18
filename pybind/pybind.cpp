@@ -109,11 +109,11 @@ PYBIND11_MODULE(pymeos, m) {
              s << self;
              return s.str();
            })
-      .def("lower", &Period::lower)
-      .def("upper", &Period::upper)
-      .def("lower_inc", &Period::lower_inc)
-      .def("upper_inc", &Period::upper_inc)
-      .def("timespan", &Period::timespan)
+      .def_property_readonly("lower", &Period::lower)
+      .def_property_readonly("upper", &Period::upper)
+      .def_property_readonly("lower_inc", &Period::lower_inc)
+      .def_property_readonly("upper_inc", &Period::upper_inc)
+      .def_property_readonly("timespan", &Period::timespan)
       .def("shift", &Period::shift)
       .def("overlap", &Period::overlap)
       .def("contains_timestamp", &Period::contains_timestamp);
