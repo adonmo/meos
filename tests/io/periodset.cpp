@@ -98,12 +98,12 @@ TEST_CASE("PeriodSets are serialized", "[serializer][periodset]") {
 TEST_CASE("PeriodSets are deserialized", "[deserializer][periodset]") {
   SECTION("only one PeriodSet present") {
     SECTION("only one inst present") {
-      Deserializer<> r("{[2012-11-01, 2012-04-01]}");
+      Deserializer<> r("{[2012-04-01, 2012-11-01]}");
 
       unique_ptr<PeriodSet> period_set = r.nextPeriodSet();
       set<Period> actual = period_set->periods();
       set<Period> expected = {
-          Period(unix_time(2012, 11, 1), unix_time(2012, 4, 1), true, true)};
+          Period(unix_time(2012, 4, 1), unix_time(2012, 11, 1), true, true)};
       auto x = UnorderedEquals(expected);
       REQUIRE(actual.size() == 1);
       REQUIRE_THAT(actual, x);

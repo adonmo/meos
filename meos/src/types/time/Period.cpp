@@ -3,7 +3,20 @@
 Period::Period(time_t const lower, time_t const upper, bool const lower_inc,
                bool const upper_inc)
     : m_lower(lower), m_upper(upper), m_lower_inc(lower_inc),
-      m_upper_inc(upper_inc) {}
+      m_upper_inc(upper_inc) {
+  if (this->lower() > this->upper()) {
+    throw invalid_argument(
+        "The lower bound must be less than or equal to the upper bound");
+  }
+
+  if (this->lower() == this->upper()) {
+    bool both_inclusive = this->lower_inc() && this->upper_inc();
+    if (!both_inclusive) {
+      throw invalid_argument(
+          "The lower and upper bounds must be inclusive for an instant period");
+    }
+  }
+}
 
 time_t Period::lower() const { return this->m_lower; }
 time_t Period::upper() const { return this->m_upper; }
