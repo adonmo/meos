@@ -1,4 +1,6 @@
+#include <meos/io/utils.hpp>
 #include <meos/types/time/Period.hpp>
+#include <meos/util/time.hpp>
 
 Period::Period(time_t const lower, time_t const upper, bool const lower_inc,
                bool const upper_inc)
@@ -46,4 +48,82 @@ bool Period::contains_timestamp(time_t const t) const {
   return ((this->lower() < t && t < this->upper()) ||
           (this->lower_inc() && this->lower() == t) ||
           (this->upper_inc() && this->upper() == t));
+}
+
+int Period::compare(Period const &other) const {
+  if (lower() < other.lower())
+    return -1;
+  else if (lower() > other.lower())
+    return 1;
+  else if (upper() < other.upper())
+    return -1;
+  else if (upper() > other.upper())
+    return 1;
+  else if (lower_inc() && !other.lower_inc())
+    return -1;
+  else if (!lower_inc() && other.lower_inc())
+    return 1;
+  else if (upper_inc() && !other.upper_inc())
+    return -1;
+  else if (!upper_inc() && other.upper_inc())
+    return 1;
+  return 0;
+}
+
+bool operator==(Period const &lhs, Period const &rhs) {
+  return lhs.compare(rhs) == 0;
+}
+
+bool operator!=(Period const &lhs, Period const &rhs) {
+  return lhs.compare(rhs) != 0;
+}
+
+bool operator<(Period const &lhs, Period const &rhs) {
+  return lhs.compare(rhs) == -1;
+}
+
+bool operator>(Period const &lhs, Period const &rhs) { return rhs < lhs; }
+
+bool operator>=(Period const &lhs, Period const &rhs) { return !(lhs < rhs); }
+
+bool operator<=(Period const &lhs, Period const &rhs) { return !(rhs < lhs); }
+
+istream &operator>>(istream &in, Period &period) {
+  char c;
+
+  in >> c;
+  if (c != '[' && c != '(') {
+    throw invalid_argument("Expected either a '[' or '('");
+  }
+  bool const lower_inc = c == '[';
+
+  auto lower = nextTime(in);
+
+  in >> c;
+  if (c != ',') {
+    throw invalid_argument("Expected a ','");
+  }
+
+  auto upper = nextTime(in);
+
+  in >> c;
+  if (c != ']' && c != ')') {
+    throw invalid_argument("Expected either a ']' or ')'");
+  }
+  bool const upper_inc = c == ']';
+
+  period.m_lower = lower;
+  period.m_upper = upper;
+  period.m_lower_inc = lower_inc;
+  period.m_upper_inc = upper_inc;
+
+  return in;
+}
+
+ostream &operator<<(ostream &os, Period const &period) {
+  auto opening = period.lower_inc() ? "[" : "(";
+  auto closing = period.upper_inc() ? "]" : ")";
+  os << opening << ISO8601_time(period.lower()) << ", "
+     << ISO8601_time(period.upper()) << closing;
+  return os;
 }

@@ -2,6 +2,7 @@
 #include <ctime>
 #include <meos/io/DeserializationException.hpp>
 #include <meos/io/Deserializer.hpp>
+#include <meos/io/utils.hpp>
 #include <sstream>
 #include <vector>
 using namespace std;
@@ -99,31 +100,15 @@ template <typename T> unique_ptr<TInstant<T>> Deserializer<T>::nextTInstant() {
 };
 
 template <typename T> unique_ptr<Period> Deserializer<T>::nextPeriod() {
-  skipWhitespaces();
-
-  if (!hasNext() || !(peek(0) == '[' || peek(0) == '(')) {
-    throw DeserializationException("Expected either a '[' or '('");
-  }
-
-  char const opening = peek(0);
-  consumeChar(opening);
-  bool const lower_inc = opening == '[';
-
-  auto lbound = nextTime();
-  skipWhitespaces();
-  skipWhitespaces();
-  consumeChar(',');
-  auto rbound = nextTime();
-
-  if (!hasNext() || !(peek(0) == ']' || peek(0) == ')')) {
-    throw DeserializationException("Expected either a ']' or ')'");
-  }
-
-  char const closing = peek(0);
-  consumeChar(closing);
-  bool const upper_inc = closing == ']';
-
-  return make_unique<Period>(lbound, rbound, lower_inc, upper_inc);
+  // TODO refactor Deserializer to simplify this futher
+  string::size_type current_pos = iter - in.begin();
+  string s = in.substr(current_pos, 256);
+  stringstream ss(s);
+  Period period(0, 1);
+  ss >> period;
+  iter += ss.tellg();
+  unique_ptr<Period> p = period.clone();
+  return p;
 };
 
 template <typename T> unique_ptr<PeriodSet> Deserializer<T>::nextPeriodSet() {
@@ -168,63 +153,6 @@ unique_ptr<TimestampSet> Deserializer<T>::nextTimestampSet() {
 
   return make_unique<TimestampSet>(s);
 };
-
-void validate_ISO8601(const string &s) {
-  if ((s[4] != '-') || (s[7] != '-')) {
-    throw DeserializationException("Expected date in YYYY-MM-DD format");
-  }
-
-  // TODO check 1<= month <= 12
-  // TODO check date according to year and month
-
-  if ((s[10] != ' ') && (s[10] != 'T')) {
-    throw DeserializationException(
-        "Expected either a space or a 'T' after day");
-  }
-
-  if ((s[13] != ':')) {
-    throw DeserializationException("Expected time in hh:mm format");
-  }
-
-  if ((s[16] != ':')) {
-    throw DeserializationException("Expected time in hh:mm:ss format");
-  }
-
-  if ((s[19] != '+') && (s[19] != '-')) {
-    throw DeserializationException("Expected either a '+' or a '-' after time");
-  }
-}
-
-string normalized_ISO8601(string s) {
-  auto length = s.length();
-
-  if (length < 10 || length > 24) {
-    throw DeserializationException(
-        "Empty or unexpected length for the provided ISO 8601 "
-        "date/time string");
-  }
-
-  if (length == 10) { // 1234-12-12
-    s += " 00:00:00+0000";
-  } else if (length == 16) { // 1234-12-12T12:12
-    s += ":00+0000";
-  } else if (length == 19) { // 1234-12-12T12:12:12
-    s += "+0000";
-  } else if (length == 20) { // 1234-12-12T12:12:12Z
-    if (s[19] != 'Z') {
-      throw DeserializationException("For a ISO8601 string of length 20, "
-                                     "expected 'Z' as the last character");
-    }
-    s[19] = '+';
-    s += "0000";
-  } else if (length == 22) { // 1234-12-12T12:12:12+05
-    s += "00";
-  }
-
-  validate_ISO8601(s);
-
-  return s;
-}
 
 /**
  * Parse time in ISO8601 format

@@ -4,6 +4,15 @@
 #include <meos/types/time/Period.hpp>
 
 TEST_CASE("periods are validated and constructed properly", "[period]") {
+  SECTION("reads from istream") {
+    Period period(0, 1);
+    stringstream ss("  [  2012-01-01  ,      2012-01-02 09:40:00+0530 )");
+    ss >> period;
+    REQUIRE(period.lower() == unix_time(2012, 1, 1));
+    REQUIRE(period.upper() == unix_time(2012, 1, 2, 4, 10));
+    REQUIRE(period.lower_inc() == true);
+    REQUIRE(period.upper_inc() == false);
+  }
   SECTION("clearly valid") {
     auto lower_inc = GENERATE(true, false);
     auto upper_inc = GENERATE(true, false);
