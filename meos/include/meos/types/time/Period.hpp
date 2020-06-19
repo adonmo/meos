@@ -13,11 +13,15 @@ private:
   bool m_lower_inc;
   bool m_upper_inc;
 
+  void validate() const;
   int compare(Period const &other) const;
 
 public:
-  Period(time_t const lower, time_t const upper, bool const lower_inc = false,
+  Period(time_t const lower, time_t const upper, bool const lower_inc = true,
          bool const upper_inc = false);
+  Period(string const lower, string const upper, bool const lower_inc = true,
+         bool const upper_inc = false);
+  Period(string const serialized);
 
   virtual unique_ptr<Period> clone() {
     return make_unique<Period>(this->m_lower, this->m_upper, this->m_lower_inc,

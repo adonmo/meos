@@ -9,8 +9,8 @@ from pymeos import TInstantBool, TInstantInt, TInstantFloat, TInstantText, TInst
     Geometry, Period, PeriodSet
 
 
-def epoch(year, month, day, hour=0, minute=0):
-    return int(datetime(year, month, day, hour, minute).replace(tzinfo=pytz.UTC).timestamp() * 1000)
+def epoch(year, month, day, hour=0, minute=0, second=0):
+    return int(datetime(year, month, day, hour, minute, second).replace(tzinfo=pytz.UTC).timestamp() * 1000)
 
 
 def test_data_types():
@@ -95,15 +95,15 @@ def test_time_types():
     period_set = PeriodSet({period_1, period_2, period_3})
 
     # Let's verify what we've done
-    assert period_1.lower() == 1293840000000
-    assert period_1.upper() == 1293926400000
-    assert period_1.lower_inc() == True
-    assert period_1.upper_inc() == False
+    assert period_1.lower == 1293840000000
+    assert period_1.upper == 1293926400000
+    assert period_1.lower_inc == True
+    assert period_1.upper_inc == False
 
-    assert period_2.lower() == 1294185600000
-    assert period_2.upper() == 1294272000000
-    assert period_2.lower_inc() == False
-    assert period_2.upper_inc() == False
+    assert period_2.lower == 1294185600000
+    assert period_2.upper == 1294272000000
+    assert period_2.lower_inc == False
+    assert period_2.upper_inc == False
 
     assert len(period_set.periods()) == 2
     assert {period_1, period_2} == period_set.periods()
@@ -117,11 +117,12 @@ def test_time_types():
     period = di.nextPeriod()
     assert period == period_1
 
-    di = DeserializerInt("[2019-09-02 01:00:00+01, 2019-09-03 00:00:00+01)")
+    di = DeserializerInt("[2019-09-02 01:00:00+01, 2019-09-03 05:43:21+01)")
     period = di.nextPeriod()
-    assert period.lower() == epoch(2019, 9, 2)
-    assert period.lower_inc() == True
-    assert period.upper_inc() == False
+    assert period.lower == epoch(2019, 9, 2)
+    assert period.upper == epoch(2019, 9, 3, 4, 43, 21)
+    assert period.lower_inc == True
+    assert period.upper_inc == False
 
 
 if __name__ == "__main__":

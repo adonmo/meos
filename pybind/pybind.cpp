@@ -76,7 +76,9 @@ PYBIND11_MODULE(pymeos, m) {
   declare_temporal_types<Geometry>(m, "Geom");
 
   py::class_<Period>(m, "Period")
-      .def(py::init<time_t, time_t, bool const, bool const>())
+      .def(py::init<time_t const, time_t const, bool const, bool const>())
+      .def(py::init<string const, string const, bool const, bool const>())
+      .def(py::init<string const>())
       .def(
           "__eq__",
           [](Period const &self, Period const &other) { return self == other; },

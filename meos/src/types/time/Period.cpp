@@ -6,6 +6,31 @@ Period::Period(time_t const lower, time_t const upper, bool const lower_inc,
                bool const upper_inc)
     : m_lower(lower), m_upper(upper), m_lower_inc(lower_inc),
       m_upper_inc(upper_inc) {
+  validate();
+}
+
+Period::Period(string const lower, string const upper, bool const lower_inc,
+               bool const upper_inc)
+    : m_lower_inc(lower_inc), m_upper_inc(upper_inc) {
+  stringstream lss(lower);
+  this->m_lower = nextTime(lss);
+  stringstream uss(upper);
+  this->m_upper = nextTime(uss);
+  validate();
+}
+
+Period::Period(string const serialized) {
+  stringstream ss(serialized);
+  Period period(0, 1);
+  ss >> period;
+  this->m_lower = period.lower();
+  this->m_upper = period.upper();
+  this->m_lower_inc = period.lower_inc();
+  this->m_upper_inc = period.upper_inc();
+  validate();
+}
+
+void Period::validate() const {
   if (this->lower() > this->upper()) {
     throw invalid_argument(
         "The lower bound must be less than or equal to the upper bound");

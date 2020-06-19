@@ -119,7 +119,10 @@ char consume_one_of(std::istream &in, std::string s) {
 std::string read_until_one_of(std::istream &in, std::string stop_set) {
   char c;
   std::string s;
-  while (stop_set.find(c = in.peek()) == std::string::npos) {
+  while (c = in.peek()) {
+    if ((c == EOF) || (stop_set.find(c) != std::string::npos)) {
+      break;
+    }
     s += in.get();
   }
   return s;

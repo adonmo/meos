@@ -13,6 +13,39 @@ TEST_CASE("periods are validated and constructed properly", "[period]") {
     REQUIRE(period.lower_inc() == true);
     REQUIRE(period.upper_inc() == false);
   }
+
+  SECTION("all constructors work") {
+    Period *period;
+    SECTION("constructors with bounds specified") {
+      SECTION("normal constructor") {
+        period = new Period(unix_time(2019, 9, 8), unix_time(2019, 9, 10),
+                            false, true);
+      }
+      SECTION("two string constructor") {
+        period = new Period("2019-09-08 01:00:00+01", "2019-09-10 01:00:00+01",
+                            false, true);
+      }
+      SECTION("single string constructor") {
+        period = new Period("(2019-09-08 01:00:00+01, 2019-09-10 01:00:00+01]");
+      }
+      REQUIRE(period->lower_inc() == false);
+      REQUIRE(period->upper_inc() == true);
+    }
+    SECTION("constructors with default bounds") {
+      SECTION("no strings constructor") {
+        period = new Period(unix_time(2019, 9, 8), unix_time(2019, 9, 10));
+      }
+      SECTION("two string constructor") {
+        period = new Period("2019-09-08 01:00:00+01", "2019-09-10 01:00:00+01");
+      }
+      REQUIRE(period->lower_inc() == true);
+      REQUIRE(period->upper_inc() == false);
+    }
+    REQUIRE(period->lower() == unix_time(2019, 9, 8));
+    REQUIRE(period->upper() == unix_time(2019, 9, 10));
+    delete period;
+  }
+
   SECTION("clearly valid") {
     auto lower_inc = GENERATE(true, false);
     auto upper_inc = GENERATE(true, false);
@@ -24,6 +57,7 @@ TEST_CASE("periods are validated and constructed properly", "[period]") {
     REQUIRE(period.lower_inc() == lower_inc);
     REQUIRE(period.upper_inc() == upper_inc);
   }
+
   SECTION("clearly invalid") {
     auto lower_inc = GENERATE(true, false);
     auto upper_inc = GENERATE(true, false);
@@ -32,6 +66,7 @@ TEST_CASE("periods are validated and constructed properly", "[period]") {
     REQUIRE_THROWS_AS((Period{lower, upper, lower_inc, upper_inc}),
                       std::invalid_argument);
   }
+
   SECTION("edge case where lower == upper") {
     time_t t;
     bool lower_inc, upper_inc, should_be_valid;
