@@ -2,8 +2,8 @@
 #include <meos/types/time/Period.hpp>
 #include <meos/util/time.hpp>
 
-Period::Period(time_t const lower, time_t const upper, bool const lower_inc,
-               bool const upper_inc)
+Period::Period(time_point const lower, time_point const upper,
+               bool const lower_inc, bool const upper_inc)
     : m_lower(lower), m_upper(upper), m_lower_inc(lower_inc),
       m_upper_inc(upper_inc) {
   validate();
@@ -13,15 +13,16 @@ Period::Period(string const lower, string const upper, bool const lower_inc,
                bool const upper_inc)
     : m_lower_inc(lower_inc), m_upper_inc(upper_inc) {
   stringstream lss(lower);
-  this->m_lower = nextTime(lss);
+  this->m_lower = std::chrono::system_clock::from_time_t(nextTime(lss) / 1000L);
   stringstream uss(upper);
-  this->m_upper = nextTime(uss);
+  this->m_upper = std::chrono::system_clock::from_time_t(nextTime(uss) / 1000L);
   validate();
 }
 
 Period::Period(string const serialized) {
   stringstream ss(serialized);
-  Period period(0, 1);
+  Period period(std::chrono::system_clock::from_time_t(0),
+                std::chrono::system_clock::from_time_t(1));
   ss >> period;
   this->m_lower = period.lower();
   this->m_upper = period.upper();
@@ -45,31 +46,34 @@ void Period::validate() const {
   }
 }
 
-time_t Period::lower() const { return this->m_lower; }
-time_t Period::upper() const { return this->m_upper; }
+time_point Period::lower() const { return this->m_lower; }
+time_point Period::upper() const { return this->m_upper; }
 
 bool Period::lower_inc() const { return this->m_lower_inc; }
 bool Period::upper_inc() const { return this->m_upper_inc; }
-time_t Period::timespan() const { return this->upper() - this->lower(); }
+duration_ms Period::timespan() const {
+  return chrono::duration_cast<chrono::milliseconds>(this->upper() -
+                                                     this->lower());
+}
 
-unique_ptr<Period> Period::shift(time_t const timedelta) const {
+unique_ptr<Period> Period::shift(duration_ms const timedelta) const {
   return make_unique<Period>(this->lower() + timedelta,
                              this->upper() + timedelta, this->lower_inc(),
                              this->upper_inc());
 }
 
 bool Period::overlap(Period const &p) const {
-  time_t const o =
-      min(this->upper(), p.upper()) - max(this->lower(), p.lower());
-  if (o > 0)
+  duration_ms const o = chrono::duration_cast<chrono::milliseconds>(
+      min(this->upper(), p.upper()) - max(this->lower(), p.lower()));
+  if (o.count() > 0)
     return true;
-  if (o < 0)
+  if (o.count() < 0)
     return false;
   return this->lower() < p.lower() ? this->upper_inc() && p.lower_inc()
                                    : p.upper_inc() && this->lower_inc();
 };
 
-bool Period::contains_timestamp(time_t const t) const {
+bool Period::contains_timestamp(time_point const t) const {
   return ((this->lower() < t && t < this->upper()) ||
           (this->lower_inc() && this->lower() == t) ||
           (this->upper_inc() && this->upper() == t));
@@ -122,14 +126,14 @@ istream &operator>>(istream &in, Period &period) {
   }
   bool const lower_inc = c == '[';
 
-  auto lower = nextTime(in);
+  auto lower = std::chrono::system_clock::from_time_t(nextTime(in) / 1000L);
 
   in >> c;
   if (c != ',') {
     throw invalid_argument("Expected a ','");
   }
 
-  auto upper = nextTime(in);
+  auto upper = std::chrono::system_clock::from_time_t(nextTime(in) / 1000L);
 
   in >> c;
   if (c != ']' && c != ')') {
@@ -148,7 +152,12 @@ istream &operator>>(istream &in, Period &period) {
 ostream &operator<<(ostream &os, Period const &period) {
   auto opening = period.lower_inc() ? "[" : "(";
   auto closing = period.upper_inc() ? "]" : ")";
-  os << opening << ISO8601_time(period.lower()) << ", "
-     << ISO8601_time(period.upper()) << closing;
+  os << opening
+     << ISO8601_time(std::chrono::system_clock::to_time_t(period.lower()) *
+                     1000)
+     << ", "
+     << ISO8601_time(std::chrono::system_clock::to_time_t(period.upper()) *
+                     1000)
+     << closing;
   return os;
 }

@@ -1,15 +1,18 @@
 #ifndef MEOS_TYPES_TIME_PERIOD_HPP
 #define MEOS_TYPES_TIME_PERIOD_HPP
 
-#include <ctime>
+#include <chrono>
 #include <iomanip>
 
 using namespace std;
 
+using time_point = std::chrono::system_clock::time_point;
+using duration_ms = std::chrono::milliseconds;
+
 class Period {
 private:
-  time_t m_lower;
-  time_t m_upper;
+  time_point m_lower;
+  time_point m_upper;
   bool m_lower_inc;
   bool m_upper_inc;
 
@@ -17,8 +20,8 @@ private:
   int compare(Period const &other) const;
 
 public:
-  Period(time_t const lower, time_t const upper, bool const lower_inc = true,
-         bool const upper_inc = false);
+  Period(time_point const lower, time_point const upper,
+         bool const lower_inc = true, bool const upper_inc = false);
   Period(string const lower, string const upper, bool const lower_inc = true,
          bool const upper_inc = false);
   Period(string const serialized);
@@ -28,14 +31,14 @@ public:
                                this->m_upper_inc);
   }
 
-  time_t lower() const;
-  time_t upper() const;
+  time_point lower() const;
+  time_point upper() const;
   bool lower_inc() const;
   bool upper_inc() const;
-  time_t timespan() const;
-  unique_ptr<Period> shift(time_t const timedelta) const;
+  duration_ms timespan() const;
+  unique_ptr<Period> shift(duration_ms const timedelta) const;
   bool overlap(Period const &p) const;
-  bool contains_timestamp(time_t const t) const;
+  bool contains_timestamp(time_point const t) const;
 
   friend bool operator==(Period const &lhs, Period const &rhs);
   friend bool operator!=(Period const &lhs, Period const &rhs);

@@ -1,7 +1,9 @@
+#include "chrono.h"
 #include <meos/io/Deserializer.hpp>
 #include <meos/io/Serializer.hpp>
 #include <meos/types/temporal/TInstant.hpp>
 #include <meos/types/temporal/TInstantSet.hpp>
+#include <pybind11/operators.h>
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
 extern "C" {
@@ -76,29 +78,19 @@ PYBIND11_MODULE(pymeos, m) {
   declare_temporal_types<Geometry>(m, "Geom");
 
   py::class_<Period>(m, "Period")
-      .def(py::init<time_t const, time_t const, bool const, bool const>())
-      .def(py::init<string const, string const, bool const, bool const>())
-      .def(py::init<string const>())
-      .def(
-          "__eq__",
-          [](Period const &self, Period const &other) { return self == other; },
-          py::is_operator())
-      .def(
-          "__lt__",
-          [](Period const &self, Period const &other) { return self < other; },
-          py::is_operator())
-      .def(
-          "__le__",
-          [](Period const &self, Period const &other) { return self <= other; },
-          py::is_operator())
-      .def(
-          "__gt__",
-          [](Period const &self, Period const &other) { return self > other; },
-          py::is_operator())
-      .def(
-          "__ge__",
-          [](Period const &self, Period const &other) { return self >= other; },
-          py::is_operator())
+      .def(py::init<time_point const, time_point const, bool const,
+                    bool const>(),
+           py::arg("lower"), py::arg("upper"), py::arg("lower_inc") = true,
+           py::arg("upper_inc") = false)
+      .def(py::init<string const, string const, bool const, bool const>(),
+           py::arg("lower"), py::arg("upper"), py::arg("lower_inc") = true,
+           py::arg("upper_inc") = false)
+      .def(py::init<string const>(), py::arg("serialized"))
+      .def(py::self == py::self)
+      .def(py::self < py::self)
+      .def(py::self <= py::self)
+      .def(py::self > py::self)
+      .def(py::self >= py::self)
       .def("__hash__",
            [](Period const &period) {
              return py::hash(py::make_tuple(period.lower(), period.upper(),

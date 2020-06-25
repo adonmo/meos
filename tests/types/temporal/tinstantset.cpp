@@ -68,8 +68,8 @@ TEMPLATE_TEST_CASE("TInstantSet getTime", "[tinstantset]", int, float) {
       GENERATE(take(2, random(unix_time(2012, 1, 1), unix_time(2020, 1, 1))));
   auto t2 =
       GENERATE(take(2, random(unix_time(2012, 1, 1), unix_time(2020, 1, 1))));
-  auto instant_1 = make_unique<TInstant<TestType>>(v1, t1);
-  auto instant_2 = make_unique<TInstant<TestType>>(v2, t2);
+  auto instant_1 = make_unique<TInstant<TestType>>(v1, t1 / 1000L * 1000L);
+  auto instant_2 = make_unique<TInstant<TestType>>(v2, t2 / 1000L * 1000L);
 
   auto period_1 = instant_1->period();
   auto period_2 = instant_2->period();
@@ -102,8 +102,10 @@ TEMPLATE_TEST_CASE("TInstantSet period and timestamp related functions",
   REQUIRE_THAT(actual.getInstants(), UnorderedEquals(instants));
   if (size > 0) {
     Period p = actual.period();
-    REQUIRE(p.lower() == actual.startTimestamp());
-    REQUIRE(p.upper() == actual.endTimestamp());
+    REQUIRE(p.lower() == std::chrono::system_clock::from_time_t(
+                             actual.startTimestamp() / 1000L));
+    REQUIRE(p.upper() == std::chrono::system_clock::from_time_t(
+                             actual.endTimestamp() / 1000L));
     REQUIRE(p.lower_inc() == true);
     REQUIRE(p.upper_inc() == true);
   } else {
@@ -120,8 +122,8 @@ TEMPLATE_TEST_CASE("TInstantSet.period() - gaps are ignored", "[tinstantset]",
       TInstant<TestType>(4, unix_time(2012, 1, 7)),
   };
   TInstantSet<TestType> instant_set(instants);
-  Period expected =
-      Period(unix_time(2012, 1, 1), unix_time(2012, 1, 7), true, true);
+  Period expected = Period(unix_time_point(2012, 1, 1),
+                           unix_time_point(2012, 1, 7), true, true);
   REQUIRE(instant_set.period() == expected);
 }
 
@@ -132,8 +134,8 @@ TEMPLATE_TEST_CASE("TInstantSet timespan", "[tinstantset]", int, float) {
       GENERATE(take(2, random(unix_time(2012, 1, 1), unix_time(2020, 1, 1))));
   auto t2 =
       GENERATE(take(2, random(unix_time(2012, 1, 1), unix_time(2020, 1, 1))));
-  auto instant_1 = make_unique<TInstant<TestType>>(v1, t1);
-  auto instant_2 = make_unique<TInstant<TestType>>(v2, t2);
+  auto instant_1 = make_unique<TInstant<TestType>>(v1, t1 / 1000L * 1000L);
+  auto instant_2 = make_unique<TInstant<TestType>>(v2, t2 / 1000L * 1000L);
 
   set<unique_ptr<TInstant<TestType>>> instants;
   instants.insert(move(instant_1));
@@ -190,15 +192,15 @@ TEMPLATE_TEST_CASE("TInstantSet intersection functions", "[tinstantset]", int,
   // clang-format off
   SECTION("intersectsPeriod") {
     // Positive cases
-    REQUIRE(iset.intersectsPeriod(Period(unix_time(2012, 1, 2), unix_time(2012, 1, 3), true, true)) == true);
-    REQUIRE(iset.intersectsPeriod(Period(unix_time(2012, 1, 2), unix_time(2012, 1, 5), true, true)) == true);
-    REQUIRE(iset.intersectsPeriod(Period(unix_time(2012, 1, 1, 12), unix_time(2012, 1, 2, 12), true, true)) == true);
-    REQUIRE(iset.intersectsPeriod(Period(unix_time(2012, 1, 2), unix_time(2012, 1, 3), true, false)) == true);
-    REQUIRE(iset.intersectsPeriod(Period(unix_time(2012, 1, 2), unix_time(2012, 1, 3), false, true)) == true);
+    REQUIRE(iset.intersectsPeriod(Period(unix_time_point(2012, 1, 2), unix_time_point(2012, 1, 3), true, true)) == true);
+    REQUIRE(iset.intersectsPeriod(Period(unix_time_point(2012, 1, 2), unix_time_point(2012, 1, 5), true, true)) == true);
+    REQUIRE(iset.intersectsPeriod(Period(unix_time_point(2012, 1, 1, 12), unix_time_point(2012, 1, 2, 12), true, true)) == true);
+    REQUIRE(iset.intersectsPeriod(Period(unix_time_point(2012, 1, 2), unix_time_point(2012, 1, 3), true, false)) == true);
+    REQUIRE(iset.intersectsPeriod(Period(unix_time_point(2012, 1, 2), unix_time_point(2012, 1, 3), false, true)) == true);
 
     // Negative cases
-    REQUIRE(iset.intersectsPeriod(Period(unix_time(2012, 1, 2), unix_time(2012, 1, 3), false, false)) == false);
-    REQUIRE(iset.intersectsPeriod(Period(unix_time(2012, 2, 2), unix_time(2012, 2, 3), true, true)) == false);
+    REQUIRE(iset.intersectsPeriod(Period(unix_time_point(2012, 1, 2), unix_time_point(2012, 1, 3), false, false)) == false);
+    REQUIRE(iset.intersectsPeriod(Period(unix_time_point(2012, 2, 2), unix_time_point(2012, 2, 3), true, true)) == false);
   }
   // clang-format on
 
@@ -220,18 +222,23 @@ TEMPLATE_TEST_CASE("TInstantSet intersection functions", "[tinstantset]", int,
 
   SECTION("intersectsPeriodSet") {
     // Positive cases
-    set<Period> s = {
-        Period(unix_time(2012, 1, 2), unix_time(2012, 1, 3), true, true)};
+    set<Period> s = {Period(unix_time_point(2012, 1, 2),
+                            unix_time_point(2012, 1, 3), true, true)};
     REQUIRE(iset.intersectsPeriodSet(PeriodSet(s)) == true);
-    s = {Period(unix_time(2012, 1, 2), unix_time(2012, 1, 5), true, true)};
+    s = {Period(unix_time_point(2012, 1, 2), unix_time_point(2012, 1, 5), true,
+                true)};
     REQUIRE(iset.intersectsPeriodSet(PeriodSet(s)) == true);
-    s = {Period(unix_time(2012, 1, 2), unix_time(2012, 1, 5), true, true),
-         Period(unix_time(2012, 2, 2), unix_time(2012, 2, 3), true, true)};
-    s = {Period(unix_time(2012, 1, 3), unix_time(2012, 1, 5), true, true)};
+    s = {Period(unix_time_point(2012, 1, 2), unix_time_point(2012, 1, 5), true,
+                true),
+         Period(unix_time_point(2012, 2, 2), unix_time_point(2012, 2, 3), true,
+                true)};
+    s = {Period(unix_time_point(2012, 1, 3), unix_time_point(2012, 1, 5), true,
+                true)};
     REQUIRE(iset.intersectsPeriodSet(PeriodSet(s)) == true);
 
     // Negative cases
-    s = {Period(unix_time(2012, 2, 2), unix_time(2012, 2, 3), true, true)};
+    s = {Period(unix_time_point(2012, 2, 2), unix_time_point(2012, 2, 3), true,
+                true)};
     REQUIRE(iset.intersectsPeriodSet(PeriodSet(s)) == false);
   }
 }

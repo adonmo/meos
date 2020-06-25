@@ -73,8 +73,10 @@ template <typename T> PeriodSet TSequence<T>::getTime() const {
 }
 
 template <typename T> Period TSequence<T>::period() const {
-  return Period(this->startTimestamp(), this->endTimestamp(), lower_inc,
-                upper_inc);
+  return Period(
+      std::chrono::system_clock::from_time_t(this->startTimestamp() / 1000L),
+      std::chrono::system_clock::from_time_t(this->endTimestamp() / 1000L),
+      lower_inc, upper_inc);
 }
 
 template <typename T>
@@ -93,7 +95,8 @@ TSequence<T> *TSequence<T>::shift_impl(time_t const timedelta) const {
 
 template <typename T>
 bool TSequence<T>::intersectsTimestamp(time_t const datetime) const {
-  return this->period().contains_timestamp(datetime);
+  return this->period().contains_timestamp(
+      std::chrono::system_clock::from_time_t(datetime / 1000L));
 };
 
 template <typename T>

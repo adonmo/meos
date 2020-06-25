@@ -104,7 +104,8 @@ template <typename T> unique_ptr<Period> Deserializer<T>::nextPeriod() {
   string::size_type current_pos = iter - in.begin();
   string s = in.substr(current_pos, 256);
   stringstream ss(s);
-  Period period(0, 1);
+  Period period(std::chrono::system_clock::from_time_t(0),
+                std::chrono::system_clock::from_time_t(1));
   ss >> period;
   iter += ss.tellg();
   unique_ptr<Period> p = period.clone();
@@ -216,7 +217,7 @@ template <typename T> time_t Deserializer<T>::nextTime() {
   int m_offset = offset % 100;
   int tz_offset_secs = sign * (h_offset * 60 + m_offset) * 60;
 
-  return (timegm(&time) - tz_offset_secs) * 1000 + millis;
+  return (timegm(&time) - tz_offset_secs) * 1000L + millis;
 }
 
 template <typename T> T Deserializer<T>::nextValue() {

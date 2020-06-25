@@ -48,8 +48,7 @@ template <typename T> time_t Temporal<T>::timestampN(int n) const {
 }
 
 template <typename T> time_t Temporal<T>::timespan() const {
-  Period p = period();
-  return p.upper() - p.lower();
+  return period().timespan().count();
 }
 
 template <typename T>

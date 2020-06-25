@@ -59,22 +59,22 @@ Period PeriodSet::periodN(int n) const {
 time_t PeriodSet::timespan() const {
   time_t result = 0;
   for (auto const &period : m_periods)
-    result += period->timespan();
+    result += period->timespan().count();
   return result;
 }
 
 unique_ptr<PeriodSet> PeriodSet::shift(time_t const timedelta) const {
   set<unique_ptr<Period>> pset;
   for (auto const &e : m_periods)
-    pset.insert(e->shift(timedelta));
+    pset.insert(e->shift(std::chrono::milliseconds(timedelta)));
   return make_unique<PeriodSet>(pset);
 }
 
 set<time_t> PeriodSet::timestamps() const {
   set<time_t> s;
   for (auto const &e : m_periods) {
-    s.insert(e->lower());
-    s.insert(e->upper());
+    s.insert(std::chrono::system_clock::to_time_t(e->lower()) * 1000L);
+    s.insert(std::chrono::system_clock::to_time_t(e->upper()) * 1000L);
   }
   return s;
 }

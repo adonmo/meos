@@ -17,7 +17,8 @@ TEST_CASE("TimestampSet period functions", "[timestampset]") {
   for (size_t i = 0; i < size; i++) {
     time_t t = unix_time(2012, 1, 1) + 10 * 365 * (random() % day);
     timestamps.insert(t);
-    expected_periods.insert(Period(t, t, true, true));
+    time_point tp = std::chrono::system_clock::from_time_t(t / 1000L);
+    expected_periods.insert(Period(tp, tp, true, true));
   }
 
   TimestampSet actual(timestamps);
@@ -46,8 +47,8 @@ TEST_CASE("TimestampSet period gaps are ignored", "[timestampset]") {
       unix_time(2012, 1, 7),
   };
   TimestampSet period_set(timestamps);
-  Period expected =
-      Period(unix_time(2012, 1, 1), unix_time(2012, 1, 7), true, true);
+  Period expected = Period(unix_time_point(2012, 1, 1),
+                           unix_time_point(2012, 1, 7), true, true);
   REQUIRE(period_set.period() == expected);
 }
 

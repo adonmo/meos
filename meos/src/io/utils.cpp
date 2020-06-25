@@ -105,7 +105,7 @@ time_t nextTime(std::istream &in) {
   int m_offset = offset % 100;
   int tz_offset_secs = sign * (h_offset * 60 + m_offset) * 60;
 
-  return (timegm(&time) - tz_offset_secs) * 1000 + millis;
+  return (timegm(&time) - tz_offset_secs) * 1000L + millis;
 }
 
 char consume_one_of(std::istream &in, std::string s) {

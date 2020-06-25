@@ -109,8 +109,10 @@ TEMPLATE_TEST_CASE("TSequence period and timestamp related functions",
   REQUIRE_THAT(actual.getInstants(), Catch::Matchers::Equals(instants));
   if (size > 0) {
     Period p = actual.period();
-    REQUIRE(p.lower() == actual.startTimestamp());
-    REQUIRE(p.upper() == actual.endTimestamp());
+    REQUIRE(p.lower() == std::chrono::system_clock::from_time_t(
+                             actual.startTimestamp() / 1000L));
+    REQUIRE(p.upper() == std::chrono::system_clock::from_time_t(
+                             actual.endTimestamp() / 1000L));
     REQUIRE(p.lower_inc() == lower_inc);
     REQUIRE(p.upper_inc() == upper_inc);
   } else {
@@ -129,8 +131,8 @@ TEMPLATE_TEST_CASE("TSequence.period() - gaps are ignored", "[tsequence]", int,
       TInstant<TestType>(4, unix_time(2012, 1, 7)),
   };
   TSequence<TestType> sequence(instants, lower_inc, upper_inc);
-  Period expected = Period(unix_time(2012, 1, 1), unix_time(2012, 1, 7),
-                           lower_inc, upper_inc);
+  Period expected = Period(unix_time_point(2012, 1, 1),
+                           unix_time_point(2012, 1, 7), lower_inc, upper_inc);
   REQUIRE(sequence.period() == expected);
 }
 
@@ -143,8 +145,8 @@ TEMPLATE_TEST_CASE("TSequence timespan", "[tsequence]", int, float) {
       GENERATE(take(2, random(unix_time(2012, 1, 1), unix_time(2020, 1, 1))));
   auto t2 =
       GENERATE(take(2, random(unix_time(2012, 1, 1), unix_time(2020, 1, 1))));
-  auto instant_1 = make_unique<TInstant<TestType>>(v1, t1);
-  auto instant_2 = make_unique<TInstant<TestType>>(v2, t2);
+  auto instant_1 = make_unique<TInstant<TestType>>(v1, t1 / 1000L * 1000L);
+  auto instant_2 = make_unique<TInstant<TestType>>(v2, t2 / 1000L * 1000L);
 
   vector<unique_ptr<TInstant<TestType>>> instants;
   instants.push_back(move(instant_1));
@@ -205,15 +207,15 @@ TEMPLATE_TEST_CASE("TSequence intersection functions", "[tsequence]", int,
   // clang-format off
   SECTION("intersectsPeriod") {
     // Positive cases
-    REQUIRE(sequence.intersectsPeriod(Period(unix_time(2012, 1, 2), unix_time(2012, 1, 3), true, true)) == true);
-    REQUIRE(sequence.intersectsPeriod(Period(unix_time(2012, 1, 2), unix_time(2012, 1, 5), true, true)) == true);
-    REQUIRE(sequence.intersectsPeriod(Period(unix_time(2012, 1, 1, 12), unix_time(2012, 1, 2, 12), true, true)) == true);
-    REQUIRE(sequence.intersectsPeriod(Period(unix_time(2012, 1, 2), unix_time(2012, 1, 3), true, false)) == true);
-    REQUIRE(sequence.intersectsPeriod(Period(unix_time(2012, 1, 2), unix_time(2012, 1, 3), false, true)) == true);
-    REQUIRE(sequence.intersectsPeriod(Period(unix_time(2012, 1, 2), unix_time(2012, 1, 3), false, false)) == true);
+    REQUIRE(sequence.intersectsPeriod(Period(unix_time_point(2012, 1, 2), unix_time_point(2012, 1, 3), true, true)) == true);
+    REQUIRE(sequence.intersectsPeriod(Period(unix_time_point(2012, 1, 2), unix_time_point(2012, 1, 5), true, true)) == true);
+    REQUIRE(sequence.intersectsPeriod(Period(unix_time_point(2012, 1, 1, 12), unix_time_point(2012, 1, 2, 12), true, true)) == true);
+    REQUIRE(sequence.intersectsPeriod(Period(unix_time_point(2012, 1, 2), unix_time_point(2012, 1, 3), true, false)) == true);
+    REQUIRE(sequence.intersectsPeriod(Period(unix_time_point(2012, 1, 2), unix_time_point(2012, 1, 3), false, true)) == true);
+    REQUIRE(sequence.intersectsPeriod(Period(unix_time_point(2012, 1, 2), unix_time_point(2012, 1, 3), false, false)) == true);
 
     // Negative cases
-    REQUIRE(sequence.intersectsPeriod(Period(unix_time(2012, 2, 2), unix_time(2012, 2, 3), true, true)) == false);
+    REQUIRE(sequence.intersectsPeriod(Period(unix_time_point(2012, 2, 2), unix_time_point(2012, 2, 3), true, true)) == false);
   }
   // clang-format on
 
@@ -235,18 +237,23 @@ TEMPLATE_TEST_CASE("TSequence intersection functions", "[tsequence]", int,
 
   SECTION("intersectsPeriodSet") {
     // Positive cases
-    set<Period> s = {
-        Period(unix_time(2012, 1, 2), unix_time(2012, 1, 3), true, true)};
+    set<Period> s = {Period(unix_time_point(2012, 1, 2),
+                            unix_time_point(2012, 1, 3), true, true)};
     REQUIRE(sequence.intersectsPeriodSet(PeriodSet(s)) == true);
-    s = {Period(unix_time(2012, 1, 2), unix_time(2012, 1, 5), true, true)};
+    s = {Period(unix_time_point(2012, 1, 2), unix_time_point(2012, 1, 5), true,
+                true)};
     REQUIRE(sequence.intersectsPeriodSet(PeriodSet(s)) == true);
-    s = {Period(unix_time(2012, 1, 2), unix_time(2012, 1, 5), true, true),
-         Period(unix_time(2012, 2, 2), unix_time(2012, 2, 3), true, true)};
-    s = {Period(unix_time(2012, 1, 3), unix_time(2012, 1, 5), true, true)};
+    s = {Period(unix_time_point(2012, 1, 2), unix_time_point(2012, 1, 5), true,
+                true),
+         Period(unix_time_point(2012, 2, 2), unix_time_point(2012, 2, 3), true,
+                true)};
+    s = {Period(unix_time_point(2012, 1, 3), unix_time_point(2012, 1, 5), true,
+                true)};
     REQUIRE(sequence.intersectsPeriodSet(PeriodSet(s)) == true);
 
     // Negative cases
-    s = {Period(unix_time(2012, 2, 2), unix_time(2012, 2, 3), true, true)};
+    s = {Period(unix_time_point(2012, 2, 2), unix_time_point(2012, 2, 3), true,
+                true)};
     REQUIRE(sequence.intersectsPeriodSet(PeriodSet(s)) == false);
   }
 }

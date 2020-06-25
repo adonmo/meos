@@ -54,7 +54,8 @@ TEMPLATE_TEST_CASE("TInstant getTime", "[tinst]", int, float) {
                     take(100, random(numeric_limits<int>::min(),
                                      numeric_limits<int>::max())));
   TInstant<TestType> instant(i, unix_time(2012, 11, 1));
-  Period p(unix_time(2012, 11, 1), unix_time(2012, 11, 1), true, true);
+  Period p(unix_time_point(2012, 11, 1), unix_time_point(2012, 11, 1), true,
+           true);
   set<Period> periods = {p};
   PeriodSet expected(periods);
   REQUIRE(instant.getTime() == expected);
@@ -65,7 +66,8 @@ TEMPLATE_TEST_CASE("TInstant period", "[tinst]", int, float) {
                     take(100, random(numeric_limits<int>::min(),
                                      numeric_limits<int>::max())));
   TInstant<TestType> instant(i, unix_time(2012, 11, 1));
-  Period expected(unix_time(2012, 11, 1), unix_time(2012, 11, 1), true, true);
+  Period expected(unix_time_point(2012, 11, 1), unix_time_point(2012, 11, 1),
+                  true, true);
   REQUIRE(instant.period() == expected);
 }
 
@@ -95,15 +97,15 @@ TEMPLATE_TEST_CASE("TInstant intersection functions", "[tinstantset]", int,
   // clang-format off
   SECTION("intersectsPeriod") {
     // Positive cases
-    REQUIRE(instant.intersectsPeriod(Period(unix_time(2012, 1, 2), unix_time(2012, 1, 3), true, true)) == true);
-    REQUIRE(instant.intersectsPeriod(Period(unix_time(2012, 1, 2), unix_time(2012, 1, 5), true, true)) == true);
-    REQUIRE(instant.intersectsPeriod(Period(unix_time(2012, 1, 1, 12), unix_time(2012, 1, 2, 12), true, true)) == true);
-    REQUIRE(instant.intersectsPeriod(Period(unix_time(2012, 1, 2), unix_time(2012, 1, 3), true, false)) == true);
+    REQUIRE(instant.intersectsPeriod(Period(unix_time_point(2012, 1, 2), unix_time_point(2012, 1, 3), true, true)) == true);
+    REQUIRE(instant.intersectsPeriod(Period(unix_time_point(2012, 1, 2), unix_time_point(2012, 1, 5), true, true)) == true);
+    REQUIRE(instant.intersectsPeriod(Period(unix_time_point(2012, 1, 1, 12), unix_time_point(2012, 1, 2, 12), true, true)) == true);
+    REQUIRE(instant.intersectsPeriod(Period(unix_time_point(2012, 1, 2), unix_time_point(2012, 1, 3), true, false)) == true);
 
     // Negative cases
-    REQUIRE(instant.intersectsPeriod(Period(unix_time(2012, 1, 2), unix_time(2012, 1, 3), false, true)) == false);
-    REQUIRE(instant.intersectsPeriod(Period(unix_time(2012, 1, 2), unix_time(2012, 1, 3), false, false)) == false);
-    REQUIRE(instant.intersectsPeriod(Period(unix_time(2012, 2, 2), unix_time(2012, 2, 3), true, true)) == false);
+    REQUIRE(instant.intersectsPeriod(Period(unix_time_point(2012, 1, 2), unix_time_point(2012, 1, 3), false, true)) == false);
+    REQUIRE(instant.intersectsPeriod(Period(unix_time_point(2012, 1, 2), unix_time_point(2012, 1, 3), false, false)) == false);
+    REQUIRE(instant.intersectsPeriod(Period(unix_time_point(2012, 2, 2), unix_time_point(2012, 2, 3), true, true)) == false);
   }
   // clang-format on
 
@@ -125,16 +127,20 @@ TEMPLATE_TEST_CASE("TInstant intersection functions", "[tinstantset]", int,
 
   SECTION("intersectsPeriodSet") {
     // Positive cases
-    set<Period> s = {
-        Period(unix_time(2012, 1, 2), unix_time(2012, 1, 3), true, true)};
+    set<Period> s = {Period(unix_time_point(2012, 1, 2),
+                            unix_time_point(2012, 1, 3), true, true)};
     REQUIRE(instant.intersectsPeriodSet(PeriodSet(s)) == true);
-    s = {Period(unix_time(2012, 1, 2), unix_time(2012, 1, 5), true, true)};
+    s = {Period(unix_time_point(2012, 1, 2), unix_time_point(2012, 1, 5), true,
+                true)};
     REQUIRE(instant.intersectsPeriodSet(PeriodSet(s)) == true);
-    s = {Period(unix_time(2012, 1, 2), unix_time(2012, 1, 5), true, true),
-         Period(unix_time(2012, 2, 2), unix_time(2012, 2, 3), true, true)};
+    s = {Period(unix_time_point(2012, 1, 2), unix_time_point(2012, 1, 5), true,
+                true),
+         Period(unix_time_point(2012, 2, 2), unix_time_point(2012, 2, 3), true,
+                true)};
 
     // Negative cases
-    s = {Period(unix_time(2012, 2, 2), unix_time(2012, 2, 3), true, true)};
+    s = {Period(unix_time_point(2012, 2, 2), unix_time_point(2012, 2, 3), true,
+                true)};
     REQUIRE(instant.intersectsPeriodSet(PeriodSet(s)) == false);
   }
 }

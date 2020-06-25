@@ -28,7 +28,10 @@ template <typename T> PeriodSet TInstant<T>::getTime() const {
 }
 
 template <typename T> Period TInstant<T>::period() const {
-  return Period(this->getTimestamp(), this->getTimestamp(), true, true);
+  return Period(
+      std::chrono::system_clock::from_time_t(this->getTimestamp() / 1000L),
+      std::chrono::system_clock::from_time_t(this->getTimestamp() / 1000L),
+      true, true);
 };
 
 template <typename T>
@@ -48,5 +51,6 @@ bool TInstant<T>::intersectsTimestamp(time_t const datetime) const {
 
 template <typename T>
 bool TInstant<T>::intersectsPeriod(Period const period) const {
-  return period.contains_timestamp(this->t);
+  return period.contains_timestamp(
+      std::chrono::system_clock::from_time_t(this->t / 1000L));
 };

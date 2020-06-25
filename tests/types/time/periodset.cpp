@@ -17,8 +17,9 @@ TEST_CASE("PeriodSet period functions", "[periodset]") {
   for (size_t i = 0; i < size; i++) {
     bool lower_inc = random() % 2;
     bool upper_inc = random() % 2;
-    long lbound = unix_time(2012, 1, 1) + 10 * 365 * (random() % day);
-    long duration = day + 6 * (random() % day);
+    auto lbound = std::chrono::system_clock::from_time_t(
+        (unix_time(2012, 1, 1) + 10 * 365 * (random() % day)) / 1000L);
+    auto duration = std::chrono::milliseconds(day + 6 * (random() % day));
     auto rbound = lbound + duration; // This is to make sure lbound <= rbound
     auto period = Period(lbound, rbound, lower_inc, upper_inc);
     expected_periods.insert(period);
@@ -47,22 +48,28 @@ TEST_CASE("PeriodSet period gaps are ignored", "[periodset]") {
   auto lower_inc = GENERATE(true, false);
   auto upper_inc = GENERATE(true, false);
   set<Period> periods = {
-      Period(unix_time(2012, 1, 1), unix_time(2012, 1, 2), lower_inc, true),
-      Period(unix_time(2012, 1, 6), unix_time(2012, 1, 7), true, upper_inc),
+      Period(unix_time_point(2012, 1, 1), unix_time_point(2012, 1, 2),
+             lower_inc, true),
+      Period(unix_time_point(2012, 1, 6), unix_time_point(2012, 1, 7), true,
+             upper_inc),
   };
   PeriodSet period_set(periods);
-  Period expected = Period(unix_time(2012, 1, 1), unix_time(2012, 1, 7),
-                           lower_inc, upper_inc);
+  Period expected = Period(unix_time_point(2012, 1, 1),
+                           unix_time_point(2012, 1, 7), lower_inc, upper_inc);
   REQUIRE(period_set.period() == expected);
 }
 
 TEST_CASE("PeriodSet timespan", "[periodset]") {
   auto lower_inc = GENERATE(true, false);
   auto upper_inc = GENERATE(true, false);
-  auto left =
-      GENERATE(take(4, random(unix_time(2012, 1, 1), unix_time(2020, 1, 1))));
-  auto duration_1 = GENERATE(take(4, random(minute, year)));
-  auto duration_2 = GENERATE(take(4, random(minute, year)));
+  auto left = std::chrono::system_clock::from_time_t(
+      (GENERATE(
+          take(4, random(unix_time(2012, 1, 1), unix_time(2020, 1, 1))))) /
+      1000);
+  auto duration_1 =
+      std::chrono::milliseconds(GENERATE(take(4, random(minute, year))));
+  auto duration_2 =
+      std::chrono::milliseconds(GENERATE(take(4, random(minute, year))));
   auto period_1 =
       make_unique<Period>(left, left + duration_1, lower_inc, upper_inc);
   auto period_2 =
@@ -73,20 +80,23 @@ TEST_CASE("PeriodSet timespan", "[periodset]") {
   periods.insert(move(period_2));
   PeriodSet period_set(periods);
 
-  REQUIRE(period_set.timespan() == duration_1 + duration_2);
+  REQUIRE(period_set.timespan() == (duration_1 + duration_2).count());
 }
 
 TEST_CASE("PeriodSet shift", "[periodset]") {
   set<unique_ptr<Period>> expected_periods;
   set<unique_ptr<Period>> actual_periods;
   auto size = GENERATE(take(4, random(1, 2)));
-  auto shift = GENERATE(take(4, random(minute, day)));
+  auto shift =
+      std::chrono::milliseconds(GENERATE(take(4, random(minute, day))));
 
   for (size_t i = 0; i < size; i++) {
     bool lower_inc = random() % 2;
     bool upper_inc = random() % 2;
-    long lbound = unix_time(2012, 1, 1) + 10 * 365 * (random() % day);
-    long duration = day + 10 * 365 * (random() % day);
+    auto lbound = std::chrono::system_clock::from_time_t(
+        (unix_time(2012, 1, 1) + 10 * 365 * (random() % day)) / 1000L);
+    auto duration =
+        std::chrono::milliseconds(day + 10 * 365 * (random() % day));
     auto rbound = lbound + duration; // This is to make sure lbound <= rbound
     auto period = make_unique<Period>(lbound, rbound, lower_inc, upper_inc);
     actual_periods.insert(period->shift(shift));
@@ -101,20 +111,22 @@ TEST_CASE("PeriodSet shift", "[periodset]") {
 }
 
 TEST_CASE("PeriodSet timestamp functions", "[periodset]") {
-  set<unique_ptr<Period>> periods;
+  set<Period> periods;
   set<time_t> expected_timestamps;
-  auto size = GENERATE(0, take(4, random(1, 100)));
+  auto size = GENERATE(0, take(4, random(1, 3)));
 
   for (size_t i = 0; i < size; i++) {
     bool lower_inc = random() % 2;
     bool upper_inc = random() % 2;
-    long lbound = unix_time(2012, 1, 1) + 10 * 365 * (random() % day);
-    long duration = day + 6 * (random() % day);
+    auto lbound = unix_time(2012, 1, 1) + 10 * 365 * (random() % day);
+    auto duration = day + 6 * (random() % day);
     auto rbound = lbound + duration; // This is to make sure lbound <= rbound
-    auto period = make_unique<Period>(lbound, rbound, lower_inc, upper_inc);
-    expected_timestamps.insert(lbound);
-    expected_timestamps.insert(rbound);
-    periods.insert(move(period));
+    auto period = Period(std::chrono::system_clock::from_time_t(lbound / 1000L),
+                         std::chrono::system_clock::from_time_t(rbound / 1000L),
+                         lower_inc, upper_inc);
+    expected_timestamps.insert(lbound / 1000L * 1000L); // Round off to seconds
+    expected_timestamps.insert(rbound / 1000L * 1000L); // Round off to seconds
+    periods.insert(period);
   }
 
   PeriodSet actual(periods);

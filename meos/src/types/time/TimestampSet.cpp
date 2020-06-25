@@ -14,7 +14,8 @@ TimestampSet::TimestampSet(TimestampSet const &t) {
 set<Period> TimestampSet::periods() const {
   set<Period> s;
   for (auto const &e : m_timestamps) {
-    s.insert(Period(e, e, true, true));
+    auto t = std::chrono::system_clock::from_time_t(e / 1000L);
+    s.insert(Period(t, t, true, true));
   }
   return s;
 }
