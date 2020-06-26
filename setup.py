@@ -1,80 +1,136 @@
+import fnmatch
 import os
-import re
-import sys
 import platform
 import subprocess
-
-from setuptools import setup, Extension, find_packages
-from setuptools.command.build_ext import build_ext
+import sys
+import logging
 from distutils.version import LooseVersion
+from setuptools import setup, Extension
 
-from tools.write_version_info import get_version_info
+log = logging.getLogger(__name__)
+ch = logging.StreamHandler()
+log.addHandler(ch)
+
+MIN_GEOS_VERSION = "3.5"
+
+if "all" in sys.warnoptions:
+    # show GEOS messages in console with: python -W all
+    log.setLevel(logging.DEBUG)
 
 
-class CMakeExtension(Extension):
-    def __init__(self, name, sourcedir=''):
-        Extension.__init__(self, name, sources=[])
-        self.sourcedir = os.path.abspath(sourcedir)
+def get_geos_config(option):
+    """Get configuration option from the `geos-config` development utility
+
+    The PATH environment variable should include the path where geos-config is located.
+    """
+    try:
+        stdout, stderr = subprocess.Popen(
+            ["geos-config", option], stdout=subprocess.PIPE, stderr=subprocess.PIPE
+        ).communicate()
+    except OSError:
+        return
+    if stderr and not stdout:
+        log.warning("geos-config %s returned '%s'", option, stderr.decode().strip())
+        return
+    result = stdout.decode().strip()
+    log.debug("geos-config %s returned '%s'", option, result)
+    return result
 
 
-class CMakeBuild(build_ext):
-    def run(self):
-        try:
-            out = subprocess.check_output(['cmake', '--version'])
-        except OSError:
-            raise RuntimeError("CMake must be installed to build the following extensions: " +
-                               ", ".join(e.name for e in self.extensions))
+def get_geos_paths():
+    """Obtain the paths for compiling and linking with the GEOS C-API
 
-        cmake_version = LooseVersion(re.search(r'version\s*([\d.]+)', out.decode()).group(1))
-        if cmake_version < LooseVersion('3.5.0'):
-            raise RuntimeError("CMake >= 3.5.0 is required")
+    First the presence of the GEOS_INCLUDE_PATH and GEOS_INCLUDE_PATH environment
+    variables is checked. If they are both present, these are taken.
 
-        for ext in self.extensions:
-            self.build_extension(ext)
+    If one of the two paths was not present, geos-config is called (it should be on the
+    PATH variable). geos-config provides all the paths.
 
-    def build_extension(self, ext):
-        extdir = os.path.abspath(os.path.dirname(self.get_ext_fullpath(ext.name)))
-        cmake_args = ['-DCMAKE_LIBRARY_OUTPUT_DIRECTORY=' + extdir,
-                      '-DPYTHON_EXECUTABLE=' + sys.executable]
-
-        build_type = os.environ.get("BUILD_TYPE", "Release")
-        build_args = ['--config', build_type]
-
-        # Pile all .so in one place and use $ORIGIN as RPATH
-        cmake_args += ["-DCMAKE_BUILD_WITH_INSTALL_RPATH=TRUE"]
-        cmake_args += ["-DCMAKE_INSTALL_RPATH={}".format("$ORIGIN")]
-
-        if platform.system() == "Windows":
-            cmake_args += ['-DCMAKE_LIBRARY_OUTPUT_DIRECTORY_{}={}'.format(build_type.upper(), extdir)]
-            if sys.maxsize > 2**32:
-                cmake_args += ['-A', 'x64']
-            build_args += ['--', '/m']
+    If geos-config was not found, no additional paths are provided to the extension. It is
+    still possible to compile in this case using custom arguments to setup.py.
+    """
+    include_dir = os.environ.get("GEOS_INCLUDE_PATH")
+    library_dir = os.environ.get("GEOS_LIBRARY_PATH")
+    if include_dir and library_dir:
+        return {
+            "include_dirs": [include_dir],
+            "library_dirs": [library_dir],
+            "libraries": ["geos_c"],
+        }
+    geos_version = get_geos_config("--version")
+    if not geos_version:
+        log.warning(
+            "Could not find geos-config executable. Either append the path to geos-config"
+            " to PATH or manually provide the include_dirs, library_dirs, libraries and "
+            "other link args for compiling against a GEOS version >=%s.",
+            MIN_GEOS_VERSION,
+        )
+        return {}
+    if LooseVersion(geos_version) < LooseVersion(MIN_GEOS_VERSION):
+        raise ImportError(
+            "GEOS version should be >={}, found {}".format(
+                MIN_GEOS_VERSION, geos_version
+            )
+        )
+    libraries = []
+    library_dirs = []
+    include_dirs = []
+    extra_link_args = []
+    for item in get_geos_config("--cflags").split():
+        if item.startswith("-I"):
+            include_dirs.extend(item[2:].split(":"))
+    for item in get_geos_config("--clibs").split():
+        if item.startswith("-L"):
+            library_dirs.extend(item[2:].split(":"))
+        elif item.startswith("-l"):
+            libraries.append(item[2:])
         else:
-            cmake_args += ['-DCMAKE_BUILD_TYPE=' + build_type]
-            build_args += ['--', '-j4']
+            extra_link_args.append(item)
+    return {
+        "include_dirs": include_dirs,
+        "library_dirs": library_dirs,
+        "libraries": libraries,
+        "extra_link_args": extra_link_args,
+    }
 
-        env = os.environ.copy()
-        env['CXXFLAGS'] = '{} -DVERSION_INFO=\\"{}\\"'.format(env.get('CXXFLAGS', ''),
-                                                              self.distribution.get_version())
-        if not os.path.exists(self.build_temp):
-            os.makedirs(self.build_temp)
-        subprocess.check_call(['cmake', ext.sourcedir] + cmake_args, cwd=self.build_temp, env=env)
-        subprocess.check_call(['cmake',
-                               '--build', '.',
-                               '--target', ext.name
-                               ] + build_args,
-                              cwd=self.build_temp)
+
+class PyBind11Include:
+    def __str__(self):
+        import pybind11
+
+        return pybind11.get_include()
+
+
+geos_paths = get_geos_paths()
+
+sources = ['pybind/pybind.cpp']
+for root, dirnames, filenames in os.walk('./meos/src'):
+    for filename in fnmatch.filter(filenames, '*.c') or fnmatch.filter(filenames, '*.cpp'):
+        sources.append(os.path.join(root, filename))
+
+include_dirs = ['include', 'meos/include', PyBind11Include()] + geos_paths.get("include_dirs", [])
+library_dirs = geos_paths.get("library_dirs", [])
+libraries = geos_paths.get("libraries", [])
+
+extra_compile_args = []
+if platform.system() == "Windows":
+    extra_compile_args.append('/std:c++14')
+else:
+    extra_compile_args.append('-std=c++14')
+
+extra_link_args = geos_paths.get("extra_link_args", [])
 
 setup(
-    name='pymeos',
-    version=get_version_info()[3],
-    author='Krishna Chaitanya Bommakanti',
-    author_email='bkchaitan94@gmail.com',
-    description='Python bindings to libmeos',
-    long_description=open("README.md").read(),
-    ext_modules=[CMakeExtension('pymeos')],
-    packages=find_packages(),
-    cmdclass=dict(build_ext=CMakeBuild),
-    url="https://github.com/chaitan94/meos",
-    zip_safe=False
+    ext_modules=[
+        Extension(
+            'pymeos',
+            sources,
+            include_dirs=include_dirs,
+            library_dirs=library_dirs,
+            libraries=libraries,
+            extra_compile_args=extra_compile_args,
+            extra_link_args=extra_link_args,
+            language='c++',
+        ),
+    ],
 )
