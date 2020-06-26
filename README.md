@@ -213,3 +213,11 @@ You can then proceed to host the docs locally, for example on http://0.0.0.0:800
 ```sh
 $ python -m http.server --directory documentation/python/_build/html
 ```
+
+## Contributing
+
+Issues and pull requests are welcome.
+
+* For proposing new features/improvements or reporting bugs, [create an issue](https://github.com/chaitan94/meos/issues/new/choose).
+* Check [open issues](https://github.com/chaitan94/meos/issues) for viewing existing ideas, verify if it is already proposed/being worked upon.
+* When implementing new features make sure to add relevant tests and documentation before sending pull requests.
