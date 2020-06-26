@@ -20,7 +20,6 @@
 #include <cmath>
 #include <ctime>
 #include <datetime.h>
-#include <iostream>
 #include <pybind11/pybind11.h>
 
 // Backport the PyDateTime_DELTA functions from Python3.3 if required
@@ -192,10 +191,6 @@ public:
     time_t t = std::mktime(&cal) + local_tz_offset - offset;
 
     value = system_clock::from_time_t(t) + msecs;
-    std::cout << "Got from python: " << t << std::endl;
-    std::cout << "               : " << std::mktime(&cal) << std::endl;
-    std::cout << "local tz offset: " << (local_tz_offset / 3600.0) << std::endl;
-    std::cout << "         offset: " << (offset / 3600.0) << std::endl;
     return true;
   }
 
@@ -211,7 +206,6 @@ public:
 
     std::time_t tt =
         system_clock::to_time_t(time_point_cast<system_clock::duration>(src));
-    std::cout << "Got from C++: " << tt << std::endl;
     // this function uses static memory so it's best to copy it out asap just in
     // case otherwise other code that is using gmtime may break this (not
     // just python code)
