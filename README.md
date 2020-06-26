@@ -188,3 +188,17 @@ $ pip install .
 $ pip install -r tests/python/requirements.txt
 $ pytest
 ```
+
+## Building docs
+
+### C++ (Doxygen)
+
+```sh
+$ cmake -B build/docs -S documentation
+$ cmake --build build/docs
+$ cmake --build build/docs --target cppdocs
+```
+You can then proceed to host the docs locally, for example on http://0.0.0.0:8000/
+```sh
+$ python -m http.server --directory build/docs/doxygen/html
+```
