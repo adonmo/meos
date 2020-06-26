@@ -103,12 +103,12 @@ class PyBind11Include:
 
 geos_paths = get_geos_paths()
 
-sources = ['pybind/pybind.cpp']
-for root, dirnames, filenames in os.walk('./meos/src'):
+sources = ['pybind/source/pybind.cpp']
+for root, dirnames, filenames in os.walk('./source'):
     for filename in fnmatch.filter(filenames, '*.c') or fnmatch.filter(filenames, '*.cpp'):
         sources.append(os.path.join(root, filename))
 
-include_dirs = ['include', 'meos/include', PyBind11Include()] + geos_paths.get("include_dirs", [])
+include_dirs = ['include', 'pybind/include', PyBind11Include()] + geos_paths.get("include_dirs", [])
 library_dirs = geos_paths.get("library_dirs", [])
 libraries = geos_paths.get("libraries", [])
 

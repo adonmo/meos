@@ -15,7 +15,7 @@ jobs:
         os: [ubuntu-latest]
 
     steps:
-    - uses: actions/checkout@v1
+    - uses: actions/checkout@v2
 
     - name: Set up conda path
       # Using this would mean we should use bash -l {0} in all the other steps instead
@@ -32,17 +32,17 @@ jobs:
       shell: bash -l {0}
       run: sudo apt-get -y update && sudo apt-get -y install libgeos-dev
 
-    - name: Configure CMake
+    - name: Configure CMake for tests
       shell: bash -l {0}
       working-directory: ${{runner.workspace}}/meos
-      run: cmake -B build -S . -DCMAKE_BUILD_TYPE=$BUILD_TYPE
+      run: cmake -B build -S test -DCMAKE_BUILD_TYPE=$BUILD_TYPE
 
     - name: Build
       working-directory: ${{runner.workspace}}/meos
       shell: bash -l {0}
-      run: cmake --build build --config $BUILD_TYPE
+      run: cmake --build build/test --config $BUILD_TYPE
 
     - name: Test
-      working-directory: ${{runner.workspace}}/meos/build
+      working-directory: ${{runner.workspace}}/meos/build/test
       shell: bash -l {0}
       run: ctest --output-on-failure -C $BUILD_TYPE

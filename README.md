@@ -160,31 +160,23 @@ assert period.upper_inc == False
 ```
 
 # Development
+MEOS uses the [CMake](https://cmake.org/) build system, [Catch2](https://github.com/catchorg/Catch2) and [pytest](https://docs.pytest.org/en/latest/) for tests.
 
 ## Building
-
-MEOS uses the [CMake](https://cmake.org/) build system. Follow these steps to build the project:
 
 ```sh
 $ cmake -B build -S .
 $ cmake --build build
 ```
 
-This builds three artifacts:
- - **libmeos&#46;so** - the compiled shared object for use in C/C++ projects.
- - **meos-tests** - executable to run tests.
- - **libmeos.cpython-38m-x86_64-linux-gnu.so** - python module bindings.
-
-If you make any additional changes, you can just run `make` to get your changes reflected in the compiled outputs.
-
-## Running tests
-
-MEOS uses [Catch2](https://github.com/catchorg/Catch2) and [pytest](https://docs.pytest.org/en/latest/) for tests.
+## Testing
 
 ### C++
 
 ```sh
-$ ./build/tests/meos-tests
+$ cmake -B build/test -S test
+$ cmake --build build/test
+$ ./build/test/libmeos-tests
 ```
 
 ### Python
