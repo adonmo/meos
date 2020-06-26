@@ -1,19 +1,7 @@
-Welcome to pymeos's documentation
+Welcome to PyMEOS's documentation
 ===================================
 
-.. toctree::
-    :maxdepth: 1
-    :caption: Contents:
-
-    Home <self>
-    pymeos
-    time
-    temporal
-    io
-
-pymeos provides python bindings to MEOS.
-
-Check `README <https://github.com/chaitan94/meos>`_ on our GitHub repository.
+PyMEOS provides python bindings to MEOS. Check `README <https://github.com/chaitan94/meos>`_ on GitHub for more infromation.
 
 Installation (Python)
 ---------------------
@@ -23,9 +11,17 @@ Installation (Python)
     pip install git+https://github.com/chaitan94/meos
 
 
-Indices and tables
-==================
+.. toctree::
+    :maxdepth: 2
 
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
+    Home <self>
+    quickstart
+
+.. toctree::
+    :maxdepth: 1
+    :caption: API Reference
+
+    pymeos
+    time
+    temporal
+    io
