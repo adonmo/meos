@@ -179,19 +179,20 @@ If you make any additional changes, you can just run `make` to get your changes 
 
 ## Running tests
 
-After building, from the build directory, run:
+MEOS uses [Catch2](https://github.com/catchorg/Catch2) and [pytest](https://docs.pytest.org/en/latest/) for tests.
+
+### C++
+
 ```sh
-$ ./tests/meos-tests
+$ ./build/tests/meos-tests
 ```
-If everything is working okay, you should see "All tests passed".
 
-MEOS uses the [Catch2](https://github.com/catchorg/Catch2) library for its tests.
+### Python
 
-### Testing the python bindings
-
-There are no strict tests yet for the python bindings. However you can run an example script file, making this a sanity test at least.
-
-After building, from the tests/python directory, run:
 ```sh
-$ python test.py
+$ pip -m venv ENV
+$ source ./ENV/bin/activate
+$ pip install .
+$ pip install -r tests/python/requirements.txt
+$ pytest
 ```

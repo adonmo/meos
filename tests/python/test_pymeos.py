@@ -1,8 +1,6 @@
 import datetime
 import sys
 from pathlib import Path
-# TODO remove this below line
-sys.path.append(str(Path(__file__).absolute().parent.parent.parent / "build" / "pybind"))
 
 import pytz
 
