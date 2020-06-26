@@ -21,10 +21,10 @@ TEMPLATE_TEST_CASE("TSequence value functions", "[tsequence]", int, float) {
   auto upper_inc = GENERATE(true, false);
 
   vector<TInstant<TestType>> instants = {
-      TInstant<TestType>(2, unix_time(2012, 1, 1)),
-      TInstant<TestType>(1, unix_time(2012, 1, 2)),
-      TInstant<TestType>(4, unix_time(2012, 1, 3)),
-      TInstant<TestType>(3, unix_time(2012, 1, 4)),
+      TInstant<TestType>(2, unix_time_point(2012, 1, 1)),
+      TInstant<TestType>(1, unix_time_point(2012, 1, 2)),
+      TInstant<TestType>(4, unix_time_point(2012, 1, 3)),
+      TInstant<TestType>(3, unix_time_point(2012, 1, 4)),
   };
   TSequence<TestType> sequence(instants, lower_inc, upper_inc);
 
@@ -48,7 +48,8 @@ TEMPLATE_TEST_CASE("TSequence instant functions", "[tsequence]", int, float) {
 
   for (size_t i = 0; i < size; i++) {
     TestType v = random() % 1000;
-    long t = unix_time(2012, 1, 1) + 10 * 365 * (random() % day);
+    time_point t = std::chrono::system_clock::from_time_t(
+        unix_time(2012, 1, 1) + 10 * 365 * (random() % day));
     auto instant = TInstant<TestType>(v, t);
     instants.push_back(instant);
     expected_instants.insert(instant);
@@ -75,8 +76,10 @@ TEMPLATE_TEST_CASE("TSequence getTime", "[tsequence]", int, float) {
       GENERATE(take(2, random(unix_time(2012, 1, 1), unix_time(2020, 1, 1))));
   auto t2 =
       GENERATE(take(2, random(unix_time(2012, 1, 1), unix_time(2020, 1, 1))));
-  auto instant_1 = make_unique<TInstant<TestType>>(v1, t1);
-  auto instant_2 = make_unique<TInstant<TestType>>(v2, t2);
+  time_point tp1 = std::chrono::system_clock::from_time_t(t1 / 1000L);
+  time_point tp2 = std::chrono::system_clock::from_time_t(t2 / 1000L);
+  auto instant_1 = make_unique<TInstant<TestType>>(v1, tp1);
+  auto instant_2 = make_unique<TInstant<TestType>>(v2, tp2);
 
   vector<unique_ptr<TInstant<TestType>>> instants;
   instants.push_back(move(instant_1));
@@ -100,7 +103,8 @@ TEMPLATE_TEST_CASE("TSequence period and timestamp related functions",
 
   for (size_t i = 0; i < size; i++) {
     TestType v = random() % 1000;
-    long t = unix_time(2012, 1, 1) + 10 * 365 * (random() % day);
+    time_point t = std::chrono::system_clock::from_time_t(
+        unix_time(2012, 1, 1) + 10 * 365 * (random() % day));
     auto instant = TInstant<TestType>(v, t);
     instants.push_back(instant);
   }
@@ -109,10 +113,8 @@ TEMPLATE_TEST_CASE("TSequence period and timestamp related functions",
   REQUIRE_THAT(actual.getInstants(), Catch::Matchers::Equals(instants));
   if (size > 0) {
     Period p = actual.period();
-    REQUIRE(p.lower() == std::chrono::system_clock::from_time_t(
-                             actual.startTimestamp() / 1000L));
-    REQUIRE(p.upper() == std::chrono::system_clock::from_time_t(
-                             actual.endTimestamp() / 1000L));
+    REQUIRE(p.lower() == actual.startTimestamp());
+    REQUIRE(p.upper() == actual.endTimestamp());
     REQUIRE(p.lower_inc() == lower_inc);
     REQUIRE(p.upper_inc() == upper_inc);
   } else {
@@ -125,10 +127,10 @@ TEMPLATE_TEST_CASE("TSequence.period() - gaps are ignored", "[tsequence]", int,
   auto lower_inc = GENERATE(true, false);
   auto upper_inc = GENERATE(true, false);
   vector<TInstant<TestType>> instants = {
-      TInstant<TestType>(1, unix_time(2012, 1, 1)),
-      TInstant<TestType>(2, unix_time(2012, 1, 2)),
-      TInstant<TestType>(3, unix_time(2012, 1, 6)),
-      TInstant<TestType>(4, unix_time(2012, 1, 7)),
+      TInstant<TestType>(1, unix_time_point(2012, 1, 1)),
+      TInstant<TestType>(2, unix_time_point(2012, 1, 2)),
+      TInstant<TestType>(3, unix_time_point(2012, 1, 6)),
+      TInstant<TestType>(4, unix_time_point(2012, 1, 7)),
   };
   TSequence<TestType> sequence(instants, lower_inc, upper_inc);
   Period expected = Period(unix_time_point(2012, 1, 1),
@@ -145,8 +147,10 @@ TEMPLATE_TEST_CASE("TSequence timespan", "[tsequence]", int, float) {
       GENERATE(take(2, random(unix_time(2012, 1, 1), unix_time(2020, 1, 1))));
   auto t2 =
       GENERATE(take(2, random(unix_time(2012, 1, 1), unix_time(2020, 1, 1))));
-  auto instant_1 = make_unique<TInstant<TestType>>(v1, t1 / 1000L * 1000L);
-  auto instant_2 = make_unique<TInstant<TestType>>(v2, t2 / 1000L * 1000L);
+  time_point tp1 = std::chrono::system_clock::from_time_t(t1);
+  time_point tp2 = std::chrono::system_clock::from_time_t(t2);
+  auto instant_1 = make_unique<TInstant<TestType>>(v1, tp1);
+  auto instant_2 = make_unique<TInstant<TestType>>(v2, tp2);
 
   vector<unique_ptr<TInstant<TestType>>> instants;
   instants.push_back(move(instant_1));
@@ -154,7 +158,8 @@ TEMPLATE_TEST_CASE("TSequence timespan", "[tsequence]", int, float) {
   TSequence<TestType> sequence(instants, lower_inc, upper_inc);
 
   REQUIRE(sequence.timespan() ==
-          sequence.endTimestamp() - sequence.startTimestamp());
+          std::chrono::duration_cast<duration_ms>(sequence.endTimestamp() -
+                                                  sequence.startTimestamp()));
 }
 
 TEMPLATE_TEST_CASE("TSequence shift", "[tsequence]", int, float) {
@@ -164,11 +169,12 @@ TEMPLATE_TEST_CASE("TSequence shift", "[tsequence]", int, float) {
   vector<unique_ptr<TInstant<TestType>>> expected_instants;
   vector<unique_ptr<TInstant<TestType>>> actual_instants;
   auto size = GENERATE(take(4, random(1, 2)));
-  auto shift = GENERATE(take(4, random(minute, day)));
+  duration_ms shift(GENERATE(take(4, random(minute, day))));
 
   for (size_t i = 0; i < size; i++) {
     TestType v = random() % 1000;
-    long t = unix_time(2012, 1, 1) + 10 * 365 * (random() % day);
+    time_point t = std::chrono::system_clock::from_time_t(
+        unix_time(2012, 1, 1) + 10 * 365 * (random() % day));
     auto instant = make_unique<TInstant<TestType>>(v, t);
     actual_instants.push_back(instant->shift(shift));
     auto expected_instant = make_unique<TInstant<TestType>>(v, t + shift);
@@ -184,24 +190,26 @@ TEMPLATE_TEST_CASE("TSequence shift", "[tsequence]", int, float) {
 TEMPLATE_TEST_CASE("TSequence intersection functions", "[tsequence]", int,
                    float) {
   vector<TInstant<TestType>> instants = {
-      TInstant<TestType>(10, unix_time(2012, 1, 2)),
-      TInstant<TestType>(20, unix_time(2012, 1, 3)),
-      TInstant<TestType>(30, unix_time(2012, 1, 4)),
+      TInstant<TestType>(10, unix_time_point(2012, 1, 2)),
+      TInstant<TestType>(20, unix_time_point(2012, 1, 3)),
+      TInstant<TestType>(30, unix_time_point(2012, 1, 4)),
   };
   TSequence<TestType> sequence(instants, true, true);
 
   SECTION("intersectsTimestamp") {
     // Positive cases
-    REQUIRE(sequence.intersectsTimestamp(unix_time(2012, 1, 2)) == true);
-    REQUIRE(sequence.intersectsTimestamp(unix_time(2012, 1, 2, 1)) == true);
-    REQUIRE(sequence.intersectsTimestamp(unix_time(2012, 1, 3)) == true);
-    REQUIRE(sequence.intersectsTimestamp(unix_time(2012, 1, 4)) == true);
+    REQUIRE(sequence.intersectsTimestamp(unix_time_point(2012, 1, 2)) == true);
+    REQUIRE(sequence.intersectsTimestamp(unix_time_point(2012, 1, 2, 1)) ==
+            true);
+    REQUIRE(sequence.intersectsTimestamp(unix_time_point(2012, 1, 3)) == true);
+    REQUIRE(sequence.intersectsTimestamp(unix_time_point(2012, 1, 4)) == true);
 
     // Negative cases
-    REQUIRE(sequence.intersectsTimestamp(unix_time(2012, 1, 1)) == false);
-    REQUIRE(sequence.intersectsTimestamp(unix_time(2012, 1, 4, 1)) == false);
-    REQUIRE(sequence.intersectsTimestamp(unix_time(2012, 1, 5)) == false);
-    REQUIRE(sequence.intersectsTimestamp(unix_time(2012, 2, 1)) == false);
+    REQUIRE(sequence.intersectsTimestamp(unix_time_point(2012, 1, 1)) == false);
+    REQUIRE(sequence.intersectsTimestamp(unix_time_point(2012, 1, 4, 1)) ==
+            false);
+    REQUIRE(sequence.intersectsTimestamp(unix_time_point(2012, 1, 5)) == false);
+    REQUIRE(sequence.intersectsTimestamp(unix_time_point(2012, 2, 1)) == false);
   }
 
   // clang-format off

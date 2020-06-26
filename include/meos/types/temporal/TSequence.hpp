@@ -10,6 +10,9 @@
 
 using namespace std;
 
+using time_point = std::chrono::system_clock::time_point;
+using duration_ms = std::chrono::milliseconds;
+
 template <typename T = float>
 class TSequence : public Temporal<T>,
                   public TInstantFunctions<TSequence<T>, TInstant<T>, T> {
@@ -37,12 +40,12 @@ public:
   set<TInstant<T>> instants() const;
 
   set<Range<T>> getValues() const override;
-  set<time_t> timestamps() const override;
+  set<time_point> timestamps() const override;
   PeriodSet getTime() const;
   Period period() const override;
-  unique_ptr<TSequence<T>> shift(time_t const timedelta) const;
-  TSequence<T> *shift_impl(time_t const timedelta) const override;
-  bool intersectsTimestamp(time_t const datetime) const override;
+  unique_ptr<TSequence<T>> shift(duration_ms const timedelta) const;
+  TSequence<T> *shift_impl(duration_ms const timedelta) const override;
+  bool intersectsTimestamp(time_point const datetime) const override;
   bool intersectsPeriod(Period const period) const override;
 
   friend ostream &operator<<(ostream &os, TSequence const &sequence) {

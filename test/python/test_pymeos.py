@@ -13,21 +13,17 @@ from pymeos.temporal import (TInstantBool, TInstantFloat, TInstantGeom,
 from pymeos.time import Period, PeriodSet
 
 
-def epoch(year, month, day, hour=0, minute=0, second=0):
-    return int(datetime.datetime(year, month, day, hour, minute, second).replace(tzinfo=pytz.UTC).timestamp() * 1000)
-
-
 def unix_dt(year, month, day, hour=0, minute=0, second=0):
     return pytz.UTC.localize(datetime.datetime(year, month, day, hour, minute, second))
 
 
 def test_data_types():
     # Example creation of temporal instant objects
-    tb = TInstantBool(True, epoch(2011, 1, 1))
-    ti = TInstantInt(10, epoch(2011, 1, 1))
-    tf = TInstantFloat(1.25, epoch(2011, 1, 1))
-    tt = TInstantText("testing", epoch(2011, 1, 1))
-    tg = TInstantGeom(Geometry(10.0, 15.0), epoch(2011, 1, 1))  # Spatiotemporal!
+    tb = TInstantBool(True, unix_dt(2011, 1, 1))
+    ti = TInstantInt(10, unix_dt(2011, 1, 1))
+    tf = TInstantFloat(1.25, unix_dt(2011, 1, 1))
+    tt = TInstantText("testing", unix_dt(2011, 1, 1))
+    tg = TInstantGeom(Geometry(10.0, 15.0), unix_dt(2011, 1, 1))  # Spatiotemporal!
 
     # Example creation of temporal instant set
     tsetb = TInstantSetBool({tb})
@@ -36,11 +32,11 @@ def test_data_types():
     tseqf = TSequenceFloat([tf], False, True)
 
     # Let's verify what we've done
-    assert (tb.getValue(), ti.getTimestamp()) == (True, 1293840000000)
-    assert (ti.getValue(), ti.getTimestamp()) == (10, 1293840000000)
-    assert (tf.getValue(), ti.getTimestamp()) == (1.25, 1293840000000)
-    assert (tt.getValue(), tt.getTimestamp()) == ("testing", 1293840000000)
-    assert (tg.getValue().toWKT(), tg.getTimestamp()) == ("POINT (10 15)", 1293840000000)
+    assert (tb.getValue(), ti.getTimestamp()) == (True, unix_dt(2011, 1, 1))
+    assert (ti.getValue(), ti.getTimestamp()) == (10, unix_dt(2011, 1, 1))
+    assert (tf.getValue(), ti.getTimestamp()) == (1.25, unix_dt(2011, 1, 1))
+    assert (tt.getValue(), tt.getTimestamp()) == ("testing", unix_dt(2011, 1, 1))
+    assert (tg.getValue().toWKT(), tg.getTimestamp()) == ("POINT (10 15)", unix_dt(2011, 1, 1))
 
     assert {tb} == tsetb.getInstants()
 
@@ -50,12 +46,12 @@ def test_data_types():
 
 def test_serialization():
     # Let's get some temporal objects ready, which we can use to show serialization examples
-    ti1 = TInstantInt(10, epoch(2011, 1, 1))
-    ti2 = TInstantInt(20, epoch(2019, 1, 1))
+    ti1 = TInstantInt(10, unix_dt(2011, 1, 1))
+    ti2 = TInstantInt(20, unix_dt(2019, 1, 1))
     tseti = TInstantSetInt({ti1, ti2})
 
-    tf1 = TInstantFloat(1.0, epoch(2011, 1, 1))
-    tf2 = TInstantFloat(2.5, epoch(2011, 1, 2))
+    tf1 = TInstantFloat(1.0, unix_dt(2011, 1, 1))
+    tf2 = TInstantFloat(2.5, unix_dt(2011, 1, 2))
     tseqf = TSequenceFloat([tf1, tf2], True, False)
 
     # Example serialization of these objects
@@ -76,19 +72,19 @@ def test_serialization():
 def test_deserialization():
     di = DeserializerInt("10@2011-01-01")
     ti = di.nextTInstant()
-    assert (ti.getValue(), ti.getTimestamp()) == (10, epoch(2011, 1, 1))
+    assert (ti.getValue(), ti.getTimestamp()) == (10, unix_dt(2011, 1, 1))
 
     df = DeserializerFloat("{1.0@2011-01-01, 2.5@2011-01-02}")
     tset = df.nextTInstantSet()
     actual = {(tf.getValue(), tf.getTimestamp()) for tf in tset.getInstants()}
-    expected = {(1.0, epoch(2011, 1, 1)), (2.5, epoch(2011, 1, 2))}
+    expected = {(1.0, unix_dt(2011, 1, 1)), (2.5, unix_dt(2011, 1, 2))}
     assert actual == expected
 
     dg = DeserializerGeom("[POINT(0 0)@2012-01-01 08:00:00+00, POINT(2 0)@2012-01-01 08:10:00+00, POINT(2 -1.98)@2012-01-01 08:15:00+00]")
     tseq = dg.nextTSequence()
     assert (tseq.lower_inc, tseq.upper_inc) == (True, True)
     actual = [(tg.getValue().toWKT(), tg.getTimestamp()) for tg in tseq.getInstants()]
-    expected = [('POINT (0 0)', epoch(2012, 1, 1, 8)), ('POINT (2 0)', epoch(2012, 1, 1, 8, 10)), ('POINT (2 -1.98)', epoch(2012, 1, 1, 8, 15))]
+    expected = [('POINT (0 0)', unix_dt(2012, 1, 1, 8)), ('POINT (2 0)', unix_dt(2012, 1, 1, 8, 10)), ('POINT (2 -1.98)', unix_dt(2012, 1, 1, 8, 15))]
     assert actual == expected
 
 

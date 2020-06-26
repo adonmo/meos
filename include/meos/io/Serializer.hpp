@@ -30,7 +30,7 @@ public:
   /**
    * Serialize time in ISO8601 format
    */
-  string writeTime(time_t const &time);
+  string writeTime(time_point const &time);
 
 private:
 };

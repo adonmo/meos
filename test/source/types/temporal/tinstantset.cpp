@@ -16,10 +16,10 @@ TEMPLATE_TEST_CASE("TInstantSet duration function returns InstantSet",
 
 TEMPLATE_TEST_CASE("TInstantSet value functions", "[tinstantset]", int, float) {
   set<TInstant<TestType>> instants = {
-      TInstant<TestType>(2, unix_time(2012, 1, 1)),
-      TInstant<TestType>(1, unix_time(2012, 1, 2)),
-      TInstant<TestType>(4, unix_time(2012, 1, 3)),
-      TInstant<TestType>(3, unix_time(2012, 1, 4)),
+      TInstant<TestType>(2, unix_time_point(2012, 1, 1)),
+      TInstant<TestType>(1, unix_time_point(2012, 1, 2)),
+      TInstant<TestType>(4, unix_time_point(2012, 1, 3)),
+      TInstant<TestType>(3, unix_time_point(2012, 1, 4)),
   };
   TInstantSet<TestType> instant_set(instants);
 
@@ -43,7 +43,8 @@ TEMPLATE_TEST_CASE("TInstantSet instant functions", "[tinstantset]", int,
 
   for (size_t i = 0; i < size; i++) {
     TestType v = random() % 1000;
-    long t = unix_time(2012, 1, 1) + 10 * 365 * (random() % day);
+    time_point t = std::chrono::system_clock::from_time_t(
+        unix_time(2012, 1, 1) + 10 * 365 * (random() % day));
     auto instant = TInstant<TestType>(v, t);
     instants.insert(instant);
     expected_instants.insert(instant);
@@ -68,8 +69,10 @@ TEMPLATE_TEST_CASE("TInstantSet getTime", "[tinstantset]", int, float) {
       GENERATE(take(2, random(unix_time(2012, 1, 1), unix_time(2020, 1, 1))));
   auto t2 =
       GENERATE(take(2, random(unix_time(2012, 1, 1), unix_time(2020, 1, 1))));
-  auto instant_1 = make_unique<TInstant<TestType>>(v1, t1 / 1000L * 1000L);
-  auto instant_2 = make_unique<TInstant<TestType>>(v2, t2 / 1000L * 1000L);
+  time_point tp1 = std::chrono::system_clock::from_time_t(t1 / 1000L);
+  time_point tp2 = std::chrono::system_clock::from_time_t(t2 / 1000L);
+  auto instant_1 = make_unique<TInstant<TestType>>(v1, tp1);
+  auto instant_2 = make_unique<TInstant<TestType>>(v2, tp2);
 
   auto period_1 = instant_1->period();
   auto period_2 = instant_2->period();
@@ -93,7 +96,8 @@ TEMPLATE_TEST_CASE("TInstantSet period and timestamp related functions",
 
   for (size_t i = 0; i < size; i++) {
     TestType v = random() % 1000;
-    long t = unix_time(2012, 1, 1) + 10 * 365 * (random() % day);
+    time_point t = std::chrono::system_clock::from_time_t(
+        unix_time(2012, 1, 1) + 10 * 365 * (random() % day));
     auto instant = TInstant<TestType>(v, t);
     instants.insert(instant);
   }
@@ -102,10 +106,8 @@ TEMPLATE_TEST_CASE("TInstantSet period and timestamp related functions",
   REQUIRE_THAT(actual.getInstants(), UnorderedEquals(instants));
   if (size > 0) {
     Period p = actual.period();
-    REQUIRE(p.lower() == std::chrono::system_clock::from_time_t(
-                             actual.startTimestamp() / 1000L));
-    REQUIRE(p.upper() == std::chrono::system_clock::from_time_t(
-                             actual.endTimestamp() / 1000L));
+    REQUIRE(p.lower() == actual.startTimestamp());
+    REQUIRE(p.upper() == actual.endTimestamp());
     REQUIRE(p.lower_inc() == true);
     REQUIRE(p.upper_inc() == true);
   } else {
@@ -116,10 +118,10 @@ TEMPLATE_TEST_CASE("TInstantSet period and timestamp related functions",
 TEMPLATE_TEST_CASE("TInstantSet.period() - gaps are ignored", "[tinstantset]",
                    int, float) {
   set<TInstant<TestType>> instants = {
-      TInstant<TestType>(1, unix_time(2012, 1, 1)),
-      TInstant<TestType>(2, unix_time(2012, 1, 2)),
-      TInstant<TestType>(3, unix_time(2012, 1, 6)),
-      TInstant<TestType>(4, unix_time(2012, 1, 7)),
+      TInstant<TestType>(1, unix_time_point(2012, 1, 1)),
+      TInstant<TestType>(2, unix_time_point(2012, 1, 2)),
+      TInstant<TestType>(3, unix_time_point(2012, 1, 6)),
+      TInstant<TestType>(4, unix_time_point(2012, 1, 7)),
   };
   TInstantSet<TestType> instant_set(instants);
   Period expected = Period(unix_time_point(2012, 1, 1),
@@ -134,8 +136,10 @@ TEMPLATE_TEST_CASE("TInstantSet timespan", "[tinstantset]", int, float) {
       GENERATE(take(2, random(unix_time(2012, 1, 1), unix_time(2020, 1, 1))));
   auto t2 =
       GENERATE(take(2, random(unix_time(2012, 1, 1), unix_time(2020, 1, 1))));
-  auto instant_1 = make_unique<TInstant<TestType>>(v1, t1 / 1000L * 1000L);
-  auto instant_2 = make_unique<TInstant<TestType>>(v2, t2 / 1000L * 1000L);
+  time_point tp1 = std::chrono::system_clock::from_time_t(t1 / 1000L);
+  time_point tp2 = std::chrono::system_clock::from_time_t(t2 / 1000L);
+  auto instant_1 = make_unique<TInstant<TestType>>(v1, tp1);
+  auto instant_2 = make_unique<TInstant<TestType>>(v2, tp2);
 
   set<unique_ptr<TInstant<TestType>>> instants;
   instants.insert(move(instant_1));
@@ -150,11 +154,12 @@ TEMPLATE_TEST_CASE("TInstantSet shift", "[tinstantset]", int, float) {
   set<unique_ptr<TInstant<TestType>>> expected_instants;
   set<unique_ptr<TInstant<TestType>>> actual_instants;
   auto size = GENERATE(take(4, random(1, 2)));
-  auto shift = GENERATE(take(4, random(minute, day)));
+  duration_ms shift(GENERATE(take(4, random(minute, day))));
 
   for (size_t i = 0; i < size; i++) {
     TestType v = random() % 1000;
-    long t = unix_time(2012, 1, 1) + 10 * 365 * (random() % day);
+    time_point t = std::chrono::system_clock::from_time_t(
+        unix_time(2012, 1, 1) + 10 * 365 * (random() % day));
     auto instant = make_unique<TInstant<TestType>>(v, t);
     actual_instants.insert(instant->shift(shift));
     auto expected_instant = make_unique<TInstant<TestType>>(v, t + shift);
@@ -169,24 +174,24 @@ TEMPLATE_TEST_CASE("TInstantSet shift", "[tinstantset]", int, float) {
 TEMPLATE_TEST_CASE("TInstantSet intersection functions", "[tinstantset]", int,
                    float) {
   set<TInstant<TestType>> instants = {
-      TInstant<TestType>(10, unix_time(2012, 1, 2)),
-      TInstant<TestType>(20, unix_time(2012, 1, 3)),
-      TInstant<TestType>(30, unix_time(2012, 1, 4)),
+      TInstant<TestType>(10, unix_time_point(2012, 1, 2)),
+      TInstant<TestType>(20, unix_time_point(2012, 1, 3)),
+      TInstant<TestType>(30, unix_time_point(2012, 1, 4)),
   };
   TInstantSet<TestType> iset(instants);
 
   SECTION("intersectsTimestamp") {
     // Positive cases
-    REQUIRE(iset.intersectsTimestamp(unix_time(2012, 1, 2)) == true);
-    REQUIRE(iset.intersectsTimestamp(unix_time(2012, 1, 3)) == true);
-    REQUIRE(iset.intersectsTimestamp(unix_time(2012, 1, 4)) == true);
+    REQUIRE(iset.intersectsTimestamp(unix_time_point(2012, 1, 2)) == true);
+    REQUIRE(iset.intersectsTimestamp(unix_time_point(2012, 1, 3)) == true);
+    REQUIRE(iset.intersectsTimestamp(unix_time_point(2012, 1, 4)) == true);
 
     // Negative cases
-    REQUIRE(iset.intersectsTimestamp(unix_time(2012, 1, 1)) == false);
-    REQUIRE(iset.intersectsTimestamp(unix_time(2012, 1, 2, 1)) == false);
-    REQUIRE(iset.intersectsTimestamp(unix_time(2012, 1, 4, 1)) == false);
-    REQUIRE(iset.intersectsTimestamp(unix_time(2012, 1, 5)) == false);
-    REQUIRE(iset.intersectsTimestamp(unix_time(2012, 2, 1)) == false);
+    REQUIRE(iset.intersectsTimestamp(unix_time_point(2012, 1, 1)) == false);
+    REQUIRE(iset.intersectsTimestamp(unix_time_point(2012, 1, 2, 1)) == false);
+    REQUIRE(iset.intersectsTimestamp(unix_time_point(2012, 1, 4, 1)) == false);
+    REQUIRE(iset.intersectsTimestamp(unix_time_point(2012, 1, 5)) == false);
+    REQUIRE(iset.intersectsTimestamp(unix_time_point(2012, 2, 1)) == false);
   }
 
   // clang-format off

@@ -54,7 +54,7 @@ public:
         first = false;
       else
         os << ", ";
-      os << ISO8601_time(std::chrono::system_clock::to_time_t(t) * 1000);
+      os << ISO8601_time(t);
     }
     os << "}";
     return os;

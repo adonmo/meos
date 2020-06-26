@@ -23,36 +23,36 @@ template <typename T> int Temporal<T>::numTimestamps() const {
   return timestamps().size();
 }
 
-template <typename T> time_t Temporal<T>::startTimestamp() const {
-  set<time_t> s = timestamps();
+template <typename T> time_point Temporal<T>::startTimestamp() const {
+  set<time_point> s = timestamps();
   if (s.size() <= 0) {
     throw "At least one timestamp expected";
   }
   return *s.begin();
 }
 
-template <typename T> time_t Temporal<T>::endTimestamp() const {
-  set<time_t> s = timestamps();
+template <typename T> time_point Temporal<T>::endTimestamp() const {
+  set<time_point> s = timestamps();
   if (s.size() <= 0) {
     throw "At least one timestamp expected";
   }
   return *s.rbegin();
 }
 
-template <typename T> time_t Temporal<T>::timestampN(int n) const {
-  set<time_t> s = timestamps();
+template <typename T> time_point Temporal<T>::timestampN(int n) const {
+  set<time_point> s = timestamps();
   if (s.size() < n) {
     throw "At least " + to_string(n) + " timestamp(s) expected";
   }
   return *next(s.begin(), n);
 }
 
-template <typename T> time_t Temporal<T>::timespan() const {
-  return period().timespan().count();
+template <typename T> duration_ms Temporal<T>::timespan() const {
+  return period().timespan();
 }
 
 template <typename T>
-unique_ptr<Temporal<T>> Temporal<T>::shift(time_t const timedelta) const {
+unique_ptr<Temporal<T>> Temporal<T>::shift(duration_ms const timedelta) const {
   return unique_ptr<Temporal<T>>(this->shift_impl(timedelta));
 }
 
@@ -60,7 +60,7 @@ template <typename T>
 bool Temporal<T>::intersectsTimestampSet(
     TimestampSet const timestampset) const {
   for (auto const &t : timestampset.timestamps()) {
-    if (intersectsTimestamp(std::chrono::system_clock::to_time_t(t) * 1000)) {
+    if (intersectsTimestamp(t)) {
       return true;
     }
   }

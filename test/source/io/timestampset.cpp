@@ -27,7 +27,7 @@ TEST_CASE("TimestampSets are serialized", "[serializer][timestampset]") {
                         take(10, random(0L, 4102488000000L)));
     time_point tp = std::chrono::system_clock::from_time_t(t / 1000L);
 
-    string expected = "{" + w.writeTime(t) + "}";
+    string expected = "{" + w.writeTime(tp) + "}";
 
     set<time_point> timestamps;
     timestamps.insert(tp);
@@ -46,7 +46,7 @@ TEST_CASE("TimestampSets are serialized", "[serializer][timestampset]") {
       time_t t = GENERATE(0L, unix_time(2012, 1, 1),
                           take(4, random(0L, 4102488000000L)));
       time_point tp = std::chrono::system_clock::from_time_t(t / 1000L);
-      expected.insert(w.writeTime(t));
+      expected.insert(w.writeTime(tp));
 
       timestamps.insert(tp);
     }

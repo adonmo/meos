@@ -1,8 +1,11 @@
 #ifndef MEOS_IO_UTILS_HPP
 #define MEOS_IO_UTILS_HPP
 
-#include <ctime>
+#include <chrono>
 #include <string>
+
+using time_point = std::chrono::system_clock::time_point;
+using duration_ms = std::chrono::milliseconds;
 
 void validate_ISO8601(const std::string &s);
 
@@ -23,7 +26,7 @@ std::string normalized_ISO8601(std::string s);
  * 1234-12-12 12:12:12+05
  * 1234-12-12 12:12:12-0530  // normalized pattern
  */
-time_t nextTime(std::istream &in);
+time_point nextTime(std::istream &in);
 
 char consume_one_of(std::istream &in, std::string s);
 

@@ -13,9 +13,9 @@ Period::Period(string const lower, string const upper, bool const lower_inc,
                bool const upper_inc)
     : m_lower_inc(lower_inc), m_upper_inc(upper_inc) {
   stringstream lss(lower);
-  this->m_lower = std::chrono::system_clock::from_time_t(nextTime(lss) / 1000L);
+  this->m_lower = nextTime(lss);
   stringstream uss(upper);
-  this->m_upper = std::chrono::system_clock::from_time_t(nextTime(uss) / 1000L);
+  this->m_upper = nextTime(uss);
   validate();
 }
 
@@ -126,14 +126,14 @@ istream &operator>>(istream &in, Period &period) {
   }
   bool const lower_inc = c == '[';
 
-  auto lower = std::chrono::system_clock::from_time_t(nextTime(in) / 1000L);
+  auto lower = nextTime(in);
 
   in >> c;
   if (c != ',') {
     throw invalid_argument("Expected a ','");
   }
 
-  auto upper = std::chrono::system_clock::from_time_t(nextTime(in) / 1000L);
+  auto upper = nextTime(in);
 
   in >> c;
   if (c != ']' && c != ')') {
@@ -152,12 +152,7 @@ istream &operator>>(istream &in, Period &period) {
 ostream &operator<<(ostream &os, Period const &period) {
   auto opening = period.lower_inc() ? "[" : "(";
   auto closing = period.upper_inc() ? "]" : ")";
-  os << opening
-     << ISO8601_time(std::chrono::system_clock::to_time_t(period.lower()) *
-                     1000)
-     << ", "
-     << ISO8601_time(std::chrono::system_clock::to_time_t(period.upper()) *
-                     1000)
-     << closing;
+  os << opening << ISO8601_time(period.lower()) << ", "
+     << ISO8601_time(period.upper()) << closing;
   return os;
 }

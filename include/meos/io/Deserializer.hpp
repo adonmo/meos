@@ -29,7 +29,7 @@ public:
   /**
    * Deserialize time in ISO8601 format
    */
-  time_t nextTime();
+  time_point nextTime();
   T nextValue();
 
 private:

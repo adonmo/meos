@@ -94,7 +94,7 @@ template <typename T> unique_ptr<TInstant<T>> Deserializer<T>::nextTInstant() {
     throw DeserializationException("Invalid TInstant: needs to contain @");
   }
   consumeChar('@');
-  time_t t = nextTime();
+  time_point t = nextTime();
 
   return make_unique<TInstant<T>>(value, t);
 };
@@ -138,12 +138,12 @@ unique_ptr<TimestampSet> Deserializer<T>::nextTimestampSet() {
   skipWhitespaces();
   consumeChar('{');
   set<time_point> s = {};
-  s.insert(std::chrono::system_clock::from_time_t(nextTime() / 1000L));
+  s.insert(nextTime());
   skipWhitespaces();
 
   while (hasNext() && peek(0) == ',') {
     consumeChar(',');
-    s.insert(std::chrono::system_clock::from_time_t(nextTime() / 1000L));
+    s.insert(nextTime());
     skipWhitespaces();
   }
 
@@ -170,7 +170,7 @@ unique_ptr<TimestampSet> Deserializer<T>::nextTimestampSet() {
  * 1234-12-12 12:12:12+05
  * 1234-12-12 12:12:12-0530  // normalized pattern
  */
-template <typename T> time_t Deserializer<T>::nextTime() {
+template <typename T> time_point Deserializer<T>::nextTime() {
   // TODO add support for UTC offset/timezone
   // TODO allow strings like 2012-1-1 instead of just 2012-01-01
 
@@ -217,7 +217,8 @@ template <typename T> time_t Deserializer<T>::nextTime() {
   int m_offset = offset % 100;
   int tz_offset_secs = sign * (h_offset * 60 + m_offset) * 60;
 
-  return (timegm(&time) - tz_offset_secs) * 1000L + millis;
+  duration_ms duration((timegm(&time) - tz_offset_secs) * 1000L + millis);
+  return time_point(duration);
 }
 
 template <typename T> T Deserializer<T>::nextValue() {

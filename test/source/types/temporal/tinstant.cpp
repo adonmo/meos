@@ -8,13 +8,13 @@ time_t const day = 24 * 60 * 60 * 1000L;
 
 TEMPLATE_TEST_CASE("TInstant duration function returns Instant", "[tinst]", int,
                    float, bool) {
-  TInstant<TestType> instant(1, unix_time(2012, 1, 1));
+  TInstant<TestType> instant(1, unix_time_point(2012, 1, 1));
   REQUIRE(instant.duration() == "Instant");
 }
 
 TEMPLATE_TEST_CASE("TInstant value functions", "[tinst]", int, float, bool) {
   TestType value = 1;
-  TInstant<TestType> instant(value, unix_time(2012, 1, 1));
+  TInstant<TestType> instant(value, unix_time_point(2012, 1, 1));
 
   set<Range<TestType>> expected = {
       Range<TestType>(instant.getValue(), instant.getValue(), true, true)};
@@ -28,7 +28,8 @@ TEMPLATE_TEST_CASE("TInstant value functions", "[tinst]", int, float, bool) {
 
 TEMPLATE_TEST_CASE("TInstant instant functions", "[tinst]", int, float) {
   TestType v = random() % 1000;
-  long t = unix_time(2012, 1, 1) + 10 * 365 * (random() % day);
+  time_point t = std::chrono::system_clock::from_time_t(
+      unix_time(2012, 1, 1) + 10 * 365 * (random() % day));
   auto actual = TInstant<TestType>(v, t);
 
   REQUIRE(actual.numInstants() == 1);
@@ -45,15 +46,15 @@ TEMPLATE_TEST_CASE("TInstant timespan", "[tinst]", int, float) {
   auto i = GENERATE(0, 1, -1, 2012, 756772544,
                     take(100, random(numeric_limits<int>::min(),
                                      numeric_limits<int>::max())));
-  TInstant<TestType> instant(i, unix_time(2012, 11, 1));
-  REQUIRE(instant.timespan() == 0);
+  TInstant<TestType> instant(i, unix_time_point(2012, 11, 1));
+  REQUIRE(instant.timespan() == duration_ms(0));
 }
 
 TEMPLATE_TEST_CASE("TInstant getTime", "[tinst]", int, float) {
   auto i = GENERATE(0, 1, -1, 2012, 756772544,
                     take(100, random(numeric_limits<int>::min(),
                                      numeric_limits<int>::max())));
-  TInstant<TestType> instant(i, unix_time(2012, 11, 1));
+  TInstant<TestType> instant(i, unix_time_point(2012, 11, 1));
   Period p(unix_time_point(2012, 11, 1), unix_time_point(2012, 11, 1), true,
            true);
   set<Period> periods = {p};
@@ -65,7 +66,7 @@ TEMPLATE_TEST_CASE("TInstant period", "[tinst]", int, float) {
   auto i = GENERATE(0, 1, -1, 2012, 756772544,
                     take(100, random(numeric_limits<int>::min(),
                                      numeric_limits<int>::max())));
-  TInstant<TestType> instant(i, unix_time(2012, 11, 1));
+  TInstant<TestType> instant(i, unix_time_point(2012, 11, 1));
   Period expected(unix_time_point(2012, 11, 1), unix_time_point(2012, 11, 1),
                   true, true);
   REQUIRE(instant.period() == expected);
@@ -75,23 +76,24 @@ TEMPLATE_TEST_CASE("TInstant shift", "[tinst]", int, float) {
   auto i = GENERATE(0, 1, -1, 2012, 756772544,
                     take(100, random(numeric_limits<int>::min(),
                                      numeric_limits<int>::max())));
-  TInstant<TestType> instant(i, unix_time(2012, 11, 1));
-  unique_ptr<TInstant<TestType>> shifted = instant.shift(day);
-  REQUIRE(shifted->getTimestamp() == unix_time(2012, 11, 2));
+  TInstant<TestType> instant(i, unix_time_point(2012, 11, 1));
+  unique_ptr<TInstant<TestType>> shifted = instant.shift(duration_ms(day));
+  REQUIRE(shifted->getTimestamp() == unix_time_point(2012, 11, 2));
 }
 
 TEMPLATE_TEST_CASE("TInstant intersection functions", "[tinstantset]", int,
                    float) {
-  TInstant<TestType> instant(10, unix_time(2012, 1, 2));
+  TInstant<TestType> instant(10, unix_time_point(2012, 1, 2));
 
   SECTION("intersectsTimestamp") {
     // Positive cases
-    REQUIRE(instant.intersectsTimestamp(unix_time(2012, 1, 2)) == true);
+    REQUIRE(instant.intersectsTimestamp(unix_time_point(2012, 1, 2)) == true);
 
     // Negative cases
-    REQUIRE(instant.intersectsTimestamp(unix_time(2012, 1, 1)) == false);
-    REQUIRE(instant.intersectsTimestamp(unix_time(2012, 1, 2, 1)) == false);
-    REQUIRE(instant.intersectsTimestamp(unix_time(2012, 2, 2)) == false);
+    REQUIRE(instant.intersectsTimestamp(unix_time_point(2012, 1, 1)) == false);
+    REQUIRE(instant.intersectsTimestamp(unix_time_point(2012, 1, 2, 1)) ==
+            false);
+    REQUIRE(instant.intersectsTimestamp(unix_time_point(2012, 2, 2)) == false);
   }
 
   // clang-format off

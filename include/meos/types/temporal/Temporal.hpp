@@ -9,6 +9,9 @@
 
 using namespace std;
 
+using time_point = std::chrono::system_clock::time_point;
+using duration_ms = std::chrono::milliseconds;
+
 template <typename T = float> class Temporal {
 public:
   Temporal();
@@ -52,7 +55,7 @@ public:
   /**
    * Interval on which the temporal value is defined.
    */
-  time_t timespan() const;
+  duration_ms timespan() const;
 
   /**
    * Period on which the temporal value is defined ignoring potential time gaps.
@@ -72,32 +75,32 @@ public:
   /**
    * Start timestamp.
    */
-  time_t startTimestamp() const;
+  time_point startTimestamp() const;
 
   /**
    * End timestamp.
    */
-  time_t endTimestamp() const;
+  time_point endTimestamp() const;
 
   /**
    * N-th timestamp.
    */
-  time_t timestampN(int n) const;
+  time_point timestampN(int n) const;
 
   /**
    * Set of timestamps.
    */
-  virtual set<time_t> timestamps() const = 0;
+  virtual set<time_point> timestamps() const = 0;
 
   /**
    * Shift the temporal value by a time interval
    */
-  unique_ptr<Temporal<T>> shift(time_t const timedelta) const;
+  unique_ptr<Temporal<T>> shift(duration_ms const timedelta) const;
 
   /**
    * Does the temporal value intersect the timestamp?
    */
-  virtual bool intersectsTimestamp(time_t const datetime) const = 0;
+  virtual bool intersectsTimestamp(time_point const datetime) const = 0;
 
   /**
    * Does the temporal value intersect the timestamp set?
@@ -117,7 +120,7 @@ public:
 private:
   virtual Temporal<T> *clone_impl() const = 0;
 
-  virtual Temporal<T> *shift_impl(time_t const timedelta) const = 0;
+  virtual Temporal<T> *shift_impl(duration_ms const timedelta) const = 0;
 };
 
 template class Temporal<bool>;

@@ -46,7 +46,7 @@ template <> string Serializer<Geometry>::write(Geometry const &value) {
   return value.toWKT();
 }
 
-template <typename T> string Serializer<T>::writeTime(time_t const &t) {
+template <typename T> string Serializer<T>::writeTime(time_point const &t) {
   return ISO8601_time(t);
 }
 

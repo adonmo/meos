@@ -8,13 +8,16 @@
 
 using namespace std;
 
+using time_point = std::chrono::system_clock::time_point;
+using duration_ms = std::chrono::milliseconds;
+
 template <typename T>
 class TInstant : public Temporal<T>,
                  public TInstantFunctions<TInstant<T>, TInstant<T>, T> {
 public:
-  TInstant(T value, time_t t);
+  TInstant(T value, time_point t);
   T getValue() const;
-  time_t getTimestamp() const;
+  time_point getTimestamp() const;
 
   unique_ptr<TInstant<T>> clone() const {
     return std::unique_ptr<TInstant<T>>(this->clone_impl());
@@ -45,22 +48,22 @@ public:
   set<TInstant> instants() const;
 
   set<Range<T>> getValues() const override;
-  set<time_t> timestamps() const override;
+  set<time_point> timestamps() const override;
   PeriodSet getTime() const;
   Period period() const override;
-  unique_ptr<TInstant<T>> shift(time_t const timedelta) const;
-  bool intersectsTimestamp(time_t const datetime) const override;
+  unique_ptr<TInstant<T>> shift(duration_ms const timedelta) const;
+  bool intersectsTimestamp(time_point const datetime) const override;
   bool intersectsPeriod(Period const period) const override;
 
 private:
   T const value;
-  time_t const t;
+  time_point const t;
 
   TInstant<T> *clone_impl() const override {
     return new TInstant<T>(this->value, this->t);
   };
 
-  TInstant<T> *shift_impl(time_t const timedelta) const override;
+  TInstant<T> *shift_impl(duration_ms const timedelta) const override;
 };
 
 template class TInstant<bool>;

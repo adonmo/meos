@@ -59,7 +59,7 @@ std::string normalized_ISO8601(std::string s) {
   return s;
 }
 
-time_t nextTime(std::istream &in) {
+time_point nextTime(std::istream &in) {
   // TODO allow strings like 2012-1-1 instead of just 2012-01-01
 
   in >> std::ws;
@@ -105,7 +105,8 @@ time_t nextTime(std::istream &in) {
   int m_offset = offset % 100;
   int tz_offset_secs = sign * (h_offset * 60 + m_offset) * 60;
 
-  return (timegm(&time) - tz_offset_secs) * 1000L + millis;
+  duration_ms duration((timegm(&time) - tz_offset_secs) * 1000L + millis);
+  return time_point(duration);
 }
 
 char consume_one_of(std::istream &in, std::string s) {

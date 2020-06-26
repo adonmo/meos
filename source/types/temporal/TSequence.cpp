@@ -59,8 +59,8 @@ template <typename T> set<Range<T>> TSequence<T>::getValues() const {
   return {Range<T>(min, max, this->lower_inc, this->upper_inc)};
 }
 
-template <typename T> set<time_t> TSequence<T>::timestamps() const {
-  set<time_t> s;
+template <typename T> set<time_point> TSequence<T>::timestamps() const {
+  set<time_point> s;
   for (auto const &e : this->m_instants) {
     s.insert(e.get()->getTimestamp());
   }
@@ -73,19 +73,18 @@ template <typename T> PeriodSet TSequence<T>::getTime() const {
 }
 
 template <typename T> Period TSequence<T>::period() const {
-  return Period(
-      std::chrono::system_clock::from_time_t(this->startTimestamp() / 1000L),
-      std::chrono::system_clock::from_time_t(this->endTimestamp() / 1000L),
-      lower_inc, upper_inc);
+  return Period(this->startTimestamp(), this->endTimestamp(), lower_inc,
+                upper_inc);
 }
 
 template <typename T>
-unique_ptr<TSequence<T>> TSequence<T>::shift(time_t const timedelta) const {
+unique_ptr<TSequence<T>>
+TSequence<T>::shift(duration_ms const timedelta) const {
   return unique_ptr<TSequence<T>>(this->shift_impl(timedelta));
 }
 
 template <typename T>
-TSequence<T> *TSequence<T>::shift_impl(time_t const timedelta) const {
+TSequence<T> *TSequence<T>::shift_impl(duration_ms const timedelta) const {
   vector<TInstant<T>> s;
   for (auto const &e : this->m_instants) {
     s.push_back(TInstant<T>(e->getValue(), e->getTimestamp() + timedelta));
@@ -94,9 +93,8 @@ TSequence<T> *TSequence<T>::shift_impl(time_t const timedelta) const {
 }
 
 template <typename T>
-bool TSequence<T>::intersectsTimestamp(time_t const datetime) const {
-  return this->period().contains_timestamp(
-      std::chrono::system_clock::from_time_t(datetime / 1000L));
+bool TSequence<T>::intersectsTimestamp(time_point const datetime) const {
+  return this->period().contains_timestamp(datetime);
 };
 
 template <typename T>

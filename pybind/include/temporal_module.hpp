@@ -12,7 +12,7 @@ namespace py = pybind11;
 template <typename T>
 void declare_temporal_types(py::module &m, std::string const &typesuffix) {
   py::class_<TInstant<T>>(m, ("TInstant" + typesuffix).c_str())
-      .def(py::init<T, time_t>())
+      .def(py::init<T, time_point>())
       .def(py::self == py::self)
       .def("__hash__",
            [](TInstant<T> const &instant) {

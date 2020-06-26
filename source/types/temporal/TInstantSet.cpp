@@ -41,8 +41,8 @@ template <typename T> set<Range<T>> TInstantSet<T>::getValues() const {
   return s;
 }
 
-template <typename T> set<time_t> TInstantSet<T>::timestamps() const {
-  set<time_t> s;
+template <typename T> set<time_point> TInstantSet<T>::timestamps() const {
+  set<time_point> s;
   for (auto const &e : this->m_instants) {
     s.insert(e.get()->getTimestamp());
   }
@@ -58,19 +58,17 @@ template <typename T> PeriodSet TInstantSet<T>::getTime() const {
 }
 
 template <typename T> Period TInstantSet<T>::period() const {
-  return Period(
-      std::chrono::system_clock::from_time_t(this->startTimestamp() / 1000L),
-      std::chrono::system_clock::from_time_t(this->endTimestamp() / 1000L),
-      true, true);
+  return Period(this->startTimestamp(), this->endTimestamp(), true, true);
 }
 
 template <typename T>
-unique_ptr<TInstantSet<T>> TInstantSet<T>::shift(time_t const timedelta) const {
+unique_ptr<TInstantSet<T>>
+TInstantSet<T>::shift(duration_ms const timedelta) const {
   return unique_ptr<TInstantSet<T>>(this->shift_impl(timedelta));
 }
 
 template <typename T>
-TInstantSet<T> *TInstantSet<T>::shift_impl(time_t const timedelta) const {
+TInstantSet<T> *TInstantSet<T>::shift_impl(duration_ms const timedelta) const {
   set<TInstant<T>> s;
   for (auto const &e : this->m_instants) {
     s.insert(TInstant<T>(e->getValue(), e->getTimestamp() + timedelta));
@@ -79,7 +77,7 @@ TInstantSet<T> *TInstantSet<T>::shift_impl(time_t const timedelta) const {
 }
 
 template <typename T>
-bool TInstantSet<T>::intersectsTimestamp(time_t const datetime) const {
+bool TInstantSet<T>::intersectsTimestamp(time_point const datetime) const {
   for (auto const &t : this->timestamps()) {
     if (t == datetime) {
       return true;
@@ -91,8 +89,7 @@ bool TInstantSet<T>::intersectsTimestamp(time_t const datetime) const {
 template <typename T>
 bool TInstantSet<T>::intersectsPeriod(Period const period) const {
   for (auto const &t : this->timestamps()) {
-    if (period.contains_timestamp(
-            std::chrono::system_clock::from_time_t(t / 1000L))) {
+    if (period.contains_timestamp(t)) {
       return true;
     }
   }
