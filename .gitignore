@@ -2,3 +2,9 @@ build
 ENV
 __pycache__
 .pyc
+dist
+*.egg-info
+*.local
+
+# Sphinx documentation
+documentation/python/_build/

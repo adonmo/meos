@@ -182,8 +182,6 @@ $ ./build/test/libmeos-tests
 ### Python
 
 ```sh
-$ pip -m venv ENV
-$ source ./ENV/bin/activate
 $ pip install .
 $ pip install -r tests/python/requirements.txt
 $ pytest
@@ -201,4 +199,17 @@ $ cmake --build build/docs --target cppdocs
 You can then proceed to host the docs locally, for example on http://0.0.0.0:8000/
 ```sh
 $ python -m http.server --directory build/docs/doxygen/html
+```
+
+### Python (Sphinx)
+
+```sh
+$ pip install .[docs]
+$ cmake -B build/docs -S documentation
+$ cmake --build build/docs
+$ cmake --build build/docs --target pydocs
+```
+You can then proceed to host the docs locally, for example on http://0.0.0.0:8000/
+```sh
+$ python -m http.server --directory documentation/python/_build/html
 ```

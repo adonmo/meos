@@ -1,0 +1,7 @@
+name: pymeos-docs
+channels:
+    - default
+dependencies:
+    - cmake
+    - pybind11
+    - numpydoc

@@ -11,7 +11,7 @@ get_filename_component(MEOS_ROOT ../ ABSOLUTE)
 include("${MEOS_ROOT}/cmake/CPM.cmake")
 
 CPMAddPackage(
-  NAME libdaylight
+  NAME libmeos
   SOURCE_DIR "${MEOS_ROOT}"
 )
 
@@ -21,14 +21,28 @@ CPMAddPackage(
   GIT_TAG 3d2d5a9fb26f0ce24e3e4eaeeff686ec2ecfb3fb
 )
 
+# ---- Setup targets for python docs ----
+
+add_custom_target(
+    pydocs
+    make html
+    WORKING_DIRECTORY "${CMAKE_CURRENT_LIST_DIR}/python"
+)
+
+add_custom_target(
+    pydoctest
+    make doctest
+    WORKING_DIRECTORY "${CMAKE_CURRENT_LIST_DIR}/python"
+)
+
 # ---- Doxygen ----
 
 set(BUILD_DOCUMENTATION ON CACHE INTERNAL "")
 include(${StableCoder-cmake-scripts_SOURCE_DIR}/doxygen.cmake)
 
 # set Doxyfile variables
-set(DOXYGEN_PROJECT_NAME daylight)
-set(DOXYGEN_PROJECT_VERSION ${daylight_VERSION})
+set(DOXYGEN_PROJECT_NAME meos)
+set(DOXYGEN_PROJECT_VERSION ${meos_VERSION})
 set(DOXYGEN_PROJECT_ROOT "${MEOS_ROOT}")
 
 # see https://github.com/StableCoder/cmake-scripts#doxygen-doxygencmake for additional options
