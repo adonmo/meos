@@ -16,7 +16,7 @@ TEST_CASE("TimestampSets are serialized", "[serializer][timestampset]") {
   SECTION("empty set") {
     string expected = "{}";
 
-    set<time_t> timestamps;
+    set<time_point> timestamps;
     TimestampSet timestamp_set(timestamps);
 
     REQUIRE(w.write(&timestamp_set) == expected);
@@ -25,11 +25,12 @@ TEST_CASE("TimestampSets are serialized", "[serializer][timestampset]") {
   SECTION("set with only one value") {
     time_t t = GENERATE(0L, unix_time(2012, 1, 1),
                         take(10, random(0L, 4102488000000L)));
+    time_point tp = std::chrono::system_clock::from_time_t(t / 1000L);
 
     string expected = "{" + w.writeTime(t) + "}";
 
-    set<time_t> timestamps;
-    timestamps.insert(t);
+    set<time_point> timestamps;
+    timestamps.insert(tp);
     TimestampSet timestamp_set(timestamps);
 
     REQUIRE(w.write(&timestamp_set) == expected);
@@ -39,14 +40,15 @@ TEST_CASE("TimestampSets are serialized", "[serializer][timestampset]") {
     auto size = GENERATE(take(4, random(1, 2)));
 
     set<string> expected;
-    set<time_t> timestamps;
+    set<time_point> timestamps;
 
     for (size_t i = 0; i < size; i++) {
       time_t t = GENERATE(0L, unix_time(2012, 1, 1),
                           take(4, random(0L, 4102488000000L)));
+      time_point tp = std::chrono::system_clock::from_time_t(t / 1000L);
       expected.insert(w.writeTime(t));
 
-      timestamps.insert(t);
+      timestamps.insert(tp);
     }
 
     TimestampSet timestamp_set(timestamps);
@@ -68,8 +70,8 @@ TEST_CASE("TimestampSets are deserialized", "[deserializer][timestampset]") {
       Deserializer<> r("{2012-11-01}");
 
       unique_ptr<TimestampSet> timestamp_set = r.nextTimestampSet();
-      set<time_t> actual = timestamp_set->timestamps();
-      set<time_t> expected = {unix_time(2012, 11, 1)};
+      set<time_point> actual = timestamp_set->timestamps();
+      set<time_point> expected = {unix_time_point(2012, 11, 1)};
       auto x = UnorderedEquals(expected);
       REQUIRE(actual.size() == 1);
       REQUIRE_THAT(actual, x);
@@ -81,10 +83,10 @@ TEST_CASE("TimestampSets are deserialized", "[deserializer][timestampset]") {
       Deserializer<> r("{2012-01-01 00:00:00+00, 2012-04-01 00:00:00+00}");
 
       unique_ptr<TimestampSet> timestamp_set = r.nextTimestampSet();
-      set<time_t> actual = timestamp_set->timestamps();
-      set<time_t> expected = {
-          unix_time(2012, 1, 1),
-          unix_time(2012, 4, 1),
+      set<time_point> actual = timestamp_set->timestamps();
+      set<time_point> expected = {
+          unix_time_point(2012, 1, 1),
+          unix_time_point(2012, 4, 1),
       };
       auto x = UnorderedEquals(expected);
       REQUIRE_THAT(actual, x);
@@ -97,14 +99,14 @@ TEST_CASE("TimestampSets are deserialized", "[deserializer][timestampset]") {
     Deserializer<> r("{2012-01-01 00:00:00+00} {2012-04-01 00:00:00+00}");
 
     unique_ptr<TimestampSet> timestamp_set_1 = r.nextTimestampSet();
-    set<time_t> actual_1 = timestamp_set_1->timestamps();
-    set<time_t> expected_1 = {unix_time(2012, 1, 1)};
+    set<time_point> actual_1 = timestamp_set_1->timestamps();
+    set<time_point> expected_1 = {unix_time_point(2012, 1, 1)};
     auto x_1 = UnorderedEquals(expected_1);
     REQUIRE_THAT(actual_1, x_1);
 
     unique_ptr<TimestampSet> timestamp_set_2 = r.nextTimestampSet();
-    set<time_t> actual_2 = timestamp_set_2->timestamps();
-    set<time_t> expected_2 = {unix_time(2012, 4, 1)};
+    set<time_point> actual_2 = timestamp_set_2->timestamps();
+    set<time_point> expected_2 = {unix_time_point(2012, 4, 1)};
     auto x_2 = UnorderedEquals(expected_2);
     REQUIRE_THAT(actual_2, x_2);
 

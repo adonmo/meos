@@ -137,13 +137,13 @@ template <typename T>
 unique_ptr<TimestampSet> Deserializer<T>::nextTimestampSet() {
   skipWhitespaces();
   consumeChar('{');
-  set<time_t> s = {};
-  s.insert(nextTime());
+  set<time_point> s = {};
+  s.insert(std::chrono::system_clock::from_time_t(nextTime() / 1000L));
   skipWhitespaces();
 
   while (hasNext() && peek(0) == ',') {
     consumeChar(',');
-    s.insert(nextTime());
+    s.insert(std::chrono::system_clock::from_time_t(nextTime() / 1000L));
     skipWhitespaces();
   }
 

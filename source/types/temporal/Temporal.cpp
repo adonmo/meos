@@ -60,7 +60,7 @@ template <typename T>
 bool Temporal<T>::intersectsTimestampSet(
     TimestampSet const timestampset) const {
   for (auto const &t : timestampset.timestamps()) {
-    if (intersectsTimestamp(t)) {
+    if (intersectsTimestamp(std::chrono::system_clock::to_time_t(t) * 1000)) {
       return true;
     }
   }

@@ -9,15 +9,15 @@ time_t const day = 24 * 60 * 60 * 1000L;
 time_t const year = 365 * 24 * 60 * 60 * 1000L;
 
 TEST_CASE("TimestampSet period functions", "[timestampset]") {
-  set<time_t> timestamps;
+  set<time_point> timestamps;
   set<Period> expected_periods;
 
   auto size = GENERATE(0, take(4, random(1, 100)));
 
   for (size_t i = 0; i < size; i++) {
     time_t t = unix_time(2012, 1, 1) + 10 * 365 * (random() % day);
-    timestamps.insert(t);
     time_point tp = std::chrono::system_clock::from_time_t(t / 1000L);
+    timestamps.insert(tp);
     expected_periods.insert(Period(tp, tp, true, true));
   }
 
@@ -40,11 +40,11 @@ TEST_CASE("TimestampSet period functions", "[timestampset]") {
 }
 
 TEST_CASE("TimestampSet period gaps are ignored", "[timestampset]") {
-  set<time_t> timestamps = {
-      unix_time(2012, 1, 1),
-      unix_time(2012, 1, 2),
-      unix_time(2012, 1, 6),
-      unix_time(2012, 1, 7),
+  set<time_point> timestamps = {
+      unix_time_point(2012, 1, 1),
+      unix_time_point(2012, 1, 2),
+      unix_time_point(2012, 1, 6),
+      unix_time_point(2012, 1, 7),
   };
   TimestampSet period_set(timestamps);
   Period expected = Period(unix_time_point(2012, 1, 1),
@@ -54,27 +54,29 @@ TEST_CASE("TimestampSet period gaps are ignored", "[timestampset]") {
 
 TEST_CASE("TimestampSet timespan", "[timestampset]") {
   auto size = GENERATE(0, take(4, random(1, 30)));
-  set<time_t> timestamps;
+  set<time_point> timestamps;
 
   for (size_t i = 0; i < size; i++) {
     time_t t = unix_time(2012, 1, 1) + 10 * 365 * (random() % day);
-    timestamps.insert(t);
+    time_point tp = std::chrono::system_clock::from_time_t(t / 1000L);
+    timestamps.insert(tp);
   }
 
   TimestampSet timestamp_set(timestamps);
-  REQUIRE(timestamp_set.timespan() == 0);
+  REQUIRE(timestamp_set.timespan() == duration_ms(0));
 }
 
 TEST_CASE("TimestampSet shift", "[timestampset]") {
   auto size = GENERATE(0, take(4, random(1, 20)));
-  time_t shift = GENERATE(0L, take(4, random(minute, day)));
-  set<time_t> expected_timestamps;
-  set<time_t> actual_timestamps;
+  duration_ms shift(GENERATE(0L, take(4, random(minute, day))));
+  set<time_point> expected_timestamps;
+  set<time_point> actual_timestamps;
 
   for (size_t i = 0; i < size; i++) {
     time_t t = unix_time(2012, 1, 1) + 10 * 365 * (random() % day);
-    actual_timestamps.insert(t);
-    expected_timestamps.insert(t + shift);
+    time_point tp = std::chrono::system_clock::from_time_t(t / 1000L);
+    actual_timestamps.insert(tp);
+    expected_timestamps.insert(tp + shift);
   }
 
   TimestampSet actual(actual_timestamps);
@@ -85,13 +87,14 @@ TEST_CASE("TimestampSet shift", "[timestampset]") {
 
 TEST_CASE("TimestampSet timestamp functions", "[timestampset]") {
   auto size = GENERATE(0, take(4, random(1, 100)));
-  set<time_t> expected_timestamps;
-  set<time_t> actual_timestamps;
+  set<time_point> expected_timestamps;
+  set<time_point> actual_timestamps;
 
   for (size_t i = 0; i < size; i++) {
     time_t t = unix_time(2012, 1, 1) + 10 * 365 * (random() % day);
-    actual_timestamps.insert(t);
-    expected_timestamps.insert(t);
+    time_point tp = std::chrono::system_clock::from_time_t(t / 1000L);
+    actual_timestamps.insert(tp);
+    expected_timestamps.insert(tp);
   }
 
   TimestampSet actual(actual_timestamps);

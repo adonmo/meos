@@ -111,17 +111,17 @@ TEMPLATE_TEST_CASE("TInstant intersection functions", "[tinstantset]", int,
 
   SECTION("intersectsTimestampSet") {
     // Positive cases
-    set<time_t> s = {unix_time(2012, 1, 2)};
+    set<time_point> s = {unix_time_point(2012, 1, 2)};
     REQUIRE(instant.intersectsTimestampSet(TimestampSet(s)) == true);
-    s = {unix_time(2012, 1, 2), unix_time(2012, 1, 5)};
+    s = {unix_time_point(2012, 1, 2), unix_time_point(2012, 1, 5)};
     REQUIRE(instant.intersectsTimestampSet(TimestampSet(s)) == true);
 
     // Negative cases
-    s = {unix_time(2012, 1, 1)};
+    s = {unix_time_point(2012, 1, 1)};
     REQUIRE(instant.intersectsTimestampSet(TimestampSet(s)) == false);
-    s = {unix_time(2012, 1, 2, 1)};
+    s = {unix_time_point(2012, 1, 2, 1)};
     REQUIRE(instant.intersectsTimestampSet(TimestampSet(s)) == false);
-    s = {unix_time(2012, 1, 4, 1), unix_time(2012, 2, 2)};
+    s = {unix_time_point(2012, 1, 4, 1), unix_time_point(2012, 2, 2)};
     REQUIRE(instant.intersectsTimestampSet(TimestampSet(s)) == false);
   }
 

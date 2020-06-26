@@ -9,9 +9,12 @@
 
 using namespace std;
 
+using time_point = std::chrono::system_clock::time_point;
+using duration_ms = std::chrono::milliseconds;
+
 class TimestampSet {
 public:
-  TimestampSet(set<time_t> &timestamps_);
+  TimestampSet(set<time_point> &timestamps_);
 
   TimestampSet(TimestampSet const &t);
 
@@ -22,14 +25,14 @@ public:
   Period endPeriod() const;
   Period periodN(int n) const;
 
-  time_t timespan() const;
-  unique_ptr<TimestampSet> shift(time_t const timedelta) const;
+  duration_ms timespan() const;
+  unique_ptr<TimestampSet> shift(duration_ms const timedelta) const;
 
-  set<time_t> timestamps() const;
+  set<time_point> timestamps() const;
   int numTimestamps() const;
-  time_t startTimestamp() const;
-  time_t endTimestamp() const;
-  time_t timestampN(int n) const;
+  time_point startTimestamp() const;
+  time_point endTimestamp() const;
+  time_point timestampN(int n) const;
 
   friend bool operator==(TimestampSet const &lhs, TimestampSet const &rhs) {
     return lhs.timestamps() == rhs.timestamps();
@@ -51,14 +54,14 @@ public:
         first = false;
       else
         os << ", ";
-      os << ISO8601_time(t);
+      os << ISO8601_time(std::chrono::system_clock::to_time_t(t) * 1000);
     }
     os << "}";
     return os;
   }
 
 protected:
-  set<time_t> m_timestamps;
+  set<time_point> m_timestamps;
 };
 
 #endif
