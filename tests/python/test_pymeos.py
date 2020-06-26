@@ -1,12 +1,18 @@
-import sys
-import pytz
 import datetime
+import sys
 from pathlib import Path
+# TODO remove this below line
 sys.path.append(str(Path(__file__).absolute().parent.parent.parent / "build" / "pybind"))
-from pymeos import TInstantBool, TInstantInt, TInstantFloat, TInstantText, TInstantGeom, \
-    TInstantSetBool, TInstantSetInt, TSequenceFloat, \
-    SerializerInt, SerializerFloat, DeserializerGeom, DeserializerInt, DeserializerFloat, \
-    Geometry, Period, PeriodSet
+
+import pytz
+
+from pymeos import Geometry
+from pymeos.io import (DeserializerFloat, DeserializerGeom, DeserializerInt,
+                       SerializerFloat, SerializerInt)
+from pymeos.temporal import (TInstantBool, TInstantFloat, TInstantGeom,
+                             TInstantInt, TInstantSetBool, TInstantSetInt,
+                             TInstantText, TSequenceFloat)
+from pymeos.time import Period, PeriodSet
 
 
 def epoch(year, month, day, hour=0, minute=0, second=0):
