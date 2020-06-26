@@ -9,6 +9,9 @@
 
 using namespace std;
 
+using time_point = std::chrono::system_clock::time_point;
+using duration_ms = std::chrono::milliseconds;
+
 class PeriodSet {
 public:
   PeriodSet(set<unique_ptr<Period>> &periods_);
@@ -24,14 +27,14 @@ public:
   Period endPeriod() const;
   Period periodN(int n) const;
 
-  time_t timespan() const;
-  unique_ptr<PeriodSet> shift(time_t const timedelta) const;
+  duration_ms timespan() const;
+  unique_ptr<PeriodSet> shift(duration_ms const timedelta) const;
 
-  set<time_t> timestamps() const;
+  set<time_point> timestamps() const;
   int numTimestamps() const;
-  time_t startTimestamp() const;
-  time_t endTimestamp() const;
-  time_t timestampN(int n) const;
+  time_point startTimestamp() const;
+  time_point endTimestamp() const;
+  time_point timestampN(int n) const;
 
   friend bool operator==(PeriodSet const &lhs, PeriodSet const &rhs) {
     return lhs.periods() == rhs.periods();

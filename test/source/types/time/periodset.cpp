@@ -80,7 +80,7 @@ TEST_CASE("PeriodSet timespan", "[periodset]") {
   periods.insert(move(period_2));
   PeriodSet period_set(periods);
 
-  REQUIRE(period_set.timespan() == (duration_1 + duration_2).count());
+  REQUIRE(period_set.timespan() == (duration_1 + duration_2));
 }
 
 TEST_CASE("PeriodSet shift", "[periodset]") {
@@ -112,20 +112,19 @@ TEST_CASE("PeriodSet shift", "[periodset]") {
 
 TEST_CASE("PeriodSet timestamp functions", "[periodset]") {
   set<Period> periods;
-  set<time_t> expected_timestamps;
+  set<time_point> expected_timestamps;
   auto size = GENERATE(0, take(4, random(1, 3)));
 
   for (size_t i = 0; i < size; i++) {
     bool lower_inc = random() % 2;
     bool upper_inc = random() % 2;
-    auto lbound = unix_time(2012, 1, 1) + 10 * 365 * (random() % day);
-    auto duration = day + 6 * (random() % day);
+    time_point lbound = std::chrono::system_clock::from_time_t(
+        (unix_time(2012, 1, 1) + 10 * 365 * (random() % day)) / 1000L);
+    duration_ms duration(day + 6 * (random() % day));
     auto rbound = lbound + duration; // This is to make sure lbound <= rbound
-    auto period = Period(std::chrono::system_clock::from_time_t(lbound / 1000L),
-                         std::chrono::system_clock::from_time_t(rbound / 1000L),
-                         lower_inc, upper_inc);
-    expected_timestamps.insert(lbound / 1000L * 1000L); // Round off to seconds
-    expected_timestamps.insert(rbound / 1000L * 1000L); // Round off to seconds
+    auto period = Period(lbound, rbound, lower_inc, upper_inc);
+    expected_timestamps.insert(lbound); // Round off to seconds
+    expected_timestamps.insert(rbound); // Round off to seconds
     periods.insert(period);
   }
 

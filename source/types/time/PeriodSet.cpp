@@ -56,49 +56,49 @@ Period PeriodSet::periodN(int n) const {
   return *next(s.begin(), n);
 }
 
-time_t PeriodSet::timespan() const {
-  time_t result = 0;
+duration_ms PeriodSet::timespan() const {
+  duration_ms result(0);
   for (auto const &period : m_periods)
-    result += period->timespan().count();
+    result += period->timespan();
   return result;
 }
 
-unique_ptr<PeriodSet> PeriodSet::shift(time_t const timedelta) const {
+unique_ptr<PeriodSet> PeriodSet::shift(duration_ms const timedelta) const {
   set<unique_ptr<Period>> pset;
   for (auto const &e : m_periods)
-    pset.insert(e->shift(std::chrono::milliseconds(timedelta)));
+    pset.insert(e->shift(timedelta));
   return make_unique<PeriodSet>(pset);
 }
 
-set<time_t> PeriodSet::timestamps() const {
-  set<time_t> s;
+set<time_point> PeriodSet::timestamps() const {
+  set<time_point> s;
   for (auto const &e : m_periods) {
-    s.insert(std::chrono::system_clock::to_time_t(e->lower()) * 1000L);
-    s.insert(std::chrono::system_clock::to_time_t(e->upper()) * 1000L);
+    s.insert(e->lower());
+    s.insert(e->upper());
   }
   return s;
 }
 
 int PeriodSet::numTimestamps() const { return timestamps().size(); }
 
-time_t PeriodSet::startTimestamp() const {
-  set<time_t> s = timestamps();
+time_point PeriodSet::startTimestamp() const {
+  set<time_point> s = timestamps();
   if (s.size() <= 0) {
     throw "At least one timestamp expected";
   }
   return *s.begin();
 }
 
-time_t PeriodSet::endTimestamp() const {
-  set<time_t> s = timestamps();
+time_point PeriodSet::endTimestamp() const {
+  set<time_point> s = timestamps();
   if (s.size() <= 0) {
     throw "At least one timestamp expected";
   }
   return *s.rbegin();
 }
 
-time_t PeriodSet::timestampN(int n) const {
-  set<time_t> s = timestamps();
+time_point PeriodSet::timestampN(int n) const {
+  set<time_point> s = timestamps();
   if (s.size() < n) {
     throw "At least " + to_string(n) + " timestamp(s) expected";
   }
