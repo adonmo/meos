@@ -1,21 +1,23 @@
 MEOS -- Mobility Engine, Open Source
 ====================================
 
-MEOS or libmeos is a library which makes it easy to work with temporal and spatio-temporal data. It is based on [MobilityDB](https://github.com/ULB-CoDE-WIT/MobilityDB)'s data types. MEOS's code is heavily inspired from a similar library called [GEOS](https://github.com/libgeos/geos). MEOS is written in modern C++ with bindings to python using [pybind11](https://github.com/pybind/pybind11).
+MEOS or libmeos is a library which makes it easy to work with temporal and spatio-temporal data. It is based on [MobilityDB](https://github.com/ULB-CoDE-WIT/MobilityDB)'s data types and functions. MEOS's code is heavily inspired from a similar library called [GEOS](https://github.com/libgeos/geos). MEOS is written in modern C++ with bindings to python using [pybind11](https://github.com/pybind/pybind11).
 
 ⚠️ Currently this library is in very early, completely **experimental** stages - heavy changes are to be expected.
 
-# Installation
+# Usage
 
-The package can be installed by running:
+## Python
+
+### Installation
 
 ```sh
 $ pip install git+https://github.com/chaitan94/meos
 ```
 
-# Usage 
+Note: This assumes libgeos-dev is already installed on your system.
 
-## Python
+### Code sample
 
 ```python
 import datetime
@@ -44,12 +46,12 @@ assert trajectory == traj_from_string
 
 ### Documentation
 
-Docs and API Reference: https://pymeos.readthedocs.io/en/latest/
+Docs and API Reference: https://pymeos.netlify.app/en/latest/
 
-More detailed usage guide/quickstart: https://pymeos.readthedocs.io/en/latest/quickstart.html
+More detailed usage guide/quickstart: https://pymeos.netlify.app/en/latest/quickstart.html
 
 # Development
-MEOS uses the [CMake](https://cmake.org/) build system, [Catch2](https://github.com/catchorg/Catch2) and [pytest](https://docs.pytest.org/en/latest/) for tests.
+MEOS uses the [CMake](https://cmake.org/) and [setuptools](https://setuptools.readthedocs.io/en/latest/) for the build system, and [Catch2](https://github.com/catchorg/Catch2) and [pytest](https://docs.pytest.org/en/latest/) for tests.
 
 ## Building
 
