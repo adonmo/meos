@@ -46,9 +46,9 @@ assert trajectory == traj_from_string
 
 ### Documentation
 
-Docs and API Reference: https://pymeos.netlify.app/en/latest/
+Docs and API Reference: https://pymeos.netlify.app
 
-More detailed usage guide/quickstart: https://pymeos.netlify.app/en/latest/quickstart.html
+More detailed usage guide/quickstart: https://pymeos.netlify.app/quickstart.html
 
 ## C++
 
