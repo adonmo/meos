@@ -27,6 +27,47 @@ TSequence<T>::TSequence(TSequence const &t)
     this->m_instants.push_back(e->clone());
 }
 
+template <typename T>
+int TSequence<T>::compare(Temporal<T> const &other) const {
+  if (this->duration() != other.duration()) {
+    throw std::invalid_argument("Unsupported types for comparision");
+  }
+
+  TSequence<T> const *that = dynamic_cast<TSequence<T> const *>(&other);
+  // Compare number of instants
+  if (this->m_instants.size() < that->m_instants.size())
+    return -1;
+  if (this->m_instants.size() > that->m_instants.size())
+    return 1;
+
+  // Compare bounds
+  // [ < (, ) < ]
+  if ((this->lower_inc && !that->lower_inc) ||
+      (!this->upper_inc && that->upper_inc))
+    return -1;
+  // ( > [, ] > )
+  if ((that->lower_inc && !this->lower_inc) ||
+      (!that->upper_inc && this->upper_inc))
+    return 1;
+
+  // Compare instant by instant
+  auto lhs_instants = this->instants();
+  auto rhs_instants = that->instants();
+  auto lhs = lhs_instants.begin();
+  auto rhs = rhs_instants.begin();
+  while (lhs != lhs_instants.end()) {
+    if (*lhs < *rhs)
+      return -1;
+    if (*lhs > *rhs)
+      return 1;
+    lhs++;
+    rhs++;
+  }
+
+  // The two are equal
+  return 0;
+}
+
 template <typename T> vector<TInstant<T>> TSequence<T>::getInstants() const {
   vector<TInstant<T>> s;
   for (auto const &e : this->m_instants) {

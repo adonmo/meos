@@ -6,10 +6,56 @@
 
 time_t const day = 24 * 60 * 60 * 1000L;
 
+TEMPLATE_TEST_CASE("TInstant comparision operators", "[tinst]", int, float,
+                   bool) {
+  SECTION("lhs == rhs") {
+    TInstant<TestType> lhs(1, unix_time_point(2012, 1, 1));
+    TInstant<TestType> rhs(1, unix_time_point(2012, 1, 1));
+    REQUIRE(lhs == rhs);
+    REQUIRE(!(lhs != rhs));
+    REQUIRE(!(lhs < rhs));
+    REQUIRE(lhs <= rhs);
+    REQUIRE(lhs >= rhs);
+    REQUIRE(!(lhs > rhs));
+  }
+  SECTION("lhs < rhs") {
+    SECTION("same values, different timestamp") {
+      TInstant<TestType> lhs(1, unix_time_point(2012, 1, 1));
+      TInstant<TestType> rhs(1, unix_time_point(2012, 1, 2));
+      REQUIRE(!(lhs == rhs));
+      REQUIRE(lhs != rhs);
+      REQUIRE(lhs < rhs);
+      REQUIRE(lhs <= rhs);
+      REQUIRE(!(lhs >= rhs));
+      REQUIRE(!(lhs > rhs));
+    }
+    SECTION("different values, same timestamp") {
+      TInstant<TestType> lhs(0, unix_time_point(2012, 1, 1));
+      TInstant<TestType> rhs(1, unix_time_point(2012, 1, 1));
+      REQUIRE(!(lhs == rhs));
+      REQUIRE(lhs != rhs);
+      REQUIRE(lhs < rhs);
+      REQUIRE(lhs <= rhs);
+      REQUIRE(!(lhs >= rhs));
+      REQUIRE(!(lhs > rhs));
+    }
+    SECTION("different values, different timestamp") {
+      TInstant<TestType> lhs(0, unix_time_point(2012, 1, 1));
+      TInstant<TestType> rhs(1, unix_time_point(2012, 1, 2));
+      REQUIRE(!(lhs == rhs));
+      REQUIRE(lhs != rhs);
+      REQUIRE(lhs < rhs);
+      REQUIRE(lhs <= rhs);
+      REQUIRE(!(lhs >= rhs));
+      REQUIRE(!(lhs > rhs));
+    }
+  }
+}
+
 TEMPLATE_TEST_CASE("TInstant duration function returns Instant", "[tinst]", int,
                    float, bool) {
   TInstant<TestType> instant(1, unix_time_point(2012, 1, 1));
-  REQUIRE(instant.duration() == "Instant");
+  REQUIRE(instant.duration() == TemporalDuration::Instant);
 }
 
 TEMPLATE_TEST_CASE("TInstant value functions", "[tinst]", int, float, bool) {

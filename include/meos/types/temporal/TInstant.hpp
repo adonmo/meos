@@ -4,6 +4,7 @@
 #include <meos/types/geom/Geometry.hpp>
 #include <meos/types/temporal/TInstantFunctions.hpp>
 #include <meos/types/temporal/Temporal.hpp>
+#include <meos/types/temporal/TemporalComparators.hpp>
 #include <meos/util/time.hpp>
 
 using namespace std;
@@ -13,9 +14,13 @@ using duration_ms = std::chrono::milliseconds;
 
 template <typename T>
 class TInstant : public Temporal<T>,
+                 public TemporalComparators<TInstant<T>>,
                  public TInstantFunctions<TInstant<T>, TInstant<T>, T> {
 public:
   TInstant(T value, time_point t);
+
+  int compare(Temporal<T> const &other) const override;
+
   T getValue() const;
   time_point getTimestamp() const;
 
@@ -23,24 +28,14 @@ public:
     return std::unique_ptr<TInstant<T>>(this->clone_impl());
   }
 
-  friend bool operator==(TInstant const &lhs, TInstant const &rhs) {
-    return (lhs.value == rhs.value) && (lhs.t == rhs.t);
-  }
-
-  friend bool operator!=(TInstant const &lhs, TInstant const &rhs) {
-    return !(lhs == rhs);
-  }
-
-  friend bool operator<(TInstant const &lhs, TInstant const &rhs) {
-    return (lhs.t < rhs.t) || ((lhs.t == rhs.t) && (lhs.value < rhs.value));
-  }
-
   friend ostream &operator<<(ostream &os, TInstant const &instant) {
     os << instant.getValue() << "@" << ISO8601_time(instant.getTimestamp());
     return os;
   }
 
-  string duration() const { return "Instant"; };
+  constexpr TemporalDuration const duration() const {
+    return TemporalDuration::Instant;
+  };
 
   /**
    * Set of instants.
@@ -51,7 +46,7 @@ public:
   set<time_point> timestamps() const override;
   PeriodSet getTime() const;
   Period period() const override;
-  unique_ptr<TInstant<T>> shift(duration_ms const timedelta) const;
+  unique_ptr<TInstant> shift(duration_ms const timedelta) const;
   bool intersectsTimestamp(time_point const datetime) const override;
   bool intersectsPeriod(Period const period) const override;
 
@@ -59,11 +54,8 @@ private:
   T const value;
   time_point const t;
 
-  TInstant<T> *clone_impl() const override {
-    return new TInstant<T>(this->value, this->t);
-  };
-
-  TInstant<T> *shift_impl(duration_ms const timedelta) const override;
+  TInstant *clone_impl() const override;
+  TInstant *shift_impl(duration_ms const timedelta) const override;
 };
 
 template class TInstant<bool>;

@@ -5,6 +5,7 @@
 #include <meos/types/temporal/TInstant.hpp>
 #include <meos/types/temporal/TInstantFunctions.hpp>
 #include <meos/types/temporal/Temporal.hpp>
+#include <meos/types/temporal/TemporalComparators.hpp>
 #include <meos/util/time.hpp>
 #include <set>
 
@@ -15,6 +16,7 @@ using duration_ms = std::chrono::milliseconds;
 
 template <typename T = float>
 class TInstantSet : public Temporal<T>,
+                    public TemporalComparators<TInstantSet<T>>,
                     public TInstantFunctions<TInstantSet<T>, TInstant<T>, T> {
 public:
   set<unique_ptr<TInstant<T>>> m_instants;
@@ -23,13 +25,17 @@ public:
 
   TInstantSet(set<TInstant<T>> &instants_);
 
+  int compare(Temporal<T> const &other) const override;
+
   unique_ptr<TInstantSet<T>> clone() const {
     return std::unique_ptr<TInstantSet<T>>(this->clone_impl());
   }
 
   set<TInstant<T>> getInstants() const;
 
-  string duration() const { return "InstantSet"; };
+  constexpr TemporalDuration const duration() const {
+    return TemporalDuration::InstantSet;
+  };
 
   /**
    * Set of instants.

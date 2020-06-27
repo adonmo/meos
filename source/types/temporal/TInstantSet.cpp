@@ -17,6 +17,37 @@ template <typename T> TInstantSet<T>::TInstantSet(TInstantSet const &t) {
     this->m_instants.insert(e->clone());
 }
 
+template <typename T>
+int TInstantSet<T>::compare(Temporal<T> const &other) const {
+  if (this->duration() != other.duration()) {
+    throw std::invalid_argument("Unsupported types for comparision");
+  }
+
+  TInstantSet<T> const *that = dynamic_cast<TInstantSet<T> const *>(&other);
+  // Compare number of instants
+  if (this->m_instants.size() < that->m_instants.size())
+    return -1;
+  if (this->m_instants.size() > that->m_instants.size())
+    return 1;
+
+  // Compare instant by instant
+  auto lhs_instants = this->instants();
+  auto rhs_instants = that->instants();
+  auto lhs = lhs_instants.begin();
+  auto rhs = rhs_instants.begin();
+  while (lhs != lhs_instants.end()) {
+    if (*lhs < *rhs)
+      return -1;
+    if (*lhs > *rhs)
+      return 1;
+    lhs++;
+    rhs++;
+  }
+
+  // The two are equal
+  return 0;
+}
+
 template <typename T> set<TInstant<T>> TInstantSet<T>::getInstants() const {
   set<TInstant<T>> s;
   for (auto const &e : this->m_instants) {

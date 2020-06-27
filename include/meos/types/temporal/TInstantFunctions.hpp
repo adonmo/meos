@@ -9,7 +9,7 @@
  *
  *   set<TInstantType> TemporalType::instants() const
  *
- * where TemporalType == Temporal<BaseType>
+ * where TemporalType == a class extending Temporal<BaseType>
  *   and TInstantType == TInstant<BaseType>
  */
 template <typename TemporalType, typename TInstantType, typename BaseType>

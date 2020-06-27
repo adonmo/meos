@@ -12,6 +12,14 @@ using namespace std;
 using time_point = std::chrono::system_clock::time_point;
 using duration_ms = std::chrono::milliseconds;
 
+enum class TemporalDuration {
+  Temporal,
+  Instant,
+  InstantSet,
+  Sequence,
+  SequenceSet,
+};
+
 template <typename T = float> class Temporal {
 public:
   Temporal();
@@ -20,11 +28,28 @@ public:
     return unique_ptr<Temporal<T>>(this->clone_impl());
   };
 
+  virtual int compare(Temporal const &other) const = 0;
+
+  template <typename U>
+  friend bool operator==(Temporal const &lhs, Temporal const &rhs);
+  template <typename U>
+  friend bool operator!=(Temporal const &lhs, Temporal const &rhs);
+  template <typename U>
+  friend bool operator<(Temporal const &lhs, Temporal const &rhs);
+  template <typename U>
+  friend bool operator>(Temporal const &lhs, Temporal const &rhs);
+  template <typename U>
+  friend bool operator>=(Temporal const &lhs, Temporal const &rhs);
+  template <typename U>
+  friend bool operator<=(Temporal const &lhs, Temporal const &rhs);
+
   /**
    * Duration of the temporal value, that is, one of Instant, InstantSet,
    * Sequence, or SequenceSet.
    */
-  virtual string duration() const { return "Temporal"; };
+  virtual constexpr TemporalDuration const duration() const {
+    return TemporalDuration::Temporal;
+  };
 
   /**
    * Set of values taken by the temporal value.

@@ -7,13 +7,123 @@ time_t const minute = 60 * 1000L;
 time_t const day = 24 * 60 * 60 * 1000L;
 time_t const year = 365 * 24 * 60 * 60 * 1000L;
 
+TEMPLATE_TEST_CASE("TSequence comparision operators", "[tsequence]", int,
+                   float) {
+  SECTION("lhs == rhs") {
+    vector<TInstant<TestType>> lhs_instants = {
+        TInstant<TestType>(2, unix_time_point(2012, 1, 1)),
+        TInstant<TestType>(1, unix_time_point(2012, 1, 2)),
+        TInstant<TestType>(4, unix_time_point(2012, 1, 3)),
+        TInstant<TestType>(3, unix_time_point(2012, 1, 4)),
+    };
+    TSequence<TestType> lhs(lhs_instants, true, false);
+    vector<TInstant<TestType>> rhs_instants = {
+        TInstant<TestType>(2, unix_time_point(2012, 1, 1)),
+        TInstant<TestType>(1, unix_time_point(2012, 1, 2)),
+        TInstant<TestType>(4, unix_time_point(2012, 1, 3)),
+        TInstant<TestType>(3, unix_time_point(2012, 1, 4)),
+    };
+    TSequence<TestType> rhs(rhs_instants, true, false);
+    REQUIRE(lhs == rhs);
+    REQUIRE(!(lhs != rhs));
+    REQUIRE(!(lhs < rhs));
+    REQUIRE(lhs <= rhs);
+    REQUIRE(lhs >= rhs);
+    REQUIRE(!(lhs > rhs));
+  }
+  SECTION("lhs < rhs") {
+    SECTION("different sizes") {
+      vector<TInstant<TestType>> lhs_instants = {
+          TInstant<TestType>(3, unix_time_point(2012, 1, 2)),
+      };
+      TSequence<TestType> lhs(lhs_instants, true, false);
+      vector<TInstant<TestType>> rhs_instants = {
+          TInstant<TestType>(1, unix_time_point(2012, 1, 2)),
+          TInstant<TestType>(2, unix_time_point(2012, 1, 2)),
+      };
+      TSequence<TestType> rhs(rhs_instants, true, false);
+      REQUIRE(!(lhs == rhs));
+      REQUIRE(lhs != rhs);
+      REQUIRE(lhs < rhs);
+      REQUIRE(lhs <= rhs);
+      REQUIRE(!(lhs >= rhs));
+      REQUIRE(!(lhs > rhs));
+    }
+    SECTION("same everything, except different bounds") {
+      // TODO: This section could use some better tests
+      vector<TInstant<TestType>> lhs_instants = {
+          TInstant<TestType>(2, unix_time_point(2012, 1, 1)),
+      };
+      TSequence<TestType> lhs(lhs_instants, true, true);
+      vector<TInstant<TestType>> rhs_instants = {
+          TInstant<TestType>(2, unix_time_point(2012, 1, 1)),
+      };
+      TSequence<TestType> rhs(rhs_instants, false, true);
+      REQUIRE(!(lhs == rhs));
+      REQUIRE(lhs != rhs);
+      REQUIRE(lhs < rhs);
+      REQUIRE(lhs <= rhs);
+      REQUIRE(!(lhs >= rhs));
+      REQUIRE(!(lhs > rhs));
+    }
+    SECTION("same everything, except different timestamp") {
+      vector<TInstant<TestType>> lhs_instants = {
+          TInstant<TestType>(2, unix_time_point(2012, 1, 1)),
+      };
+      TSequence<TestType> lhs(lhs_instants, true, false);
+      vector<TInstant<TestType>> rhs_instants = {
+          TInstant<TestType>(2, unix_time_point(2012, 1, 2)),
+      };
+      TSequence<TestType> rhs(rhs_instants, true, false);
+      REQUIRE(!(lhs == rhs));
+      REQUIRE(lhs != rhs);
+      REQUIRE(lhs < rhs);
+      REQUIRE(lhs <= rhs);
+      REQUIRE(!(lhs >= rhs));
+      REQUIRE(!(lhs > rhs));
+    }
+    SECTION("same everything, except different values") {
+      vector<TInstant<TestType>> lhs_instants = {
+          TInstant<TestType>(1, unix_time_point(2012, 1, 1)),
+      };
+      TSequence<TestType> lhs(lhs_instants, true, false);
+      vector<TInstant<TestType>> rhs_instants = {
+          TInstant<TestType>(2, unix_time_point(2012, 1, 1)),
+      };
+      TSequence<TestType> rhs(rhs_instants, true, false);
+      REQUIRE(!(lhs == rhs));
+      REQUIRE(lhs != rhs);
+      REQUIRE(lhs < rhs);
+      REQUIRE(lhs <= rhs);
+      REQUIRE(!(lhs >= rhs));
+      REQUIRE(!(lhs > rhs));
+    }
+    SECTION("different values, different timestamp") {
+      vector<TInstant<TestType>> lhs_instants = {
+          TInstant<TestType>(1, unix_time_point(2012, 1, 1)),
+      };
+      TSequence<TestType> lhs(lhs_instants, true, false);
+      vector<TInstant<TestType>> rhs_instants = {
+          TInstant<TestType>(2, unix_time_point(2012, 1, 2)),
+      };
+      TSequence<TestType> rhs(rhs_instants, true, false);
+      REQUIRE(!(lhs == rhs));
+      REQUIRE(lhs != rhs);
+      REQUIRE(lhs < rhs);
+      REQUIRE(lhs <= rhs);
+      REQUIRE(!(lhs >= rhs));
+      REQUIRE(!(lhs > rhs));
+    }
+  }
+}
+
 TEMPLATE_TEST_CASE("TSequence duration function returns Sequence",
                    "[tsequence]", int, float, bool, string, Geometry) {
   auto lower_inc = GENERATE(true, false);
   auto upper_inc = GENERATE(true, false);
   vector<TInstant<TestType>> v;
   TSequence<TestType> sequence(v, lower_inc, upper_inc);
-  REQUIRE(sequence.duration() == "Sequence");
+  REQUIRE(sequence.duration() == TemporalDuration::Sequence);
 }
 
 TEMPLATE_TEST_CASE("TSequence value functions", "[tsequence]", int, float) {

@@ -4,6 +4,29 @@
 template <typename T>
 TInstant<T>::TInstant(T value_, time_point t_) : value(value_), t(t_) {}
 
+template <typename T> int TInstant<T>::compare(Temporal<T> const &other) const {
+  if (this->duration() != other.duration()) {
+    throw std::invalid_argument("Unsupported types for comparision");
+  }
+
+  TInstant<T> const *that = dynamic_cast<TInstant<T> const *>(&other);
+
+  // Compare timestamps
+  if (this->t < that->t)
+    return -1;
+  if (this->t > that->t)
+    return 1;
+
+  // Compare values
+  if (this->value < that->value)
+    return -1;
+  if (this->value > that->value)
+    return 1;
+
+  // The two are equal
+  return 0;
+}
+
 template <typename T> T TInstant<T>::getValue() const { return this->value; }
 
 template <typename T> time_point TInstant<T>::getTimestamp() const {
@@ -35,6 +58,10 @@ template <typename T>
 unique_ptr<TInstant<T>> TInstant<T>::shift(duration_ms const timedelta) const {
   return unique_ptr<TInstant<T>>(this->shift_impl(timedelta));
 }
+
+template <typename T> TInstant<T> *TInstant<T>::clone_impl() const {
+  return new TInstant<T>(this->value, this->t);
+};
 
 template <typename T>
 TInstant<T> *TInstant<T>::shift_impl(duration_ms const timedelta) const {

@@ -7,11 +7,104 @@ time_t const minute = 60 * 1000L;
 time_t const day = 24 * 60 * 60 * 1000L;
 time_t const year = 365 * 24 * 60 * 60 * 1000L;
 
+TEMPLATE_TEST_CASE("TInstantSet comparision operators", "[tinstset]", int,
+                   float) {
+  SECTION("lhs == rhs") {
+    set<TInstant<TestType>> lhs_instants = {
+        TInstant<TestType>(2, unix_time_point(2012, 1, 1)),
+        TInstant<TestType>(1, unix_time_point(2012, 1, 2)),
+        TInstant<TestType>(4, unix_time_point(2012, 1, 3)),
+        TInstant<TestType>(3, unix_time_point(2012, 1, 4)),
+    };
+    TInstantSet<TestType> lhs(lhs_instants);
+    set<TInstant<TestType>> rhs_instants = {
+        TInstant<TestType>(2, unix_time_point(2012, 1, 1)),
+        TInstant<TestType>(1, unix_time_point(2012, 1, 2)),
+        TInstant<TestType>(4, unix_time_point(2012, 1, 3)),
+        TInstant<TestType>(3, unix_time_point(2012, 1, 4)),
+    };
+    TInstantSet<TestType> rhs(rhs_instants);
+    REQUIRE(lhs == rhs);
+    REQUIRE(!(lhs != rhs));
+    REQUIRE(!(lhs < rhs));
+    REQUIRE(lhs <= rhs);
+    REQUIRE(lhs >= rhs);
+    REQUIRE(!(lhs > rhs));
+  }
+  SECTION("lhs < rhs") {
+    SECTION("different sizes") {
+      set<TInstant<TestType>> lhs_instants = {
+          TInstant<TestType>(3, unix_time_point(2012, 1, 2)),
+      };
+      TInstantSet<TestType> lhs(lhs_instants);
+      set<TInstant<TestType>> rhs_instants = {
+          TInstant<TestType>(1, unix_time_point(2012, 1, 2)),
+          TInstant<TestType>(2, unix_time_point(2012, 1, 2)),
+      };
+      TInstantSet<TestType> rhs(rhs_instants);
+      REQUIRE(!(lhs == rhs));
+      REQUIRE(lhs != rhs);
+      REQUIRE(lhs < rhs);
+      REQUIRE(lhs <= rhs);
+      REQUIRE(!(lhs >= rhs));
+      REQUIRE(!(lhs > rhs));
+    }
+    SECTION("same everything, except different timestamp") {
+      set<TInstant<TestType>> lhs_instants = {
+          TInstant<TestType>(2, unix_time_point(2012, 1, 1)),
+      };
+      TInstantSet<TestType> lhs(lhs_instants);
+      set<TInstant<TestType>> rhs_instants = {
+          TInstant<TestType>(2, unix_time_point(2012, 1, 2)),
+      };
+      TInstantSet<TestType> rhs(rhs_instants);
+      REQUIRE(!(lhs == rhs));
+      REQUIRE(lhs != rhs);
+      REQUIRE(lhs < rhs);
+      REQUIRE(lhs <= rhs);
+      REQUIRE(!(lhs >= rhs));
+      REQUIRE(!(lhs > rhs));
+    }
+    SECTION("same everything, except different values") {
+      set<TInstant<TestType>> lhs_instants = {
+          TInstant<TestType>(1, unix_time_point(2012, 1, 1)),
+      };
+      TInstantSet<TestType> lhs(lhs_instants);
+      set<TInstant<TestType>> rhs_instants = {
+          TInstant<TestType>(2, unix_time_point(2012, 1, 1)),
+      };
+      TInstantSet<TestType> rhs(rhs_instants);
+      REQUIRE(!(lhs == rhs));
+      REQUIRE(lhs != rhs);
+      REQUIRE(lhs < rhs);
+      REQUIRE(lhs <= rhs);
+      REQUIRE(!(lhs >= rhs));
+      REQUIRE(!(lhs > rhs));
+    }
+    SECTION("different values, different timestamp") {
+      set<TInstant<TestType>> lhs_instants = {
+          TInstant<TestType>(1, unix_time_point(2012, 1, 1)),
+      };
+      TInstantSet<TestType> lhs(lhs_instants);
+      set<TInstant<TestType>> rhs_instants = {
+          TInstant<TestType>(2, unix_time_point(2012, 1, 2)),
+      };
+      TInstantSet<TestType> rhs(rhs_instants);
+      REQUIRE(!(lhs == rhs));
+      REQUIRE(lhs != rhs);
+      REQUIRE(lhs < rhs);
+      REQUIRE(lhs <= rhs);
+      REQUIRE(!(lhs >= rhs));
+      REQUIRE(!(lhs > rhs));
+    }
+  }
+}
+
 TEMPLATE_TEST_CASE("TInstantSet duration function returns InstantSet",
                    "[tinstantset]", int, float, bool, string, Geometry) {
   set<TInstant<TestType>> s;
   TInstantSet<TestType> instant_set(s);
-  REQUIRE(instant_set.duration() == "InstantSet");
+  REQUIRE(instant_set.duration() == TemporalDuration::InstantSet);
 }
 
 TEMPLATE_TEST_CASE("TInstantSet value functions", "[tinstantset]", int, float) {
