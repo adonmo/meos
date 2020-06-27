@@ -30,19 +30,6 @@ public:
 
   virtual int compare(Temporal const &other) const = 0;
 
-  template <typename U>
-  friend bool operator==(Temporal const &lhs, Temporal const &rhs);
-  template <typename U>
-  friend bool operator!=(Temporal const &lhs, Temporal const &rhs);
-  template <typename U>
-  friend bool operator<(Temporal const &lhs, Temporal const &rhs);
-  template <typename U>
-  friend bool operator>(Temporal const &lhs, Temporal const &rhs);
-  template <typename U>
-  friend bool operator>=(Temporal const &lhs, Temporal const &rhs);
-  template <typename U>
-  friend bool operator<=(Temporal const &lhs, Temporal const &rhs);
-
   /**
    * Duration of the temporal value, that is, one of Instant, InstantSet,
    * Sequence, or SequenceSet.
