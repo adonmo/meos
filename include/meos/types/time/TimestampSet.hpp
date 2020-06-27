@@ -14,6 +14,8 @@ using duration_ms = std::chrono::milliseconds;
 
 class TimestampSet {
 public:
+  TimestampSet();
+
   TimestampSet(set<time_point> &timestamps_);
 
   TimestampSet(TimestampSet const &t);
@@ -41,6 +43,7 @@ public:
   friend bool operator>=(TimestampSet const &lhs, TimestampSet const &rhs);
   friend bool operator<=(TimestampSet const &lhs, TimestampSet const &rhs);
 
+  friend istream &operator>>(istream &in, TimestampSet &timestamp_set);
   friend ostream &operator<<(ostream &os, TimestampSet const &timestamp_set);
 
 protected:

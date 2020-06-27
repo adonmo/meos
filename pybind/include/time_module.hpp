@@ -60,6 +60,12 @@ void def_time_module(py::module &m) {
       .def(py::self <= py::self)
       .def(py::self > py::self)
       .def(py::self >= py::self)
+      .def("__str__",
+           [](PeriodSet const &self) {
+             std::ostringstream s;
+             s << self;
+             return s.str();
+           })
       .def("periods", &PeriodSet::periods);
 
   py::class_<TimestampSet>(time_module, "TimestampSet")
@@ -70,5 +76,11 @@ void def_time_module(py::module &m) {
       .def(py::self <= py::self)
       .def(py::self > py::self)
       .def(py::self >= py::self)
+      .def("__str__",
+           [](TimestampSet const &self) {
+             std::ostringstream s;
+             s << self;
+             return s.str();
+           })
       .def("periods", &TimestampSet::periods);
 }

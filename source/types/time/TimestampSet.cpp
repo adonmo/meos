@@ -1,5 +1,8 @@
 #include <iomanip>
+#include <meos/io/utils.hpp>
 #include <meos/types/time/TimestampSet.hpp>
+
+TimestampSet::TimestampSet() {}
 
 TimestampSet::TimestampSet(set<time_point> &timestamps_) {
   for (auto const &e : timestamps_)
@@ -120,6 +123,34 @@ bool operator>=(TimestampSet const &lhs, TimestampSet const &rhs) {
 
 bool operator<=(TimestampSet const &lhs, TimestampSet const &rhs) {
   return !(rhs < lhs);
+}
+
+istream &operator>>(istream &in, TimestampSet &timestamp_set) {
+  char c;
+
+  in >> c;
+  if (c != '{') {
+    throw invalid_argument("Expected '{'");
+  }
+
+  set<time_point> s = {};
+
+  s.insert(nextTime(in));
+
+  while (true) {
+    in >> c;
+    if (c != ',')
+      break;
+    s.insert(nextTime(in));
+  }
+
+  if (c != '}') {
+    throw invalid_argument("Expected '}'");
+  }
+
+  timestamp_set.m_timestamps = s;
+
+  return in;
 }
 
 ostream &operator<<(ostream &os, TimestampSet const &timestamp_set) {

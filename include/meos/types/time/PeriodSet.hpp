@@ -14,11 +14,15 @@ using duration_ms = std::chrono::milliseconds;
 
 class PeriodSet {
 public:
+  PeriodSet();
+
   PeriodSet(set<unique_ptr<Period>> &periods_);
 
   PeriodSet(set<Period> &periods_);
 
   PeriodSet(PeriodSet const &t);
+
+  unique_ptr<PeriodSet> clone();
 
   set<Period> periods() const;
   Period period() const;
@@ -43,6 +47,7 @@ public:
   friend bool operator>=(PeriodSet const &lhs, PeriodSet const &rhs);
   friend bool operator<=(PeriodSet const &lhs, PeriodSet const &rhs);
 
+  friend istream &operator>>(istream &in, PeriodSet &period_set);
   friend ostream &operator<<(ostream &os, PeriodSet const &period_set);
 
 protected:

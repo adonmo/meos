@@ -2,6 +2,10 @@
 #include <meos/types/time/Period.hpp>
 #include <meos/util/time.hpp>
 
+Period::Period()
+    : m_lower(std::chrono::system_clock::from_time_t(0)),
+      m_upper(std::chrono::system_clock::from_time_t(1)) {}
+
 Period::Period(time_point const lower, time_point const upper,
                bool const lower_inc, bool const upper_inc)
     : m_lower(lower), m_upper(upper), m_lower_inc(lower_inc),
@@ -29,6 +33,11 @@ Period::Period(string const serialized) {
   this->m_lower_inc = period.lower_inc();
   this->m_upper_inc = period.upper_inc();
   validate();
+}
+
+unique_ptr<Period> Period::clone() {
+  return make_unique<Period>(this->m_lower, this->m_upper, this->m_lower_inc,
+                             this->m_upper_inc);
 }
 
 void Period::validate() const {

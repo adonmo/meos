@@ -1,6 +1,8 @@
 #include <iomanip>
 #include <meos/types/time/PeriodSet.hpp>
 
+PeriodSet::PeriodSet() {}
+
 PeriodSet::PeriodSet(set<unique_ptr<Period>> &periods_) {
   for (auto const &e : periods_)
     m_periods.insert(e->clone());
@@ -14,6 +16,10 @@ PeriodSet::PeriodSet(set<Period> &periods_) {
 PeriodSet::PeriodSet(PeriodSet const &t) {
   for (auto const &e : t.m_periods)
     m_periods.insert(e->clone());
+}
+
+unique_ptr<PeriodSet> PeriodSet::clone() {
+  return make_unique<PeriodSet>(this->m_periods);
 }
 
 set<Period> PeriodSet::periods() const {
@@ -125,6 +131,39 @@ bool operator>=(PeriodSet const &lhs, PeriodSet const &rhs) {
 
 bool operator<=(PeriodSet const &lhs, PeriodSet const &rhs) {
   return !(rhs < lhs);
+}
+
+istream &operator>>(istream &in, PeriodSet &period_set) {
+  char c;
+
+  in >> c;
+  if (c != '{') {
+    throw invalid_argument("Expected '{'");
+  }
+
+  set<unique_ptr<Period>> s = {};
+
+  Period period;
+  in >> period;
+  s.insert(period.clone());
+
+  while (true) {
+    in >> c;
+    if (c != ',')
+      break;
+    in >> period;
+    s.insert(period.clone());
+  }
+
+  if (c != '}') {
+    throw invalid_argument("Expected '}'");
+  }
+
+  period_set.m_periods.empty();
+  for (auto const &e : s)
+    period_set.m_periods.insert(e->clone());
+
+  return in;
 }
 
 ostream &operator<<(ostream &os, PeriodSet const &period_set) {

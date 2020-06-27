@@ -20,16 +20,14 @@ private:
   int compare(Period const &other) const;
 
 public:
+  Period();
   Period(time_point const lower, time_point const upper,
          bool const lower_inc = true, bool const upper_inc = false);
   Period(string const lower, string const upper, bool const lower_inc = true,
          bool const upper_inc = false);
   Period(string const serialized);
 
-  virtual unique_ptr<Period> clone() {
-    return make_unique<Period>(this->m_lower, this->m_upper, this->m_lower_inc,
-                               this->m_upper_inc);
-  }
+  unique_ptr<Period> clone();
 
   time_point lower() const;
   time_point upper() const;

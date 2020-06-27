@@ -104,55 +104,31 @@ template <typename T> unique_ptr<Period> Deserializer<T>::nextPeriod() {
   string::size_type current_pos = iter - in.begin();
   string s = in.substr(current_pos, 256);
   stringstream ss(s);
-  Period period(std::chrono::system_clock::from_time_t(0),
-                std::chrono::system_clock::from_time_t(1));
+  Period period;
   ss >> period;
   iter += ss.tellg();
-  unique_ptr<Period> p = period.clone();
-  return p;
+  return period.clone();
 };
 
 template <typename T> unique_ptr<PeriodSet> Deserializer<T>::nextPeriodSet() {
-  skipWhitespaces();
-  consumeChar('{');
-  set<unique_ptr<Period>> s = {};
-  s.insert(nextPeriod());
-  skipWhitespaces();
-
-  while (hasNext() && peek(0) == ',') {
-    consumeChar(',');
-    s.insert(nextPeriod());
-    skipWhitespaces();
-  }
-
-  if (!hasNext() || peek(0) != '}') {
-    throw DeserializationException("Expected a '}'");
-  }
-  consumeChar('}');
-
-  return make_unique<PeriodSet>(s);
+  string::size_type current_pos = iter - in.begin();
+  string s = in.substr(current_pos, 2048);
+  stringstream ss(s);
+  PeriodSet period_set;
+  ss >> period_set;
+  iter += ss.tellg();
+  return period_set.clone();
 };
 
 template <typename T>
 unique_ptr<TimestampSet> Deserializer<T>::nextTimestampSet() {
-  skipWhitespaces();
-  consumeChar('{');
-  set<time_point> s = {};
-  s.insert(nextTime());
-  skipWhitespaces();
-
-  while (hasNext() && peek(0) == ',') {
-    consumeChar(',');
-    s.insert(nextTime());
-    skipWhitespaces();
-  }
-
-  if (!hasNext() || peek(0) != '}') {
-    throw DeserializationException("Expected a '}'");
-  }
-  consumeChar('}');
-
-  return make_unique<TimestampSet>(s);
+  string::size_type current_pos = iter - in.begin();
+  string s = in.substr(current_pos, 2048);
+  stringstream ss(s);
+  TimestampSet timestamp_set;
+  ss >> timestamp_set;
+  iter += ss.tellg();
+  return make_unique<TimestampSet>(timestamp_set);
 };
 
 /**
