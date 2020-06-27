@@ -20,7 +20,7 @@ $ pip install git+https://github.com/chaitan94/meos
 ```python
 import datetime
 from pymeos import Geometry
-from pymeos.io import DeserializerGeom, SerializerGeom
+from pymeos.io import DeserializerGeom
 from pymeos.temporal import TInstantGeom, TSequenceGeom
 
 
@@ -43,8 +43,10 @@ assert trajectory == traj_from_string
 ```
 
 ### Documentation
-More detailed usage guide / quickstart, check docs: https://adonmo-daylight.readthedocs.io/en/latest/quickstart.html
-API Reference can also be found in the docs: https://adonmo-daylight.readthedocs.io/en/latest/
+
+Docs and API Reference: https://pymeos.readthedocs.io/en/latest/
+
+More detailed usage guide/quickstart: https://pymeos.readthedocs.io/en/latest/quickstart.html
 
 # Development
 MEOS uses the [CMake](https://cmake.org/) build system, [Catch2](https://github.com/catchorg/Catch2) and [pytest](https://docs.pytest.org/en/latest/) for tests.
