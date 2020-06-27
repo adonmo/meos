@@ -104,3 +104,25 @@ time_point PeriodSet::timestampN(int n) const {
   }
   return *next(s.begin(), n);
 }
+
+bool operator==(PeriodSet const &lhs, PeriodSet const &rhs) {
+  return lhs.periods() == rhs.periods();
+}
+
+bool operator!=(PeriodSet const &lhs, PeriodSet const &rhs) {
+  return lhs.periods() != rhs.periods();
+}
+
+bool operator<(PeriodSet const &lhs, PeriodSet const &rhs) {
+  return lhs.periods() < rhs.periods();
+}
+
+bool operator>(PeriodSet const &lhs, PeriodSet const &rhs) { return rhs < lhs; }
+
+bool operator>=(PeriodSet const &lhs, PeriodSet const &rhs) {
+  return !(lhs < rhs);
+}
+
+bool operator<=(PeriodSet const &lhs, PeriodSet const &rhs) {
+  return !(rhs < lhs);
+}

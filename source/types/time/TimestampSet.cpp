@@ -97,3 +97,27 @@ time_point TimestampSet::timestampN(int n) const {
   }
   return *next(s.begin(), n);
 }
+
+bool operator==(TimestampSet const &lhs, TimestampSet const &rhs) {
+  return lhs.timestamps() == rhs.timestamps();
+}
+
+bool operator!=(TimestampSet const &lhs, TimestampSet const &rhs) {
+  return lhs.timestamps() != rhs.timestamps();
+}
+
+bool operator<(TimestampSet const &lhs, TimestampSet const &rhs) {
+  return lhs.timestamps() < rhs.timestamps();
+}
+
+bool operator>(TimestampSet const &lhs, TimestampSet const &rhs) {
+  return rhs < lhs;
+}
+
+bool operator>=(TimestampSet const &lhs, TimestampSet const &rhs) {
+  return !(lhs < rhs);
+}
+
+bool operator<=(TimestampSet const &lhs, TimestampSet const &rhs) {
+  return !(rhs < lhs);
+}

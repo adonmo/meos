@@ -34,17 +34,12 @@ public:
   time_point endTimestamp() const;
   time_point timestampN(int n) const;
 
-  friend bool operator==(TimestampSet const &lhs, TimestampSet const &rhs) {
-    return lhs.timestamps() == rhs.timestamps();
-  }
-
-  friend bool operator!=(TimestampSet const &lhs, TimestampSet const &rhs) {
-    return lhs.timestamps() != rhs.timestamps();
-  }
-
-  friend bool operator<(TimestampSet const &lhs, TimestampSet const &rhs) {
-    return lhs.timestamps() < rhs.timestamps();
-  }
+  friend bool operator==(TimestampSet const &lhs, TimestampSet const &rhs);
+  friend bool operator!=(TimestampSet const &lhs, TimestampSet const &rhs);
+  friend bool operator<(TimestampSet const &lhs, TimestampSet const &rhs);
+  friend bool operator>(TimestampSet const &lhs, TimestampSet const &rhs);
+  friend bool operator>=(TimestampSet const &lhs, TimestampSet const &rhs);
+  friend bool operator<=(TimestampSet const &lhs, TimestampSet const &rhs);
 
   friend ostream &operator<<(ostream &os, TimestampSet const &timestamp_set) {
     bool first = true;

@@ -26,6 +26,7 @@ void def_time_module(py::module &m) {
            py::arg("upper_inc") = false)
       .def(py::init<string const>(), py::arg("serialized"))
       .def(py::self == py::self)
+      .def(py::self != py::self)
       .def(py::self < py::self)
       .def(py::self <= py::self)
       .def(py::self > py::self)
@@ -53,5 +54,21 @@ void def_time_module(py::module &m) {
 
   py::class_<PeriodSet>(time_module, "PeriodSet")
       .def(py::init<set<Period> &>())
+      .def(py::self == py::self)
+      .def(py::self != py::self)
+      .def(py::self < py::self)
+      .def(py::self <= py::self)
+      .def(py::self > py::self)
+      .def(py::self >= py::self)
       .def("periods", &PeriodSet::periods);
+
+  py::class_<TimestampSet>(time_module, "TimestampSet")
+      .def(py::init<set<time_point> &>())
+      .def(py::self == py::self)
+      .def(py::self != py::self)
+      .def(py::self < py::self)
+      .def(py::self <= py::self)
+      .def(py::self > py::self)
+      .def(py::self >= py::self)
+      .def("periods", &TimestampSet::periods);
 }
