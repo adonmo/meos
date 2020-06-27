@@ -43,19 +43,7 @@ public:
   friend bool operator>=(PeriodSet const &lhs, PeriodSet const &rhs);
   friend bool operator<=(PeriodSet const &lhs, PeriodSet const &rhs);
 
-  friend ostream &operator<<(ostream &os, PeriodSet const &period_set) {
-    bool first = true;
-    os << "{";
-    for (auto period : period_set.periods()) {
-      if (first)
-        first = false;
-      else
-        os << ", ";
-      os << period;
-    }
-    os << "}";
-    return os;
-  }
+  friend ostream &operator<<(ostream &os, PeriodSet const &period_set);
 
 protected:
   set<unique_ptr<Period>> m_periods;

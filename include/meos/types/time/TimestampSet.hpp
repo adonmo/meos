@@ -41,19 +41,7 @@ public:
   friend bool operator>=(TimestampSet const &lhs, TimestampSet const &rhs);
   friend bool operator<=(TimestampSet const &lhs, TimestampSet const &rhs);
 
-  friend ostream &operator<<(ostream &os, TimestampSet const &timestamp_set) {
-    bool first = true;
-    os << "{";
-    for (auto t : timestamp_set.timestamps()) {
-      if (first)
-        first = false;
-      else
-        os << ", ";
-      os << ISO8601_time(t);
-    }
-    os << "}";
-    return os;
-  }
+  friend ostream &operator<<(ostream &os, TimestampSet const &timestamp_set);
 
 protected:
   set<time_point> m_timestamps;

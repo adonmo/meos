@@ -126,3 +126,17 @@ bool operator>=(PeriodSet const &lhs, PeriodSet const &rhs) {
 bool operator<=(PeriodSet const &lhs, PeriodSet const &rhs) {
   return !(rhs < lhs);
 }
+
+ostream &operator<<(ostream &os, PeriodSet const &period_set) {
+  bool first = true;
+  os << "{";
+  for (auto period : period_set.periods()) {
+    if (first)
+      first = false;
+    else
+      os << ", ";
+    os << period;
+  }
+  os << "}";
+  return os;
+}

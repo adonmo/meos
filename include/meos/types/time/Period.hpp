@@ -46,6 +46,7 @@ public:
   friend bool operator>(Period const &lhs, Period const &rhs);
   friend bool operator>=(Period const &lhs, Period const &rhs);
   friend bool operator<=(Period const &lhs, Period const &rhs);
+
   friend istream &operator>>(istream &in, Period &period);
   friend ostream &operator<<(ostream &os, Period const &period);
 };

@@ -121,3 +121,17 @@ bool operator>=(TimestampSet const &lhs, TimestampSet const &rhs) {
 bool operator<=(TimestampSet const &lhs, TimestampSet const &rhs) {
   return !(rhs < lhs);
 }
+
+ostream &operator<<(ostream &os, TimestampSet const &timestamp_set) {
+  bool first = true;
+  os << "{";
+  for (auto t : timestamp_set.timestamps()) {
+    if (first)
+      first = false;
+    else
+      os << ", ";
+    os << ISO8601_time(t);
+  }
+  os << "}";
+  return os;
+}
