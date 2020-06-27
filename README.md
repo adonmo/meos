@@ -50,6 +50,32 @@ Docs and API Reference: https://pymeos.netlify.app/en/latest/
 
 More detailed usage guide/quickstart: https://pymeos.netlify.app/en/latest/quickstart.html
 
+## C++
+
+```cpp
+#include <iostream>
+#include <meos/types/temporal/TSequence.hpp>
+
+using namespace std;
+
+
+int main() {
+    vector<TInstant<int>> instants = {
+        TInstant<int>(2, unix_time_point(2012, 1, 1)),
+        TInstant<int>(1, unix_time_point(2012, 1, 2)),
+        TInstant<int>(4, unix_time_point(2012, 1, 3)),
+        TInstant<int>(3, unix_time_point(2012, 1, 4)),
+    };
+    TSequence<int> tseq(instants, true, false);
+    cout << tseq << endl;
+    return 0;
+}
+```
+
+### Documentation
+
+C++ API Reference: https://meos.netlify.app
+
 # Development
 MEOS uses the [CMake](https://cmake.org/) and [setuptools](https://setuptools.readthedocs.io/en/latest/) for the build system, and [Catch2](https://github.com/catchorg/Catch2) and [pytest](https://docs.pytest.org/en/latest/) for tests.
 
