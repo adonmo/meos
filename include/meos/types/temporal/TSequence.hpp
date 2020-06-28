@@ -6,7 +6,7 @@
 #include <meos/types/temporal/TInstantFunctions.hpp>
 #include <meos/types/temporal/Temporal.hpp>
 #include <meos/types/temporal/TemporalComparators.hpp>
-#include <meos/util/time.hpp>
+#include <meos/util/serializing.hpp>
 #include <vector>
 
 using namespace std;

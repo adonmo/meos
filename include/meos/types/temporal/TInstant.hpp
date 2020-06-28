@@ -5,7 +5,7 @@
 #include <meos/types/temporal/TInstantFunctions.hpp>
 #include <meos/types/temporal/Temporal.hpp>
 #include <meos/types/temporal/TemporalComparators.hpp>
-#include <meos/util/time.hpp>
+#include <meos/util/serializing.hpp>
 
 using namespace std;
 
@@ -29,7 +29,8 @@ public:
   }
 
   friend ostream &operator<<(ostream &os, TInstant const &instant) {
-    os << instant.getValue() << "@" << ISO8601_time(instant.getTimestamp());
+    os << write_value(instant.getValue()) << "@"
+       << write_ISO8601_time(instant.getTimestamp());
     return os;
   }
 

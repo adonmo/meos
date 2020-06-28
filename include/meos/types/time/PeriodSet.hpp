@@ -4,7 +4,7 @@
 #include <iomanip>
 #include <iterator>
 #include <meos/types/time/Period.hpp>
-#include <meos/util/time.hpp>
+#include <meos/util/serializing.hpp>
 #include <set>
 
 using namespace std;

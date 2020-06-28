@@ -1,14 +1,8 @@
-import datetime
-
-import pytz
-
 from pymeos.io import (DeserializerFloat, DeserializerGeom, DeserializerInt,
                        SerializerFloat, SerializerInt)
 from pymeos.temporal import (TInstantFloat, TInstantInt, TInstantSetInt, TSequenceFloat)
 
-
-def unix_dt(year, month, day, hour=0, minute=0, second=0):
-    return pytz.UTC.localize(datetime.datetime(year, month, day, hour, minute, second))
+from ..utils import unix_dt
 
 
 def test_serialization():

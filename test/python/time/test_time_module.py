@@ -1,13 +1,9 @@
 import datetime
 
-import pytz
-
 from pymeos.io import SerializerInt, DeserializerInt
 from pymeos.time import Period, PeriodSet
 
-
-def unix_dt(year, month, day, hour=0, minute=0, second=0):
-    return pytz.UTC.localize(datetime.datetime(year, month, day, hour, minute, second))
+from ..utils import unix_dt
 
 
 def test_time_types():

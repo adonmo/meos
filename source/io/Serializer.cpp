@@ -1,6 +1,6 @@
 #include <meos/io/SerializationException.hpp>
 #include <meos/io/Serializer.hpp>
-#include <meos/util/time.hpp>
+#include <meos/util/serializing.hpp>
 
 using namespace std;
 
@@ -47,7 +47,7 @@ template <> string Serializer<Geometry>::write(Geometry const &value) {
 }
 
 template <typename T> string Serializer<T>::writeTime(time_point const &t) {
-  return ISO8601_time(t);
+  return write_ISO8601_time(t);
 }
 
 template <typename T> string Serializer<T>::write(TInstant<T> const *instant) {

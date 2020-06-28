@@ -161,7 +161,7 @@ ostream &operator<<(ostream &os, TimestampSet const &timestamp_set) {
       first = false;
     else
       os << ", ";
-    os << ISO8601_time(t);
+    os << write_ISO8601_time(t);
   }
   os << "}";
   return os;

@@ -1,6 +1,6 @@
 #include <meos/io/utils.hpp>
 #include <meos/types/time/Period.hpp>
-#include <meos/util/time.hpp>
+#include <meos/util/serializing.hpp>
 
 Period::Period()
     : m_lower(std::chrono::system_clock::from_time_t(0)),
@@ -161,7 +161,7 @@ istream &operator>>(istream &in, Period &period) {
 ostream &operator<<(ostream &os, Period const &period) {
   auto opening = period.lower_inc() ? "[" : "(";
   auto closing = period.upper_inc() ? "]" : ")";
-  os << opening << ISO8601_time(period.lower()) << ", "
-     << ISO8601_time(period.upper()) << closing;
+  os << opening << write_ISO8601_time(period.lower()) << ", "
+     << write_ISO8601_time(period.upper()) << closing;
   return os;
 }

@@ -48,6 +48,12 @@ void declare_temporal_types(py::module &m, std::string const &typesuffix) {
       .def(py::self <= py::self)
       .def(py::self > py::self)
       .def(py::self >= py::self)
+      .def("__str__",
+           [](TInstant<T> const &self) {
+             std::ostringstream s;
+             s << self;
+             return s.str();
+           })
       .def("__hash__",
            [](TInstant<T> const &instant) {
              return py::hash(
@@ -70,6 +76,12 @@ void declare_temporal_types(py::module &m, std::string const &typesuffix) {
       .def(py::self <= py::self)
       .def(py::self > py::self)
       .def(py::self >= py::self)
+      .def("__str__",
+           [](TInstantSet<T> const &self) {
+             std::ostringstream s;
+             s << self;
+             return s.str();
+           })
       .def("getInstants", &TInstantSet<T>::getInstants);
 
   def_comparator<TemporalComparators<TSequence<T>>>(m, "TSequence", typesuffix);
@@ -85,6 +97,12 @@ void declare_temporal_types(py::module &m, std::string const &typesuffix) {
       .def(py::self <= py::self)
       .def(py::self > py::self)
       .def(py::self >= py::self)
+      .def("__str__",
+           [](TSequence<T> const &self) {
+             std::ostringstream s;
+             s << self;
+             return s.str();
+           })
       .def_readonly("lower_inc", &TSequence<T>::lower_inc)
       .def_readonly("upper_inc", &TSequence<T>::upper_inc)
       .def("getInstants", &TSequence<T>::getInstants);
