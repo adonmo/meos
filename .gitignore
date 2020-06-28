@@ -8,3 +8,6 @@ dist
 
 # Sphinx documentation
 documentation/python/_build/
+
+# Local Netlify folder
+.netlify
