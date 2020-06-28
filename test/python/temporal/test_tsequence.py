@@ -11,10 +11,14 @@ def get_sample_tsequence():
 
 def test_constructor():
     tseqf = get_sample_tsequence()
-    assert tseqf.getInstants() == [
+    assert tseqf.getInstants == [
       TInstantFloat(1.25, unix_dt(2011, 1, 1)),
       TInstantFloat(6.25, unix_dt(2011, 1, 2)),
     ]
+    assert tseqf.instants == {
+      TInstantFloat(1.25, unix_dt(2011, 1, 1)),
+      TInstantFloat(6.25, unix_dt(2011, 1, 2)),
+    }
     assert (tseqf.lower_inc, tseqf.upper_inc) == (False, True)
 
 

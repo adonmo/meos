@@ -47,9 +47,10 @@ void def_time_module(py::module &m) {
       .def_property_readonly("lower_inc", &Period::lower_inc)
       .def_property_readonly("upper_inc", &Period::upper_inc)
       .def_property_readonly("timespan", &Period::timespan)
-      .def("shift", &Period::shift)
-      .def("overlap", &Period::overlap)
-      .def("contains_timestamp", &Period::contains_timestamp);
+      .def("shift", &Period::shift, py::arg("timedelta"))
+      .def("overlap", &Period::overlap, py::arg("period"))
+      .def("contains_timestamp", &Period::contains_timestamp,
+           py::arg("timestamp"));
 
   py::class_<PeriodSet>(time_module, "PeriodSet")
       .def(py::init<set<Period> &>(), py::arg("periods"))
@@ -72,14 +73,14 @@ void def_time_module(py::module &m) {
       .def_property_readonly("numPeriods", &PeriodSet::numPeriods)
       .def_property_readonly("startPeriod", &PeriodSet::startPeriod)
       .def_property_readonly("endPeriod", &PeriodSet::endPeriod)
-      .def("periodN", &PeriodSet::periodN)
       .def_property_readonly("timespan", &PeriodSet::timespan)
-      .def("shift", &PeriodSet::shift)
       .def_property_readonly("timestamps", &PeriodSet::timestamps)
       .def_property_readonly("numTimestamps", &PeriodSet::numTimestamps)
       .def_property_readonly("startTimestamp", &PeriodSet::startTimestamp)
       .def_property_readonly("endTimestamp", &PeriodSet::endTimestamp)
-      .def("timestampN", &PeriodSet::timestampN);
+      .def("periodN", &PeriodSet::periodN, py::arg("n"))
+      .def("shift", &PeriodSet::shift, py::arg("timedelta"))
+      .def("timestampN", &PeriodSet::timestampN, py::arg("n"));
 
   py::class_<TimestampSet>(time_module, "TimestampSet")
       .def(py::init<set<time_point> &>())
@@ -95,5 +96,5 @@ void def_time_module(py::module &m) {
              s << self;
              return s.str();
            })
-      .def("periods", &TimestampSet::periods);
+      .def_property_readonly("periods", &TimestampSet::periods);
 }

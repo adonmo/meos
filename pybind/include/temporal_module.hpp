@@ -25,12 +25,12 @@ void def_tinstant_functions(const pybind11::module &m,
   py::class_<Interface>(
       m,
       ("TInstantFunctions" + temporal_type_suffix + base_type_suffix).c_str())
-      .def("numInstants", &Interface::numInstants)
-      .def("startInstant", &Interface::startInstant)
-      .def("endInstant", &Interface::endInstant)
-      .def("instantN", &Interface::instantN)
-      .def("startValue", &Interface::startValue)
-      .def("endValue", &Interface::endValue);
+      .def_property_readonly("numInstants", &Interface::numInstants)
+      .def_property_readonly("startInstant", &Interface::startInstant)
+      .def_property_readonly("endInstant", &Interface::endInstant)
+      .def("instantN", &Interface::instantN, py::arg("n"))
+      .def_property_readonly("startValue", &Interface::startValue)
+      .def_property_readonly("endValue", &Interface::endValue);
 }
 
 template <typename T>
@@ -63,15 +63,15 @@ void def_temporal_types(py::module &m, std::string const &typesuffix) {
              return py::hash(
                  py::make_tuple(instant.getValue(), instant.getTimestamp()));
            })
-      .def("getTimestamp", &TInstant<T>::getTimestamp)
-      .def("getValue", &TInstant<T>::getValue)
-      .def("compare", &TInstant<T>::compare)
-      .def("duration", &TInstant<T>::duration)
-      .def("instants", &TInstant<T>::instants)
-      .def("getValues", &TInstant<T>::getValues)
-      .def("timestamps", &TInstant<T>::timestamps)
-      .def("getTime", &TInstant<T>::getTime)
-      .def("period", &TInstant<T>::period)
+      .def("compare", &TInstant<T>::compare, py::arg("other"))
+      .def_property_readonly("getTimestamp", &TInstant<T>::getTimestamp)
+      .def_property_readonly("getValue", &TInstant<T>::getValue)
+      .def_property_readonly("duration", &TInstant<T>::duration)
+      .def_property_readonly("instants", &TInstant<T>::instants)
+      .def_property_readonly("getValues", &TInstant<T>::getValues)
+      .def_property_readonly("timestamps", &TInstant<T>::timestamps)
+      .def_property_readonly("getTime", &TInstant<T>::getTime)
+      .def_property_readonly("period", &TInstant<T>::period)
       .def("shift", &TInstant<T>::shift, py::arg("timedelta"))
       .def("intersectsTimestamp", &TInstant<T>::intersectsTimestamp,
            py::arg("datetime"))
@@ -86,6 +86,8 @@ void def_temporal_types(py::module &m, std::string const &typesuffix) {
              TInstantFunctions<TInstantSet<T>, TInstant<T>, T>>(
       m, ("TInstantSet" + typesuffix).c_str())
       .def(py::init<set<TInstant<T>> &>(), py::arg("instants"))
+      .def(py::init<set<string> &>(), py::arg("instants"))
+      .def(py::init<string>(), py::arg("serialized"))
       .def(py::self == py::self, py::arg("other"))
       .def(py::self != py::self, py::arg("other"))
       .def(py::self < py::self, py::arg("other"))
@@ -98,14 +100,14 @@ void def_temporal_types(py::module &m, std::string const &typesuffix) {
              s << self;
              return s.str();
            })
-      .def("getInstants", &TInstantSet<T>::getInstants)
-      .def("compare", &TInstantSet<T>::compare)
-      .def("duration", &TInstantSet<T>::duration)
-      .def("instants", &TInstantSet<T>::instants)
-      .def("getValues", &TInstantSet<T>::getValues)
-      .def("timestamps", &TInstantSet<T>::timestamps)
-      .def("getTime", &TInstantSet<T>::getTime)
-      .def("period", &TInstantSet<T>::period)
+      .def("compare", &TInstantSet<T>::compare, py::arg("other"))
+      .def_property_readonly("getInstants", &TInstantSet<T>::getInstants)
+      .def_property_readonly("duration", &TInstantSet<T>::duration)
+      .def_property_readonly("instants", &TInstantSet<T>::instants)
+      .def_property_readonly("getValues", &TInstantSet<T>::getValues)
+      .def_property_readonly("timestamps", &TInstantSet<T>::timestamps)
+      .def_property_readonly("getTime", &TInstantSet<T>::getTime)
+      .def_property_readonly("period", &TInstantSet<T>::period)
       .def("shift", &TInstantSet<T>::shift, py::arg("timedelta"))
       .def("intersectsTimestamp", &TInstantSet<T>::intersectsTimestamp,
            py::arg("datetime"))
@@ -132,16 +134,16 @@ void def_temporal_types(py::module &m, std::string const &typesuffix) {
              s << self;
              return s.str();
            })
+      .def("compare", &TSequence<T>::compare, py::arg("other"))
       .def_readonly("lower_inc", &TSequence<T>::lower_inc)
       .def_readonly("upper_inc", &TSequence<T>::upper_inc)
-      .def("getInstants", &TSequence<T>::getInstants)
-      .def("compare", &TSequence<T>::compare)
-      .def("duration", &TSequence<T>::duration)
-      .def("instants", &TSequence<T>::instants)
-      .def("getValues", &TSequence<T>::getValues)
-      .def("timestamps", &TSequence<T>::timestamps)
-      .def("getTime", &TSequence<T>::getTime)
-      .def("period", &TSequence<T>::period)
+      .def_property_readonly("getInstants", &TSequence<T>::getInstants)
+      .def_property_readonly("duration", &TSequence<T>::duration)
+      .def_property_readonly("instants", &TSequence<T>::instants)
+      .def_property_readonly("getValues", &TSequence<T>::getValues)
+      .def_property_readonly("timestamps", &TSequence<T>::timestamps)
+      .def_property_readonly("getTime", &TSequence<T>::getTime)
+      .def_property_readonly("period", &TSequence<T>::period)
       .def("shift", &TSequence<T>::shift, py::arg("timedelta"))
       .def("intersectsTimestamp", &TSequence<T>::intersectsTimestamp,
            py::arg("datetime"))

@@ -33,17 +33,17 @@ def test_serialization():
 def test_deserialization():
     di = DeserializerInt("10@2011-01-01")
     ti = di.nextTInstant()
-    assert (ti.getValue(), ti.getTimestamp()) == (10, unix_dt(2011, 1, 1))
+    assert (ti.getValue, ti.getTimestamp) == (10, unix_dt(2011, 1, 1))
 
     df = DeserializerFloat("{1.0@2011-01-01, 2.5@2011-01-02}")
     tset = df.nextTInstantSet()
-    actual = {(tf.getValue(), tf.getTimestamp()) for tf in tset.getInstants()}
+    actual = {(tf.getValue, tf.getTimestamp) for tf in tset.instants}
     expected = {(1.0, unix_dt(2011, 1, 1)), (2.5, unix_dt(2011, 1, 2))}
     assert actual == expected
 
     dg = DeserializerGeom("[POINT(0 0)@2012-01-01 08:00:00+00, POINT(2 0)@2012-01-01 08:10:00+00, POINT(2 -1.98)@2012-01-01 08:15:00+00]")
     tseq = dg.nextTSequence()
     assert (tseq.lower_inc, tseq.upper_inc) == (True, True)
-    actual = [(tg.getValue().toWKT(), tg.getTimestamp()) for tg in tseq.getInstants()]
+    actual = [(tg.getValue.toWKT(), tg.getTimestamp) for tg in tseq.instants]
     expected = [('POINT (0 0)', unix_dt(2012, 1, 1, 8)), ('POINT (2 0)', unix_dt(2012, 1, 1, 8, 10)), ('POINT (2 -1.98)', unix_dt(2012, 1, 1, 8, 15))]
     assert actual == expected

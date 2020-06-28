@@ -19,11 +19,15 @@ class TInstantSet : public Temporal<T>,
                     public TemporalComparators<TInstantSet<T>>,
                     public TInstantFunctions<TInstantSet<T>, TInstant<T>, T> {
 public:
+  // TODO FIXME make this private?
+  // right now this is public as some tests need it
   set<unique_ptr<TInstant<T>>> m_instants;
 
-  TInstantSet(set<unique_ptr<TInstant<T>>> &instants_);
-
-  TInstantSet(set<TInstant<T>> &instants_);
+  TInstantSet();
+  TInstantSet(set<unique_ptr<TInstant<T>>> const &instants);
+  TInstantSet(set<TInstant<T>> const &instants);
+  TInstantSet(set<string> const &instants);
+  TInstantSet(string const &serialized);
 
   int compare(Temporal<T> const &other) const override;
 
@@ -50,6 +54,39 @@ public:
   TInstantSet<T> *shift_impl(duration_ms const timedelta) const override;
   bool intersectsTimestamp(time_point const datetime) const override;
   bool intersectsPeriod(Period const period) const override;
+
+  friend istream &operator>>(istream &in, TInstantSet<T> &instant_set) {
+    char c;
+
+    in >> c;
+    if (c != '{') {
+      throw invalid_argument("Expected '{'");
+    }
+
+    set<unique_ptr<TInstant<T>>> s = {};
+
+    TInstant<T> instant;
+    in >> instant;
+    s.insert(instant.clone());
+
+    while (true) {
+      in >> c;
+      if (c != ',')
+        break;
+      in >> instant;
+      s.insert(instant.clone());
+    }
+
+    if (c != '}') {
+      throw invalid_argument("Expected '}'");
+    }
+
+    instant_set.m_instants.empty();
+    for (auto const &e : s)
+      instant_set.m_instants.insert(e->clone());
+
+    return in;
+  }
 
   friend ostream &operator<<(ostream &os, TInstantSet const &instant_set) {
     bool first = true;

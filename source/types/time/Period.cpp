@@ -71,21 +71,22 @@ unique_ptr<Period> Period::shift(duration_ms const timedelta) const {
                              this->upper_inc());
 }
 
-bool Period::overlap(Period const &p) const {
+bool Period::overlap(Period const &period) const {
   duration_ms const o = chrono::duration_cast<chrono::milliseconds>(
-      min(this->upper(), p.upper()) - max(this->lower(), p.lower()));
+      min(this->upper(), period.upper()) - max(this->lower(), period.lower()));
   if (o.count() > 0)
     return true;
   if (o.count() < 0)
     return false;
-  return this->lower() < p.lower() ? this->upper_inc() && p.lower_inc()
-                                   : p.upper_inc() && this->lower_inc();
+  return this->lower() < period.lower()
+             ? this->upper_inc() && period.lower_inc()
+             : period.upper_inc() && this->lower_inc();
 };
 
-bool Period::contains_timestamp(time_point const t) const {
-  return ((this->lower() < t && t < this->upper()) ||
-          (this->lower_inc() && this->lower() == t) ||
-          (this->upper_inc() && this->upper() == t));
+bool Period::contains_timestamp(time_point const timestamp) const {
+  return ((this->lower() < timestamp && timestamp < this->upper()) ||
+          (this->lower_inc() && this->lower() == timestamp) ||
+          (this->upper_inc() && this->upper() == timestamp));
 }
 
 int Period::compare(Period const &other) const {

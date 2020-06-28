@@ -1,20 +1,37 @@
 #include <iomanip>
 #include <meos/types/temporal/TInstantSet.hpp>
 
+template <typename T> TInstantSet<T>::TInstantSet() {}
+
 template <typename T>
-TInstantSet<T>::TInstantSet(set<unique_ptr<TInstant<T>>> &instants_) {
-  for (auto const &e : instants_)
+TInstantSet<T>::TInstantSet(set<unique_ptr<TInstant<T>>> const &instants) {
+  for (auto const &e : instants)
     this->m_instants.insert(e->clone());
 }
 
-template <typename T> TInstantSet<T>::TInstantSet(set<TInstant<T>> &instants_) {
-  for (auto const &e : instants_)
+template <typename T>
+TInstantSet<T>::TInstantSet(set<TInstant<T>> const &instants) {
+  for (auto const &e : instants)
     this->m_instants.insert(e.clone());
 }
 
 template <typename T> TInstantSet<T>::TInstantSet(TInstantSet const &t) {
   for (auto const &e : t.m_instants)
     this->m_instants.insert(e->clone());
+}
+
+template <typename T> TInstantSet<T>::TInstantSet(set<string> const &instants) {
+  TInstantSet<T> instant_set;
+  for (auto const &e : instants)
+    m_instants.insert(make_unique<TInstant<T>>(e));
+}
+
+template <typename T> TInstantSet<T>::TInstantSet(string const &serialized) {
+  stringstream ss(serialized);
+  TInstantSet<T> instant_set;
+  ss >> instant_set;
+  for (auto const &e : instant_set.m_instants)
+    m_instants.insert(e->clone());
 }
 
 template <typename T>

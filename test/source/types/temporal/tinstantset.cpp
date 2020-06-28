@@ -7,6 +7,51 @@ time_t const minute = 60 * 1000L;
 time_t const day = 24 * 60 * 60 * 1000L;
 time_t const year = 365 * 24 * 60 * 60 * 1000L;
 
+TEMPLATE_TEST_CASE("TInstantSets are constructed properly", "[tinstset]", int,
+                   float) {
+  SECTION("reads from istream") {
+    TInstantSet<TestType> instant_set;
+    stringstream ss("{    10@2012-01-01  ,      20@2012-01-02 09:40:00+0530 }");
+    ss >> instant_set;
+    REQUIRE(instant_set.instants().size() == 2);
+    REQUIRE(instant_set.startInstant() ==
+            TInstant<TestType>(10, unix_time_point(2012, 1, 1)));
+    REQUIRE(instant_set.endInstant() ==
+            TInstant<TestType>(20, unix_time_point(2012, 1, 2, 4, 10)));
+  }
+
+  SECTION("all constructors work") {
+    TInstant<TestType> instant_1(10, unix_time_point(2020, 9, 10));
+    TInstant<TestType> instant_2(20, unix_time_point(2019, 9, 10));
+    SECTION("no strings constructor") {
+      TInstant<TestType> instant_3(20,
+                                   unix_time_point(2019, 9, 10)); // Duplicate!
+      set<TInstant<TestType>> s = {instant_1, instant_2, instant_3};
+      TInstantSet<TestType> instant_set(s);
+      REQUIRE(instant_set.instants().size() == 2);
+      // We gave the instants out-of-order!
+      REQUIRE(instant_set.startInstant() == instant_2);
+      REQUIRE(instant_set.endInstant() == instant_1);
+    }
+    SECTION("string constructor") {
+      TInstantSet<TestType> instant_set(
+          "{10@2020-09-10 01:00:00+01, 20@2019-09-10 01:00:00+01}");
+      REQUIRE(instant_set.instants().size() == 2);
+      // We gave the instants out-of-order!
+      REQUIRE(instant_set.startInstant() == instant_2);
+      REQUIRE(instant_set.endInstant() == instant_1);
+    }
+    SECTION("set of strings constructor") {
+      TInstantSet<TestType> instant_set(set<string>{
+          "10@2020-09-10 01:00:00+01", "20@2019-09-10 01:00:00+01"});
+      REQUIRE(instant_set.instants().size() == 2);
+      // We gave the instants out-of-order!
+      REQUIRE(instant_set.startInstant() == instant_2);
+      REQUIRE(instant_set.endInstant() == instant_1);
+    }
+  }
+}
+
 TEMPLATE_TEST_CASE("TInstantSet comparision operators", "[tinstset]", int,
                    float) {
   SECTION("lhs == rhs") {

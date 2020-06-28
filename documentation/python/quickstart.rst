@@ -6,7 +6,7 @@ For all below examples, the following imports and helpers are assumed, in the in
 .. code-block:: python
 
     import pytz
-    from datetime import datetime
+    import datetime
     from pymeos import Geometry
     from pymeos.io import (DeserializerFloat, DeserializerGeom, DeserializerInt,
                         SerializerFloat, SerializerInt)
@@ -58,8 +58,8 @@ Time Types
     assert period_2.lower_inc == False
     assert period_2.upper_inc == False
 
-    assert len(period_set.periods()) == 2
-    assert {period_1, period_2} == period_set.periods()
+    assert len(period_set.periods) == 2
+    assert {period_1, period_2} == period_set.periods
 
     # Test functions
     assert period_1.timespan == datetime.timedelta(days=1)
@@ -104,15 +104,15 @@ Temporal Types
 
 
     # Let's verify what we've done
-    assert (tb.getValue(), ti.getTimestamp()) == (True, unix_dt(2011, 1, 1))
-    assert (ti.getValue(), ti.getTimestamp()) == (10, unix_dt(2011, 1, 1))
-    assert (tf.getValue(), ti.getTimestamp()) == (1.25, unix_dt(2011, 1, 1))
-    assert (tt.getValue(), tt.getTimestamp()) == ("testing", unix_dt(2011, 1, 1))
-    assert (tg.getValue().toWKT(), tg.getTimestamp()) == ("POINT (10 15)", unix_dt(2011, 1, 1))
+    assert (tb.getValue, ti.getTimestamp) == (True, unix_dt(2011, 1, 1))
+    assert (ti.getValue, ti.getTimestamp) == (10, unix_dt(2011, 1, 1))
+    assert (tf.getValue, ti.getTimestamp) == (1.25, unix_dt(2011, 1, 1))
+    assert (tt.getValue, tt.getTimestamp) == ("testing", unix_dt(2011, 1, 1))
+    assert (tg.getValue.toWKT(), tg.getTimestamp) == ("POINT (10 15)", unix_dt(2011, 1, 1))
 
-    assert {tb} == tsetb.getInstants()
+    assert {tb} == tsetb.getInstants
 
-    assert [tf] == tseqf.getInstants()
+    assert [tf] == tseqf.getInstants
     assert (tseqf.lower_inc, tseqf.upper_inc) == (False, True)
 
 
@@ -153,17 +153,17 @@ Deserialization
 
     di = DeserializerInt("10@2011-01-01")
     ti = di.nextTInstant()
-    assert (ti.getValue(), ti.getTimestamp()) == (10, unix_dt(2011, 1, 1))
+    assert (ti.getValue, ti.getTimestamp) == (10, unix_dt(2011, 1, 1))
 
     df = DeserializerFloat("{1.0@2011-01-01, 2.5@2011-01-02}")
     tset = df.nextTInstantSet()
-    actual = {(tf.getValue(), tf.getTimestamp()) for tf in tset.getInstants()}
+    actual = {(tf.getValue, tf.getTimestamp) for tf in tset.instants}
     expected = {(1.0, unix_dt(2011, 1, 1)), (2.5, unix_dt(2011, 1, 2))}
     assert actual == expected
 
     dg = DeserializerGeom("[POINT(0 0)@2012-01-01 08:00:00+00, POINT(2 0)@2012-01-01 08:10:00+00, POINT(2 -1.98)@2012-01-01 08:15:00+00]")
     tseq = dg.nextTSequence()
     assert (tseq.lower_inc, tseq.upper_inc) == (True, True)
-    actual = [(tg.getValue().toWKT(), tg.getTimestamp()) for tg in tseq.getInstants()]
+    actual = [(tg.getValue.toWKT(), tg.getTimestamp) for tg in tseq.instants]
     expected = [('POINT (0 0)', unix_dt(2012, 1, 1, 8)), ('POINT (2 0)', unix_dt(2012, 1, 1, 8, 10)), ('POINT (2 -1.98)', unix_dt(2012, 1, 1, 8, 15))]
     assert actual == expected

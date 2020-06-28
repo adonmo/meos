@@ -35,8 +35,8 @@ public:
   bool upper_inc() const;
   duration_ms timespan() const;
   unique_ptr<Period> shift(duration_ms const timedelta) const;
-  bool overlap(Period const &p) const;
-  bool contains_timestamp(time_point const t) const;
+  bool overlap(Period const &period) const;
+  bool contains_timestamp(time_point const timestamp) const;
 
   friend bool operator==(Period const &lhs, Period const &rhs);
   friend bool operator!=(Period const &lhs, Period const &rhs);

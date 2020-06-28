@@ -19,7 +19,7 @@ PeriodSet::PeriodSet(PeriodSet const &t) {
 }
 
 PeriodSet::PeriodSet(set<string> const &periods) {
-  PeriodSet instant_set;
+  PeriodSet period_set;
   for (auto const &e : periods)
     m_periods.insert(make_unique<Period>(e));
 }
