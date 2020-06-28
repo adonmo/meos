@@ -6,6 +6,43 @@
 
 time_t const day = 24 * 60 * 60 * 1000L;
 
+TEMPLATE_TEST_CASE("TInstants are constructed properly", "[tinstant]", int,
+                   float) {
+  SECTION("reads from istream") {
+    TInstant<TestType> instant;
+    stringstream ss("    1 @     2012-01-02 09:40:00+0530 ");
+    ss >> instant;
+    REQUIRE(instant.getValue() == 1);
+    REQUIRE(instant.getTimestamp() == unix_time_point(2012, 1, 2, 4, 10));
+  }
+
+  SECTION("all constructors work") {
+    TInstant<TestType> *instant;
+    SECTION("no strings constructor") {
+      instant = new TInstant<TestType>(1, unix_time_point(2019, 9, 21));
+    }
+    SECTION("two strings constructor") {
+      instant = new TInstant<TestType>("1", "2019-09-21 01:00:00+01");
+    }
+    SECTION("one string constructor") {
+      instant = new TInstant<TestType>("1@2019-09-21 01:00:00+01");
+    }
+    SECTION("pair constructor") {
+      SECTION("no strings") {
+        instant =
+            new TInstant<TestType>(make_pair(1, unix_time_point(2019, 9, 21)));
+      }
+      SECTION("two strings") {
+        instant =
+            new TInstant<TestType>(make_pair("1", "2019-09-21 01:00:00+01"));
+      }
+    }
+    REQUIRE(instant->getValue() == 1);
+    REQUIRE(instant->getTimestamp() == unix_time_point(2019, 9, 21));
+    delete instant;
+  }
+}
+
 TEMPLATE_TEST_CASE("TInstant comparision operators", "[tinst]", int, float,
                    bool) {
   SECTION("lhs == rhs") {

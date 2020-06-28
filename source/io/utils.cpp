@@ -1,38 +1,107 @@
+#include <algorithm>
 #include <meos/io/utils.hpp>
+#include <meos/types/geom/Geometry.hpp>
 #include <meos/util/string.hpp>
 #include <sstream>
 #include <stdexcept>
 
-void validate_ISO8601(const std::string &s) {
+using namespace std;
+
+template <typename T> T nextValue(istream &in) {
+  // Check specialized template functions below for supported types
+  throw std::invalid_argument("Unsupported type");
+}
+
+template <> bool nextValue(istream &in) {
+  in >> std::ws;
+  string s = read_until_one_of(in, " @\n");
+  transform(s.begin(), s.end(), s.begin(), ::tolower);
+
+  bool value;
+  if (s == "t" || s == "true") {
+    value = true;
+  } else if (s == "f" || s == "false") {
+    value = false;
+  } else {
+    throw std::invalid_argument(
+        "Boolean value can only be one of (t, f, true, false), but got: " + s);
+  }
+
+  return value;
+}
+
+template <> int nextValue(istream &in) {
+  int value;
+  in >> value;
+  return value;
+}
+
+template <> float nextValue(istream &in) {
+  float value;
+  in >> value;
+  return value;
+}
+
+template <> string nextValue(istream &in) {
+  in >> std::ws;
+  string input = read_until_one_of(in, "@");
+  int length = input.length();
+
+  // Skip double quotes if present
+  if (length >= 2 && input[0] == '"' && input[input.length() - 1] == '"') {
+    input = input.substr(1, length - 2);
+  }
+
+  if (length <= 0) {
+    throw std::invalid_argument("Could not parse text: empty, unquoted value");
+  }
+
+  return input;
+}
+
+template <> Geometry nextValue(istream &in) {
+  in >> std::ws;
+  string input = read_until_one_of(in, "@");
+
+  Geometry value(input);
+
+  if (value.geom == nullptr) {
+    throw std::invalid_argument("Could not parse geometry");
+  }
+
+  return value;
+}
+
+void validate_ISO8601(const string &s) {
   if ((s[4] != '-') || (s[7] != '-')) {
-    throw std::invalid_argument("Expected date in YYYY-MM-DD format");
+    throw invalid_argument("Expected date in YYYY-MM-DD format");
   }
 
   // TODO check 1<= month <= 12
   // TODO check date according to year and month
 
   if ((s[10] != ' ') && (s[10] != 'T')) {
-    throw std::invalid_argument("Expected either a space or a 'T' after day");
+    throw invalid_argument("Expected either a space or a 'T' after day");
   }
 
   if ((s[13] != ':')) {
-    throw std::invalid_argument("Expected time in hh:mm format");
+    throw invalid_argument("Expected time in hh:mm format");
   }
 
   if ((s[16] != ':')) {
-    throw std::invalid_argument("Expected time in hh:mm:ss format");
+    throw invalid_argument("Expected time in hh:mm:ss format");
   }
 
   if ((s[19] != '+') && (s[19] != '-')) {
-    throw std::invalid_argument("Expected either a '+' or a '-' after time");
+    throw invalid_argument("Expected either a '+' or a '-' after time");
   }
 }
 
-std::string normalized_ISO8601(std::string s) {
+string normalized_ISO8601(string s) {
   auto length = s.length();
 
   if (length < 10 || length > 24) {
-    throw std::invalid_argument(
+    throw invalid_argument(
         "Empty or unexpected length for the provided ISO 8601 "
         "date/time string");
   }
@@ -45,8 +114,8 @@ std::string normalized_ISO8601(std::string s) {
     s += "+0000";
   } else if (length == 20) { // 1234-12-12T12:12:12Z
     if (s[19] != 'Z') {
-      throw std::invalid_argument("For a ISO8601 string of length 20, "
-                                  "expected 'Z' as the last character");
+      throw invalid_argument("For a ISO8601 string of length 20, "
+                             "expected 'Z' as the last character");
     }
     s[19] = '+';
     s += "0000";
@@ -59,11 +128,11 @@ std::string normalized_ISO8601(std::string s) {
   return s;
 }
 
-time_point nextTime(std::istream &in) {
+time_point nextTime(istream &in) {
   // TODO allow strings like 2012-1-1 instead of just 2012-01-01
 
   in >> std::ws;
-  std::string s = read_until_one_of(in, ",)]}\n");
+  string s = read_until_one_of(in, ",)]}\n");
   s = trim(s);
   int length = s.length();
 
@@ -74,7 +143,7 @@ time_point nextTime(std::istream &in) {
   }
 
   validate_ISO8601(s);
-  std::stringstream ss(s);
+  stringstream ss(s);
   int temp_int;
 
   tm time = {0};
@@ -109,19 +178,19 @@ time_point nextTime(std::istream &in) {
   return time_point(duration);
 }
 
-char consume_one_of(std::istream &in, std::string s) {
+char consume_one_of(istream &in, string s) {
   char c;
-  if (s.find(c = in.get()) == std::string::npos) {
-    throw std::invalid_argument("Expected one of '" + s + "'");
+  if (s.find(c = in.get()) == string::npos) {
+    throw invalid_argument("Expected one of '" + s + "'");
   }
   return c;
 }
 
-std::string read_until_one_of(std::istream &in, std::string stop_set) {
+string read_until_one_of(istream &in, string stop_set) {
   char c;
-  std::string s;
+  string s;
   while (c = in.peek()) {
-    if ((c == EOF) || (stop_set.find(c) != std::string::npos)) {
+    if ((c == EOF) || (stop_set.find(c) != string::npos)) {
       break;
     }
     s += in.get();

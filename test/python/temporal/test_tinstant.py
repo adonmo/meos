@@ -1,3 +1,5 @@
+import pytest
+
 from pymeos import Geometry
 from pymeos.temporal import (TInstantBool, TInstantFloat, TInstantGeom,
                              TInstantInt, TInstantSetBool, TInstantText,
@@ -6,7 +8,19 @@ from pymeos.temporal import (TInstantBool, TInstantFloat, TInstantGeom,
 from ..utils import unix_dt
 
 
-def test_constructor():
+@pytest.mark.parametrize("actual", [
+    TInstantInt(10, unix_dt(2011, 1, 1)),
+    TInstantInt((10, unix_dt(2011, 1, 1))),
+    TInstantInt("10", "2011-01-01"),
+    TInstantInt(("10", "2011-01-01")),
+    TInstantInt("10@2011-01-01"),
+])
+def test_different_constructors(actual):
+    assert actual.getValue() == 10
+    assert actual.getTimestamp() == unix_dt(2011, 1, 1)
+
+
+def test_constructor_different_base_types():
     tb = TInstantBool(True, unix_dt(2011, 1, 1))
     ti = TInstantInt(10, unix_dt(2011, 1, 1))
     tf = TInstantFloat(1.25, unix_dt(2011, 1, 1))

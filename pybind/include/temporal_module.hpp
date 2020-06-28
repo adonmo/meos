@@ -41,7 +41,11 @@ void declare_temporal_types(py::module &m, std::string const &typesuffix) {
   py::class_<TInstant<T>, TemporalComparators<TInstant<T>>,
              TInstantFunctions<TInstant<T>, TInstant<T>, T>>(
       m, ("TInstant" + typesuffix).c_str())
-      .def(py::init<T, time_point>())
+      .def(py::init<T, time_point>(), py::arg("value"), py::arg("timestamp"))
+      .def(py::init<pair<T, time_point>>(), py::arg("instant"))
+      .def(py::init<string, string>(), py::arg("value"), py::arg("timestamp"))
+      .def(py::init<pair<string, string>>(), py::arg("instant"))
+      .def(py::init<string>(), py::arg("serialized"))
       .def(py::self == py::self)
       .def(py::self != py::self)
       .def(py::self < py::self)

@@ -1,8 +1,37 @@
 #include <iomanip>
 #include <meos/types/temporal/TInstant.hpp>
 
+template <typename T> TInstant<T>::TInstant() {}
+
 template <typename T>
 TInstant<T>::TInstant(T value_, time_point t_) : value(value_), t(t_) {}
+
+template <typename T>
+TInstant<T>::TInstant(pair<T, time_point> p) : value(p.first), t(p.second) {}
+
+template <typename T>
+TInstant<T>::TInstant(string const value, string const t) {
+  stringstream lss(value);
+  this->value = nextValue<T>(lss);
+  stringstream uss(t);
+  this->t = nextTime(uss);
+}
+
+template <typename T>
+TInstant<T>::TInstant(pair<string const, string const> p) {
+  stringstream lss(p.first);
+  this->value = nextValue<T>(lss);
+  stringstream uss(p.second);
+  this->t = nextTime(uss);
+}
+
+template <typename T> TInstant<T>::TInstant(string const serialized) {
+  stringstream ss(serialized);
+  TInstant<T> instant;
+  ss >> instant;
+  this->value = instant.value;
+  this->t = instant.t;
+}
 
 template <typename T> int TInstant<T>::compare(Temporal<T> const &other) const {
   if (this->duration() != other.duration()) {

@@ -1,6 +1,7 @@
 #ifndef MEOS_TYPES_TEMPORAL_TINSTANT_HPP
 #define MEOS_TYPES_TEMPORAL_TINSTANT_HPP
 
+#include <meos/io/utils.hpp>
 #include <meos/types/geom/Geometry.hpp>
 #include <meos/types/temporal/TInstantFunctions.hpp>
 #include <meos/types/temporal/Temporal.hpp>
@@ -17,7 +18,29 @@ class TInstant : public Temporal<T>,
                  public TemporalComparators<TInstant<T>>,
                  public TInstantFunctions<TInstant<T>, TInstant<T>, T> {
 public:
+  TInstant();
   TInstant(T value, time_point t);
+  TInstant(pair<T, time_point> p);
+  TInstant(string const value, string const t);
+  TInstant(pair<string const, string const> p);
+  TInstant(string const serialized);
+
+  friend istream &operator>>(istream &in, TInstant &instant) {
+    instant.value = nextValue<T>(in);
+    char c;
+    in >> c;
+    if (c != '@') {
+      throw invalid_argument("Expected a '@'");
+    }
+    instant.t = nextTime(in);
+    return in;
+  }
+
+  friend ostream &operator<<(ostream &os, TInstant const &instant) {
+    os << write_value(instant.getValue()) << "@"
+       << write_ISO8601_time(instant.getTimestamp());
+    return os;
+  }
 
   int compare(Temporal<T> const &other) const override;
 
@@ -26,12 +49,6 @@ public:
 
   unique_ptr<TInstant<T>> clone() const {
     return std::unique_ptr<TInstant<T>>(this->clone_impl());
-  }
-
-  friend ostream &operator<<(ostream &os, TInstant const &instant) {
-    os << write_value(instant.getValue()) << "@"
-       << write_ISO8601_time(instant.getTimestamp());
-    return os;
   }
 
   constexpr TemporalDuration const duration() const {
@@ -52,8 +69,8 @@ public:
   bool intersectsPeriod(Period const period) const override;
 
 private:
-  T const value;
-  time_point const t;
+  T value;
+  time_point t;
 
   TInstant *clone_impl() const override;
   TInstant *shift_impl(duration_ms const timedelta) const override;

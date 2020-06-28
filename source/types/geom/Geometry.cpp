@@ -1,6 +1,7 @@
 #include <cstdlib>
 #include <meos/types/geom/Geometry.hpp>
 
+Geometry::Geometry() { point(0, 0); }
 Geometry::Geometry(std::string wkt) { fromWKT(wkt); }
 Geometry::Geometry(double x, double y) { point(x, y); }
 Geometry::Geometry(Geometry const &g) {

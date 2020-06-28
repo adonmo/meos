@@ -23,10 +23,11 @@ public:
   bool lower_inc;
   bool upper_inc;
 
-  TSequence(vector<unique_ptr<TInstant<T>>> &instants_, bool lower_inc,
-            bool upper_inc);
+  TSequence(vector<unique_ptr<TInstant<T>>> &instants_, bool lower_inc = true,
+            bool upper_inc = false);
 
-  TSequence(vector<TInstant<T>> &instants_, bool lower_inc, bool upper_inc);
+  TSequence(vector<TInstant<T>> &instants_, bool lower_inc = true,
+            bool upper_inc = false);
 
   int compare(Temporal<T> const &other) const override;
 

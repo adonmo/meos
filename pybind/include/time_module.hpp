@@ -17,14 +17,13 @@ void def_time_module(py::module &m) {
                               "Period, PeriodSet and TimestampSet");
 
   py::class_<Period>(time_module, "Period")
-      .def(py::init<time_point const, time_point const, bool const,
-                    bool const>(),
-           py::arg("lower"), py::arg("upper"), py::arg("lower_inc") = true,
+      .def(py::init<time_point, time_point, bool, bool>(), py::arg("lower"),
+           py::arg("upper"), py::arg("lower_inc") = true,
            py::arg("upper_inc") = false)
-      .def(py::init<string const, string const, bool const, bool const>(),
-           py::arg("lower"), py::arg("upper"), py::arg("lower_inc") = true,
+      .def(py::init<string, string, bool, bool>(), py::arg("lower"),
+           py::arg("upper"), py::arg("lower_inc") = true,
            py::arg("upper_inc") = false)
-      .def(py::init<string const>(), py::arg("serialized"))
+      .def(py::init<string>(), py::arg("serialized"))
       .def(py::self == py::self)
       .def(py::self != py::self)
       .def(py::self < py::self)

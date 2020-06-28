@@ -14,6 +14,7 @@ class Geometry {
 public:
   GEOSGeometry *geom = nullptr;
 
+  Geometry();
   Geometry(std::string wkt);
   Geometry(double x, double y);
   Geometry(Geometry const &g);
