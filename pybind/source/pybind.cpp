@@ -1,4 +1,5 @@
 #include "io_module.hpp"
+#include "range_module.hpp"
 #include "temporal_module.hpp"
 #include "time_module.hpp"
 #include <pybind11/pybind11.h>
@@ -18,6 +19,7 @@ PYBIND11_MODULE(pymeos, m) {
       .def("toWKT", &Geometry::toWKT);
 
   def_io_module(m);
+  def_range_module(m);
   def_temporal_module(m);
   def_time_module(m);
 }

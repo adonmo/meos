@@ -13,31 +13,13 @@ private:
   bool const m_lower_inc;
   bool const m_upper_inc;
 
-  int compare(Range const &other) const {
-    if (lower() < other.lower())
-      return -1;
-    else if (lower() > other.lower())
-      return 1;
-    else if (upper() < other.upper())
-      return -1;
-    else if (upper() > other.upper())
-      return 1;
-    else if (lower_inc() && !other.lower_inc())
-      return -1;
-    else if (!lower_inc() && other.lower_inc())
-      return 1;
-    else if (upper_inc() && !other.upper_inc())
-      return -1;
-    else if (!upper_inc() && other.upper_inc())
-      return 1;
-    return 0;
-  }
-
 public:
-  Range(T const lower, T const upper, bool const lower_inc = false,
+  Range(T const lower, T const upper, bool const lower_inc = true,
         bool const upper_inc = false);
 
   virtual unique_ptr<Range> clone() { return make_unique<Range>(*this); }
+
+  int compare(Range const &other) const;
 
   T lower() const;
   T upper() const;
@@ -47,22 +29,34 @@ public:
   bool overlap(Range const &p) const;
   bool contains(T const t) const;
 
-  friend bool operator==(Range const &lhs, Range const &rhs) {
+  friend bool operator==(Range<T> const &lhs, Range<T> const &rhs) {
     return lhs.compare(rhs) == 0;
   }
 
-  friend bool operator!=(Range const &lhs, Range const &rhs) {
+  friend bool operator!=(Range<T> const &lhs, Range<T> const &rhs) {
     return lhs.compare(rhs) != 0;
   }
 
-  friend bool operator<(Range const &lhs, Range const &rhs) {
+  friend bool operator<(Range<T> const &lhs, Range<T> const &rhs) {
     return lhs.compare(rhs) == -1;
   }
 
-  friend ostream &operator<<(ostream &os, Range const &period) {
-    auto opening = period.lower_inc() ? "[" : "(";
-    auto closing = period.upper_inc() ? "]" : ")";
-    os << opening << period.lower() << ", " << period.upper() << closing;
+  friend bool operator>(Range<T> const &lhs, Range<T> const &rhs) {
+    return rhs < lhs;
+  }
+
+  friend bool operator>=(Range<T> const &lhs, Range<T> const &rhs) {
+    return !(lhs < rhs);
+  }
+
+  friend bool operator<=(Range<T> const &lhs, Range<T> const &rhs) {
+    return !(rhs < lhs);
+  }
+
+  friend ostream &operator<<(ostream &os, Range<T> const &range) {
+    auto opening = range.lower_inc() ? "[" : "(";
+    auto closing = range.upper_inc() ? "]" : ")";
+    os << opening << range.lower() << ", " << range.upper() << closing;
     return os;
   }
 };

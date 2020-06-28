@@ -34,7 +34,7 @@ void def_tinstant_functions(const pybind11::module &m,
 }
 
 template <typename T>
-void declare_temporal_types(py::module &m, std::string const &typesuffix) {
+void def_temporal_types(py::module &m, std::string const &typesuffix) {
   def_comparator<TemporalComparators<TInstant<T>>>(m, "TInstant", typesuffix);
   def_tinstant_functions<TInstantFunctions<TInstant<T>, TInstant<T>, T>>(
       m, "TInstant", typesuffix);
@@ -154,9 +154,9 @@ void def_temporal_module(py::module &m) {
       "temporal", "This module defines MobilityDB's temporal types: Temporal, "
                   "TInstant, TInstantSet, TSequence and TSequenceSet");
 
-  declare_temporal_types<bool>(temporal_module, "Bool");
-  declare_temporal_types<int>(temporal_module, "Int");
-  declare_temporal_types<float>(temporal_module, "Float");
-  declare_temporal_types<string>(temporal_module, "Text");
-  declare_temporal_types<Geometry>(temporal_module, "Geom");
+  def_temporal_types<bool>(temporal_module, "Bool");
+  def_temporal_types<int>(temporal_module, "Int");
+  def_temporal_types<float>(temporal_module, "Float");
+  def_temporal_types<string>(temporal_module, "Text");
+  def_temporal_types<Geometry>(temporal_module, "Geom");
 }
