@@ -22,7 +22,6 @@ Note: This assumes libgeos-dev is already installed on your system.
 ```python
 import datetime
 from pymeos import Geometry
-from pymeos.io import DeserializerGeom
 from pymeos.temporal import TInstantGeom, TSequenceGeom
 
 
@@ -35,13 +34,13 @@ trajectory = TSequenceGeom([
     TInstantGeom(Geometry(0, 0), datetime_utc(2012, 1, 1, 8, 0)),
     TInstantGeom(Geometry(2, 0), datetime_utc(2012, 1, 1, 8, 10)),
     TInstantGeom(Geometry(2, 1), datetime_utc(2012, 1, 1, 8, 15)),
-], True, False)
+])
 
-# Can also be constructed from a serialized format
-traj_from_string = DeserializerGeom('[Point(0 0)@2012-01-01 08:00:00, Point(2 0)@2012-01-01 08:10:00, Point(2 1)@2012-01-01 08:15:00)').nextTSequence()
+print(trajectory)
+```
 
-# Both are equivalent
-assert trajectory == traj_from_string
+```
+[POINT (0 0)@2012-01-01T08:00:00+0000, POINT (2 0)@2012-01-01T08:10:00+0000, POINT (2 1)@2012-01-01T08:15:00+0000)
 ```
 
 ### Documentation

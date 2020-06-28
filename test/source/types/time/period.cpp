@@ -5,8 +5,7 @@
 
 TEST_CASE("periods are validated and constructed properly", "[period]") {
   SECTION("reads from istream") {
-    Period period(std::chrono::system_clock::from_time_t(0),
-                  std::chrono::system_clock::from_time_t(1));
+    Period period;
     stringstream ss("  [  2012-01-01  ,      2012-01-02 09:40:00+0530 )");
     ss >> period;
     REQUIRE(period.lower() == unix_time_point(2012, 1, 1));

@@ -8,6 +8,43 @@ time_t const minute = 60 * 1000L;
 time_t const day = 24 * 60 * 60 * 1000L;
 time_t const year = 365 * 24 * 60 * 60 * 1000L;
 
+TEST_CASE("PeriodSets are constructed properly", "[periodset]") {
+  SECTION("reads from istream") {
+    PeriodSet period_set;
+    stringstream ss("{  [  2012-01-01  ,      2012-01-02 09:40:00+0530 )}");
+    ss >> period_set;
+    REQUIRE(period_set.periods().size() == 1);
+    Period period = period_set.startPeriod();
+    REQUIRE(period.lower() == unix_time_point(2012, 1, 1));
+    REQUIRE(period.upper() == unix_time_point(2012, 1, 2, 4, 10));
+    REQUIRE(period.lower_inc() == true);
+    REQUIRE(period.upper_inc() == false);
+  }
+
+  SECTION("all constructors work") {
+    Period period_1(unix_time_point(2020, 9, 8), unix_time_point(2020, 9, 10));
+    Period period_2(unix_time_point(2019, 9, 8), unix_time_point(2019, 9, 10));
+    SECTION("no strings constructor") {
+      Period period_3(unix_time_point(2019, 9, 8),
+                      unix_time_point(2019, 9, 10)); // Duplicate!
+      set<Period> s = {period_1, period_2, period_3};
+      PeriodSet period_set(s);
+      REQUIRE(period_set.periods().size() == 2);
+      // We gave the periods out-of-order!
+      REQUIRE(period_set.startPeriod() == period_2);
+      REQUIRE(period_set.endPeriod() == period_1);
+    }
+    SECTION("string constructor") {
+      PeriodSet period_set("{[2020-09-08 01:00:00+01, 2020-09-10 01:00:00+01), "
+                           "[2019-09-08 01:00:00+01, 2019-09-10 01:00:00+01)}");
+      REQUIRE(period_set.periods().size() == 2);
+      // We gave the periods out-of-order!
+      REQUIRE(period_set.startPeriod() == period_2);
+      REQUIRE(period_set.endPeriod() == period_1);
+    }
+  }
+}
+
 TEST_CASE("PeriodSet period functions", "[periodset]") {
   set<Period> periods;
   set<Period> expected_periods;

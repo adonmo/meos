@@ -18,6 +18,14 @@ PeriodSet::PeriodSet(PeriodSet const &t) {
     m_periods.insert(e->clone());
 }
 
+PeriodSet::PeriodSet(string const serialized) {
+  stringstream ss(serialized);
+  PeriodSet period_set;
+  ss >> period_set;
+  for (auto const &e : period_set.m_periods)
+    m_periods.insert(e->clone());
+}
+
 unique_ptr<PeriodSet> PeriodSet::clone() {
   return make_unique<PeriodSet>(this->m_periods);
 }

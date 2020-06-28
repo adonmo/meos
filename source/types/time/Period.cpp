@@ -25,8 +25,7 @@ Period::Period(string const lower, string const upper, bool const lower_inc,
 
 Period::Period(string const serialized) {
   stringstream ss(serialized);
-  Period period(std::chrono::system_clock::from_time_t(0),
-                std::chrono::system_clock::from_time_t(1));
+  Period period;
   ss >> period;
   this->m_lower = period.lower();
   this->m_upper = period.upper();

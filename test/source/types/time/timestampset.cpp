@@ -8,6 +8,38 @@ time_t const minute = 60 * 1000L;
 time_t const day = 24 * 60 * 60 * 1000L;
 time_t const year = 365 * 24 * 60 * 60 * 1000L;
 
+TEST_CASE("TimestampSets are constructed properly", "[timestampset]") {
+  SECTION("reads from istream") {
+    TimestampSet timestamp_set;
+    stringstream ss("{    2012-01-01  ,      2012-01-02 09:40:00+0530 }");
+    ss >> timestamp_set;
+    REQUIRE(timestamp_set.timestamps().size() == 2);
+    REQUIRE(timestamp_set.startTimestamp() == unix_time_point(2012, 1, 1));
+    REQUIRE(timestamp_set.endTimestamp() == unix_time_point(2012, 1, 2, 4, 10));
+  }
+
+  SECTION("all constructors work") {
+    time_point t1 = unix_time_point(2020, 9, 8);
+    time_point t2 = unix_time_point(2019, 9, 8);
+    SECTION("no strings constructor") {
+      time_point t3 = unix_time_point(2019, 9, 8); // Duplicate!
+      set<time_point> s = {t1, t2, t3};
+      TimestampSet timestamp_set(s);
+      REQUIRE(timestamp_set.timestamps().size() == 2);
+      // We gave the timestamps out-of-order!
+      REQUIRE(timestamp_set.startTimestamp() == t2);
+      REQUIRE(timestamp_set.endTimestamp() == t1);
+    }
+    SECTION("string constructor") {
+      TimestampSet timestamp_set(
+          "{2020-09-08 01:00:00+01, 2019-09-08 01:00:00+01}");
+      REQUIRE(timestamp_set.timestamps().size() == 2);
+      REQUIRE(timestamp_set.startTimestamp() == t2);
+      REQUIRE(timestamp_set.endTimestamp() == t1);
+    }
+  }
+}
+
 TEST_CASE("TimestampSet period functions", "[timestampset]") {
   set<time_point> timestamps;
   set<Period> expected_periods;
@@ -46,10 +78,10 @@ TEST_CASE("TimestampSet period gaps are ignored", "[timestampset]") {
       unix_time_point(2012, 1, 6),
       unix_time_point(2012, 1, 7),
   };
-  TimestampSet period_set(timestamps);
+  TimestampSet timestamp_set(timestamps);
   Period expected = Period(unix_time_point(2012, 1, 1),
                            unix_time_point(2012, 1, 7), true, true);
-  REQUIRE(period_set.period() == expected);
+  REQUIRE(timestamp_set.period() == expected);
 }
 
 TEST_CASE("TimestampSet timespan", "[timestampset]") {

@@ -14,6 +14,14 @@ TimestampSet::TimestampSet(TimestampSet const &t) {
     m_timestamps.insert(e);
 }
 
+TimestampSet::TimestampSet(string const serialized) {
+  stringstream ss(serialized);
+  TimestampSet timestamp_set;
+  ss >> timestamp_set;
+  for (auto const &e : timestamp_set.m_timestamps)
+    m_timestamps.insert(e);
+}
+
 set<Period> TimestampSet::periods() const {
   set<Period> s;
   for (auto const &e : m_timestamps) {
