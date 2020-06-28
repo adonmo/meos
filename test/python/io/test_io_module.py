@@ -44,6 +44,6 @@ def test_deserialization():
     dg = DeserializerGeom("[POINT(0 0)@2012-01-01 08:00:00+00, POINT(2 0)@2012-01-01 08:10:00+00, POINT(2 -1.98)@2012-01-01 08:15:00+00]")
     tseq = dg.nextTSequence()
     assert (tseq.lower_inc, tseq.upper_inc) == (True, True)
-    actual = [(tg.getValue.toWKT(), tg.getTimestamp) for tg in tseq.instants]
+    actual = [(tg.getValue.toWKT(), tg.getTimestamp) for tg in tseq.getInstants]
     expected = [('POINT (0 0)', unix_dt(2012, 1, 1, 8)), ('POINT (2 0)', unix_dt(2012, 1, 1, 8, 10)), ('POINT (2 -1.98)', unix_dt(2012, 1, 1, 8, 15))]
     assert actual == expected

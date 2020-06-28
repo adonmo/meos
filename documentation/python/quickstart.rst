@@ -5,7 +5,6 @@ For all below examples, the following imports and helpers are assumed, in the in
 
 .. code-block:: python
 
-    import pytz
     import datetime
     from pymeos import Geometry
     from pymeos.io import (DeserializerFloat, DeserializerGeom, DeserializerInt,
@@ -17,7 +16,7 @@ For all below examples, the following imports and helpers are assumed, in the in
 
 
     def unix_dt(year, month, day, hour=0, minute=0, second=0):
-        return pytz.UTC.localize(datetime.datetime(year, month, day, hour, minute, second))
+        return datetime.datetime(year, month, day, hour, minute, second, tzinfo=datetime.timezone.utc)
 
 
 Range Types
