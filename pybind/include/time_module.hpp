@@ -52,7 +52,9 @@ void def_time_module(py::module &m) {
       .def("contains_timestamp", &Period::contains_timestamp);
 
   py::class_<PeriodSet>(time_module, "PeriodSet")
-      .def(py::init<set<Period> &>())
+      .def(py::init<set<Period> &>(), py::arg("periods"))
+      .def(py::init<set<string> &>(), py::arg("periods"))
+      .def(py::init<string>(), py::arg("serialized"))
       .def(py::self == py::self)
       .def(py::self != py::self)
       .def(py::self < py::self)
@@ -65,7 +67,19 @@ void def_time_module(py::module &m) {
              s << self;
              return s.str();
            })
-      .def("periods", &PeriodSet::periods);
+      .def_property_readonly("periods", &PeriodSet::periods)
+      .def_property_readonly("period", &PeriodSet::period)
+      .def_property_readonly("numPeriods", &PeriodSet::numPeriods)
+      .def_property_readonly("startPeriod", &PeriodSet::startPeriod)
+      .def_property_readonly("endPeriod", &PeriodSet::endPeriod)
+      .def("periodN", &PeriodSet::periodN)
+      .def_property_readonly("timespan", &PeriodSet::timespan)
+      .def("shift", &PeriodSet::shift)
+      .def_property_readonly("timestamps", &PeriodSet::timestamps)
+      .def_property_readonly("numTimestamps", &PeriodSet::numTimestamps)
+      .def_property_readonly("startTimestamp", &PeriodSet::startTimestamp)
+      .def_property_readonly("endTimestamp", &PeriodSet::endTimestamp)
+      .def("timestampN", &PeriodSet::timestampN);
 
   py::class_<TimestampSet>(time_module, "TimestampSet")
       .def(py::init<set<time_point> &>())

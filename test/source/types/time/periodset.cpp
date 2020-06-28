@@ -42,6 +42,15 @@ TEST_CASE("PeriodSets are constructed properly", "[periodset]") {
       REQUIRE(period_set.startPeriod() == period_2);
       REQUIRE(period_set.endPeriod() == period_1);
     }
+    SECTION("set of strings constructor") {
+      PeriodSet period_set(
+          set<string>{"[2020-09-08 01:00:00+01, 2020-09-10 01:00:00+01)",
+                      "[2019-09-08 01:00:00+01, 2019-09-10 01:00:00+01)"});
+      REQUIRE(period_set.periods().size() == 2);
+      // We gave the periods out-of-order!
+      REQUIRE(period_set.startPeriod() == period_2);
+      REQUIRE(period_set.endPeriod() == period_1);
+    }
   }
 }
 

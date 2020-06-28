@@ -15,10 +15,11 @@ using duration_ms = std::chrono::milliseconds;
 class PeriodSet {
 public:
   PeriodSet();
-  PeriodSet(set<unique_ptr<Period>> &periods_);
-  PeriodSet(set<Period> &periods_);
+  PeriodSet(set<unique_ptr<Period>> const &periods);
+  PeriodSet(set<Period> const &periods);
+  PeriodSet(set<string> const &periods);
   PeriodSet(PeriodSet const &t);
-  PeriodSet(string const serialized);
+  PeriodSet(string const &serialized);
 
   unique_ptr<PeriodSet> clone();
 

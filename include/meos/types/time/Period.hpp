@@ -23,9 +23,9 @@ public:
   Period();
   Period(time_point const lower, time_point const upper,
          bool const lower_inc = true, bool const upper_inc = false);
-  Period(string const lower, string const upper, bool const lower_inc = true,
+  Period(string const &lower, string const &upper, bool const lower_inc = true,
          bool const upper_inc = false);
-  Period(string const serialized);
+  Period(string const &serialized);
 
   unique_ptr<Period> clone();
 

@@ -3,13 +3,13 @@
 
 PeriodSet::PeriodSet() {}
 
-PeriodSet::PeriodSet(set<unique_ptr<Period>> &periods_) {
-  for (auto const &e : periods_)
+PeriodSet::PeriodSet(set<unique_ptr<Period>> const &periods) {
+  for (auto const &e : periods)
     m_periods.insert(e->clone());
 }
 
-PeriodSet::PeriodSet(set<Period> &periods_) {
-  for (auto e : periods_)
+PeriodSet::PeriodSet(set<Period> const &periods) {
+  for (auto e : periods)
     m_periods.insert(e.clone());
 }
 
@@ -18,7 +18,13 @@ PeriodSet::PeriodSet(PeriodSet const &t) {
     m_periods.insert(e->clone());
 }
 
-PeriodSet::PeriodSet(string const serialized) {
+PeriodSet::PeriodSet(set<string> const &periods) {
+  PeriodSet instant_set;
+  for (auto const &e : periods)
+    m_periods.insert(make_unique<Period>(e));
+}
+
+PeriodSet::PeriodSet(string const &serialized) {
   stringstream ss(serialized);
   PeriodSet period_set;
   ss >> period_set;

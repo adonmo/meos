@@ -4,7 +4,8 @@
 
 Period::Period()
     : m_lower(std::chrono::system_clock::from_time_t(0)),
-      m_upper(std::chrono::system_clock::from_time_t(1)) {}
+      m_upper(std::chrono::system_clock::from_time_t(1)), m_lower_inc(true),
+      m_upper_inc(false) {}
 
 Period::Period(time_point const lower, time_point const upper,
                bool const lower_inc, bool const upper_inc)
@@ -13,7 +14,7 @@ Period::Period(time_point const lower, time_point const upper,
   validate();
 }
 
-Period::Period(string const lower, string const upper, bool const lower_inc,
+Period::Period(string const &lower, string const &upper, bool const lower_inc,
                bool const upper_inc)
     : m_lower_inc(lower_inc), m_upper_inc(upper_inc) {
   stringstream lss(lower);
@@ -23,7 +24,7 @@ Period::Period(string const lower, string const upper, bool const lower_inc,
   validate();
 }
 
-Period::Period(string const serialized) {
+Period::Period(string const &serialized) {
   stringstream ss(serialized);
   Period period;
   ss >> period;
