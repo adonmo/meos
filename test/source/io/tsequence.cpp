@@ -69,8 +69,8 @@ TEMPLATE_TEST_CASE("TSequence are deserialized", "[deserializer][tsequence]",
           TInstant<TestType>(10, unix_time_point(2012, 11, 1))};
       auto x = Catch::Matchers::Equals(v);
       REQUIRE_THAT(actual, x);
-      REQUIRE(tseq->lower_inc == true);
-      REQUIRE(tseq->upper_inc == false);
+      REQUIRE(tseq->lower_inc() == true);
+      REQUIRE(tseq->upper_inc() == false);
 
       CHECK_THROWS(r.nextTSequence());
     }
@@ -85,8 +85,8 @@ TEMPLATE_TEST_CASE("TSequence are deserialized", "[deserializer][tsequence]",
           TInstant<TestType>(12, unix_time_point(2012, 4, 1))};
       auto x = Catch::Matchers::Equals(v);
       REQUIRE_THAT(actual, x);
-      REQUIRE(tseq->lower_inc == false);
-      REQUIRE(tseq->upper_inc == false);
+      REQUIRE(tseq->lower_inc() == false);
+      REQUIRE(tseq->upper_inc() == false);
 
       CHECK_THROWS(r.nextTSequence());
     }
@@ -102,8 +102,8 @@ TEMPLATE_TEST_CASE("TSequence are deserialized", "[deserializer][tsequence]",
         TInstant<TestType>(10, unix_time_point(2012, 1, 1))};
     auto x1 = Catch::Matchers::Equals(v1);
     REQUIRE_THAT(actual, x1);
-    REQUIRE(tseq->lower_inc == false);
-    REQUIRE(tseq->upper_inc == true);
+    REQUIRE(tseq->lower_inc() == false);
+    REQUIRE(tseq->upper_inc() == true);
 
     unique_ptr<TSequence<TestType>> tseq2 = r.nextTSequence();
     vector<TInstant<TestType>> actual2 = unwrap(tseq2->m_instants);
@@ -111,8 +111,8 @@ TEMPLATE_TEST_CASE("TSequence are deserialized", "[deserializer][tsequence]",
         TInstant<TestType>(12, unix_time_point(2012, 4, 1))};
     auto x2 = Catch::Matchers::Equals(v2);
     REQUIRE_THAT(actual2, x2);
-    REQUIRE(tseq2->lower_inc == true);
-    REQUIRE(tseq2->upper_inc == true);
+    REQUIRE(tseq2->lower_inc() == true);
+    REQUIRE(tseq2->upper_inc() == true);
 
     CHECK_THROWS(r.nextTSequence());
   }

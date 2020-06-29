@@ -7,6 +7,57 @@ time_t const minute = 60 * 1000L;
 time_t const day = 24 * 60 * 60 * 1000L;
 time_t const year = 365 * 24 * 60 * 60 * 1000L;
 
+TEMPLATE_TEST_CASE("TSequences are constructed properly", "[tinstset]", int,
+                   float) {
+  SECTION("reads from istream") {
+    TSequence<TestType> seq;
+    stringstream ss("(    10@2012-01-01  ,      20@2012-01-02 09:40:00+0530 )");
+    ss >> seq;
+    REQUIRE(seq.instants().size() == 2);
+    REQUIRE(seq.startInstant() ==
+            TInstant<TestType>(10, unix_time_point(2012, 1, 1)));
+    REQUIRE(seq.endInstant() ==
+            TInstant<TestType>(20, unix_time_point(2012, 1, 2, 4, 10)));
+    REQUIRE(seq.lower_inc() == false);
+    REQUIRE(seq.upper_inc() == false);
+  }
+
+  SECTION("all constructors work") {
+    TSequence<TestType> *seq;
+    TInstant<TestType> instant_1(10, unix_time_point(2020, 9, 10));
+    TInstant<TestType> instant_2(20, unix_time_point(2019, 9, 10));
+
+    SECTION("no strings constructor") {
+      TInstant<TestType> instant_3(20,
+                                   unix_time_point(2019, 9, 10)); // Duplicate!
+      vector<TInstant<TestType>> v = {instant_1, instant_2, instant_3};
+      seq = new TSequence<TestType>(v, false, true);
+    }
+
+    SECTION("string constructor") {
+      seq = new TSequence<TestType>(
+          "(10@2020-09-10 01:00:00+01, 20@2019-09-10 01:00:00+01]");
+    }
+
+    SECTION("vector of strings constructor") {
+      seq = new TSequence<TestType>(vector<string>{"10@2020-09-10 01:00:00+01",
+                                                   "20@2019-09-10 01:00:00+01"},
+                                    false, true);
+    }
+
+    REQUIRE(seq->instants().size() == 2);
+
+    // We gave the instants out-of-order!
+    REQUIRE(seq->startInstant() == instant_2);
+    REQUIRE(seq->endInstant() == instant_1);
+
+    REQUIRE(seq->lower_inc() == false);
+    REQUIRE(seq->upper_inc() == true);
+
+    delete seq;
+  }
+}
+
 TEMPLATE_TEST_CASE("TSequence comparision operators", "[tsequence]", int,
                    float) {
   SECTION("lhs == rhs") {

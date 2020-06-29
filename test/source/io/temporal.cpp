@@ -45,8 +45,8 @@ TEMPLATE_TEST_CASE("Temporal are deserialized", "[deserializer][temporal]", int,
             TInstant<TestType>(10, unix_time_point(2012, 11, 1))};
         auto x = Catch::Matchers::Equals(v);
         REQUIRE_THAT(actual, x);
-        REQUIRE(casted->lower_inc == true);
-        REQUIRE(casted->upper_inc == false);
+        REQUIRE(casted->lower_inc() == true);
+        REQUIRE(casted->upper_inc() == false);
 
         CHECK_THROWS(r.nextTemporal());
       }

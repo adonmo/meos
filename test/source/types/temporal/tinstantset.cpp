@@ -21,34 +21,34 @@ TEMPLATE_TEST_CASE("TInstantSets are constructed properly", "[tinstset]", int,
   }
 
   SECTION("all constructors work") {
+    TInstantSet<TestType> *instant_set;
     TInstant<TestType> instant_1(10, unix_time_point(2020, 9, 10));
     TInstant<TestType> instant_2(20, unix_time_point(2019, 9, 10));
+
     SECTION("no strings constructor") {
       TInstant<TestType> instant_3(20,
                                    unix_time_point(2019, 9, 10)); // Duplicate!
       set<TInstant<TestType>> s = {instant_1, instant_2, instant_3};
-      TInstantSet<TestType> instant_set(s);
-      REQUIRE(instant_set.instants().size() == 2);
-      // We gave the instants out-of-order!
-      REQUIRE(instant_set.startInstant() == instant_2);
-      REQUIRE(instant_set.endInstant() == instant_1);
+      instant_set = new TInstantSet<TestType>(s);
     }
+
     SECTION("string constructor") {
-      TInstantSet<TestType> instant_set(
+      instant_set = new TInstantSet<TestType>(
           "{10@2020-09-10 01:00:00+01, 20@2019-09-10 01:00:00+01}");
-      REQUIRE(instant_set.instants().size() == 2);
-      // We gave the instants out-of-order!
-      REQUIRE(instant_set.startInstant() == instant_2);
-      REQUIRE(instant_set.endInstant() == instant_1);
     }
+
     SECTION("set of strings constructor") {
-      TInstantSet<TestType> instant_set(set<string>{
+      instant_set = new TInstantSet<TestType>(set<string>{
           "10@2020-09-10 01:00:00+01", "20@2019-09-10 01:00:00+01"});
-      REQUIRE(instant_set.instants().size() == 2);
-      // We gave the instants out-of-order!
-      REQUIRE(instant_set.startInstant() == instant_2);
-      REQUIRE(instant_set.endInstant() == instant_1);
     }
+
+    REQUIRE(instant_set->instants().size() == 2);
+
+    // We gave the instants out-of-order!
+    REQUIRE(instant_set->startInstant() == instant_2);
+    REQUIRE(instant_set->endInstant() == instant_1);
+
+    delete instant_set;
   }
 }
 

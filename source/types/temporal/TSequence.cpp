@@ -1,30 +1,51 @@
 #include <iomanip>
 #include <meos/types/temporal/TSequence.hpp>
 
+template <typename T> TSequence<T>::TSequence() {}
+
 template <typename T>
-TSequence<T>::TSequence(vector<unique_ptr<TInstant<T>>> &instants_,
-                        bool lower_inc_, bool upper_inc_)
-    : lower_inc(lower_inc_), upper_inc(upper_inc_) {
-  this->m_instants.reserve(instants_.size());
-  for (auto const &e : instants_)
+TSequence<T>::TSequence(vector<unique_ptr<TInstant<T>>> &instants,
+                        bool lower_inc, bool upper_inc)
+    : m_lower_inc(lower_inc), m_upper_inc(upper_inc) {
+  this->m_instants.reserve(instants.size());
+  for (auto const &e : instants)
     this->m_instants.push_back(e->clone());
 }
 
 template <typename T>
-TSequence<T>::TSequence(vector<TInstant<T>> &instants_, bool lower_inc_,
-                        bool upper_inc_)
-    : lower_inc(lower_inc_), upper_inc(upper_inc_) {
-  this->m_instants.reserve(instants_.size());
-  for (auto const &e : instants_)
+TSequence<T>::TSequence(vector<TInstant<T>> &instants, bool lower_inc,
+                        bool upper_inc)
+    : m_lower_inc(lower_inc), m_upper_inc(upper_inc) {
+  this->m_instants.reserve(instants.size());
+  for (auto const &e : instants)
     this->m_instants.push_back(e.clone());
 }
 
 template <typename T>
 TSequence<T>::TSequence(TSequence const &t)
-    : lower_inc(t.lower_inc), upper_inc(t.upper_inc) {
+    : m_lower_inc(t.m_lower_inc), m_upper_inc(t.m_upper_inc) {
   this->m_instants.reserve(t.m_instants.size());
   for (auto const &e : t.m_instants)
     this->m_instants.push_back(e->clone());
+}
+
+template <typename T>
+TSequence<T>::TSequence(vector<string> const &instants, bool lower_inc,
+                        bool upper_inc)
+    : m_lower_inc(lower_inc), m_upper_inc(upper_inc) {
+  TSequence<T> instant_set;
+  for (auto const &e : instants)
+    m_instants.push_back(make_unique<TInstant<T>>(e));
+}
+
+template <typename T> TSequence<T>::TSequence(string const &serialized) {
+  stringstream ss(serialized);
+  TSequence<T> seq;
+  ss >> seq;
+  for (auto const &e : seq.m_instants)
+    m_instants.push_back(e->clone());
+  this->m_lower_inc = seq.lower_inc();
+  this->m_upper_inc = seq.upper_inc();
 }
 
 template <typename T>
@@ -42,12 +63,12 @@ int TSequence<T>::compare(Temporal<T> const &other) const {
 
   // Compare bounds
   // [ < (, ) < ]
-  if ((this->lower_inc && !that->lower_inc) ||
-      (!this->upper_inc && that->upper_inc))
+  if ((this->m_lower_inc && !that->m_lower_inc) ||
+      (!this->m_upper_inc && that->m_upper_inc))
     return -1;
   // ( > [, ] > )
-  if ((that->lower_inc && !this->lower_inc) ||
-      (!that->upper_inc && this->upper_inc))
+  if ((that->m_lower_inc && !this->m_lower_inc) ||
+      (!that->m_upper_inc && this->m_upper_inc))
     return 1;
 
   // Compare instant by instant
@@ -66,6 +87,13 @@ int TSequence<T>::compare(Temporal<T> const &other) const {
 
   // The two are equal
   return 0;
+}
+
+template <typename T> bool TSequence<T>::lower_inc() const {
+  return this->m_lower_inc;
+}
+template <typename T> bool TSequence<T>::upper_inc() const {
+  return this->m_upper_inc;
 }
 
 template <typename T> vector<TInstant<T>> TSequence<T>::getInstants() const {
@@ -97,7 +125,7 @@ template <typename T> set<Range<T>> TSequence<T>::getValues() const {
       max = e->getValue();
     }
   }
-  return {Range<T>(min, max, this->lower_inc, this->upper_inc)};
+  return {Range<T>(min, max, this->m_lower_inc, this->m_upper_inc)};
 }
 
 template <typename T> set<time_point> TSequence<T>::timestamps() const {
@@ -114,8 +142,8 @@ template <typename T> PeriodSet TSequence<T>::getTime() const {
 }
 
 template <typename T> Period TSequence<T>::period() const {
-  return Period(this->startTimestamp(), this->endTimestamp(), lower_inc,
-                upper_inc);
+  return Period(this->startTimestamp(), this->endTimestamp(), m_lower_inc,
+                m_upper_inc);
 }
 
 template <typename T>
@@ -130,7 +158,7 @@ TSequence<T> *TSequence<T>::shift_impl(duration_ms const timedelta) const {
   for (auto const &e : this->m_instants) {
     s.push_back(TInstant<T>(e->getValue(), e->getTimestamp() + timedelta));
   }
-  return new TSequence<T>(s, lower_inc, upper_inc);
+  return new TSequence<T>(s, m_lower_inc, m_upper_inc);
 }
 
 template <typename T>

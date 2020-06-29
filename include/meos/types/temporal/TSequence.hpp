@@ -20,14 +20,15 @@ class TSequence : public Temporal<T>,
                   public TInstantFunctions<TSequence<T>, TInstant<T>, T> {
 public:
   vector<unique_ptr<TInstant<T>>> m_instants;
-  bool lower_inc;
-  bool upper_inc;
 
+  TSequence();
   TSequence(vector<unique_ptr<TInstant<T>>> &instants_, bool lower_inc = true,
             bool upper_inc = false);
-
   TSequence(vector<TInstant<T>> &instants_, bool lower_inc = true,
             bool upper_inc = false);
+  TSequence(vector<string> const &instants, bool lower_inc = true,
+            bool upper_inc = false);
+  TSequence(string const &serialized);
 
   int compare(Temporal<T> const &other) const override;
 
@@ -35,6 +36,8 @@ public:
     return std::unique_ptr<TSequence<T>>(this->clone_impl());
   }
 
+  bool lower_inc() const;
+  bool upper_inc() const;
   vector<TInstant<T>> getInstants() const;
 
   constexpr TemporalDuration const duration() const {
@@ -55,9 +58,47 @@ public:
   bool intersectsTimestamp(time_point const datetime) const override;
   bool intersectsPeriod(Period const period) const override;
 
+  friend istream &operator>>(istream &in, TSequence &sequence) {
+    char c;
+
+    in >> c;
+    if (c != '[' && c != '(') {
+      throw invalid_argument("Expected either a '[' or '('");
+    }
+    bool const lower_inc = c == '[';
+
+    vector<unique_ptr<TInstant<T>>> s = {};
+
+    TInstant<T> instant;
+    in >> instant;
+    s.push_back(instant.clone());
+
+    while (true) {
+      in >> c;
+      if (c != ',')
+        break;
+      in >> instant;
+      s.push_back(instant.clone());
+    }
+
+    if (c != ']' && c != ')') {
+      throw invalid_argument("Expected either a ']' or ')'");
+    }
+    bool const upper_inc = c == ']';
+
+    sequence.m_instants.empty();
+    for (auto const &e : s)
+      sequence.m_instants.push_back(e->clone());
+
+    sequence.m_lower_inc = lower_inc;
+    sequence.m_upper_inc = upper_inc;
+
+    return in;
+  }
+
   friend ostream &operator<<(ostream &os, TSequence const &sequence) {
     bool first = true;
-    os << (sequence.lower_inc ? "[" : "(");
+    os << (sequence.m_lower_inc ? "[" : "(");
     for (auto const &instant : sequence.getInstants()) {
       if (first)
         first = false;
@@ -65,7 +106,7 @@ public:
         os << ", ";
       os << instant;
     }
-    os << (sequence.upper_inc ? "]" : ")");
+    os << (sequence.m_upper_inc ? "]" : ")");
     return os;
   }
 
@@ -73,6 +114,9 @@ protected:
   TSequence(TSequence const &t);
 
 private:
+  bool m_lower_inc;
+  bool m_upper_inc;
+
   TSequence<T> *clone_impl() const override { return new TSequence<T>(*this); };
 };
 
