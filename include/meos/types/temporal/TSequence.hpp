@@ -1,6 +1,7 @@
 #ifndef MEOS_TYPES_TEMPORAL_TSEQUENCE_HPP
 #define MEOS_TYPES_TEMPORAL_TSEQUENCE_HPP
 
+#include <meos/io/utils.hpp>
 #include <meos/types/geom/Geometry.hpp>
 #include <meos/types/temporal/TInstant.hpp>
 #include <meos/types/temporal/TInstantFunctions.hpp>
@@ -61,10 +62,7 @@ public:
   friend istream &operator>>(istream &in, TSequence &sequence) {
     char c;
 
-    in >> c;
-    if (c != '[' && c != '(') {
-      throw invalid_argument("Expected either a '[' or '('");
-    }
+    c = consume_one_of(in, "[(");
     bool const lower_inc = c == '[';
 
     vector<unique_ptr<TInstant<T>>> s = {};

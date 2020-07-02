@@ -1,6 +1,7 @@
 #ifndef MEOS_TYPES_TEMPORAL_TINSTANTSET_HPP
 #define MEOS_TYPES_TEMPORAL_TINSTANTSET_HPP
 
+#include <meos/io/utils.hpp>
 #include <meos/types/geom/Geometry.hpp>
 #include <meos/types/temporal/TInstant.hpp>
 #include <meos/types/temporal/TInstantFunctions.hpp>
@@ -58,10 +59,7 @@ public:
   friend istream &operator>>(istream &in, TInstantSet<T> &instant_set) {
     char c;
 
-    in >> c;
-    if (c != '{') {
-      throw invalid_argument("Expected '{'");
-    }
+    consume(in, '{');
 
     set<unique_ptr<TInstant<T>>> s = {};
 

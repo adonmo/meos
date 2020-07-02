@@ -30,7 +30,9 @@ std::string normalized_ISO8601(std::string s);
  */
 time_point nextTime(std::istream &in);
 
-char consume_one_of(std::istream &in, std::string s);
+void consume(std::istream &in, char expectedCharacter, bool skip_ws = true);
+void consume(std::istream &in, std::string expectedString, bool skip_ws = true);
+char consume_one_of(std::istream &in, std::string charSet, bool skip_ws = true);
 
 std::string read_until_one_of(std::istream &in, std::string end);
 

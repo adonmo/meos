@@ -28,10 +28,7 @@ public:
   friend istream &operator>>(istream &in, TInstant &instant) {
     instant.value = nextValue<T>(in);
     char c;
-    in >> c;
-    if (c != '@') {
-      throw invalid_argument("Expected a '@'");
-    }
+    consume(in, '@');
     instant.t = nextTime(in);
     return in;
   }

@@ -178,10 +178,29 @@ time_point nextTime(istream &in) {
   return time_point(duration);
 }
 
-char consume_one_of(istream &in, string s) {
+void consume(istream &in, char expectedCharacter, bool skip_ws) {
+  if (skip_ws)
+    in >> std::ws;
+  char c = in.get();
+  if (c != expectedCharacter)
+    throw invalid_argument("Expected '" + string(1, expectedCharacter) +
+                           "', got '" + c + "'");
+}
+
+void consume(istream &in, string expectedString, bool skip_ws) {
+  if (skip_ws)
+    in >> std::ws;
+  for (auto c : expectedString)
+    if (c != in.get())
+      throw invalid_argument("Expected '" + expectedString + "'");
+}
+
+char consume_one_of(istream &in, string charSet, bool skip_ws) {
+  if (skip_ws)
+    in >> std::ws;
   char c;
-  if (s.find(c = in.get()) == string::npos) {
-    throw invalid_argument("Expected one of '" + s + "'");
+  if (charSet.find(c = in.get()) == string::npos) {
+    throw invalid_argument("Expected one of '" + charSet + "'");
   }
   return c;
 }

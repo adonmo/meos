@@ -136,10 +136,7 @@ bool operator<=(TimestampSet const &lhs, TimestampSet const &rhs) {
 istream &operator>>(istream &in, TimestampSet &timestamp_set) {
   char c;
 
-  in >> c;
-  if (c != '{') {
-    throw invalid_argument("Expected '{'");
-  }
+  consume(in, '{');
 
   set<time_point> s = {};
 

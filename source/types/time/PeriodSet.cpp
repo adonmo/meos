@@ -1,4 +1,5 @@
 #include <iomanip>
+#include <meos/io/utils.hpp>
 #include <meos/types/time/PeriodSet.hpp>
 
 PeriodSet::PeriodSet() {}
@@ -150,10 +151,7 @@ bool operator<=(PeriodSet const &lhs, PeriodSet const &rhs) {
 istream &operator>>(istream &in, PeriodSet &period_set) {
   char c;
 
-  in >> c;
-  if (c != '{') {
-    throw invalid_argument("Expected '{'");
-  }
+  consume(in, '{');
 
   set<unique_ptr<Period>> s = {};
 

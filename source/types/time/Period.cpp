@@ -130,25 +130,12 @@ bool operator<=(Period const &lhs, Period const &rhs) { return !(rhs < lhs); }
 istream &operator>>(istream &in, Period &period) {
   char c;
 
-  in >> c;
-  if (c != '[' && c != '(') {
-    throw invalid_argument("Expected either a '[' or '('");
-  }
+  c = consume_one_of(in, "[(");
   bool const lower_inc = c == '[';
-
   auto lower = nextTime(in);
-
-  in >> c;
-  if (c != ',') {
-    throw invalid_argument("Expected a ','");
-  }
-
+  consume(in, ",");
   auto upper = nextTime(in);
-
-  in >> c;
-  if (c != ']' && c != ')') {
-    throw invalid_argument("Expected either a ']' or ')'");
-  }
+  c = consume_one_of(in, ")]");
   bool const upper_inc = c == ']';
 
   period.m_lower = lower;
