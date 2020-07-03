@@ -23,7 +23,7 @@ TEMPLATE_TEST_CASE("TSequences are constructed properly", "[tinstset]", int,
   }
 
   SECTION("all constructors work") {
-    TSequence<TestType> *seq;
+    unique_ptr<TSequence<TestType>> seq;
     TInstant<TestType> instant_1(10, unix_time_point(2020, 9, 10));
     TInstant<TestType> instant_2(20, unix_time_point(2019, 9, 10));
 
@@ -31,18 +31,19 @@ TEMPLATE_TEST_CASE("TSequences are constructed properly", "[tinstset]", int,
       TInstant<TestType> instant_3(20,
                                    unix_time_point(2019, 9, 10)); // Duplicate!
       vector<TInstant<TestType>> v = {instant_1, instant_2, instant_3};
-      seq = new TSequence<TestType>(v, false, true);
+      seq = make_unique<TSequence<TestType>>(v, false, true);
     }
 
     SECTION("string constructor") {
-      seq = new TSequence<TestType>(
+      seq = make_unique<TSequence<TestType>>(
           "(10@2020-09-10 01:00:00+01, 20@2019-09-10 01:00:00+01]");
     }
 
     SECTION("vector of strings constructor") {
-      seq = new TSequence<TestType>(vector<string>{"10@2020-09-10 01:00:00+01",
-                                                   "20@2019-09-10 01:00:00+01"},
-                                    false, true);
+      seq = make_unique<TSequence<TestType>>(
+          vector<string>{"10@2020-09-10 01:00:00+01",
+                         "20@2019-09-10 01:00:00+01"},
+          false, true);
     }
 
     REQUIRE(seq->instants().size() == 2);
@@ -53,8 +54,6 @@ TEMPLATE_TEST_CASE("TSequences are constructed properly", "[tinstset]", int,
 
     REQUIRE(seq->lower_inc() == false);
     REQUIRE(seq->upper_inc() == true);
-
-    delete seq;
   }
 }
 

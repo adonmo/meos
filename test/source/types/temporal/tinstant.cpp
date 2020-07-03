@@ -17,29 +17,29 @@ TEMPLATE_TEST_CASE("TInstants are constructed properly", "[tinstant]", int,
   }
 
   SECTION("all constructors work") {
-    TInstant<TestType> *instant;
+    unique_ptr<TInstant<TestType>> instant;
     SECTION("no strings constructor") {
-      instant = new TInstant<TestType>(1, unix_time_point(2019, 9, 21));
+      instant =
+          make_unique<TInstant<TestType>>(1, unix_time_point(2019, 9, 21));
     }
     SECTION("two strings constructor") {
-      instant = new TInstant<TestType>("1", "2019-09-21 01:00:00+01");
+      instant = make_unique<TInstant<TestType>>("1", "2019-09-21 01:00:00+01");
     }
     SECTION("one string constructor") {
-      instant = new TInstant<TestType>("1@2019-09-21 01:00:00+01");
+      instant = make_unique<TInstant<TestType>>("1@2019-09-21 01:00:00+01");
     }
     SECTION("pair constructor") {
       SECTION("no strings") {
-        instant =
-            new TInstant<TestType>(make_pair(1, unix_time_point(2019, 9, 21)));
+        instant = make_unique<TInstant<TestType>>(
+            make_pair(1, unix_time_point(2019, 9, 21)));
       }
       SECTION("two strings") {
-        instant =
-            new TInstant<TestType>(make_pair("1", "2019-09-21 01:00:00+01"));
+        instant = make_unique<TInstant<TestType>>(
+            make_pair("1", "2019-09-21 01:00:00+01"));
       }
     }
     REQUIRE(instant->getValue() == 1);
     REQUIRE(instant->getTimestamp() == unix_time_point(2019, 9, 21));
-    delete instant;
   }
 }
 

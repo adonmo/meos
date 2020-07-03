@@ -15,36 +15,37 @@ TEST_CASE("periods are validated and constructed properly", "[period]") {
   }
 
   SECTION("all constructors work") {
-    Period *period;
+    unique_ptr<Period> period;
     SECTION("constructors with bounds specified") {
       SECTION("normal constructor") {
-        period = new Period(unix_time_point(2019, 9, 8),
-                            unix_time_point(2019, 9, 10), false, true);
+        period = make_unique<Period>(unix_time_point(2019, 9, 8),
+                                     unix_time_point(2019, 9, 10), false, true);
       }
       SECTION("two string constructor") {
-        period = new Period("2019-09-08 01:00:00+01", "2019-09-10 01:00:00+01",
-                            false, true);
+        period = make_unique<Period>("2019-09-08 01:00:00+01",
+                                     "2019-09-10 01:00:00+01", false, true);
       }
       SECTION("single string constructor") {
-        period = new Period("(2019-09-08 01:00:00+01, 2019-09-10 01:00:00+01]");
+        period = make_unique<Period>(
+            "(2019-09-08 01:00:00+01, 2019-09-10 01:00:00+01]");
       }
       REQUIRE(period->lower_inc() == false);
       REQUIRE(period->upper_inc() == true);
     }
     SECTION("constructors with default bounds") {
       SECTION("no strings constructor") {
-        period = new Period(unix_time_point(2019, 9, 8),
-                            unix_time_point(2019, 9, 10));
+        period = make_unique<Period>(unix_time_point(2019, 9, 8),
+                                     unix_time_point(2019, 9, 10));
       }
       SECTION("two string constructor") {
-        period = new Period("2019-09-08 01:00:00+01", "2019-09-10 01:00:00+01");
+        period = make_unique<Period>("2019-09-08 01:00:00+01",
+                                     "2019-09-10 01:00:00+01");
       }
       REQUIRE(period->lower_inc() == true);
       REQUIRE(period->upper_inc() == false);
     }
     REQUIRE(period->lower() == unix_time_point(2019, 9, 8));
     REQUIRE(period->upper() == unix_time_point(2019, 9, 10));
-    delete period;
   }
 
   SECTION("clearly valid") {

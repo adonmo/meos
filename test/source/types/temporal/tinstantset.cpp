@@ -21,7 +21,7 @@ TEMPLATE_TEST_CASE("TInstantSets are constructed properly", "[tinstset]", int,
   }
 
   SECTION("all constructors work") {
-    TInstantSet<TestType> *instant_set;
+    unique_ptr<TInstantSet<TestType>> instant_set;
     TInstant<TestType> instant_1(10, unix_time_point(2020, 9, 10));
     TInstant<TestType> instant_2(20, unix_time_point(2019, 9, 10));
 
@@ -29,16 +29,16 @@ TEMPLATE_TEST_CASE("TInstantSets are constructed properly", "[tinstset]", int,
       TInstant<TestType> instant_3(20,
                                    unix_time_point(2019, 9, 10)); // Duplicate!
       set<TInstant<TestType>> s = {instant_1, instant_2, instant_3};
-      instant_set = new TInstantSet<TestType>(s);
+      instant_set = make_unique<TInstantSet<TestType>>(s);
     }
 
     SECTION("string constructor") {
-      instant_set = new TInstantSet<TestType>(
+      instant_set = make_unique<TInstantSet<TestType>>(
           "{10@2020-09-10 01:00:00+01, 20@2019-09-10 01:00:00+01}");
     }
 
     SECTION("set of strings constructor") {
-      instant_set = new TInstantSet<TestType>(set<string>{
+      instant_set = make_unique<TInstantSet<TestType>>(set<string>{
           "10@2020-09-10 01:00:00+01", "20@2019-09-10 01:00:00+01"});
     }
 
@@ -47,8 +47,6 @@ TEMPLATE_TEST_CASE("TInstantSets are constructed properly", "[tinstset]", int,
     // We gave the instants out-of-order!
     REQUIRE(instant_set->startInstant() == instant_2);
     REQUIRE(instant_set->endInstant() == instant_1);
-
-    delete instant_set;
   }
 }
 
