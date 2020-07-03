@@ -1,3 +1,4 @@
+#include "box_module.hpp"
 #include "io_module.hpp"
 #include "range_module.hpp"
 #include "temporal_module.hpp"
@@ -18,6 +19,7 @@ PYBIND11_MODULE(pymeos, m) {
       .def("fromWKT", &Geometry::fromWKT)
       .def("toWKT", &Geometry::toWKT);
 
+  def_box_module(m);
   def_io_module(m);
   def_range_module(m);
   def_temporal_module(m);
