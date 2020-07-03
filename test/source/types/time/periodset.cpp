@@ -58,7 +58,7 @@ TEST_CASE("PeriodSet period functions", "[periodset]") {
   set<Period> periods;
   set<Period> expected_periods;
 
-  auto size = GENERATE(0, take(4, random(1, 100)));
+  size_t size = GENERATE(0, take(4, random(1, 100)));
 
   for (size_t i = 0; i < size; i++) {
     bool lower_inc = random() % 2;
@@ -132,7 +132,7 @@ TEST_CASE("PeriodSet timespan", "[periodset]") {
 TEST_CASE("PeriodSet shift", "[periodset]") {
   set<unique_ptr<Period>> expected_periods;
   set<unique_ptr<Period>> actual_periods;
-  auto size = GENERATE(take(4, random(1, 2)));
+  size_t size = GENERATE(take(4, random(1, 2)));
   auto shift =
       std::chrono::milliseconds(GENERATE(take(4, random(minute, day))));
 
@@ -159,7 +159,7 @@ TEST_CASE("PeriodSet shift", "[periodset]") {
 TEST_CASE("PeriodSet timestamp functions", "[periodset]") {
   set<Period> periods;
   set<time_point> expected_timestamps;
-  auto size = GENERATE(0, take(4, random(1, 3)));
+  size_t size = GENERATE(0, take(4, random(1, 3)));
 
   for (size_t i = 0; i < size; i++) {
     bool lower_inc = random() % 2;

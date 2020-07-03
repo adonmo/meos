@@ -44,7 +44,7 @@ TEST_CASE("TimestampSet period functions", "[timestampset]") {
   set<time_point> timestamps;
   set<Period> expected_periods;
 
-  auto size = GENERATE(0, take(4, random(1, 100)));
+  size_t size = GENERATE(0, take(4, random(1, 100)));
 
   for (size_t i = 0; i < size; i++) {
     time_t t = unix_time(2012, 1, 1) + 10 * 365 * (random() % day);
@@ -85,7 +85,7 @@ TEST_CASE("TimestampSet period gaps are ignored", "[timestampset]") {
 }
 
 TEST_CASE("TimestampSet timespan", "[timestampset]") {
-  auto size = GENERATE(0, take(4, random(1, 30)));
+  size_t size = GENERATE(0, take(4, random(1, 30)));
   set<time_point> timestamps;
 
   for (size_t i = 0; i < size; i++) {
@@ -99,7 +99,7 @@ TEST_CASE("TimestampSet timespan", "[timestampset]") {
 }
 
 TEST_CASE("TimestampSet shift", "[timestampset]") {
-  auto size = GENERATE(0, take(4, random(1, 20)));
+  size_t size = GENERATE(0, take(4, random(1, 20)));
   duration_ms shift(GENERATE(0L, take(4, random(minute, day))));
   set<time_point> expected_timestamps;
   set<time_point> actual_timestamps;
@@ -118,7 +118,7 @@ TEST_CASE("TimestampSet shift", "[timestampset]") {
 }
 
 TEST_CASE("TimestampSet timestamp functions", "[timestampset]") {
-  auto size = GENERATE(0, take(4, random(1, 100)));
+  size_t size = GENERATE(0, take(4, random(1, 100)));
   set<time_point> expected_timestamps;
   set<time_point> actual_timestamps;
 

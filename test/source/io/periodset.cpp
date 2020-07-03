@@ -69,7 +69,7 @@ TEST_CASE("PeriodSets are serialized", "[serializer][periodset]") {
   SECTION("set with multiple values") {
     auto lower_inc = GENERATE(true, false);
     auto upper_inc = GENERATE(true, false);
-    auto size = GENERATE(take(4, random(1, 2)));
+    size_t size = GENERATE(take(4, random(1, 2)));
 
     set<string> expected;
     set<unique_ptr<Period>> periods;

@@ -113,7 +113,6 @@ bool operator>=(TBox const &lhs, TBox const &rhs) { return !(lhs < rhs); }
 bool operator<=(TBox const &lhs, TBox const &rhs) { return !(rhs < lhs); }
 
 istream &operator>>(istream &in, TBox &tbox) {
-  char c;
   double xmin = -INFINITY;
   double xmax = INFINITY;
   time_point tmin = time_point(time_point::duration::min());

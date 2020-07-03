@@ -81,7 +81,7 @@ template <typename T> PeriodSet TInstant<T>::getTime() const {
 
 template <typename T> Period TInstant<T>::period() const {
   return Period(this->getTimestamp(), this->getTimestamp(), true, true);
-};
+}
 
 template <typename T>
 unique_ptr<TInstant<T>> TInstant<T>::shift(duration_ms const timedelta) const {
@@ -90,7 +90,7 @@ unique_ptr<TInstant<T>> TInstant<T>::shift(duration_ms const timedelta) const {
 
 template <typename T> TInstant<T> *TInstant<T>::clone_impl() const {
   return new TInstant<T>(this->value, this->t);
-};
+}
 
 template <typename T>
 TInstant<T> *TInstant<T>::shift_impl(duration_ms const timedelta) const {
@@ -100,9 +100,9 @@ TInstant<T> *TInstant<T>::shift_impl(duration_ms const timedelta) const {
 template <typename T>
 bool TInstant<T>::intersectsTimestamp(time_point const datetime) const {
   return datetime == this->t;
-};
+}
 
 template <typename T>
 bool TInstant<T>::intersectsPeriod(Period const period) const {
   return period.contains_timestamp(this->t);
-};
+}

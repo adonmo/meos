@@ -37,7 +37,7 @@ TEST_CASE("TimestampSets are serialized", "[serializer][timestampset]") {
   }
 
   SECTION("set with multiple values") {
-    auto size = GENERATE(take(4, random(1, 2)));
+    size_t size = GENERATE(take(4, random(1, 2)));
 
     set<string> expected;
     set<time_point> timestamps;

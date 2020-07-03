@@ -3,6 +3,8 @@
 
 template <typename T> Temporal<T>::Temporal() {}
 
+template <typename T> Temporal<T>::~Temporal() {}
+
 template <typename T> T Temporal<T>::minValue() const {
   set<Range<T>> s = getValues();
   if (s.size() <= 0) {
@@ -19,7 +21,7 @@ template <typename T> T Temporal<T>::maxValue() const {
   return s.rbegin()->upper();
 }
 
-template <typename T> int Temporal<T>::numTimestamps() const {
+template <typename T> size_t Temporal<T>::numTimestamps() const {
   return timestamps().size();
 }
 
@@ -39,7 +41,7 @@ template <typename T> time_point Temporal<T>::endTimestamp() const {
   return *s.rbegin();
 }
 
-template <typename T> time_point Temporal<T>::timestampN(int n) const {
+template <typename T> time_point Temporal<T>::timestampN(size_t n) const {
   set<time_point> s = timestamps();
   if (s.size() < n) {
     throw "At least " + to_string(n) + " timestamp(s) expected";

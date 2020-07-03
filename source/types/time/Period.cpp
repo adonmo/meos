@@ -81,7 +81,7 @@ bool Period::overlap(Period const &period) const {
   return this->lower() < period.lower()
              ? this->upper_inc() && period.lower_inc()
              : period.upper_inc() && this->lower_inc();
-};
+}
 
 bool Period::contains_timestamp(time_point const timestamp) const {
   return ((this->lower() < timestamp && timestamp < this->upper()) ||

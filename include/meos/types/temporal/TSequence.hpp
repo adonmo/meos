@@ -41,9 +41,7 @@ public:
   bool upper_inc() const;
   vector<TInstant<T>> getInstants() const;
 
-  TemporalDuration const duration() const {
-    return TemporalDuration::Sequence;
-  };
+  TemporalDuration duration() const { return TemporalDuration::Sequence; };
 
   /**
    * Set of instants.

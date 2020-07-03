@@ -9,7 +9,7 @@ time_t unix_time(short year, short month, short day, short hour, short minute,
   epoch.tm_year = 70;
   time_t local_tz_offset = mktime(&epoch) * 1000L;
 
-  struct tm timeinfo = {0};
+  struct tm timeinfo = {};
   timeinfo.tm_year = year - 1900;
   timeinfo.tm_mon = month - 1;
   timeinfo.tm_mday = day;

@@ -12,7 +12,7 @@ std::string write_ISO8601_time(time_point const &t) {
   tt = tt / 1000;
   textStream << std::put_time(gmtime(&tt), "%FT%T%z");
   return textStream.str();
-};
+}
 
 template <typename T> std::string write_value(T const &value) {
   // Check specialized template functions below for supported types

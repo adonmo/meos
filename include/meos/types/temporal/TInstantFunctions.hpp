@@ -17,7 +17,7 @@ struct TInstantFunctions {
   /**
    * Number of distinct instants.
    */
-  int numInstants() const { return this->temporal().instants().size(); };
+  size_t numInstants() const { return this->temporal().instants().size(); };
 
   /**
    * Start instant.
@@ -44,7 +44,7 @@ struct TInstantFunctions {
   /**
    * N-th distinct instant.
    */
-  TInstantType instantN(int n) const {
+  TInstantType instantN(size_t n) const {
     auto s = this->temporal().instants();
     if (s.size() < n) {
       throw "At least " + std::to_string(n) + " instant(s) expected";

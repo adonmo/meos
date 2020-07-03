@@ -45,9 +45,8 @@ unique_ptr<Range<T>> Range<T>::shift(T const offset) const {
 template <>
 unique_ptr<Range<Geometry>>
 Range<Geometry>::shift(Geometry const offset) const {
-  // TODO fixme
-  return make_unique<Range>(this->lower(), this->upper(), this->lower_inc(),
-                            this->upper_inc());
+  return make_unique<Range>(this->lower() + offset, this->upper() + offset,
+                            this->lower_inc(), this->upper_inc());
 }
 
 template <typename T> bool Range<T>::overlap(Range const &p) const {
@@ -57,7 +56,7 @@ template <typename T> bool Range<T>::overlap(Range const &p) const {
     return this->lower() < p.lower() ? this->upper_inc() && p.lower_inc()
                                      : p.upper_inc() && this->lower_inc();
   return min_upper > max_lower;
-};
+}
 
 template <typename T> bool Range<T>::contains(T const t) const {
   return ((this->lower() < t && t < this->upper()) ||

@@ -144,9 +144,8 @@ time_point nextTime(istream &in) {
 
   validate_ISO8601(s);
   stringstream ss(s);
-  int temp_int;
 
-  tm time = {0};
+  tm time = {};
   ss >> time.tm_year;
   consume_one_of(ss, "-");
   ss >> time.tm_mon;
@@ -208,7 +207,7 @@ char consume_one_of(istream &in, string charSet, bool skip_ws) {
 string read_until_one_of(istream &in, string stop_set) {
   char c;
   string s;
-  while (c = in.peek()) {
+  while ((c = in.peek())) {
     if ((c == EOF) || (stop_set.find(c) != string::npos)) {
       break;
     }

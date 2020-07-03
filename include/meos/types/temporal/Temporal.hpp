@@ -23,6 +23,7 @@ enum class TemporalDuration {
 template <typename T = float> class Temporal {
 public:
   Temporal();
+  virtual ~Temporal();
 
   unique_ptr<Temporal<T>> clone() const {
     return unique_ptr<Temporal<T>>(this->clone_impl());
@@ -34,7 +35,7 @@ public:
    * Duration of the temporal value, that is, one of Instant, InstantSet,
    * Sequence, or SequenceSet.
    */
-  virtual TemporalDuration const duration() const {
+  virtual TemporalDuration duration() const {
     return TemporalDuration::Temporal;
   };
 
@@ -82,7 +83,7 @@ public:
   /**
    * Number of distinct timestamps.
    */
-  int numTimestamps() const;
+  size_t numTimestamps() const;
 
   /**
    * Start timestamp.
@@ -97,7 +98,7 @@ public:
   /**
    * N-th timestamp.
    */
-  time_point timestampN(int n) const;
+  time_point timestampN(size_t n) const;
 
   /**
    * Set of timestamps.

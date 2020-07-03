@@ -164,9 +164,9 @@ TSequence<T> *TSequence<T>::shift_impl(duration_ms const timedelta) const {
 template <typename T>
 bool TSequence<T>::intersectsTimestamp(time_point const datetime) const {
   return this->period().contains_timestamp(datetime);
-};
+}
 
 template <typename T>
 bool TSequence<T>::intersectsPeriod(Period const period) const {
   return this->period().overlap(period);
-};
+}

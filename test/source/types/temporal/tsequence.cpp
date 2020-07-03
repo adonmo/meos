@@ -205,7 +205,7 @@ TEMPLATE_TEST_CASE("TSequence instant functions", "[tsequence]", int, float) {
   vector<TInstant<TestType>> instants;
   set<TInstant<TestType>> expected_instants;
 
-  auto size = GENERATE(0, take(4, random(1, 100)));
+  size_t size = GENERATE(0, take(4, random(1, 100)));
 
   for (size_t i = 0; i < size; i++) {
     TestType v = random() % 1000;
@@ -260,7 +260,7 @@ TEMPLATE_TEST_CASE("TSequence period and timestamp related functions",
   auto upper_inc = GENERATE(true, false);
   vector<TInstant<TestType>> instants;
 
-  auto size = GENERATE(0, take(4, random(1, 100)));
+  size_t size = GENERATE(0, take(4, random(1, 100)));
 
   for (size_t i = 0; i < size; i++) {
     TestType v = random() % 1000;
@@ -329,7 +329,7 @@ TEMPLATE_TEST_CASE("TSequence shift", "[tsequence]", int, float) {
 
   vector<unique_ptr<TInstant<TestType>>> expected_instants;
   vector<unique_ptr<TInstant<TestType>>> actual_instants;
-  auto size = GENERATE(take(4, random(1, 2)));
+  size_t size = GENERATE(take(4, random(1, 2)));
   duration_ms shift(GENERATE(take(4, random(minute, day))));
 
   for (size_t i = 0; i < size; i++) {

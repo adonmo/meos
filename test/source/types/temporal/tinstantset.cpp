@@ -177,7 +177,7 @@ TEMPLATE_TEST_CASE("TInstantSet instant functions", "[tinstantset]", int,
   set<TInstant<TestType>> instants;
   set<TInstant<TestType>> expected_instants;
 
-  auto size = GENERATE(0, take(4, random(1, 6)));
+  size_t size = GENERATE(0, take(4, random(1, 6)));
 
   for (size_t i = 0; i < size; i++) {
     TestType v = random() % 1000;
@@ -230,7 +230,7 @@ TEMPLATE_TEST_CASE("TInstantSet period and timestamp related functions",
                    "[tinstantset]", int, float) {
   set<TInstant<TestType>> instants;
 
-  auto size = GENERATE(0, take(4, random(1, 100)));
+  size_t size = GENERATE(0, take(4, random(1, 100)));
 
   for (size_t i = 0; i < size; i++) {
     TestType v = random() % 1000;
@@ -291,7 +291,7 @@ TEMPLATE_TEST_CASE("TInstantSet timespan", "[tinstantset]", int, float) {
 TEMPLATE_TEST_CASE("TInstantSet shift", "[tinstantset]", int, float) {
   set<unique_ptr<TInstant<TestType>>> expected_instants;
   set<unique_ptr<TInstant<TestType>>> actual_instants;
-  auto size = GENERATE(take(4, random(1, 2)));
+  size_t size = GENERATE(take(4, random(1, 2)));
   duration_ms shift(GENERATE(take(4, random(minute, day))));
 
   for (size_t i = 0; i < size; i++) {

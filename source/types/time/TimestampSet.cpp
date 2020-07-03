@@ -36,7 +36,7 @@ Period TimestampSet::period() const {
   return Period(start.lower(), end.upper(), start.lower_inc(), end.upper_inc());
 }
 
-int TimestampSet::numPeriods() const { return periods().size(); }
+size_t TimestampSet::numPeriods() const { return periods().size(); }
 
 Period TimestampSet::startPeriod() const {
   set<Period> s = periods();
@@ -54,7 +54,7 @@ Period TimestampSet::endPeriod() const {
   return *s.rbegin();
 }
 
-Period TimestampSet::periodN(int n) const {
+Period TimestampSet::periodN(size_t n) const {
   set<Period> s = periods();
   if (s.size() < n) {
     throw "At least " + to_string(n) + " period(s) expected";
@@ -83,7 +83,7 @@ set<time_point> TimestampSet::timestamps() const {
   return s;
 }
 
-int TimestampSet::numTimestamps() const { return timestamps().size(); }
+size_t TimestampSet::numTimestamps() const { return timestamps().size(); }
 
 time_point TimestampSet::startTimestamp() const {
   set<time_point> s = timestamps();
@@ -101,7 +101,7 @@ time_point TimestampSet::endTimestamp() const {
   return *s.rbegin();
 }
 
-time_point TimestampSet::timestampN(int n) const {
+time_point TimestampSet::timestampN(size_t n) const {
   set<time_point> s = timestamps();
   if (s.size() < n) {
     throw "At least " + to_string(n) + " timestamp(s) expected";

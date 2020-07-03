@@ -27,7 +27,6 @@ public:
 
   friend istream &operator>>(istream &in, TInstant &instant) {
     instant.value = nextValue<T>(in);
-    char c;
     consume(in, '@');
     instant.t = nextTime(in);
     return in;
@@ -48,7 +47,7 @@ public:
     return std::unique_ptr<TInstant<T>>(this->clone_impl());
   }
 
-  TemporalDuration const duration() const { return TemporalDuration::Instant; };
+  TemporalDuration duration() const { return TemporalDuration::Instant; };
 
   /**
    * Set of instants.

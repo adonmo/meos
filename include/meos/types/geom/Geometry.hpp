@@ -25,28 +25,19 @@ public:
   void fromWKT(std::string wkt);
   std::string toWKT() const;
 
-  friend bool operator==(Geometry const &lhs, Geometry const &rhs) {
-    return lhs.geom == rhs.geom;
-  }
+  Geometry operator+(Geometry const &g);
+  Geometry operator-(Geometry const &g);
 
-  friend bool operator!=(Geometry const &lhs, Geometry const &rhs) {
-    return !(lhs == rhs);
-  }
+  int compare(Geometry const &other) const;
 
-  friend bool operator<(Geometry const &lhs, Geometry const &rhs) {
-    // TODO fixme
-    return lhs.geom < rhs.geom;
-  }
+  friend bool operator==(Geometry const &lhs, Geometry const &rhs);
+  friend bool operator!=(Geometry const &lhs, Geometry const &rhs);
+  friend bool operator<(Geometry const &lhs, Geometry const &rhs);
+  friend bool operator<=(Geometry const &lhs, Geometry const &rhs);
+  friend bool operator>(Geometry const &lhs, Geometry const &rhs);
+  friend bool operator>=(Geometry const &lhs, Geometry const &rhs);
 
-  friend bool operator>(Geometry const &lhs, Geometry const &rhs) {
-    // TODO fixme
-    return lhs.geom > rhs.geom;
-  }
-
-  friend std::ostream &operator<<(std::ostream &os, Geometry const &g) {
-    os << g.toWKT();
-    return os;
-  }
+  friend std::ostream &operator<<(std::ostream &os, Geometry const &g);
 
 private:
   void free();

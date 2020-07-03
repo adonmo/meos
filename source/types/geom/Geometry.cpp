@@ -47,3 +47,75 @@ void Geometry::free() {
     geom = nullptr;
   }
 }
+
+Geometry Geometry::operator+(Geometry const &other) {
+  double x, y;
+  GEOSGeomGetX_r(geos_context, this->geom, &x);
+  GEOSGeomGetY_r(geos_context, this->geom, &y);
+
+  double ox, oy;
+  GEOSGeomGetX_r(geos_context, other.geom, &ox);
+  GEOSGeomGetY_r(geos_context, other.geom, &oy);
+
+  return Geometry(x + ox, y + oy);
+}
+
+Geometry Geometry::operator-(Geometry const &other) {
+  double x, y;
+  GEOSGeomGetX_r(geos_context, this->geom, &x);
+  GEOSGeomGetY_r(geos_context, this->geom, &y);
+
+  double ox, oy;
+  GEOSGeomGetX_r(geos_context, other.geom, &ox);
+  GEOSGeomGetY_r(geos_context, other.geom, &oy);
+
+  return Geometry(x - ox, y - oy);
+}
+
+int Geometry::compare(Geometry const &other) const {
+  double x, y;
+  GEOSGeomGetX_r(geos_context, this->geom, &x);
+  GEOSGeomGetY_r(geos_context, this->geom, &y);
+
+  double ox, oy;
+  GEOSGeomGetX_r(geos_context, other.geom, &ox);
+  GEOSGeomGetY_r(geos_context, other.geom, &oy);
+
+  if (x < ox)
+    return -1;
+  else if (x > ox)
+    return 1;
+  else if (y < oy)
+    return -1;
+  else if (y > oy)
+    return 1;
+
+  return 0;
+}
+
+bool operator==(Geometry const &lhs, Geometry const &rhs) {
+  return lhs.compare(rhs) == 0;
+}
+
+bool operator!=(Geometry const &lhs, Geometry const &rhs) {
+  return lhs.compare(rhs) != 0;
+}
+
+bool operator<(Geometry const &lhs, Geometry const &rhs) {
+  return lhs.compare(rhs) == -1;
+}
+
+bool operator>(Geometry const &lhs, Geometry const &rhs) { return rhs < lhs; }
+
+bool operator>=(Geometry const &lhs, Geometry const &rhs) {
+  return !(lhs < rhs);
+}
+
+bool operator<=(Geometry const &lhs, Geometry const &rhs) {
+  return !(rhs < lhs);
+}
+
+std::ostream &operator<<(std::ostream &os, Geometry const &g) {
+  os << g.toWKT();
+  return os;
+}

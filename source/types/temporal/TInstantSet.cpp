@@ -132,7 +132,7 @@ bool TInstantSet<T>::intersectsTimestamp(time_point const datetime) const {
     }
   }
   return false;
-};
+}
 
 template <typename T>
 bool TInstantSet<T>::intersectsPeriod(Period const period) const {
@@ -142,4 +142,4 @@ bool TInstantSet<T>::intersectsPeriod(Period const period) const {
     }
   }
   return false;
-};
+}

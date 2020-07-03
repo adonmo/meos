@@ -48,7 +48,7 @@ set_target_properties(libmeos-tests PROPERTIES CXX_STANDARD 14)
 # enable compiler warnings
 if (NOT TEST_INSTALLED_VERSION)
   if (CMAKE_CXX_COMPILER_ID MATCHES "Clang" OR CMAKE_CXX_COMPILER_ID MATCHES "GNU")
-    target_compile_options(libmeos PUBLIC)
+    target_compile_options(libmeos PUBLIC -Wall -pedantic -Wextra -Werror)
   elseif(MSVC)
     target_compile_options(libmeos PUBLIC /W4 /WX)
   endif()

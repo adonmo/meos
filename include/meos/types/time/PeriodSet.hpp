@@ -25,19 +25,19 @@ public:
 
   set<Period> periods() const;
   Period period() const;
-  int numPeriods() const;
+  size_t numPeriods() const;
   Period startPeriod() const;
   Period endPeriod() const;
-  Period periodN(int n) const;
+  Period periodN(size_t n) const;
 
   duration_ms timespan() const;
   unique_ptr<PeriodSet> shift(duration_ms const timedelta) const;
 
   set<time_point> timestamps() const;
-  int numTimestamps() const;
+  size_t numTimestamps() const;
   time_point startTimestamp() const;
   time_point endTimestamp() const;
-  time_point timestampN(int n) const;
+  time_point timestampN(size_t n) const;
 
   friend bool operator==(PeriodSet const &lhs, PeriodSet const &rhs);
   friend bool operator!=(PeriodSet const &lhs, PeriodSet const &rhs);

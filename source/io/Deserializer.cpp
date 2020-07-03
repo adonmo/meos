@@ -29,7 +29,7 @@ template <typename T> unique_ptr<Temporal<T>> Deserializer<T>::nextTemporal() {
     }
   }
   throw new DeserializationException("Invalid Temporal");
-};
+}
 
 template <typename T>
 unique_ptr<TSequence<T>> Deserializer<T>::nextTSequence() {
@@ -62,7 +62,7 @@ unique_ptr<TSequence<T>> Deserializer<T>::nextTSequence() {
   bool const upper_inc = closing == ']';
 
   return make_unique<TSequence<T>>(v, lower_inc, upper_inc);
-};
+}
 
 template <typename T>
 unique_ptr<TInstantSet<T>> Deserializer<T>::nextTInstantSet() {
@@ -84,7 +84,7 @@ unique_ptr<TInstantSet<T>> Deserializer<T>::nextTInstantSet() {
   consumeChar('}');
 
   return make_unique<TInstantSet<T>>(s);
-};
+}
 
 template <typename T> unique_ptr<TInstant<T>> Deserializer<T>::nextTInstant() {
   skipWhitespaces();
@@ -97,7 +97,7 @@ template <typename T> unique_ptr<TInstant<T>> Deserializer<T>::nextTInstant() {
   time_point t = nextTime();
 
   return make_unique<TInstant<T>>(value, t);
-};
+}
 
 template <typename T> unique_ptr<Period> Deserializer<T>::nextPeriod() {
   // TODO refactor Deserializer to simplify this futher
@@ -108,7 +108,7 @@ template <typename T> unique_ptr<Period> Deserializer<T>::nextPeriod() {
   ss >> period;
   iter += ss.tellg();
   return period.clone();
-};
+}
 
 template <typename T> unique_ptr<PeriodSet> Deserializer<T>::nextPeriodSet() {
   string::size_type current_pos = iter - in.begin();
@@ -118,7 +118,7 @@ template <typename T> unique_ptr<PeriodSet> Deserializer<T>::nextPeriodSet() {
   ss >> period_set;
   iter += ss.tellg();
   return period_set.clone();
-};
+}
 
 template <typename T>
 unique_ptr<TimestampSet> Deserializer<T>::nextTimestampSet() {
@@ -129,7 +129,7 @@ unique_ptr<TimestampSet> Deserializer<T>::nextTimestampSet() {
   ss >> timestamp_set;
   iter += ss.tellg();
   return make_unique<TimestampSet>(timestamp_set);
-};
+}
 
 /**
  * Parse time in ISO8601 format
@@ -169,7 +169,7 @@ template <typename T> time_point Deserializer<T>::nextTime() {
 
   validate_ISO8601(in.substr(current_pos, length));
 
-  tm time = {0};
+  tm time = {};
   time.tm_year = nextInt() - 1900;
   consumeChar('-');
   time.tm_mon = nextInt() - 1;
@@ -299,9 +299,9 @@ template <typename T> int Deserializer<T>::nextInt() {
     int ivalue = stoi(s, &length, 10);
     iter += length;
     return ivalue;
-  } catch (invalid_argument e) {
+  } catch (invalid_argument &) {
     throw DeserializationException("Could not parse: invalid argument");
-  } catch (out_of_range e) {
+  } catch (out_of_range &) {
     throw DeserializationException("Could not parse: out of range");
   }
 }
