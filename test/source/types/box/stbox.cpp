@@ -35,6 +35,18 @@ TEST_CASE("STBoxes are constructed and serialized properly", "[stbox]") {
   }
 
   SECTION("<string> constructor") {
-    // TODO
+    STBox stbox("STBOX ZT((11.0, 12.0, 13.0, 2001-01-04), (21.0, 22.0, 23.0, "
+                "2001-01-05))");
+    output << stbox;
+    REQUIRE(stbox.xmin() == 11);
+    REQUIRE(stbox.ymin() == 12);
+    REQUIRE(stbox.zmin() == 13);
+    REQUIRE(stbox.tmin() == unix_time_point(2001, 1, 4));
+    REQUIRE(stbox.xmax() == 21);
+    REQUIRE(stbox.ymax() == 22);
+    REQUIRE(stbox.zmax() == 23);
+    REQUIRE(stbox.tmax() == unix_time_point(2001, 1, 5));
+    REQUIRE(output.str() == "STBOX ZT((11, 12, 13, 2001-01-04T00:00:00+0000), "
+                            "(21, 22, 23, 2001-01-05T00:00:00+0000))");
   }
 }

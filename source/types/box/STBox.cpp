@@ -178,16 +178,112 @@ bool operator<=(STBox const &lhs, STBox const &rhs) { return !(rhs < lhs); }
 
 istream &operator>>(istream &in, STBox &stbox) {
   double xmin = -INFINITY;
-  double xmax = INFINITY;
+  double ymin = -INFINITY;
+  double zmin = -INFINITY;
   time_point tmin = time_point(time_point::duration::min());
+
+  double xmax = INFINITY;
+  double ymax = INFINITY;
+  double zmax = INFINITY;
   time_point tmax = time_point(time_point::duration::max());
 
-  // TODO
+  bool geod = false;
+  bool hasz = false;
+  bool hast = false;
 
-  stbox.m_tmin = tmin;
-  stbox.m_tmax = tmax;
+  in >> std::ws;
+  if (in.peek() == 'G') {
+    geod = true;
+    hasz = true;
+    consume(in, "GEODSTBOX");
+    in >> std::ws;
+    hast = in.peek() == 'T';
+    if (hast)
+      consume(in, 'T');
+  } else {
+    consume(in, "STBOX");
+    in >> std::ws;
+    hasz = in.peek() == 'Z';
+    if (hasz)
+      consume(in, 'Z');
+    hast = in.peek() == 'T';
+    if (hast)
+      consume(in, 'T');
+  }
+
+  consume(in, '(');
+  consume(in, '(');
+
+  // Read X and Y min values
+  in >> std::ws;
+  // if xmin is skipped, ymin, xmax and ymax would be too
+  bool xskip = in.peek() == ',';
+  if (!xskip) {
+    in >> xmin;
+  }
+  consume(in, ',');
+  if (!xskip) {
+    in >> ymin;
+  }
+
+  // Read Z min value
+  consume(in, ',');
+  in >> std::ws;
+  // if zmin is skipped, zmax would be too, and hasz should reflect this
+  bool zskip = in.peek() == ')';
+  if (hasz == zskip) {
+    throw invalid_argument("invalid z value");
+  }
+  if (hasz) {
+    in >> zmin;
+  }
+
+  // Read T min value
+  consume(in, ',');
+  in >> std::ws;
+  // if tmin is skipped, tmax would be too, and hast should reflect this
+  bool tskip = in.peek() == ')';
+  if (hast == tskip) {
+    throw invalid_argument("invalid t value");
+  }
+  if (xskip && tskip) {
+    throw invalid_argument("both xmin and tmin cannot be missing");
+  }
+  if (hast) {
+    tmin = nextTime(in);
+  }
+
+  consume(in, ')');
+  consume(in, ',');
+  consume(in, '(');
+  if (!xskip) {
+    in >> xmax;
+  }
+  consume(in, ',');
+  if (!xskip) {
+    in >> ymax;
+  }
+  consume(in, ',');
+  if (!zskip) {
+    in >> zmax;
+  }
+  consume(in, ',');
+  if (!tskip) {
+    tmax = nextTime(in);
+  }
+  consume(in, ')');
+  consume(in, ')');
+
   stbox.m_xmin = xmin;
+  stbox.m_ymin = ymin;
+  stbox.m_zmin = zmin;
+  stbox.m_tmin = tmin;
   stbox.m_xmax = xmax;
+  stbox.m_ymax = ymax;
+  stbox.m_zmax = zmax;
+  stbox.m_tmax = tmax;
+
+  stbox.m_geodetic = geod;
 
   return in;
 }
