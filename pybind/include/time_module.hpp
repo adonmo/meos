@@ -1,10 +1,9 @@
 #pragma once
 
 #include "chrono.h"
-#include <meos/io/Deserializer.hpp>
-#include <meos/io/Serializer.hpp>
-#include <meos/types/temporal/TInstant.hpp>
-#include <meos/types/temporal/TInstantSet.hpp>
+#include <meos/types/time/Period.hpp>
+#include <meos/types/time/PeriodSet.hpp>
+#include <meos/types/time/TimestampSet.hpp>
 #include <pybind11/operators.h>
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
@@ -96,5 +95,17 @@ void def_time_module(py::module &m) {
              s << self;
              return s.str();
            })
-      .def_property_readonly("periods", &TimestampSet::periods);
+      .def_property_readonly("periods", &TimestampSet::periods)
+      .def_property_readonly("period", &TimestampSet::period)
+      .def_property_readonly("numPeriods", &TimestampSet::numPeriods)
+      .def_property_readonly("startPeriod", &TimestampSet::startPeriod)
+      .def_property_readonly("endPeriod", &TimestampSet::endPeriod)
+      .def_property_readonly("timespan", &TimestampSet::timespan)
+      .def_property_readonly("timestamps", &TimestampSet::timestamps)
+      .def_property_readonly("numTimestamps", &TimestampSet::numTimestamps)
+      .def_property_readonly("startTimestamp", &TimestampSet::startTimestamp)
+      .def_property_readonly("endTimestamp", &TimestampSet::endTimestamp)
+      .def("periodN", &TimestampSet::periodN, py::arg("n"))
+      .def("shift", &TimestampSet::shift, py::arg("timedelta"))
+      .def("timestampN", &TimestampSet::timestampN, py::arg("n"));
 }
