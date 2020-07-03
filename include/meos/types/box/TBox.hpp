@@ -2,6 +2,7 @@
 #define MEOS_TYPES_BOX_TBOX_HPP
 
 #include <chrono>
+#include <cmath>
 #include <string>
 
 using namespace std;
@@ -21,10 +22,10 @@ public:
        string const &tmax);
   TBox(string const &serialized);
 
-  time_point tmin() const;
-  time_point tmax() const;
   double xmin() const;
+  time_point tmin() const;
   double xmax() const;
+  time_point tmax() const;
 
   friend bool operator==(TBox const &lhs, TBox const &rhs);
   friend bool operator!=(TBox const &lhs, TBox const &rhs);
@@ -37,10 +38,20 @@ public:
   friend ostream &operator<<(ostream &os, TBox const &period);
 
 private:
-  double m_xmin;
-  time_point m_tmin;
-  double m_xmax;
-  time_point m_tmax;
+  double m_xmin = -INFINITY;
+  time_point m_tmin = time_point(time_point::duration::min());
+  double m_xmax = INFINITY;
+  time_point m_tmax = time_point(time_point::duration::max());
+
+  /**
+   * @return true if X bounds are finite
+   */
+  bool xset() const;
+
+  /**
+   * @return true if T bounds are finite
+   */
+  bool tset() const;
 
   void validate() const;
   int compare(TBox const &other) const;

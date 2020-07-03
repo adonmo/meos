@@ -1,14 +1,9 @@
-#include <cmath>
 #include <meos/io/utils.hpp>
 #include <meos/types/box/TBox.hpp>
 #include <meos/util/serializing.hpp>
 #include <sstream>
 
-TBox::TBox()
-    : m_xmin(-INFINITY), m_tmin(time_point(time_point::duration::min())),
-      m_xmax(INFINITY), m_tmax(time_point(time_point::duration::max())) {
-  validate();
-}
+TBox::TBox() {}
 
 TBox::TBox(double const xmin, time_point const tmin, double const xmax,
            time_point const tmax)
@@ -16,14 +11,12 @@ TBox::TBox(double const xmin, time_point const tmin, double const xmax,
   validate();
 }
 
-TBox::TBox(double const xmin, double const xmax)
-    : m_xmin(xmin), m_tmin(time_point(time_point::duration::min())),
-      m_xmax(xmax), m_tmax(time_point(time_point::duration::max())) {
+TBox::TBox(double const xmin, double const xmax) : m_xmin(xmin), m_xmax(xmax) {
   validate();
 }
 
 TBox::TBox(time_point const tmin, time_point const tmax)
-    : m_xmin(-INFINITY), m_tmin(tmin), m_xmax(INFINITY), m_tmax(tmax) {
+    : m_tmin(tmin), m_tmax(tmax) {
   validate();
 }
 
@@ -68,11 +61,15 @@ void TBox::validate() const {
   }
 }
 
+double TBox::xmin() const { return this->m_xmin; }
 time_point TBox::tmin() const { return this->m_tmin; }
+double TBox::xmax() const { return this->m_xmax; }
 time_point TBox::tmax() const { return this->m_tmax; }
 
-double TBox::xmin() const { return this->m_xmin; }
-double TBox::xmax() const { return this->m_xmax; }
+bool TBox::xset() const { return this->m_xmin != -INFINITY; }
+bool TBox::tset() const {
+  return this->m_tmin != time_point(time_point::duration::min());
+}
 
 int TBox::compare(TBox const &other) const {
   if (tmin() < other.tmin())
@@ -162,20 +159,19 @@ istream &operator>>(istream &in, TBox &tbox) {
 ostream &operator<<(ostream &os, TBox const &tbox) {
   os << "TBOX(";
 
-  if (tbox.xmin() != -INFINITY &&
-      tbox.tmin() != time_point(time_point::duration::min())) {
+  if (tbox.xset() && tbox.tset()) {
 
     // Example: TBOX((1.0, 2000-01-01), (2.0, 2000-01-02))
     os << "(" << tbox.xmin() << ", " << write_ISO8601_time(tbox.tmin())
        << "), (" << tbox.xmax() << ", " << write_ISO8601_time(tbox.tmax())
        << ")";
 
-  } else if (tbox.xmin() != -INFINITY) {
+  } else if (tbox.xset()) {
 
     // Example: TBOX((1.0,), (2.0,))
     os << "(" << tbox.xmin() << ",), (" << tbox.xmax() << ",)";
 
-  } else if (tbox.tmin() != time_point(time_point::duration::min())) {
+  } else if (tbox.tset()) {
 
     // Example: TBOX((, 2000-01-01), (, 2000-01-02))
     os << "(, " << write_ISO8601_time(tbox.tmin()) << "), (, "
