@@ -35,7 +35,7 @@ jobs:
     - name: Configure CMake for tests
       shell: bash -l {0}
       working-directory: ${{runner.workspace}}/meos
-      run: cmake -B build -S test -DCMAKE_BUILD_TYPE=$BUILD_TYPE
+      run: cmake -B build/test -S test -DCMAKE_BUILD_TYPE=$BUILD_TYPE
 
     - name: Build
       working-directory: ${{runner.workspace}}/meos

@@ -34,7 +34,7 @@ public:
    * Duration of the temporal value, that is, one of Instant, InstantSet,
    * Sequence, or SequenceSet.
    */
-  virtual constexpr TemporalDuration const duration() const {
+  virtual TemporalDuration const duration() const {
     return TemporalDuration::Temporal;
   };
 

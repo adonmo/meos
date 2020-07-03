@@ -48,9 +48,7 @@ public:
     return std::unique_ptr<TInstant<T>>(this->clone_impl());
   }
 
-  constexpr TemporalDuration const duration() const {
-    return TemporalDuration::Instant;
-  };
+  TemporalDuration const duration() const { return TemporalDuration::Instant; };
 
   /**
    * Set of instants.

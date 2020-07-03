@@ -38,7 +38,7 @@ public:
 
   set<TInstant<T>> getInstants() const;
 
-  constexpr TemporalDuration const duration() const {
+  TemporalDuration const duration() const {
     return TemporalDuration::InstantSet;
   };
 
