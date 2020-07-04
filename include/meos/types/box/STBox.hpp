@@ -39,6 +39,7 @@ public:
   // T
   STBox(time_point const tmin, time_point const tmax,
         bool const geodetic = false);
+  STBox(string const &tmin, string const &tmax, bool const geodetic = false);
 
   double xmin() const;
   double ymin() const;

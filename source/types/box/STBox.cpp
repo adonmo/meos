@@ -71,6 +71,15 @@ STBox::STBox(time_point const tmin, time_point const tmax, bool const geodetic)
   validate();
 }
 
+STBox::STBox(string const &tmin, string const &tmax, bool const geodetic)
+    : m_geodetic(geodetic) {
+  stringstream tmin_ss(tmin);
+  this->m_tmin = nextTime(tmin_ss);
+  stringstream tmax_ss(tmax);
+  this->m_tmax = nextTime(tmax_ss);
+  validate();
+}
+
 STBox::STBox(string const &serialized) {
   stringstream ss(serialized);
   STBox stbox;
@@ -292,47 +301,47 @@ ostream &operator<<(ostream &os, STBox const &stbox) {
   if (stbox.geodetic()) {
     if (stbox.tset()) {
       if (stbox.xset()) {
-        // GEODSTBOX T((11.0, 12.0, 13.0, 2000-01-01),
-        //             (21.0, 22.0, 23.0, 2000-01-02))
-        os << "GEODSTBOX T(" << stbox.xmin() << ", " << stbox.ymin() << ", "
+        // GEODSTBOX T((11, 12, 13, 2000-01-01),
+        //             (21, 22, 23, 2000-01-02))
+        os << "GEODSTBOX T((" << stbox.xmin() << ", " << stbox.ymin() << ", "
            << stbox.zmin() << ", " << write_ISO8601_time(stbox.tmin()) << "), ("
            << stbox.xmax() << ", " << stbox.ymax() << ", " << stbox.zmax()
            << ", " << write_ISO8601_time(stbox.tmax()) << "))";
         return os;
       }
       // GEODSTBOX T((, 2000-01-01), (, 2000-01-02))
-      os << "GEODSTBOX T( , , " << write_ISO8601_time(stbox.tmin())
+      os << "GEODSTBOX T(( , , " << write_ISO8601_time(stbox.tmin())
          << "), ( , , " << write_ISO8601_time(stbox.tmax()) << "))";
       return os;
     }
-    // GEODSTBOX((11.0, 12.0, 13.0), (21.0, 22.0, 23.0))
+    // GEODSTBOX((11, 12, 13), (21, 22, 23))
     os << "GEODSTBOX((" << stbox.xmin() << ", " << stbox.ymin() << ", "
        << stbox.zmin() << "), (" << stbox.xmax() << ", " << stbox.ymax() << ", "
        << stbox.zmax() << "))";
     return os;
   } else {
     if (stbox.xset() && stbox.zset() && stbox.tset()) {
-      // STBOX ZT((11.0, 12.0, 13.0, 2000-01-01),
-      //             (21.0, 22.0, 23.0, 2000-01-02))
+      // STBOX ZT((11, 12, 13, 2000-01-01),
+      //          (21, 22, 23, 2000-01-02))
       os << "STBOX ZT((" << stbox.xmin() << ", " << stbox.ymin() << ", "
          << stbox.zmin() << ", " << write_ISO8601_time(stbox.tmin()) << "), ("
          << stbox.xmax() << ", " << stbox.ymax() << ", " << stbox.zmax() << ", "
          << write_ISO8601_time(stbox.tmax()) << "))";
       return os;
     } else if (stbox.xset() && stbox.zset() && !stbox.tset()) {
-      // STBOX Z((11.0, 12.0, 13.0), (21.0, 22.0, 23.0))
+      // STBOX Z((11, 12, 13), (21, 22, 23))
       os << "STBOX Z((" << stbox.xmin() << ", " << stbox.ymin() << ", "
          << stbox.zmin() << "), (" << stbox.xmax() << ", " << stbox.ymax()
          << ", " << stbox.zmax() << "))";
       return os;
     } else if (stbox.xset() && !stbox.zset() && stbox.tset()) {
-      // STBOX T((11.0, 12.0, 2000-01-01), (21.0, 22.0, 2000-01-02))
+      // STBOX T((11, 12, 2000-01-01), (21, 22, 2000-01-02))
       os << "STBOX T((" << stbox.xmin() << ", " << stbox.ymin() << ", "
          << write_ISO8601_time(stbox.tmin()) << "), (" << stbox.xmax() << ", "
          << stbox.ymax() << ", " << write_ISO8601_time(stbox.tmax()) << "))";
       return os;
     } else if (stbox.xset() && !stbox.zset() && !stbox.tset()) {
-      // STBOX((11.0, 12.0), (21.0, 22.0))
+      // STBOX((11, 12), (21, 22))
       os << "STBOX((" << stbox.xmin() << ", " << stbox.ymin() << "), ("
          << stbox.xmax() << ", " << stbox.ymax() << "))";
       return os;
