@@ -1,6 +1,7 @@
 #pragma once
 
 #include "chrono.h"
+#include <meos/types/box/STBox.hpp>
 #include <meos/types/box/TBox.hpp>
 #include <pybind11/operators.h>
 #include <pybind11/pybind11.h>
@@ -42,4 +43,54 @@ void def_box_module(py::module &m) {
       .def_property_readonly("tmin", &TBox::tmin)
       .def_property_readonly("xmax", &TBox::xmax)
       .def_property_readonly("tmax", &TBox::tmax);
+
+  py::class_<STBox>(box_module, "STBox")
+      .def(py::init<>())
+      .def(py::init<double, double, double, time_point, double, double, double,
+                    time_point, bool>(),
+           py::arg("xmin"), py::arg("ymin"), py::arg("zmin"), py::arg("tmin"),
+           py::arg("xmax"), py::arg("ymax"), py::arg("zmax"), py::arg("tmax"),
+           py::arg("geodetic") = false)
+      .def(py::init<double, double, double, string &, double, double, double,
+                    string &, bool>(),
+           py::arg("xmin"), py::arg("ymin"), py::arg("zmin"), py::arg("tmin"),
+           py::arg("xmax"), py::arg("ymax"), py::arg("zmax"), py::arg("tmax"),
+           py::arg("geodetic") = false)
+      .def(py::init<double, double, double, double, double, double, bool>(),
+           py::arg("xmin"), py::arg("ymin"), py::arg("zmin"), py::arg("xmax"),
+           py::arg("ymax"), py::arg("zmax"), py::arg("geodetic") = false)
+      .def(py::init<double, double, time_point, double, double, time_point>(),
+           py::arg("xmin"), py::arg("ymin"), py::arg("tmin"), py::arg("xmax"),
+           py::arg("ymax"), py::arg("tmax"))
+      .def(py::init<double, double, string &, double, double, string &>(),
+           py::arg("xmin"), py::arg("ymin"), py::arg("tmin"), py::arg("xmax"),
+           py::arg("ymax"), py::arg("tmax"))
+      .def(py::init<double, double, double, double>(), py::arg("xmin"),
+           py::arg("ymin"), py::arg("xmax"), py::arg("ymax"))
+      .def(py::init<time_point, time_point, bool>(), py::arg("tmin"),
+           py::arg("tmax"), py::arg("geodetic") = false)
+      .def(py::init<string &, string &, bool>(), py::arg("tmin"),
+           py::arg("tmax"), py::arg("geodetic") = false)
+      .def(py::init<string &>(), py::arg("serialized"))
+      .def(py::self == py::self)
+      .def(py::self != py::self)
+      .def(py::self < py::self)
+      .def(py::self <= py::self)
+      .def(py::self > py::self)
+      .def(py::self >= py::self)
+      .def("__str__",
+           [](STBox const &self) {
+             std::ostringstream s;
+             s << self;
+             return s.str();
+           })
+      .def_property_readonly("xmin", &STBox::xmin)
+      .def_property_readonly("ymin", &STBox::ymin)
+      .def_property_readonly("zmin", &STBox::zmin)
+      .def_property_readonly("tmin", &STBox::tmin)
+      .def_property_readonly("xmax", &STBox::xmax)
+      .def_property_readonly("ymax", &STBox::ymax)
+      .def_property_readonly("zmax", &STBox::zmax)
+      .def_property_readonly("tmax", &STBox::tmax)
+      .def_property_readonly("geodetic", &STBox::geodetic);
 }

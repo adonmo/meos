@@ -29,14 +29,28 @@ TEST_CASE("STBoxes are constructed and serialized properly", "[stbox]") {
   }
 
   SECTION("STBOX T") {
-    SECTION("time as time_point") {
-      stbox = STBox(unix_time_point(2012, 1, 1), unix_time_point(2012, 1, 2));
+    SECTION("with xy") {
+      SECTION("time as time_point") {
+        stbox = STBox(11, 12, unix_time_point(2012, 1, 1), 21, 22,
+                      unix_time_point(2012, 1, 2));
+      }
+
+      SECTION("time as string") {
+        stbox = STBox(11, 12, "2012-01-01", 21, 22, "2012-01-02");
+      }
+      expected = "STBOX T((11, 12, 2012-01-01T00:00:00+0000), "
+                 "(21, 22, 2012-01-02T00:00:00+0000))";
     }
+    SECTION("without xy") {
+      SECTION("time as time_point") {
+        stbox = STBox(unix_time_point(2012, 1, 1), unix_time_point(2012, 1, 2));
+      }
 
-    SECTION("time as string") { stbox = STBox("2012-01-01", "2012-01-02"); }
+      SECTION("time as string") { stbox = STBox("2012-01-01", "2012-01-02"); }
 
-    expected = "STBOX T(( , , 2012-01-01T00:00:00+0000), ( , , "
-               "2012-01-02T00:00:00+0000))";
+      expected = "STBOX T(( , , 2012-01-01T00:00:00+0000), ( , , "
+                 "2012-01-02T00:00:00+0000))";
+    }
   }
 
   SECTION("STBOX") {
@@ -60,7 +74,13 @@ TEST_CASE("STBoxes are constructed and serialized properly", "[stbox]") {
       }
       SECTION("without xyz") {
         SECTION("GEODSTBOX T") {
-          stbox = STBox("2012-01-01", "2012-01-02", true);
+          SECTION("time as time_point") {
+            stbox = STBox(unix_time_point(2012, 1, 1),
+                          unix_time_point(2012, 1, 2), true);
+          }
+          SECTION("time as string") {
+            stbox = STBox("2012-01-01", "2012-01-02", true);
+          }
           expected = "GEODSTBOX T(( , , 2012-01-01T00:00:00+0000), "
                      "( , , 2012-01-02T00:00:00+0000))";
         }
