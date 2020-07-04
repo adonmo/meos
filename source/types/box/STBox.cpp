@@ -221,12 +221,24 @@ istream &operator>>(istream &in, STBox &stbox) {
   }
 
   consume(in, '(');
+
+  // Special case: empty STBox - STBOX()
+  // Note: Not in official MobilityDB spec
+  in >> std::ws;
+  if (in.peek() == ')') {
+    consume(in, ')');
+    return in;
+  }
+
   consume(in, '(');
 
   // Read X and Y min values
   in >> std::ws;
   // if xmin is skipped, ymin, xmax and ymax would be too
   bool xskip = in.peek() == ',';
+  if (xskip && !hast) {
+    throw invalid_argument("both xmin and tmin cannot be missing");
+  }
   if (!xskip) {
     in >> xmin;
   }
@@ -236,29 +248,16 @@ istream &operator>>(istream &in, STBox &stbox) {
   }
 
   // Read Z min value
-  consume(in, ',');
   in >> std::ws;
-  // if zmin is skipped, zmax would be too, and hasz should reflect this
-  bool zskip = in.peek() == ')';
-  if (hasz == zskip) {
-    throw invalid_argument("invalid z value");
-  }
-  if (hasz) {
+  if (!xskip && hasz) {
+    consume(in, ',');
     in >> zmin;
   }
 
   // Read T min value
-  consume(in, ',');
   in >> std::ws;
-  // if tmin is skipped, tmax would be too, and hast should reflect this
-  bool tskip = in.peek() == ')';
-  if (hast == tskip) {
-    throw invalid_argument("invalid t value");
-  }
-  if (xskip && tskip) {
-    throw invalid_argument("both xmin and tmin cannot be missing");
-  }
   if (hast) {
+    consume(in, ',');
     tmin = nextTime(in);
   }
 
@@ -272,12 +271,12 @@ istream &operator>>(istream &in, STBox &stbox) {
   if (!xskip) {
     in >> ymax;
   }
-  consume(in, ',');
-  if (!zskip) {
+  if (!xskip && hasz) {
+    consume(in, ',');
     in >> zmax;
   }
-  consume(in, ',');
-  if (!tskip) {
+  if (hast) {
+    consume(in, ',');
     tmax = nextTime(in);
   }
   consume(in, ')');

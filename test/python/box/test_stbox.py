@@ -6,7 +6,7 @@ from pymeos.box import STBox
 from ..utils import unix_dt
 
 
-@pytest.mark.parametrize("stbox, expected", [
+@pytest.mark.parametrize("stbox, serialized", [
     (
         STBox(),
         "STBOX()",
@@ -68,5 +68,6 @@ from ..utils import unix_dt
         "STBOX ZT((11, 12, 13, 2011-01-01T00:00:00+0000), (21, 22, 23, 2011-01-02T00:00:00+0000))",
     ),
 ])
-def test_constructor_and_str(stbox, expected):
-    assert str(stbox) == expected
+def test_constructor_and_serdes(stbox, serialized):
+    assert str(stbox) == serialized
+    assert STBox(serialized) == stbox

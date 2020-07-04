@@ -117,8 +117,19 @@ istream &operator>>(istream &in, TBox &tbox) {
 
   in >> std::ws;
   consume(in, "TBOX");
+
   consume(in, '(');
+
+  // Special case: empty STBox - STBOX()
+  // Note: Not in official MobilityDB spec
+  in >> std::ws;
+  if (in.peek() == ')') {
+    consume(in, ')');
+    return in;
+  }
+
   consume(in, '(');
+
   in >> std::ws;
   // if xmin is skipped, xmax would be too
   bool xskip = in.peek() == ',';
@@ -126,6 +137,7 @@ istream &operator>>(istream &in, TBox &tbox) {
     in >> xmin;
   }
   consume(in, ',');
+
   in >> std::ws;
   // if tmin is skipped, tmax would be too
   bool tskip = in.peek() == ')';
@@ -135,6 +147,7 @@ istream &operator>>(istream &in, TBox &tbox) {
   if (!tskip) {
     tmin = nextTime(in);
   }
+
   consume(in, ')');
   consume(in, ',');
   consume(in, '(');
