@@ -2,7 +2,7 @@
 
 **MEOS (Mobility Engine, Open Source)** is a C++ library which makes it easy to work with temporal and spatio-temporal data. It is based on [MobilityDB](https://github.com/ULB-CoDE-WIT/MobilityDB)'s data types and functions. MEOS's code is heavily inspired from a similar library called [GEOS](https://github.com/libgeos/geos) - hence the name. This repository also includes **PyMEOS** - python bindings to MEOS using [pybind11](https://github.com/pybind/pybind11).
 
-⚠️ Currently this library is in very early, completely **experimental** stages - heavy changes are to be expected.
+⚠️ Currently this library is an early, **experimental** stage - breaking changes might occur as it evolves.
 
 # Usage
 
@@ -29,11 +29,11 @@ def datetime_utc(year, month, day, hour=0, minute=0, second=0):
 
 
 # Example creation of trajectory (temporal sequence of geometries)
-trajectory = TSequenceGeom([
+trajectory = TSequenceGeom({
     TInstantGeom(Geometry(0, 0), datetime_utc(2012, 1, 1, 8, 0)),
     TInstantGeom(Geometry(2, 0), datetime_utc(2012, 1, 1, 8, 10)),
     TInstantGeom(Geometry(2, 1), datetime_utc(2012, 1, 1, 8, 15)),
-])
+})
 
 print(trajectory)
 ```
@@ -53,7 +53,7 @@ More detailed usage guide/quickstart: https://pymeos.netlify.app/quickstart.html
 ```cpp
 #include <iostream>
 #include <meos/types/temporal/TSequence.hpp>
-
+#include "time_utils.cpp"
 using namespace std;
 
 
@@ -69,6 +69,10 @@ int main() {
     return 0;
 }
 ```
+
+### Example
+
+Minimalistic C++ app example: https://github.com/chaitan94/meos-cpp-example
 
 ### Documentation
 
@@ -89,8 +93,8 @@ $ cmake --build build
 ### C++
 
 ```sh
-$ cmake -B build/test -S test
-$ cmake --build build/test
+$ cmake -B build/test -S test -DCMAKE_BUILD_TYPE=Release
+$ cmake --build build/test --config Release
 $ ./build/test/libmeos-tests
 ```
 
