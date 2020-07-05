@@ -36,8 +36,6 @@ public:
     return std::unique_ptr<TInstantSet<T>>(this->clone_impl());
   }
 
-  set<TInstant<T>> getInstants() const;
-
   TemporalDuration duration() const { return TemporalDuration::InstantSet; };
 
   /**
@@ -87,7 +85,7 @@ public:
   friend ostream &operator<<(ostream &os, TInstantSet const &instant_set) {
     bool first = true;
     os << "{";
-    for (auto instant : instant_set.getInstants()) {
+    for (auto instant : instant_set.instants()) {
       if (first)
         first = false;
       else

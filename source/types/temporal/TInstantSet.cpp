@@ -65,14 +65,6 @@ int TInstantSet<T>::compare(Temporal<T> const &other) const {
   return 0;
 }
 
-template <typename T> set<TInstant<T>> TInstantSet<T>::getInstants() const {
-  set<TInstant<T>> s;
-  for (auto const &e : this->m_instants) {
-    s.insert(*e.get());
-  }
-  return s;
-}
-
 template <typename T> set<TInstant<T>> TInstantSet<T>::instants() const {
   set<TInstant<T>> s;
   for (auto const &e : this->m_instants) {

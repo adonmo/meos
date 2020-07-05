@@ -99,7 +99,7 @@ Temporal Types
     tsetb = TInstantSetBool({tb})
 
     # Example creation of temporal sequence
-    tseqf = TSequenceFloat([tf], False, True)
+    tseqf = TSequenceFloat({tf}, False, True)
 
 
     # Let's verify what we've done
@@ -109,9 +109,9 @@ Temporal Types
     assert (tt.getValue, tt.getTimestamp) == ("testing", unix_dt(2011, 1, 1))
     assert (tg.getValue.toWKT(), tg.getTimestamp) == ("POINT (10 15)", unix_dt(2011, 1, 1))
 
-    assert {tb} == tsetb.getInstants
+    assert {tb} == tsetb.instants
 
-    assert [tf] == tseqf.getInstants
+    assert {tf} == tseqf.instants
     assert (tseqf.lower_inc, tseqf.upper_inc) == (False, True)
 
 
@@ -127,7 +127,7 @@ Serialization
 
     tf1 = TInstantFloat(1.0, unix_dt(2011, 1, 1))
     tf2 = TInstantFloat(2.5, unix_dt(2011, 1, 2))
-    tseqf = TSequenceFloat([tf1, tf2], True, False)
+    tseqf = TSequenceFloat({tf1, tf2}, True, False)
 
     # Example serialization of these objects
     si = SerializerInt()

@@ -239,7 +239,7 @@ TEMPLATE_TEST_CASE("TInstantSet period and timestamp related functions",
   }
 
   TInstantSet<TestType> actual(instants);
-  REQUIRE_THAT(actual.getInstants(), UnorderedEquals(instants));
+  REQUIRE_THAT(actual.instants(), UnorderedEquals(instants));
   if (size > 0) {
     Period p = actual.period();
     REQUIRE(p.lower() == actual.startTimestamp());
@@ -304,7 +304,7 @@ TEMPLATE_TEST_CASE("TInstantSet shift", "[tinstantset]", int, float) {
 
   TInstantSet<TestType> actual(actual_instants);
   TInstantSet<TestType> expected(expected_instants);
-  REQUIRE_THAT(actual.getInstants(), UnorderedEquals(expected.getInstants()));
+  REQUIRE_THAT(actual.instants(), UnorderedEquals(expected.instants()));
 }
 
 TEMPLATE_TEST_CASE("TInstantSet intersection functions", "[tinstantset]", int,

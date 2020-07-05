@@ -101,7 +101,6 @@ void def_temporal_types(py::module &m, std::string const &typesuffix) {
              return s.str();
            })
       .def("compare", &TInstantSet<T>::compare, py::arg("other"))
-      .def_property_readonly("getInstants", &TInstantSet<T>::getInstants)
       .def_property_readonly("duration", &TInstantSet<T>::duration)
       .def_property_readonly("instants", &TInstantSet<T>::instants)
       .def_property_readonly("getValues", &TInstantSet<T>::getValues)
@@ -120,9 +119,9 @@ void def_temporal_types(py::module &m, std::string const &typesuffix) {
   py::class_<TSequence<T>, TemporalComparators<TSequence<T>>,
              TInstantFunctions<TSequence<T>, TInstant<T>, T>>(
       m, ("TSequence" + typesuffix).c_str())
-      .def(py::init<vector<TInstant<T>> &, bool, bool>(), py::arg("instants"),
+      .def(py::init<set<TInstant<T>> &, bool, bool>(), py::arg("instants"),
            py::arg("lower_inc") = true, py::arg("upper_inc") = false)
-      .def(py::init<vector<string> &, bool, bool>(), py::arg("instants"),
+      .def(py::init<set<string> &, bool, bool>(), py::arg("instants"),
            py::arg("lower_inc") = true, py::arg("upper_inc") = false)
       .def(py::init<string>(), py::arg("serialized"))
       .def(py::self == py::self, py::arg("other"))
@@ -140,7 +139,6 @@ void def_temporal_types(py::module &m, std::string const &typesuffix) {
       .def("compare", &TSequence<T>::compare, py::arg("other"))
       .def_property_readonly("lower_inc", &TSequence<T>::lower_inc)
       .def_property_readonly("upper_inc", &TSequence<T>::upper_inc)
-      .def_property_readonly("getInstants", &TSequence<T>::getInstants)
       .def_property_readonly("duration", &TSequence<T>::duration)
       .def_property_readonly("instants", &TSequence<T>::instants)
       .def_property_readonly("getValues", &TSequence<T>::getValues)

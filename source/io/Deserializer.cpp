@@ -43,13 +43,13 @@ unique_ptr<TSequence<T>> Deserializer<T>::nextTSequence() {
   consumeChar(opening);
   bool const lower_inc = opening == '[';
 
-  vector<unique_ptr<TInstant<T>>> v = {};
-  v.push_back(nextTInstant());
+  set<TInstant<T>> s = {};
+  s.insert(*(nextTInstant().get()));
   skipWhitespaces();
 
   while (hasNext() && peek(0) == ',') {
     consumeChar(',');
-    v.push_back(nextTInstant());
+    s.insert(*(nextTInstant().get()));
     skipWhitespaces();
   }
 
@@ -61,7 +61,7 @@ unique_ptr<TSequence<T>> Deserializer<T>::nextTSequence() {
   consumeChar(closing);
   bool const upper_inc = closing == ']';
 
-  return make_unique<TSequence<T>>(v, lower_inc, upper_inc);
+  return make_unique<TSequence<T>>(s, lower_inc, upper_inc);
 }
 
 template <typename T>

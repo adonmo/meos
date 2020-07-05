@@ -8,7 +8,7 @@
 #include <meos/types/temporal/Temporal.hpp>
 #include <meos/types/temporal/TemporalComparators.hpp>
 #include <meos/util/serializing.hpp>
-#include <vector>
+#include <set>
 
 using namespace std;
 
@@ -20,14 +20,12 @@ class TSequence : public Temporal<T>,
                   public TemporalComparators<TSequence<T>>,
                   public TInstantFunctions<TSequence<T>, TInstant<T>, T> {
 public:
-  vector<unique_ptr<TInstant<T>>> m_instants;
+  set<TInstant<T>> m_instants;
 
   TSequence();
-  TSequence(vector<unique_ptr<TInstant<T>>> &instants_, bool lower_inc = true,
+  TSequence(set<TInstant<T>> &instants_, bool lower_inc = true,
             bool upper_inc = false);
-  TSequence(vector<TInstant<T>> &instants_, bool lower_inc = true,
-            bool upper_inc = false);
-  TSequence(vector<string> const &instants, bool lower_inc = true,
+  TSequence(set<string> const &instants, bool lower_inc = true,
             bool upper_inc = false);
   TSequence(string const &serialized);
 
@@ -39,7 +37,6 @@ public:
 
   bool lower_inc() const;
   bool upper_inc() const;
-  vector<TInstant<T>> getInstants() const;
 
   TemporalDuration duration() const { return TemporalDuration::Sequence; };
 
@@ -63,18 +60,18 @@ public:
     c = consume_one_of(in, "[(");
     bool const lower_inc = c == '[';
 
-    vector<unique_ptr<TInstant<T>>> s = {};
+    set<TInstant<T>> s = {};
 
     TInstant<T> instant;
     in >> instant;
-    s.push_back(instant.clone());
+    s.insert(instant);
 
     while (true) {
       in >> c;
       if (c != ',')
         break;
       in >> instant;
-      s.push_back(instant.clone());
+      s.insert(instant);
     }
 
     if (c != ']' && c != ')') {
@@ -82,10 +79,7 @@ public:
     }
     bool const upper_inc = c == ']';
 
-    sequence.m_instants.empty();
-    for (auto const &e : s)
-      sequence.m_instants.push_back(e->clone());
-
+    sequence.m_instants = s;
     sequence.m_lower_inc = lower_inc;
     sequence.m_upper_inc = upper_inc;
 
@@ -95,7 +89,7 @@ public:
   friend ostream &operator<<(ostream &os, TSequence const &sequence) {
     bool first = true;
     os << (sequence.m_lower_inc ? "[" : "(");
-    for (auto const &instant : sequence.getInstants()) {
+    for (auto const &instant : sequence.instants()) {
       if (first)
         first = false;
       else
