@@ -138,6 +138,13 @@ void def_temporal_types(py::module &m, std::string const &typesuffix) {
              s << self;
              return s.str();
            })
+      .def("__hash__",
+           [](TSequence<T> const &self) {
+             // TODO is there a better way?
+             std::ostringstream s;
+             s << self;
+             return py::hash(py::make_tuple(s.str()));
+           })
       .def("compare", &TSequence<T>::compare, py::arg("other"))
       .def_property_readonly("lower_inc", &TSequence<T>::lower_inc)
       .def_property_readonly("upper_inc", &TSequence<T>::upper_inc)
@@ -151,6 +158,46 @@ void def_temporal_types(py::module &m, std::string const &typesuffix) {
       .def("intersectsTimestamp", &TSequence<T>::intersectsTimestamp,
            py::arg("datetime"))
       .def("intersectsPeriod", &TSequence<T>::intersectsPeriod,
+           py::arg("period"));
+
+  def_comparator<TemporalComparators<TSequenceSet<T>>>(m, "TSequenceSet",
+                                                       typesuffix);
+  def_tinstant_functions<TInstantFunctions<TSequenceSet<T>, TInstant<T>, T>>(
+      m, "TSequenceSet", typesuffix);
+  py::class_<TSequenceSet<T>, TemporalComparators<TSequenceSet<T>>,
+             TInstantFunctions<TSequenceSet<T>, TInstant<T>, T>>(
+      m, ("TSequenceSet" + typesuffix).c_str())
+      .def(py::init<set<TSequence<T>> &>(), py::arg("sequences"))
+      .def(py::init<set<string> &>(), py::arg("sequences"))
+      .def(py::init<string>(), py::arg("serialized"))
+      .def(py::self == py::self, py::arg("other"))
+      .def(py::self != py::self, py::arg("other"))
+      .def(py::self < py::self, py::arg("other"))
+      .def(py::self <= py::self, py::arg("other"))
+      .def(py::self > py::self, py::arg("other"))
+      .def(py::self >= py::self, py::arg("other"))
+      .def("__str__",
+           [](TSequenceSet<T> const &self) {
+             std::ostringstream s;
+             s << self;
+             return s.str();
+           })
+      .def("compare", &TSequenceSet<T>::compare, py::arg("other"))
+      .def_property_readonly("duration", &TSequenceSet<T>::duration)
+      .def_property_readonly("sequences", &TSequenceSet<T>::sequences)
+      .def_property_readonly("numSequences", &TSequenceSet<T>::numSequences)
+      .def_property_readonly("startSequence", &TSequenceSet<T>::startSequence)
+      .def_property_readonly("endSequence", &TSequenceSet<T>::endSequence)
+      .def("sequenceN", &TSequenceSet<T>::sequenceN, py::arg("n"))
+      .def_property_readonly("instants", &TSequenceSet<T>::instants)
+      .def_property_readonly("getValues", &TSequenceSet<T>::getValues)
+      .def_property_readonly("timestamps", &TSequenceSet<T>::timestamps)
+      .def_property_readonly("getTime", &TSequenceSet<T>::getTime)
+      .def_property_readonly("period", &TSequenceSet<T>::period)
+      .def("shift", &TSequenceSet<T>::shift, py::arg("timedelta"))
+      .def("intersectsTimestamp", &TSequenceSet<T>::intersectsTimestamp,
+           py::arg("datetime"))
+      .def("intersectsPeriod", &TSequenceSet<T>::intersectsPeriod,
            py::arg("period"));
 }
 

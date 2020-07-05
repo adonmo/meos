@@ -1,6 +1,6 @@
 from pymeos.io import (DeserializerFloat, DeserializerGeom, DeserializerInt,
                        SerializerFloat, SerializerInt)
-from pymeos.temporal import (TInstantFloat, TInstantInt, TInstantSetInt, TSequenceFloat)
+from pymeos.temporal import (TInstantFloat, TInstantInt, TInstantSetInt, TSequenceFloat, TSequenceSetFloat)
 
 from ..utils import unix_dt
 
@@ -13,7 +13,8 @@ def test_serialization():
 
     tf1 = TInstantFloat(1.0, unix_dt(2011, 1, 1))
     tf2 = TInstantFloat(2.5, unix_dt(2011, 1, 2))
-    tseqf = TSequenceFloat({tf1, tf2}, True, False)
+    tseqf = TSequenceFloat({tf1, tf2})
+    tseqsetf = TSequenceSetFloat({tseqf})
 
     # Example serialization of these objects
     si = SerializerInt()
@@ -21,6 +22,7 @@ def test_serialization():
 
     sf = SerializerFloat()
     assert (sf.write(tseqf) == "[1@2011-01-01T00:00:00+0000, 2.5@2011-01-02T00:00:00+0000)")
+    assert (sf.write(tseqsetf) == "{[1@2011-01-01T00:00:00+0000, 2.5@2011-01-02T00:00:00+0000)}")
 
     # For sets, ordering might vary, so we need to check accordingly
     serialized = si.write(tseti)
@@ -28,6 +30,7 @@ def test_serialization():
     assert serialized[0] == "{"
     assert serialized[-1] == "}"
     assert {"10@2011-01-01T00:00:00+0000", "20@2019-01-01T00:00:00+0000"} == set(serialized[1:-1].split(", "))
+    assert {tseqf} == tseqsetf.sequences
 
 
 def test_deserialization():
@@ -47,3 +50,10 @@ def test_deserialization():
     actual = {(tg.getValue.toWKT(), tg.getTimestamp) for tg in tseq.instants}
     expected = {('POINT (0 0)', unix_dt(2012, 1, 1, 8)), ('POINT (2 0)', unix_dt(2012, 1, 1, 8, 10)), ('POINT (2 -1.98)', unix_dt(2012, 1, 1, 8, 15))}
     assert actual == expected
+
+    df = DeserializerFloat("{[1.0@2011-01-01, 2.5@2011-01-02)}")
+    tseqset = df.nextTSequenceSet()
+    tf1 = TInstantFloat(1.0, unix_dt(2011, 1, 1))
+    tf2 = TInstantFloat(2.5, unix_dt(2011, 1, 2))
+    expected = TSequenceSetFloat({TSequenceFloat({tf1, tf2})})
+    assert tseqset == expected
