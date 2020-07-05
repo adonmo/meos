@@ -9,11 +9,6 @@ TSequence<T>::TSequence(set<TInstant<T>> &instants, bool lower_inc,
     : m_instants(instants), m_lower_inc(lower_inc), m_upper_inc(upper_inc) {}
 
 template <typename T>
-TSequence<T>::TSequence(TSequence const &t)
-    : m_instants(t.m_instants), m_lower_inc(t.m_lower_inc),
-      m_upper_inc(t.m_upper_inc) {}
-
-template <typename T>
 TSequence<T>::TSequence(set<string> const &instants, bool lower_inc,
                         bool upper_inc)
     : m_lower_inc(lower_inc), m_upper_inc(upper_inc) {

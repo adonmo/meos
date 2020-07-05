@@ -98,9 +98,6 @@ public:
     return os;
   }
 
-protected:
-  TSequence(TSequence const &t);
-
 private:
   set<TInstant<T>> m_instants;
   bool m_lower_inc;

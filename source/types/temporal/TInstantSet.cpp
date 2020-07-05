@@ -11,9 +11,8 @@ template <typename T>
 TInstantSet<T>::TInstantSet(TInstantSet const &t) : m_instants(t.m_instants) {}
 
 template <typename T> TInstantSet<T>::TInstantSet(set<string> const &instants) {
-  TInstantSet<T> instant_set;
   for (auto const &e : instants)
-    m_instants.insert(TInstant<T>(e));
+    this->m_instants.insert(TInstant<T>(e));
 }
 
 template <typename T> TInstantSet<T>::TInstantSet(string const &serialized) {
