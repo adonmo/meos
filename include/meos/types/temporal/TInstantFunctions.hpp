@@ -46,7 +46,7 @@ struct TInstantFunctions {
    */
   TInstantType instantN(size_t n) const {
     auto s = this->temporal().instants();
-    if (s.size() < n) {
+    if (s.size() <= n) {
       throw "At least " + std::to_string(n) + " instant(s) expected";
     }
     return *next(s.begin(), n);
@@ -59,6 +59,10 @@ struct TInstantFunctions {
    * not.
    */
   BaseType startValue() const {
+    auto s = this->temporal().instants();
+    if (s.size() <= 0) {
+      throw "At least one instant expected";
+    }
     return this->temporal().startInstant().getValue();
   }
 
@@ -68,7 +72,27 @@ struct TInstantFunctions {
    * The function does not take into account whether the bounds are inclusive or
    * not.
    */
-  BaseType endValue() const { return this->temporal().endInstant().getValue(); }
+  BaseType endValue() const {
+    auto s = this->temporal().instants();
+    if (s.size() <= 0) {
+      throw "At least one instant expected";
+    }
+    return this->temporal().endInstant().getValue();
+  }
+
+  /**
+   * N-th value.
+   *
+   * The function does not take into account whether the bounds are inclusive or
+   * not.
+   */
+  BaseType valueN(size_t n) const {
+    auto s = this->temporal().instants();
+    if (s.size() <= n) {
+      throw "At least " + std::to_string(n) + " instant(s) expected";
+    }
+    return this->temporal().instantN(n).getValue();
+  }
 
 private:
   TemporalType &temporal() { return static_cast<TemporalType &>(*this); }

@@ -71,7 +71,7 @@ Period PeriodSet::endPeriod() const {
 
 Period PeriodSet::periodN(size_t n) const {
   set<Period> s = periods();
-  if (s.size() < n) {
+  if (s.size() <= n) {
     throw "At least " + to_string(n) + " period(s) expected";
   }
   return *next(s.begin(), n);
@@ -120,7 +120,7 @@ time_point PeriodSet::endTimestamp() const {
 
 time_point PeriodSet::timestampN(size_t n) const {
   set<time_point> s = timestamps();
-  if (s.size() < n) {
+  if (s.size() <= n) {
     throw "At least " + to_string(n) + " timestamp(s) expected";
   }
   return *next(s.begin(), n);

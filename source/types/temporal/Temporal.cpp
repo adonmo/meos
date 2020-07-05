@@ -43,7 +43,7 @@ template <typename T> time_point Temporal<T>::endTimestamp() const {
 
 template <typename T> time_point Temporal<T>::timestampN(size_t n) const {
   set<time_point> s = timestamps();
-  if (s.size() < n) {
+  if (s.size() <= n) {
     throw "At least " + to_string(n) + " timestamp(s) expected";
   }
   return *next(s.begin(), n);

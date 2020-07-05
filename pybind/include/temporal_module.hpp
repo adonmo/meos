@@ -3,6 +3,7 @@
 #include <meos/types/temporal/TInstant.hpp>
 #include <meos/types/temporal/TInstantSet.hpp>
 #include <meos/types/temporal/TSequence.hpp>
+#include <meos/types/temporal/TSequenceSet.hpp>
 #include <pybind11/operators.h>
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
@@ -30,7 +31,8 @@ void def_tinstant_functions(const pybind11::module &m,
       .def_property_readonly("endInstant", &Interface::endInstant)
       .def("instantN", &Interface::instantN, py::arg("n"))
       .def_property_readonly("startValue", &Interface::startValue)
-      .def_property_readonly("endValue", &Interface::endValue);
+      .def_property_readonly("endValue", &Interface::endValue)
+      .def("valueN", &Interface::valueN, py::arg("n"));
 }
 
 template <typename T>

@@ -33,7 +33,10 @@ TEMPLATE_TEST_CASE("TSequenceSets are constructed properly", "[tinstset]", int,
 
     REQUIRE(sequence_set.sequences().size() == 2);
     REQUIRE(sequence_set.startSequence() == getSampleSequence1<TestType>());
+    REQUIRE(sequence_set.sequenceN(0) == getSampleSequence1<TestType>());
     REQUIRE(sequence_set.endSequence() == getSampleSequence2<TestType>());
+    REQUIRE(sequence_set.sequenceN(1) == getSampleSequence2<TestType>());
+    CHECK_THROWS(sequence_set.sequenceN(2));
   }
 
   SECTION("all constructors work") {
@@ -260,10 +263,15 @@ TEMPLATE_TEST_CASE("TSequenceSet instant functions", "[tsequenceset]", int,
   REQUIRE_THAT(actual.instants(), UnorderedEquals(expected_instants));
   if (size > 0) {
     REQUIRE(actual.startInstant() == *expected_instants.begin());
+    REQUIRE(actual.instantN(0) == *expected_instants.begin());
     REQUIRE(actual.endInstant() == *expected_instants.rbegin());
+    REQUIRE(actual.instantN(size - 1) == *expected_instants.rbegin());
+    CHECK_THROWS(actual.instantN(size));
   } else {
     CHECK_THROWS(actual.startInstant());
+    CHECK_THROWS(actual.instantN(0));
     CHECK_THROWS(actual.endInstant());
+    CHECK_THROWS(actual.instantN(1));
   }
 }
 
@@ -318,7 +326,10 @@ TEMPLATE_TEST_CASE("TSequenceSet period and timestamp related functions",
   if (size > 0) {
     Period p = actual.period();
     REQUIRE(p.lower() == actual.startTimestamp());
+    REQUIRE(p.lower() == actual.timestampN(0));
     REQUIRE(p.upper() == actual.endTimestamp());
+    REQUIRE(p.upper() == actual.timestampN(size - 1));
+    CHECK_THROWS(actual.timestampN(size));
     REQUIRE(p.lower_inc() == true);
     REQUIRE(p.upper_inc() == true);
   } else {

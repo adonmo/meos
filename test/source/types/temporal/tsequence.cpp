@@ -49,7 +49,10 @@ TEMPLATE_TEST_CASE("TSequences are constructed properly", "[tinstset]", int,
 
     // We gave the instants out-of-order!
     REQUIRE(seq->startInstant() == instant_2);
+    REQUIRE(seq->instantN(0) == instant_2);
     REQUIRE(seq->endInstant() == instant_1);
+    REQUIRE(seq->instantN(1) == instant_1);
+    CHECK_THROWS(seq->instantN(2));
 
     REQUIRE(seq->lower_inc() == false);
     REQUIRE(seq->upper_inc() == true);
@@ -194,7 +197,10 @@ TEMPLATE_TEST_CASE("TSequence value functions", "[tsequence]", int, float) {
   REQUIRE(sequence.minValue() == 1);
   REQUIRE(sequence.maxValue() == 4);
   REQUIRE(sequence.startValue() == 2);
+  REQUIRE(sequence.valueN(0) == 2);
   REQUIRE(sequence.endValue() == 3);
+  REQUIRE(sequence.valueN(3) == 3);
+  CHECK_THROWS(sequence.valueN(4));
 }
 
 TEMPLATE_TEST_CASE("TSequence instant functions", "[tsequence]", int, float) {
@@ -219,10 +225,15 @@ TEMPLATE_TEST_CASE("TSequence instant functions", "[tsequence]", int, float) {
   REQUIRE_THAT(actual.instants(), UnorderedEquals(expected_instants));
   if (size > 0) {
     REQUIRE(actual.startInstant() == *expected_instants.begin());
+    REQUIRE(actual.instantN(0) == *expected_instants.begin());
     REQUIRE(actual.endInstant() == *expected_instants.rbegin());
+    REQUIRE(actual.instantN(size - 1) == *expected_instants.rbegin());
+    CHECK_THROWS(actual.instantN(size));
   } else {
     CHECK_THROWS(actual.startInstant());
+    CHECK_THROWS(actual.instantN(0));
     CHECK_THROWS(actual.endInstant());
+    CHECK_THROWS(actual.instantN(1));
   }
 }
 
@@ -273,7 +284,10 @@ TEMPLATE_TEST_CASE("TSequence period and timestamp related functions",
   if (size > 0) {
     Period p = actual.period();
     REQUIRE(p.lower() == actual.startTimestamp());
+    REQUIRE(p.lower() == actual.timestampN(0));
     REQUIRE(p.upper() == actual.endTimestamp());
+    REQUIRE(p.upper() == actual.timestampN(size - 1));
+    CHECK_THROWS(actual.timestampN(size));
     REQUIRE(p.lower_inc() == lower_inc);
     REQUIRE(p.upper_inc() == upper_inc);
   } else {

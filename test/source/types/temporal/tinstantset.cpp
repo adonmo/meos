@@ -46,7 +46,10 @@ TEMPLATE_TEST_CASE("TInstantSets are constructed properly", "[tinstset]", int,
 
     // We gave the instants out-of-order!
     REQUIRE(instant_set->startInstant() == instant_2);
+    REQUIRE(instant_set->instantN(0) == instant_2);
     REQUIRE(instant_set->endInstant() == instant_1);
+    REQUIRE(instant_set->instantN(1) == instant_1);
+    CHECK_THROWS(instant_set->instantN(2));
   }
 }
 
@@ -167,7 +170,10 @@ TEMPLATE_TEST_CASE("TInstantSet value functions", "[tinstantset]", int, float) {
   REQUIRE(instant_set.minValue() == 1);
   REQUIRE(instant_set.maxValue() == 4);
   REQUIRE(instant_set.startValue() == 2);
+  REQUIRE(instant_set.valueN(0) == 2);
   REQUIRE(instant_set.endValue() == 3);
+  REQUIRE(instant_set.valueN(3) == 3);
+  CHECK_THROWS(instant_set.valueN(4));
 }
 
 TEMPLATE_TEST_CASE("TInstantSet instant functions", "[tinstantset]", int,
@@ -191,10 +197,15 @@ TEMPLATE_TEST_CASE("TInstantSet instant functions", "[tinstantset]", int,
   REQUIRE_THAT(actual.instants(), UnorderedEquals(expected_instants));
   if (size > 0) {
     REQUIRE(actual.startInstant() == *expected_instants.begin());
+    REQUIRE(actual.instantN(0) == *expected_instants.begin());
     REQUIRE(actual.endInstant() == *expected_instants.rbegin());
+    REQUIRE(actual.instantN(size - 1) == *expected_instants.rbegin());
+    CHECK_THROWS(actual.instantN(size));
   } else {
     CHECK_THROWS(actual.startInstant());
+    CHECK_THROWS(actual.instantN(0));
     CHECK_THROWS(actual.endInstant());
+    CHECK_THROWS(actual.instantN(1));
   }
 }
 
@@ -243,7 +254,10 @@ TEMPLATE_TEST_CASE("TInstantSet period and timestamp related functions",
   if (size > 0) {
     Period p = actual.period();
     REQUIRE(p.lower() == actual.startTimestamp());
+    REQUIRE(p.lower() == actual.timestampN(0));
     REQUIRE(p.upper() == actual.endTimestamp());
+    REQUIRE(p.upper() == actual.timestampN(size - 1));
+    CHECK_THROWS(actual.timestampN(size));
     REQUIRE(p.lower_inc() == true);
     REQUIRE(p.upper_inc() == true);
   } else {

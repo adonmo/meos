@@ -88,7 +88,7 @@ template <typename T> TSequence<T> TSequenceSet<T>::endSequence() const {
  */
 template <typename T> TSequence<T> TSequenceSet<T>::sequenceN(size_t n) const {
   auto s = this->m_sequences;
-  if (s.size() < n) {
+  if (s.size() <= n) {
     throw "At least " + std::to_string(n) + " sequence(s) expected";
   }
   return *next(s.begin(), n);
