@@ -51,6 +51,19 @@ TEMPLATE_TEST_CASE("Temporal are deserialized", "[deserializer][temporal]", int,
 
         CHECK_THROWS(r.nextTemporal());
       }
+      SECTION("in a sequenceset duration") {
+        Deserializer<TestType> r("{[10@2012-11-01]}");
+
+        unique_ptr<Temporal<TestType>> temporal = r.nextTemporal();
+        auto casted = (dynamic_cast<TSequenceSet<TestType> *>(temporal.get()));
+        set<TInstant<TestType>> actual = casted->instants();
+        set<TInstant<TestType>> s = {
+            TInstant<TestType>(10, unix_time_point(2012, 11, 1))};
+        auto x = UnorderedEquals(s);
+        REQUIRE_THAT(actual, x);
+
+        CHECK_THROWS(r.nextTemporal());
+      }
       SECTION("shouldn't be able to cast a instantset duration to a sequence "
               "duration") {
         Deserializer<TestType> r("{10@2012-11-01}");

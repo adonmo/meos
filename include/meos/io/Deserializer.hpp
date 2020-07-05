@@ -6,6 +6,7 @@
 #include <meos/types/temporal/TInstant.hpp>
 #include <meos/types/temporal/TInstantSet.hpp>
 #include <meos/types/temporal/TSequence.hpp>
+#include <meos/types/temporal/TSequenceSet.hpp>
 #include <meos/types/temporal/Temporal.hpp>
 #include <meos/types/time/Period.hpp>
 #include <meos/types/time/PeriodSet.hpp>
@@ -18,6 +19,7 @@ template <typename T = float> class Deserializer {
 public:
   Deserializer(string const &in);
   unique_ptr<Temporal<T>> nextTemporal();
+  unique_ptr<TSequenceSet<T>> nextTSequenceSet();
   unique_ptr<TSequence<T>> nextTSequence();
   unique_ptr<TInstantSet<T>> nextTInstantSet();
   unique_ptr<TInstant<T>> nextTInstant();

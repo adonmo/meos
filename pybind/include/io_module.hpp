@@ -16,6 +16,8 @@ void declare_serdes(py::module &m, std::string const &typesuffix) {
                         Serializer<T>::write)
       .def("write", (string(Serializer<T>::*)(TSequence<T> const *)) &
                         Serializer<T>::write)
+      .def("write", (string(Serializer<T>::*)(TSequenceSet<T> const *)) &
+                        Serializer<T>::write)
       .def("write",
            (string(Serializer<T>::*)(Period const *)) & Serializer<T>::write)
       .def("write", (string(Serializer<T>::*)(PeriodSet const *)) &
@@ -26,6 +28,7 @@ void declare_serdes(py::module &m, std::string const &typesuffix) {
       .def("nextTInstant", &Deserializer<T>::nextTInstant)
       .def("nextTInstantSet", &Deserializer<T>::nextTInstantSet)
       .def("nextTSequence", &Deserializer<T>::nextTSequence)
+      .def("nextTSequenceSet", &Deserializer<T>::nextTSequenceSet)
       .def("nextPeriod", &Deserializer<T>::nextPeriod)
       .def("nextPeriodSet", &Deserializer<T>::nextPeriodSet);
 }

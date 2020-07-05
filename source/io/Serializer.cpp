@@ -15,6 +15,9 @@ template <typename T> string Serializer<T>::write(Temporal<T> const *temporal) {
   } else if (TSequence<T> const *sequence =
                  reinterpret_cast<TSequence<T> const *>(temporal)) {
     return write(sequence);
+  } else if (TSequenceSet<T> const *sequence_set =
+                 reinterpret_cast<TSequenceSet<T> const *>(temporal)) {
+    return write(sequence_set);
   }
   throw SerializationException("Unsupported type");
 }
@@ -67,6 +70,13 @@ template <typename T>
 string Serializer<T>::write(TSequence<T> const *sequence) {
   stringstream ss;
   ss << *sequence;
+  return ss.str();
+}
+
+template <typename T>
+string Serializer<T>::write(TSequenceSet<T> const *sequence_set) {
+  stringstream ss;
+  ss << *sequence_set;
   return ss.str();
 }
 

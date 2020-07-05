@@ -6,6 +6,7 @@
 #include <meos/types/temporal/TInstant.hpp>
 #include <meos/types/temporal/TInstantSet.hpp>
 #include <meos/types/temporal/TSequence.hpp>
+#include <meos/types/temporal/TSequenceSet.hpp>
 #include <meos/types/temporal/Temporal.hpp>
 #include <meos/types/time/Period.hpp>
 #include <meos/types/time/PeriodSet.hpp>
@@ -20,6 +21,7 @@ public:
   string write(TInstant<T> const *instant);
   string write(TInstantSet<T> const *instant_set);
   string write(TSequence<T> const *sequence);
+  string write(TSequenceSet<T> const *sequence_set);
 
   string write(Period const *period);
   string write(PeriodSet const *period_set);

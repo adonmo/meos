@@ -21,13 +21,34 @@ template <typename T> unique_ptr<Temporal<T>> Deserializer<T>::nextTemporal() {
     return nextTSequence();
   } else if (lookahead1 == '{') {
     if (lookahead2 == '[' || lookahead2 == '(') {
-      throw new DeserializationException("TSequenceSet not implemented yet");
-      // return TSequenceSet<T>(value);
+      return nextTSequenceSet();
     } else {
       return nextTInstantSet();
     }
   }
   throw new DeserializationException("Invalid Temporal");
+}
+
+template <typename T>
+unique_ptr<TSequenceSet<T>> Deserializer<T>::nextTSequenceSet() {
+  skipWhitespaces();
+  consumeChar('{');
+  set<TSequence<T>> s = {};
+  s.insert(*nextTSequence().get());
+  skipWhitespaces();
+
+  while (hasNext() && peek(0) == ',') {
+    consumeChar(',');
+    s.insert(*nextTSequence().get());
+    skipWhitespaces();
+  }
+
+  if (!hasNext() || peek(0) != '}') {
+    throw DeserializationException("Expected a '}'");
+  }
+  consumeChar('}');
+
+  return make_unique<TSequenceSet<T>>(s);
 }
 
 template <typename T>
