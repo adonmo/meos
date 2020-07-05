@@ -22,6 +22,7 @@ Installation (Python)
     :caption: API Reference
 
     pymeos
+    box
     range
     time
     temporal
