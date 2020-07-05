@@ -115,9 +115,6 @@ public:
     return os;
   }
 
-protected:
-  TSequenceSet(TSequenceSet const &t);
-
 private:
   set<TSequence<T>> m_sequences;
 

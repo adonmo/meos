@@ -7,10 +7,6 @@ template <typename T>
 TSequenceSet<T>::TSequenceSet(set<TSequence<T>> const &sequences)
     : m_sequences(sequences) {}
 
-template <typename T>
-TSequenceSet<T>::TSequenceSet(TSequenceSet const &t)
-    : m_sequences(t.m_sequences) {}
-
 template <typename T> TSequenceSet<T>::TSequenceSet(set<string> const &ss) {
   for (auto const &e : ss)
     this->m_sequences.insert(TSequence<T>(e));

@@ -304,7 +304,7 @@ TEMPLATE_TEST_CASE("TInstantSet shift", "[tinstantset]", int, float) {
 
   TInstantSet<TestType> actual(actual_instants);
   TInstantSet<TestType> expected(expected_instants);
-  REQUIRE_THAT(actual.instants(), UnorderedEquals(expected.instants()));
+  REQUIRE(actual == expected);
 }
 
 TEMPLATE_TEST_CASE("TInstantSet intersection functions", "[tinstantset]", int,
