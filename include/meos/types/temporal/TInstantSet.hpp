@@ -20,12 +20,7 @@ class TInstantSet : public Temporal<T>,
                     public TemporalComparators<TInstantSet<T>>,
                     public TInstantFunctions<TInstantSet<T>, TInstant<T>, T> {
 public:
-  // TODO FIXME make this private?
-  // right now this is public as some tests need it
-  set<unique_ptr<TInstant<T>>> m_instants;
-
   TInstantSet();
-  TInstantSet(set<unique_ptr<TInstant<T>>> const &instants);
   TInstantSet(set<TInstant<T>> const &instants);
   TInstantSet(set<string> const &instants);
   TInstantSet(string const &serialized);
@@ -57,27 +52,25 @@ public:
 
     consume(in, '{');
 
-    set<unique_ptr<TInstant<T>>> s = {};
+    set<TInstant<T>> s = {};
 
     TInstant<T> instant;
     in >> instant;
-    s.insert(instant.clone());
+    s.insert(instant);
 
     while (true) {
       in >> c;
       if (c != ',')
         break;
       in >> instant;
-      s.insert(instant.clone());
+      s.insert(instant);
     }
 
     if (c != '}') {
       throw invalid_argument("Expected '}'");
     }
 
-    instant_set.m_instants.empty();
-    for (auto const &e : s)
-      instant_set.m_instants.insert(e->clone());
+    instant_set.m_instants = s;
 
     return in;
   }
@@ -100,6 +93,8 @@ protected:
   TInstantSet(TInstantSet const &t);
 
 private:
+  set<TInstant<T>> m_instants;
+
   TInstantSet<T> *clone_impl() const override {
     return new TInstantSet<T>(*this);
   };

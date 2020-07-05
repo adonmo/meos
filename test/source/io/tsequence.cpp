@@ -62,7 +62,7 @@ TEMPLATE_TEST_CASE("TSequence are deserialized", "[deserializer][tsequence]",
       Deserializer<TestType> r("[10@2012-11-01)");
 
       unique_ptr<TSequence<TestType>> tseq = r.nextTSequence();
-      set<TInstant<TestType>> actual = tseq->m_instants;
+      set<TInstant<TestType>> actual = tseq->instants();
       set<TInstant<TestType>> s = {
           TInstant<TestType>(10, unix_time_point(2012, 11, 1))};
       auto x = UnorderedEquals(s);
@@ -77,7 +77,7 @@ TEMPLATE_TEST_CASE("TSequence are deserialized", "[deserializer][tsequence]",
           "(10@2012-01-01 00:00:00+00, 12@2012-04-01 00:00:00+00)");
 
       unique_ptr<TSequence<TestType>> tseq = r.nextTSequence();
-      set<TInstant<TestType>> actual = tseq->m_instants;
+      set<TInstant<TestType>> actual = tseq->instants();
       set<TInstant<TestType>> s = {
           TInstant<TestType>(10, unix_time_point(2012, 1, 1)),
           TInstant<TestType>(12, unix_time_point(2012, 4, 1))};
@@ -95,7 +95,7 @@ TEMPLATE_TEST_CASE("TSequence are deserialized", "[deserializer][tsequence]",
         "(10@2012-01-01 00:00:00+00] [12@2012-04-01 00:00:00+00]");
 
     unique_ptr<TSequence<TestType>> tseq = r.nextTSequence();
-    set<TInstant<TestType>> actual = tseq->m_instants;
+    set<TInstant<TestType>> actual = tseq->instants();
     set<TInstant<TestType>> s1 = {
         TInstant<TestType>(10, unix_time_point(2012, 1, 1))};
     auto x1 = UnorderedEquals(s1);
@@ -104,7 +104,7 @@ TEMPLATE_TEST_CASE("TSequence are deserialized", "[deserializer][tsequence]",
     REQUIRE(tseq->upper_inc() == true);
 
     unique_ptr<TSequence<TestType>> tseq2 = r.nextTSequence();
-    set<TInstant<TestType>> actual2 = tseq2->m_instants;
+    set<TInstant<TestType>> actual2 = tseq2->instants();
     set<TInstant<TestType>> s2 = {
         TInstant<TestType>(12, unix_time_point(2012, 4, 1))};
     auto x2 = UnorderedEquals(s2);

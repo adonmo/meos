@@ -207,17 +207,17 @@ TEMPLATE_TEST_CASE("TInstantSet getTime", "[tinstantset]", int, float) {
       GENERATE(take(2, random(unix_time(2012, 1, 1), unix_time(2020, 1, 1))));
   time_point tp1 = std::chrono::system_clock::from_time_t(t1 / 1000L);
   time_point tp2 = std::chrono::system_clock::from_time_t(t2 / 1000L);
-  auto instant_1 = make_unique<TInstant<TestType>>(v1, tp1);
-  auto instant_2 = make_unique<TInstant<TestType>>(v2, tp2);
+  auto instant_1 = TInstant<TestType>(v1, tp1);
+  auto instant_2 = TInstant<TestType>(v2, tp2);
 
-  auto period_1 = instant_1->period();
-  auto period_2 = instant_2->period();
+  auto period_1 = instant_1.period();
+  auto period_2 = instant_2.period();
   set<Period> periods = {period_1, period_2};
   PeriodSet expected(periods);
 
-  set<unique_ptr<TInstant<TestType>>> instants;
-  instants.insert(move(instant_1));
-  instants.insert(move(instant_2));
+  set<TInstant<TestType>> instants;
+  instants.insert(instant_1);
+  instants.insert(instant_2);
   TInstantSet<TestType> instant_set(instants);
 
   REQUIRE(instant_set.timespan() ==
@@ -274,12 +274,12 @@ TEMPLATE_TEST_CASE("TInstantSet timespan", "[tinstantset]", int, float) {
       GENERATE(take(2, random(unix_time(2012, 1, 1), unix_time(2020, 1, 1))));
   time_point tp1 = std::chrono::system_clock::from_time_t(t1 / 1000L);
   time_point tp2 = std::chrono::system_clock::from_time_t(t2 / 1000L);
-  auto instant_1 = make_unique<TInstant<TestType>>(v1, tp1);
-  auto instant_2 = make_unique<TInstant<TestType>>(v2, tp2);
+  auto instant_1 = TInstant<TestType>(v1, tp1);
+  auto instant_2 = TInstant<TestType>(v2, tp2);
 
-  set<unique_ptr<TInstant<TestType>>> instants;
-  instants.insert(move(instant_1));
-  instants.insert(move(instant_2));
+  set<TInstant<TestType>> instants;
+  instants.insert(instant_1);
+  instants.insert(instant_2);
   TInstantSet<TestType> instant_set(instants);
 
   REQUIRE(instant_set.timespan() ==
@@ -287,8 +287,8 @@ TEMPLATE_TEST_CASE("TInstantSet timespan", "[tinstantset]", int, float) {
 }
 
 TEMPLATE_TEST_CASE("TInstantSet shift", "[tinstantset]", int, float) {
-  set<unique_ptr<TInstant<TestType>>> expected_instants;
-  set<unique_ptr<TInstant<TestType>>> actual_instants;
+  set<TInstant<TestType>> expected_instants;
+  set<TInstant<TestType>> actual_instants;
   size_t size = GENERATE(take(4, random(1, 2)));
   duration_ms shift(GENERATE(take(4, random(minute, day))));
 
@@ -296,10 +296,10 @@ TEMPLATE_TEST_CASE("TInstantSet shift", "[tinstantset]", int, float) {
     TestType v = random() % 1000;
     time_point t = std::chrono::system_clock::from_time_t(
         unix_time(2012, 1, 1) + 10 * 365 * (random() % day));
-    auto instant = make_unique<TInstant<TestType>>(v, t);
-    actual_instants.insert(instant->shift(shift));
-    auto expected_instant = make_unique<TInstant<TestType>>(v, t + shift);
-    expected_instants.insert(move(expected_instant));
+    auto instant = TInstant<TestType>(v, t);
+    actual_instants.insert(*instant.shift(shift).get());
+    auto expected_instant = TInstant<TestType>(v, t + shift);
+    expected_instants.insert(expected_instant);
   }
 
   TInstantSet<TestType> actual(actual_instants);

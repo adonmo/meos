@@ -4,34 +4,23 @@
 template <typename T> TInstantSet<T>::TInstantSet() {}
 
 template <typename T>
-TInstantSet<T>::TInstantSet(set<unique_ptr<TInstant<T>>> const &instants) {
-  for (auto const &e : instants)
-    this->m_instants.insert(e->clone());
-}
+TInstantSet<T>::TInstantSet(set<TInstant<T>> const &instants)
+    : m_instants(instants) {}
 
 template <typename T>
-TInstantSet<T>::TInstantSet(set<TInstant<T>> const &instants) {
-  for (auto const &e : instants)
-    this->m_instants.insert(e.clone());
-}
-
-template <typename T> TInstantSet<T>::TInstantSet(TInstantSet const &t) {
-  for (auto const &e : t.m_instants)
-    this->m_instants.insert(e->clone());
-}
+TInstantSet<T>::TInstantSet(TInstantSet const &t) : m_instants(t.m_instants) {}
 
 template <typename T> TInstantSet<T>::TInstantSet(set<string> const &instants) {
   TInstantSet<T> instant_set;
   for (auto const &e : instants)
-    m_instants.insert(make_unique<TInstant<T>>(e));
+    m_instants.insert(TInstant<T>(e));
 }
 
 template <typename T> TInstantSet<T>::TInstantSet(string const &serialized) {
   stringstream ss(serialized);
   TInstantSet<T> instant_set;
   ss >> instant_set;
-  for (auto const &e : instant_set.m_instants)
-    m_instants.insert(e->clone());
+  this->m_instants = instant_set.instants();
 }
 
 template <typename T>
@@ -66,17 +55,13 @@ int TInstantSet<T>::compare(Temporal<T> const &other) const {
 }
 
 template <typename T> set<TInstant<T>> TInstantSet<T>::instants() const {
-  set<TInstant<T>> s;
-  for (auto const &e : this->m_instants) {
-    s.insert(*e.get());
-  }
-  return s;
+  return this->m_instants;
 }
 
 template <typename T> set<Range<T>> TInstantSet<T>::getValues() const {
   set<Range<T>> s;
   for (auto const &e : this->m_instants) {
-    s.insert(Range<T>(e->getValue(), e->getValue(), true, true));
+    s.insert(Range<T>(e.getValue(), e.getValue(), true, true));
   }
   return s;
 }
@@ -84,7 +69,7 @@ template <typename T> set<Range<T>> TInstantSet<T>::getValues() const {
 template <typename T> set<time_point> TInstantSet<T>::timestamps() const {
   set<time_point> s;
   for (auto const &e : this->m_instants) {
-    s.insert(e.get()->getTimestamp());
+    s.insert(e.getTimestamp());
   }
   return s;
 }
@@ -111,7 +96,7 @@ template <typename T>
 TInstantSet<T> *TInstantSet<T>::shift_impl(duration_ms const timedelta) const {
   set<TInstant<T>> s;
   for (auto const &e : this->m_instants) {
-    s.insert(TInstant<T>(e->getValue(), e->getTimestamp() + timedelta));
+    s.insert(TInstant<T>(e.getValue(), e.getTimestamp() + timedelta));
   }
   return new TInstantSet<T>(s);
 }

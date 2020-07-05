@@ -4,7 +4,6 @@
 #include <meos/io/Deserializer.hpp>
 #include <meos/io/utils.hpp>
 #include <sstream>
-#include <vector>
 using namespace std;
 
 template <typename T>
@@ -68,13 +67,13 @@ template <typename T>
 unique_ptr<TInstantSet<T>> Deserializer<T>::nextTInstantSet() {
   skipWhitespaces();
   consumeChar('{');
-  set<unique_ptr<TInstant<T>>> s = {};
-  s.insert(nextTInstant());
+  set<TInstant<T>> s = {};
+  s.insert(*nextTInstant().get());
   skipWhitespaces();
 
   while (hasNext() && peek(0) == ',') {
     consumeChar(',');
-    s.insert(nextTInstant());
+    s.insert(*nextTInstant().get());
     skipWhitespaces();
   }
 

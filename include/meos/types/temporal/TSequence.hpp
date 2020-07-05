@@ -20,8 +20,6 @@ class TSequence : public Temporal<T>,
                   public TemporalComparators<TSequence<T>>,
                   public TInstantFunctions<TSequence<T>, TInstant<T>, T> {
 public:
-  set<TInstant<T>> m_instants;
-
   TSequence();
   TSequence(set<TInstant<T>> &instants_, bool lower_inc = true,
             bool upper_inc = false);
@@ -104,6 +102,7 @@ protected:
   TSequence(TSequence const &t);
 
 private:
+  set<TInstant<T>> m_instants;
   bool m_lower_inc;
   bool m_upper_inc;
 
