@@ -16,30 +16,35 @@ public:
   // XYZT
   STBox(double const xmin, double const ymin, double const zmin,
         time_point const tmin, double const xmax, double const ymax,
-        double const zmax, time_point const tmax, bool const geodetic = false);
+        double const zmax, time_point const tmax, int const srid = 0,
+        bool const geodetic = false);
   STBox(double const xmin, double const ymin, double const zmin,
         string const &tmin, double const xmax, double const ymax,
-        double const zmax, string const &tmax, bool const geodetic = false);
+        double const zmax, string const &tmax, int const srid = 0,
+        bool const geodetic = false);
 
   // XYZ
   STBox(double const xmin, double const ymin, double const zmin,
         double const xmax, double const ymax, double const zmax,
-        bool const geodetic = false);
+        int const srid = 0, bool const geodetic = false);
 
   // XYT - geodetic not allowed
   STBox(double const xmin, double const ymin, time_point const tmin,
-        double const xmax, double const ymax, time_point const tmax);
+        double const xmax, double const ymax, time_point const tmax,
+        int const srid = 0);
   STBox(double const xmin, double const ymin, string const &tmin,
-        double const xmax, double const ymax, string const &tmax);
+        double const xmax, double const ymax, string const &tmax,
+        int const srid = 0);
 
   // XY - geodetic not allowed
   STBox(double const xmin, double const ymin, double const xmax,
-        double const ymax);
+        double const ymax, int const srid = 0);
 
   // T
-  STBox(time_point const tmin, time_point const tmax,
+  STBox(time_point const tmin, time_point const tmax, int const srid = 0,
         bool const geodetic = false);
-  STBox(string const &tmin, string const &tmax, bool const geodetic = false);
+  STBox(string const &tmin, string const &tmax, int const srid = 0,
+        bool const geodetic = false);
 
   double xmin() const;
   double ymin() const;
@@ -50,6 +55,7 @@ public:
   double zmax() const;
   time_point tmax() const;
 
+  int srid() const;
   bool geodetic() const;
 
   friend bool operator==(STBox const &lhs, STBox const &rhs);
@@ -72,6 +78,7 @@ private:
   double m_zmax = INFINITY;
   time_point m_tmax = time_point(time_point::duration::max());
 
+  int m_srid = 0;
   bool m_geodetic = false;
 
   /**
