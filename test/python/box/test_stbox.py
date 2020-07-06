@@ -53,11 +53,11 @@ from ..utils import unix_dt
     ),
     (
         STBox(unix_dt(2011, 1, 1), unix_dt(2011, 1, 2), geodetic=True),
-        "SRID=4326;GEODSTBOX T(( , , 2011-01-01T00:00:00+0000), ( , , 2011-01-02T00:00:00+0000))",
+        "GEODSTBOX T(( , , 2011-01-01T00:00:00+0000), ( , , 2011-01-02T00:00:00+0000))",
     ),
     (
         STBox("2011-01-01", "2011-01-02", geodetic=True),
-        "SRID=4326;GEODSTBOX T(( , , 2011-01-01T00:00:00+0000), ( , , 2011-01-02T00:00:00+0000))",
+        "GEODSTBOX T(( , , 2011-01-01T00:00:00+0000), ( , , 2011-01-02T00:00:00+0000))",
     ),
     (
         STBox(11, 12, 13, 21, 22, 23, geodetic=True),
@@ -79,6 +79,17 @@ from ..utils import unix_dt
 def test_constructor_and_serdes(stbox, serialized):
     assert str(stbox) == serialized
     assert STBox(serialized) == stbox
+
+
+@pytest.mark.parametrize("args, kwargs", [
+    # Geodetic, but no coordinates given
+    (("SRID=4326;GEODSTBOX T(( , , 2011-01-01T00:00:00+0000), ( , , 2011-01-02T00:00:00+0000))"), {}),
+    (("2011-01-01", "2011-01-02"), dict(geodetic=True, srid=5676)),
+    ((unix_dt(2011, 1, 1), unix_dt(2011, 1, 2)), dict(geodetic=True, srid=5676)),
+])
+def test_constructor_bad_arguments(args, kwargs):
+    with pytest.raises(Exception):
+        STBox(*args, **kwargs)
 
 
 def test_accessor_functions():

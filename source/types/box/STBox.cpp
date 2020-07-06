@@ -110,12 +110,16 @@ void STBox::init() {
 }
 
 void STBox::setup_defaults() {
-  if (this->m_geodetic && this->m_srid == SRID_DEFAULT) {
+  if (this->m_geodetic && this->has_x() && this->m_srid == SRID_DEFAULT) {
     this->m_srid = 4326;
   }
 }
 
 void STBox::validate() const {
+  if (!this->has_x() && this->has_srid()) {
+    throw invalid_argument("SRID is specified but coordinates are not given");
+  }
+
   if (this->m_xmin > this->m_xmax) {
     throw invalid_argument("The xmin must be less than or equal to the xmax");
   }
@@ -145,12 +149,13 @@ time_point STBox::tmax() const { return this->m_tmax; }
 int STBox::srid() const { return this->m_srid; }
 bool STBox::geodetic() const { return this->m_geodetic; }
 
-bool STBox::xset() const { return this->m_xmin != -INFINITY; }
-bool STBox::yset() const { return this->m_ymin != -INFINITY; }
-bool STBox::zset() const { return this->m_zmin != -INFINITY; }
-bool STBox::tset() const {
+bool STBox::has_x() const { return this->m_xmin != -INFINITY; }
+bool STBox::has_y() const { return this->m_ymin != -INFINITY; }
+bool STBox::has_z() const { return this->m_zmin != -INFINITY; }
+bool STBox::has_t() const {
   return this->m_tmin != time_point(time_point::duration::min());
 }
+bool STBox::has_srid() const { return this->m_srid != SRID_DEFAULT; }
 
 int STBox::compare(STBox const &other) const {
   if (srid() < other.srid())
@@ -235,8 +240,8 @@ istream &operator>>(istream &in, STBox &stbox) {
   int pos = in.tellg();
   char prefix[4];
   in.read(prefix, 4);
-  bool has_srid = string(prefix) == "SRID";
-  if (has_srid) {
+  bool srid_specified = string(prefix) == "SRID";
+  if (srid_specified) {
     consume(in, '=');
     in >> srid;
     consume(in, ';');
@@ -341,13 +346,13 @@ istream &operator>>(istream &in, STBox &stbox) {
 }
 
 ostream &operator<<(ostream &os, STBox const &stbox) {
-  if (stbox.srid() != 0) {
+  if (stbox.has_x() && stbox.srid() != 0) {
     os << "SRID=" << stbox.srid() << ";";
   }
 
   if (stbox.geodetic()) {
-    if (stbox.tset()) {
-      if (stbox.xset()) {
+    if (stbox.has_t()) {
+      if (stbox.has_x()) {
         // GEODSTBOX T((11, 12, 13, 2000-01-01),
         //             (21, 22, 23, 2000-01-02))
         os << "GEODSTBOX T((" << stbox.xmin() << ", " << stbox.ymin() << ", "
@@ -367,7 +372,7 @@ ostream &operator<<(ostream &os, STBox const &stbox) {
        << stbox.zmax() << "))";
     return os;
   } else {
-    if (stbox.xset() && stbox.zset() && stbox.tset()) {
+    if (stbox.has_x() && stbox.has_z() && stbox.has_t()) {
       // STBOX ZT((11, 12, 13, 2000-01-01),
       //          (21, 22, 23, 2000-01-02))
       os << "STBOX ZT((" << stbox.xmin() << ", " << stbox.ymin() << ", "
@@ -375,29 +380,29 @@ ostream &operator<<(ostream &os, STBox const &stbox) {
          << stbox.xmax() << ", " << stbox.ymax() << ", " << stbox.zmax() << ", "
          << write_ISO8601_time(stbox.tmax()) << "))";
       return os;
-    } else if (stbox.xset() && stbox.zset() && !stbox.tset()) {
+    } else if (stbox.has_x() && stbox.has_z() && !stbox.has_t()) {
       // STBOX Z((11, 12, 13), (21, 22, 23))
       os << "STBOX Z((" << stbox.xmin() << ", " << stbox.ymin() << ", "
          << stbox.zmin() << "), (" << stbox.xmax() << ", " << stbox.ymax()
          << ", " << stbox.zmax() << "))";
       return os;
-    } else if (stbox.xset() && !stbox.zset() && stbox.tset()) {
+    } else if (stbox.has_x() && !stbox.has_z() && stbox.has_t()) {
       // STBOX T((11, 12, 2000-01-01), (21, 22, 2000-01-02))
       os << "STBOX T((" << stbox.xmin() << ", " << stbox.ymin() << ", "
          << write_ISO8601_time(stbox.tmin()) << "), (" << stbox.xmax() << ", "
          << stbox.ymax() << ", " << write_ISO8601_time(stbox.tmax()) << "))";
       return os;
-    } else if (stbox.xset() && !stbox.zset() && !stbox.tset()) {
+    } else if (stbox.has_x() && !stbox.has_z() && !stbox.has_t()) {
       // STBOX((11, 12), (21, 22))
       os << "STBOX((" << stbox.xmin() << ", " << stbox.ymin() << "), ("
          << stbox.xmax() << ", " << stbox.ymax() << "))";
       return os;
-    } else if (!stbox.xset() && !stbox.zset() && stbox.tset()) {
+    } else if (!stbox.has_x() && !stbox.has_z() && stbox.has_t()) {
       // STBOX T((, 2000-01-01), (, 2000-01-02))
       os << "STBOX T(( , , " << write_ISO8601_time(stbox.tmin()) << "), ( , , "
          << write_ISO8601_time(stbox.tmax()) << "))";
       return os;
-    } else if (!stbox.xset() && !stbox.zset() && !stbox.tset()) {
+    } else if (!stbox.has_x() && !stbox.has_z() && !stbox.has_t()) {
       // Note: This is not part of official MobilityDB spec
       // Empty STBOX
       os << "STBOX()";

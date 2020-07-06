@@ -83,7 +83,7 @@ TEST_CASE("STBoxes are constructed and serialized properly", "[stbox]") {
           SECTION("time as string") {
             stbox = STBox("2012-01-01", "2012-01-02", SRID_DEFAULT, true);
           }
-          expected = "SRID=4326;GEODSTBOX T(( , , 2012-01-01T00:00:00+0000), "
+          expected = "GEODSTBOX T(( , , 2012-01-01T00:00:00+0000), "
                      "( , , 2012-01-02T00:00:00+0000))";
         }
       }
@@ -127,4 +127,19 @@ TEST_CASE("STBoxes are constructed and serialized properly", "[stbox]") {
 
   output << stbox;
   REQUIRE(output.str() == expected);
+}
+
+TEST_CASE("STBoxes throw when constructed with bad arguments", "[stbox]") {
+  SECTION("throw when SRID specified, but coordinates not present") {
+    SECTION("string constructor") {
+      REQUIRE_THROWS_AS(
+          (STBox{"SRID=4326;GEODSTBOX T(( , , 2012-01-01T00:00:00+0000), "
+                 "( , , 2012-01-02T00:00:00+0000))"}),
+          std::invalid_argument);
+    }
+    SECTION("two strings constructor") {
+      REQUIRE_THROWS_AS((STBox{"2012-01-01", "2012-01-02", 4326, true}),
+                        std::invalid_argument);
+    }
+  }
 }

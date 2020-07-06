@@ -86,22 +86,27 @@ private:
   /**
    * @return true if X bounds are finite
    */
-  bool xset() const;
+  bool has_x() const;
 
   /**
    * @return true if Y bounds are finite
    */
-  bool yset() const;
+  bool has_y() const;
 
   /**
    * @return true if Z bounds are finite
    */
-  bool zset() const;
+  bool has_z() const;
 
   /**
    * @return true if T bounds are finite
    */
-  bool tset() const;
+  bool has_t() const;
+
+  /**
+   * @return true if SRID != SRID_DEFAULT
+   */
+  bool has_srid() const;
 
   void init();
   void setup_defaults();
