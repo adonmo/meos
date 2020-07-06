@@ -4,6 +4,8 @@
 #include <meos/util/serializing.hpp>
 #include <sstream>
 
+extern int const SRID_DEFAULT = 0;
+
 STBox::STBox() {}
 
 // XYZT
@@ -14,7 +16,7 @@ STBox::STBox(double const xmin, double const ymin, double const zmin,
     : m_xmin(xmin), m_ymin(ymin), m_zmin(zmin), m_tmin(tmin), m_xmax(xmax),
       m_ymax(ymax), m_zmax(zmax), m_tmax(tmax), m_srid(srid),
       m_geodetic(geodetic) {
-  validate();
+  init();
 }
 
 // XYZT
@@ -28,7 +30,7 @@ STBox::STBox(double const xmin, double const ymin, double const zmin,
   this->m_tmin = nextTime(tmin_ss);
   stringstream tmax_ss(tmax);
   this->m_tmax = nextTime(tmax_ss);
-  validate();
+  init();
 }
 
 // XYZ
@@ -37,7 +39,7 @@ STBox::STBox(double const xmin, double const ymin, double const zmin,
              int const srid, bool const geodetic)
     : m_xmin(xmin), m_ymin(ymin), m_zmin(zmin), m_xmax(xmax), m_ymax(ymax),
       m_zmax(zmax), m_srid(srid), m_geodetic(geodetic) {
-  validate();
+  init();
 }
 
 // XYT
@@ -46,7 +48,7 @@ STBox::STBox(double const xmin, double const ymin, time_point const tmin,
              int const srid)
     : m_xmin(xmin), m_ymin(ymin), m_tmin(tmin), m_xmax(xmax), m_ymax(ymax),
       m_tmax(tmax), m_srid(srid) {
-  validate();
+  init();
 }
 
 // XYT
@@ -58,21 +60,21 @@ STBox::STBox(double const xmin, double const ymin, string const &tmin,
   this->m_tmin = nextTime(tmin_ss);
   stringstream tmax_ss(tmax);
   this->m_tmax = nextTime(tmax_ss);
-  validate();
+  init();
 }
 
 // XY
 STBox::STBox(double const xmin, double const ymin, double const xmax,
              double const ymax, int const srid)
     : m_xmin(xmin), m_ymin(ymin), m_xmax(xmax), m_ymax(ymax), m_srid(srid) {
-  validate();
+  init();
 }
 
 // T
 STBox::STBox(time_point const tmin, time_point const tmax, int const srid,
              bool const geodetic)
     : m_tmin(tmin), m_tmax(tmax), m_srid(srid), m_geodetic(geodetic) {
-  validate();
+  init();
 }
 
 STBox::STBox(string const &tmin, string const &tmax, int const srid,
@@ -82,7 +84,7 @@ STBox::STBox(string const &tmin, string const &tmax, int const srid,
   this->m_tmin = nextTime(tmin_ss);
   stringstream tmax_ss(tmax);
   this->m_tmax = nextTime(tmax_ss);
-  validate();
+  init();
 }
 
 STBox::STBox(string const &serialized) {
@@ -99,23 +101,34 @@ STBox::STBox(string const &serialized) {
   this->m_tmax = stbox.tmax();
   this->m_srid = stbox.srid();
   this->m_geodetic = stbox.geodetic();
+  init();
+}
+
+void STBox::init() {
+  setup_defaults();
   validate();
 }
 
+void STBox::setup_defaults() {
+  if (this->m_geodetic && this->m_srid == SRID_DEFAULT) {
+    this->m_srid = 4326;
+  }
+}
+
 void STBox::validate() const {
-  if (this->xmin() > this->xmax()) {
+  if (this->m_xmin > this->m_xmax) {
     throw invalid_argument("The xmin must be less than or equal to the xmax");
   }
 
-  if (this->ymin() > this->ymax()) {
+  if (this->m_ymin > this->m_ymax) {
     throw invalid_argument("The ymin must be less than or equal to the ymax");
   }
 
-  if (this->zmin() > this->zmax()) {
+  if (this->m_zmin > this->m_zmax) {
     throw invalid_argument("The zmin must be less than or equal to the zmax");
   }
 
-  if (this->tmin() > this->tmax()) {
+  if (this->m_tmin > this->m_tmax) {
     throw invalid_argument("The tmin must be less than or equal to the tmax");
   }
 }

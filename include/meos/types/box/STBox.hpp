@@ -8,6 +8,8 @@ using namespace std;
 
 using time_point = std::chrono::system_clock::time_point;
 
+extern int const SRID_DEFAULT;
+
 class STBox {
 public:
   STBox();
@@ -78,7 +80,7 @@ private:
   double m_zmax = INFINITY;
   time_point m_tmax = time_point(time_point::duration::max());
 
-  int m_srid = 0;
+  int m_srid = SRID_DEFAULT;
   bool m_geodetic = false;
 
   /**
@@ -101,6 +103,8 @@ private:
    */
   bool tset() const;
 
+  void init();
+  void setup_defaults();
   void validate() const;
   int compare(STBox const &other) const;
 };

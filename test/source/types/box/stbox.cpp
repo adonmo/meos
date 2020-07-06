@@ -43,7 +43,8 @@ TEST_CASE("STBoxes are constructed and serialized properly", "[stbox]") {
     }
     SECTION("without xy") {
       SECTION("time as time_point") {
-        stbox = STBox(unix_time_point(2012, 1, 1), unix_time_point(2012, 1, 2));
+        stbox = STBox(unix_time_point(2012, 1, 1), unix_time_point(2012, 1, 2),
+                      SRID_DEFAULT);
       }
 
       SECTION("time as string") { stbox = STBox("2012-01-01", "2012-01-02"); }
@@ -63,33 +64,34 @@ TEST_CASE("STBoxes are constructed and serialized properly", "[stbox]") {
       SECTION("with xyz") {
         SECTION("time as time_point") {
           stbox = STBox(11, 12, 13, unix_time_point(2012, 1, 1), 21, 22, 23,
-                        unix_time_point(2012, 1, 2), 0, true);
+                        unix_time_point(2012, 1, 2), SRID_DEFAULT, true);
         }
         SECTION("time as string") {
-          stbox = STBox(11, 12, 13, "2012-01-01", 21, 22, 23, "2012-01-02", 0,
-                        true);
+          stbox = STBox(11, 12, 13, "2012-01-01", 21, 22, 23, "2012-01-02",
+                        SRID_DEFAULT, true);
         }
-        expected = "GEODSTBOX T((11, 12, 13, 2012-01-01T00:00:00+0000), "
-                   "(21, 22, 23, 2012-01-02T00:00:00+0000))";
+        expected =
+            "SRID=4326;GEODSTBOX T((11, 12, 13, 2012-01-01T00:00:00+0000), "
+            "(21, 22, 23, 2012-01-02T00:00:00+0000))";
       }
       SECTION("without xyz") {
         SECTION("GEODSTBOX T") {
           SECTION("time as time_point") {
             stbox = STBox(unix_time_point(2012, 1, 1),
-                          unix_time_point(2012, 1, 2), 0, true);
+                          unix_time_point(2012, 1, 2), SRID_DEFAULT, true);
           }
           SECTION("time as string") {
-            stbox = STBox("2012-01-01", "2012-01-02", 0, true);
+            stbox = STBox("2012-01-01", "2012-01-02", SRID_DEFAULT, true);
           }
-          expected = "GEODSTBOX T(( , , 2012-01-01T00:00:00+0000), "
+          expected = "SRID=4326;GEODSTBOX T(( , , 2012-01-01T00:00:00+0000), "
                      "( , , 2012-01-02T00:00:00+0000))";
         }
       }
     }
 
     SECTION("GEODSTBOX") {
-      stbox = STBox(11, 12, 13, 21, 22, 23, 0, true);
-      expected = "GEODSTBOX((11, 12, 13), (21, 22, 23))";
+      stbox = STBox(11, 12, 13, 21, 22, 23, SRID_DEFAULT, true);
+      expected = "SRID=4326;GEODSTBOX((11, 12, 13), (21, 22, 23))";
     }
   }
 
