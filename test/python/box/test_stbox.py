@@ -67,6 +67,14 @@ from ..utils import unix_dt
         STBox("STBOX ZT((11, 12, 13, 2011-01-01T00:00), (21, 22, 23, 2011-01-02T00:00))"),
         "STBOX ZT((11, 12, 13, 2011-01-01T00:00:00+0000), (21, 22, 23, 2011-01-02T00:00:00+0000))",
     ),
+    (
+        STBox(11, 12, "2011-01-01", 21, 22, "2011-01-02", srid=5676),
+        "SRID=5676;STBOX T((11, 12, 2011-01-01T00:00:00+0000), (21, 22, 2011-01-02T00:00:00+0000))",
+    ),
+    (
+        STBox(11, 12, 13, 21, 22, 23, srid=4326, geodetic=True),
+        "SRID=4326;GEODSTBOX((11, 12, 13), (21, 22, 23))",
+    ),
 ])
 def test_constructor_and_serdes(stbox, serialized):
     assert str(stbox) == serialized
