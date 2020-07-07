@@ -4,6 +4,7 @@
 #include <meos/types/temporal/TInstantSet.hpp>
 #include <meos/types/temporal/TSequence.hpp>
 #include <meos/types/temporal/TSequenceSet.hpp>
+#include <meos/types/temporal/Temporal.hpp>
 #include <meos/types/temporal/TemporalDuration.hpp>
 #include <pybind11/operators.h>
 #include <pybind11/pybind11.h>
@@ -38,10 +39,23 @@ void def_tinstant_functions(const pybind11::module &m,
 
 template <typename T>
 void def_temporal_types(py::module &m, std::string const &typesuffix) {
+  py::class_<Temporal<T>>(m, ("Temporal" + typesuffix).c_str())
+      .def_property_readonly("minValue", &Temporal<T>::minValue)
+      .def_property_readonly("maxValue", &Temporal<T>::maxValue)
+      .def_property_readonly("timespan", &Temporal<T>::timespan)
+      .def_property_readonly("numTimestamps", &Temporal<T>::numTimestamps)
+      .def_property_readonly("startTimestamp", &Temporal<T>::startTimestamp)
+      .def_property_readonly("endTimestamp", &Temporal<T>::endTimestamp)
+      .def("timestampN", &Temporal<T>::timestampN, py::arg("n"))
+      .def("intersectsTimestampSet", &Temporal<T>::intersectsTimestampSet,
+           py::arg("timestampset"))
+      .def("intersectsPeriodSet", &Temporal<T>::intersectsPeriodSet,
+           py::arg("periodset"));
+
   def_comparator<TemporalComparators<TInstant<T>>>(m, "TInstant", typesuffix);
   def_tinstant_functions<TInstantFunctions<TInstant<T>, TInstant<T>, T>>(
       m, "TInstant", typesuffix);
-  py::class_<TInstant<T>, TemporalComparators<TInstant<T>>,
+  py::class_<TInstant<T>, Temporal<T>, TemporalComparators<TInstant<T>>,
              TInstantFunctions<TInstant<T>, TInstant<T>, T>>(
       m, ("TInstant" + typesuffix).c_str())
       .def(py::init<T, time_point>(), py::arg("value"), py::arg("timestamp"))
@@ -85,7 +99,7 @@ void def_temporal_types(py::module &m, std::string const &typesuffix) {
                                                       typesuffix);
   def_tinstant_functions<TInstantFunctions<TInstantSet<T>, TInstant<T>, T>>(
       m, "TInstantSet", typesuffix);
-  py::class_<TInstantSet<T>, TemporalComparators<TInstantSet<T>>,
+  py::class_<TInstantSet<T>, Temporal<T>, TemporalComparators<TInstantSet<T>>,
              TInstantFunctions<TInstantSet<T>, TInstant<T>, T>>(
       m, ("TInstantSet" + typesuffix).c_str())
       .def(py::init<set<TInstant<T>> &>(), py::arg("instants"))
@@ -119,7 +133,7 @@ void def_temporal_types(py::module &m, std::string const &typesuffix) {
   def_comparator<TemporalComparators<TSequence<T>>>(m, "TSequence", typesuffix);
   def_tinstant_functions<TInstantFunctions<TSequence<T>, TInstant<T>, T>>(
       m, "TSequence", typesuffix);
-  py::class_<TSequence<T>, TemporalComparators<TSequence<T>>,
+  py::class_<TSequence<T>, Temporal<T>, TemporalComparators<TSequence<T>>,
              TInstantFunctions<TSequence<T>, TInstant<T>, T>>(
       m, ("TSequence" + typesuffix).c_str())
       .def(py::init<set<TInstant<T>> &, bool, bool>(), py::arg("instants"),
@@ -165,7 +179,7 @@ void def_temporal_types(py::module &m, std::string const &typesuffix) {
                                                        typesuffix);
   def_tinstant_functions<TInstantFunctions<TSequenceSet<T>, TInstant<T>, T>>(
       m, "TSequenceSet", typesuffix);
-  py::class_<TSequenceSet<T>, TemporalComparators<TSequenceSet<T>>,
+  py::class_<TSequenceSet<T>, Temporal<T>, TemporalComparators<TSequenceSet<T>>,
              TInstantFunctions<TSequenceSet<T>, TInstant<T>, T>>(
       m, ("TSequenceSet" + typesuffix).c_str())
       .def(py::init<set<TSequence<T>> &>(), py::arg("sequences"))
