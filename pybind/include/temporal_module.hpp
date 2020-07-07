@@ -4,6 +4,7 @@
 #include <meos/types/temporal/TInstantSet.hpp>
 #include <meos/types/temporal/TSequence.hpp>
 #include <meos/types/temporal/TSequenceSet.hpp>
+#include <meos/types/temporal/TemporalDuration.hpp>
 #include <pybind11/operators.h>
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
@@ -205,6 +206,13 @@ void def_temporal_module(py::module &m) {
   py::module temporal_module = m.def_submodule(
       "temporal", "This module defines MobilityDB's temporal types: Temporal, "
                   "TInstant, TInstantSet, TSequence and TSequenceSet");
+
+  py::enum_<TemporalDuration>(temporal_module, "TemporalDuration")
+      .value("Temporal", TemporalDuration::Temporal)
+      .value("Instant", TemporalDuration::Instant)
+      .value("InstantSet", TemporalDuration::InstantSet)
+      .value("Sequence", TemporalDuration::Sequence)
+      .value("SequenceSet", TemporalDuration::SequenceSet);
 
   def_temporal_types<bool>(temporal_module, "Bool");
   def_temporal_types<int>(temporal_module, "Int");

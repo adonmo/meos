@@ -3,7 +3,7 @@ import pytest
 from pymeos import Geometry
 from pymeos.temporal import (TInstantBool, TInstantFloat, TInstantGeom,
                              TInstantInt, TInstantSetBool, TInstantText,
-                             TSequenceFloat)
+                             TSequenceFloat, TemporalDuration)
 
 from ..utils import unix_dt
 
@@ -16,6 +16,8 @@ from ..utils import unix_dt
     TInstantInt("10@2011-01-01"),
 ])
 def test_different_constructors(actual):
+    assert actual.duration == TemporalDuration.Instant
+    assert actual.duration.name == 'Instant'
     assert actual.getValue == 10
     assert actual.getTimestamp == unix_dt(2011, 1, 1)
 

@@ -3,6 +3,7 @@
 
 #include <meos/types/geom/Geometry.hpp>
 #include <meos/types/range/Range.hpp>
+#include <meos/types/temporal/TemporalDuration.hpp>
 #include <meos/types/time/Period.hpp>
 #include <meos/types/time/PeriodSet.hpp>
 #include <meos/types/time/TimestampSet.hpp>
@@ -11,14 +12,6 @@ using namespace std;
 
 using time_point = std::chrono::system_clock::time_point;
 using duration_ms = std::chrono::milliseconds;
-
-enum class TemporalDuration {
-  Temporal,
-  Instant,
-  InstantSet,
-  Sequence,
-  SequenceSet,
-};
 
 template <typename T = float> class Temporal {
 public:

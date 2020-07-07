@@ -1,6 +1,6 @@
 import pytest
 
-from pymeos.temporal import TInstantInt, TSequenceInt, TSequenceSetInt
+from pymeos.temporal import TInstantInt, TSequenceInt, TSequenceSetInt, TemporalDuration
 
 from ..utils import unix_dt
 
@@ -30,6 +30,8 @@ def get_sample_tsequence_set():
     TSequenceSetInt("{[10@2011-01-01, 40@2011-01-02), [20@2011-01-03, 30@2011-01-04)}"),
 ])
 def test_different_constructors(actual):
+    assert actual.duration == TemporalDuration.SequenceSet
+    assert actual.duration.name == 'SequenceSet'
     assert len(actual.sequences) == 2
     assert actual.startSequence == get_sample_tsequence_1()
     assert actual.endSequence == get_sample_tsequence_2()

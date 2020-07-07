@@ -1,6 +1,6 @@
 import pytest
 
-from pymeos.temporal import TInstantFloat, TSequenceFloat
+from pymeos.temporal import TInstantFloat, TSequenceFloat, TemporalDuration
 
 from ..utils import unix_dt
 
@@ -17,6 +17,8 @@ def get_sample_tsequence():
     TSequenceFloat("(10@2020-09-10 01:00:00+01, 20@2019-09-10 01:00:00+01]"),
 ])
 def test_different_constructors(actual):
+    assert actual.duration == TemporalDuration.Sequence
+    assert actual.duration.name == 'Sequence'
     assert len(actual.instants) == 2
     assert actual.startInstant == TInstantFloat(20, unix_dt(2019, 9, 10))
     assert actual.endInstant == TInstantFloat(10, unix_dt(2020, 9, 10))
