@@ -19,24 +19,26 @@ TEST_CASE("TimestampSets are constructed properly", "[timestampset]") {
   }
 
   SECTION("all constructors work") {
+    TimestampSet timestamp_set;
     time_point t1 = unix_time_point(2020, 9, 8);
     time_point t2 = unix_time_point(2019, 9, 8);
     SECTION("no strings constructor") {
       time_point t3 = unix_time_point(2019, 9, 8); // Duplicate!
       set<time_point> s = {t1, t2, t3};
-      TimestampSet timestamp_set(s);
-      REQUIRE(timestamp_set.timestamps().size() == 2);
-      // We gave the timestamps out-of-order!
-      REQUIRE(timestamp_set.startTimestamp() == t2);
-      REQUIRE(timestamp_set.endTimestamp() == t1);
+      timestamp_set = TimestampSet(s);
+    }
+    SECTION("set of strings constructor") {
+      set<string> s = {"2020-09-08 01:00:00+01", "2019-09-08 01:00:00+01"};
+      timestamp_set = TimestampSet(s);
     }
     SECTION("string constructor") {
-      TimestampSet timestamp_set(
-          "{2020-09-08 01:00:00+01, 2019-09-08 01:00:00+01}");
-      REQUIRE(timestamp_set.timestamps().size() == 2);
-      REQUIRE(timestamp_set.startTimestamp() == t2);
-      REQUIRE(timestamp_set.endTimestamp() == t1);
+      timestamp_set =
+          TimestampSet("{2020-09-08 01:00:00+01, 2019-09-08 01:00:00+01}");
     }
+    REQUIRE(timestamp_set.timestamps().size() == 2);
+    // We gave the timestamps out-of-order!
+    REQUIRE(timestamp_set.startTimestamp() == t2);
+    REQUIRE(timestamp_set.endTimestamp() == t1);
   }
 }
 

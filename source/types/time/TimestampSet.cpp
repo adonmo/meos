@@ -4,14 +4,16 @@
 
 TimestampSet::TimestampSet() {}
 
-TimestampSet::TimestampSet(set<time_point> &timestamps_) {
-  for (auto const &e : timestamps_)
+TimestampSet::TimestampSet(set<time_point> &timestamps) {
+  for (auto const &e : timestamps)
     m_timestamps.insert(e);
 }
 
-TimestampSet::TimestampSet(TimestampSet const &t) {
-  for (auto const &e : t.m_timestamps)
-    m_timestamps.insert(e);
+TimestampSet::TimestampSet(set<string> &timestamps) {
+  for (auto const &e : timestamps) {
+    stringstream ss(e);
+    m_timestamps.insert(nextTime(ss));
+  }
 }
 
 TimestampSet::TimestampSet(string const serialized) {

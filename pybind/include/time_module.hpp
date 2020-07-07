@@ -82,7 +82,9 @@ void def_time_module(py::module &m) {
       .def("timestampN", &PeriodSet::timestampN, py::arg("n"));
 
   py::class_<TimestampSet>(time_module, "TimestampSet")
-      .def(py::init<set<time_point> &>())
+      .def(py::init<set<time_point> &>(), py::arg("timestamps"))
+      .def(py::init<set<string> &>(), py::arg("timestamps"))
+      .def(py::init<string>(), py::arg("serialized"))
       .def(py::self == py::self)
       .def(py::self != py::self)
       .def(py::self < py::self)

@@ -15,8 +15,8 @@ using duration_ms = std::chrono::milliseconds;
 class TimestampSet {
 public:
   TimestampSet();
-  TimestampSet(set<time_point> &timestamps_);
-  TimestampSet(TimestampSet const &t);
+  TimestampSet(set<time_point> &timestamps);
+  TimestampSet(set<string> &timestamps);
   TimestampSet(string const serialized);
 
   set<Period> periods() const;
