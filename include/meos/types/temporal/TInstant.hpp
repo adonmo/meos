@@ -54,6 +54,7 @@ public:
    */
   set<TInstant> instants() const;
 
+  duration_ms timespan() const override;
   set<Range<T>> getValues() const override;
   set<time_point> timestamps() const override;
   PeriodSet getTime() const;

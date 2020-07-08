@@ -6,7 +6,9 @@ template <typename T> TSequence<T>::TSequence() {}
 template <typename T>
 TSequence<T>::TSequence(set<TInstant<T>> &instants, bool lower_inc,
                         bool upper_inc)
-    : m_instants(instants), m_lower_inc(lower_inc), m_upper_inc(upper_inc) {}
+    : m_instants(instants), m_lower_inc(lower_inc), m_upper_inc(upper_inc) {
+  validate();
+}
 
 template <typename T>
 TSequence<T>::TSequence(set<string> const &instants, bool lower_inc,
@@ -15,6 +17,7 @@ TSequence<T>::TSequence(set<string> const &instants, bool lower_inc,
   TSequence<T> instant_set;
   for (auto const &e : instants)
     m_instants.insert(TInstant<T>(e));
+  validate();
 }
 
 template <typename T> TSequence<T>::TSequence(string const &serialized) {
@@ -24,6 +27,29 @@ template <typename T> TSequence<T>::TSequence(string const &serialized) {
   this->m_instants = seq.instants();
   this->m_lower_inc = seq.lower_inc();
   this->m_upper_inc = seq.upper_inc();
+  validate();
+}
+
+template <typename T> void TSequence<T>::validate() const {
+  if (m_instants.size() < 1) {
+    throw invalid_argument("A sequence should have at least one instant");
+  }
+
+  time_point start = this->startTimestamp();
+  time_point end = this->endTimestamp();
+
+  if (start > end) {
+    throw invalid_argument(
+        "The lower bound must be less than or equal to the upper bound");
+  }
+
+  if (start == end) {
+    bool both_inclusive = this->lower_inc() && this->upper_inc();
+    if (!both_inclusive) {
+      throw invalid_argument("The lower and upper bounds must be inclusive for "
+                             "an instantaneous sequence");
+    }
+  }
 }
 
 template <typename T>
@@ -76,6 +102,11 @@ template <typename T> bool TSequence<T>::upper_inc() const {
 
 template <typename T> set<TInstant<T>> TSequence<T>::instants() const {
   return this->m_instants;
+}
+
+template <typename T> duration_ms TSequence<T>::timespan() const {
+  return std::chrono::duration_cast<duration_ms>(this->endTimestamp() -
+                                                 this->startTimestamp());
 }
 
 template <typename T> set<Range<T>> TSequence<T>::getValues() const {

@@ -61,7 +61,7 @@ public:
   /**
    * Interval on which the temporal value is defined.
    */
-  duration_ms timespan() const;
+  virtual duration_ms timespan() const = 0;
 
   /**
    * Period on which the temporal value is defined ignoring potential time gaps.

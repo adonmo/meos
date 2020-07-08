@@ -104,6 +104,13 @@ template <typename T> set<TInstant<T>> TSequenceSet<T>::instants() const {
   return s;
 }
 
+template <typename T> duration_ms TSequenceSet<T>::timespan() const {
+  duration_ms tspan(0);
+  for (auto const &e : this->m_sequences)
+    tspan += e.timespan();
+  return tspan;
+}
+
 template <typename T> set<Range<T>> TSequenceSet<T>::getValues() const {
   set<Range<T>> s;
   for (auto const &e : this->m_sequences) {

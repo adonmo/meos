@@ -20,11 +20,11 @@ TEMPLATE_TEST_CASE("TSequenceSet are serialized", "[serializer][tsequenceset]",
     set<TInstant<TestType>> instants;
     instants.insert(instant);
     auto sequences = set<TSequence<TestType>>{
-        TSequence<TestType>(instants),
+        TSequence<TestType>(instants, true, true),
     };
     TSequenceSet<TestType> sequence_set(sequences);
     REQUIRE(w.write(&sequence_set) ==
-            "{[" + w.write(i) + "@2012-11-01T00:00:00+0000)}");
+            "{[" + w.write(i) + "@2012-11-01T00:00:00+0000]}");
   }
   SECTION("multiple values present") {
     auto i = GENERATE(0, 1, -1, 2012, 756772544,
@@ -34,7 +34,7 @@ TEMPLATE_TEST_CASE("TSequenceSet are serialized", "[serializer][tsequenceset]",
                       take(6, random(numeric_limits<int>::min(),
                                      numeric_limits<int>::max())));
     auto instant1 = TInstant<TestType>(i, unix_time_point(2012, 11, 1));
-    auto instant2 = TInstant<TestType>(j, unix_time_point(2012, 11, 1));
+    auto instant2 = TInstant<TestType>(j, unix_time_point(2012, 11, 2));
     set<TInstant<TestType>> instants;
     instants.insert(instant1);
     instants.insert(instant2);
@@ -52,7 +52,7 @@ TEMPLATE_TEST_CASE("TSequenceSet are serialized", "[serializer][tsequenceset]",
         split_into_set(serialized.substr(2, serialized.size() - 4), ", ");
     set<string> expected = {
         w.write(i) + "@2012-11-01T00:00:00+0000",
-        w.write(j) + "@2012-11-01T00:00:00+0000",
+        w.write(j) + "@2012-11-02T00:00:00+0000",
     };
     REQUIRE_THAT(actual, UnorderedEquals(expected));
   }

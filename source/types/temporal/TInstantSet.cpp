@@ -57,6 +57,10 @@ template <typename T> set<TInstant<T>> TInstantSet<T>::instants() const {
   return this->m_instants;
 }
 
+template <typename T> duration_ms TInstantSet<T>::timespan() const {
+  return duration_ms(0);
+}
+
 template <typename T> set<Range<T>> TInstantSet<T>::getValues() const {
   set<Range<T>> s;
   for (auto const &e : this->m_instants) {

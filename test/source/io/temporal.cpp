@@ -37,7 +37,7 @@ TEMPLATE_TEST_CASE("Temporal are deserialized", "[deserializer][temporal]", int,
         CHECK_THROWS(r.nextTemporal());
       }
       SECTION("in a sequence duration") {
-        Deserializer<TestType> r("[10@2012-11-01)");
+        Deserializer<TestType> r("[10@2012-11-01]");
 
         unique_ptr<Temporal<TestType>> temporal = r.nextTemporal();
         auto casted = (dynamic_cast<TSequence<TestType> *>(temporal.get()));
@@ -47,7 +47,7 @@ TEMPLATE_TEST_CASE("Temporal are deserialized", "[deserializer][temporal]", int,
         auto x = UnorderedEquals(s);
         REQUIRE_THAT(actual, x);
         REQUIRE(casted->lower_inc() == true);
-        REQUIRE(casted->upper_inc() == false);
+        REQUIRE(casted->upper_inc() == true);
 
         CHECK_THROWS(r.nextTemporal());
       }

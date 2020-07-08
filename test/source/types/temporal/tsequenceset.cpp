@@ -205,15 +205,19 @@ TEMPLATE_TEST_CASE("TSequenceSet value functions", "[tsequenceset]", int,
   REQUIRE(sequence_set.endValue() == 50);
 }
 
-TEMPLATE_TEST_CASE("TSequenceSet sequence functions", "[tsequenceset]", int,
+TEMPLATE_TEST_CASE("TSequenceSet getTime and timespan", "[tsequenceset]", int,
                    float) {
   set<TSequence<TestType>> sequences;
-  set<TSequence<TestType>> expected_sequences;
-  size_t size = GENERATE(0, take(2, random(1, 6)));
+  size_t size = GENERATE(0, take(4, random(1, 24)));
+  set<TInstant<TestType>> all_expected_instants;
+  set<time_point> all_expected_timestamps;
+  duration_ms expected_timespan(0);
+
+  duration_ms shift(GENERATE(take(4, random(minute, day))));
 
   for (size_t i = 0; i < size; i++) {
     set<TInstant<TestType>> instants;
-    size_t seq_size = GENERATE(0, take(2, random(1, 6)));
+    size_t seq_size = 2 + random() % 9;
 
     for (size_t j = 0; j < seq_size; j++) {
       TestType v = random() % 1000;
@@ -221,119 +225,81 @@ TEMPLATE_TEST_CASE("TSequenceSet sequence functions", "[tsequenceset]", int,
           unix_time(2012, 1, 1) + 10 * 365 * (random() % day));
       auto instant = TInstant<TestType>(v, t);
       instants.insert(instant);
+      all_expected_instants.insert(instant);
+      all_expected_timestamps.insert(t);
     }
     TSequence<TestType> sequence(instants);
+    expected_timespan += sequence.timespan();
     sequences.insert(sequence);
-    expected_sequences.insert(sequence);
   }
 
-  TSequenceSet<TestType> actual(expected_sequences);
-  REQUIRE(actual.numSequences() == expected_sequences.size());
-  REQUIRE_THAT(actual.sequences(), UnorderedEquals(expected_sequences));
-  if (size > 0) {
-    REQUIRE(actual.startSequence() == *expected_sequences.begin());
-    REQUIRE(actual.endSequence() == *expected_sequences.rbegin());
-  } else {
-    CHECK_THROWS(actual.startSequence());
-    CHECK_THROWS(actual.endSequence());
-  }
-}
-
-TEMPLATE_TEST_CASE("TSequenceSet instant functions", "[tsequenceset]", int,
-                   float) {
-  set<TInstant<TestType>> instants;
-  set<TInstant<TestType>> expected_instants;
-
-  size_t size = GENERATE(0, take(4, random(1, 6)));
-
-  for (size_t i = 0; i < size; i++) {
-    TestType v = random() % 1000;
-    time_point t = std::chrono::system_clock::from_time_t(
-        unix_time(2012, 1, 1) + 10 * 365 * (random() % day));
-    auto instant = TInstant<TestType>(v, t);
-    instants.insert(instant);
-    expected_instants.insert(instant);
-  }
-
-  auto sequences = set<TSequence<TestType>>{
-      TSequence<TestType>(instants),
-  };
   TSequenceSet<TestType> actual(sequences);
-  REQUIRE(actual.numInstants() == expected_instants.size());
-  REQUIRE_THAT(actual.instants(), UnorderedEquals(expected_instants));
-  if (size > 0) {
-    REQUIRE(actual.startInstant() == *expected_instants.begin());
-    REQUIRE(actual.instantN(0) == *expected_instants.begin());
-    REQUIRE(actual.endInstant() == *expected_instants.rbegin());
-    REQUIRE(actual.instantN(size - 1) == *expected_instants.rbegin());
-    CHECK_THROWS(actual.instantN(size));
-  } else {
-    CHECK_THROWS(actual.startInstant());
-    CHECK_THROWS(actual.instantN(0));
-    CHECK_THROWS(actual.endInstant());
-    CHECK_THROWS(actual.instantN(1));
-  }
-}
 
-TEMPLATE_TEST_CASE("TSequenceSet getTime", "[tsequenceset]", int, float) {
-  TestType v1 = GENERATE(take(2, random(0, 1000)));
-  TestType v2 = GENERATE(take(2, random(0, 1000)));
-  auto t1 =
-      GENERATE(take(2, random(unix_time(2012, 1, 1), unix_time(2020, 1, 1))));
-  auto t2 =
-      GENERATE(take(2, random(unix_time(2012, 1, 1), unix_time(2020, 1, 1))));
-  time_point tp1 = std::chrono::system_clock::from_time_t(t1 / 1000L);
-  time_point tp2 = std::chrono::system_clock::from_time_t(t2 / 1000L);
-  auto sequence_1 = TInstant<TestType>(v1, tp1);
-  auto sequence_2 = TInstant<TestType>(v2, tp2);
+  SECTION("getTime") {
+    set<Period> periods = {};
+    for (auto const &e : sequences)
+      periods.insert(e.period());
+    PeriodSet expected(periods);
 
-  auto period_1 = sequence_1.period();
-  auto period_2 = sequence_2.period();
-  set<Period> periods = {period_1, period_2};
-  PeriodSet expected(periods);
-
-  set<TInstant<TestType>> instants;
-  instants.insert(sequence_1);
-  instants.insert(sequence_2);
-  auto sequences = set<TSequence<TestType>>{
-      TSequence<TestType>(instants),
-  };
-  TSequenceSet<TestType> sequence_set(sequences);
-
-  REQUIRE(sequence_set.timespan() ==
-          sequence_set.endTimestamp() - sequence_set.startTimestamp());
-}
-
-TEMPLATE_TEST_CASE("TSequenceSet period and timestamp related functions",
-                   "[tsequenceset]", int, float) {
-  set<TInstant<TestType>> instants;
-
-  size_t size = GENERATE(0, take(4, random(1, 100)));
-
-  for (size_t i = 0; i < size; i++) {
-    TestType v = random() % 1000;
-    time_point t = std::chrono::system_clock::from_time_t(
-        (unix_time(2012, 1, 1) + 10 * 365 * (random() % day)) / 1000L);
-    auto instant = TInstant<TestType>(v, t);
-    instants.insert(instant);
+    REQUIRE(actual.getTime() == expected);
   }
 
-  auto sequences = set<TSequence<TestType>>{
-      TSequence<TestType>(instants),
-  };
-  TSequenceSet<TestType> actual(sequences);
-  REQUIRE_THAT(actual.instants(), UnorderedEquals(instants));
-  if (size > 0) {
-    Period p = actual.period();
-    REQUIRE(p.lower() == actual.startTimestamp());
-    REQUIRE(p.lower() == actual.timestampN(0));
-    REQUIRE(p.upper() == actual.endTimestamp());
-    REQUIRE(p.upper() == actual.timestampN(size - 1));
-    CHECK_THROWS(actual.timestampN(size));
-    REQUIRE(p.lower_inc() == true);
-    REQUIRE(p.upper_inc() == true);
-  } else {
-    CHECK_THROWS(actual.period());
+  SECTION("timespan") { REQUIRE(actual.timespan() == expected_timespan); }
+
+  SECTION("sequence functions") {
+    REQUIRE(actual.numSequences() == sequences.size());
+    REQUIRE_THAT(actual.sequences(), UnorderedEquals(sequences));
+    if (size > 0) {
+      REQUIRE(actual.startSequence() == *sequences.begin());
+      REQUIRE(actual.endSequence() == *sequences.rbegin());
+    } else {
+      CHECK_THROWS(actual.startSequence());
+      CHECK_THROWS(actual.endSequence());
+    }
+  }
+
+  SECTION("instant functions") {
+    size_t sz = all_expected_instants.size();
+    REQUIRE(actual.numInstants() == all_expected_instants.size());
+    REQUIRE_THAT(actual.instants(), UnorderedEquals(all_expected_instants));
+    if (sz > 0) {
+      REQUIRE(actual.startInstant() == *all_expected_instants.begin());
+      REQUIRE(actual.instantN(0) == *all_expected_instants.begin());
+      REQUIRE(actual.endInstant() == *all_expected_instants.rbegin());
+      REQUIRE(actual.instantN(sz - 1) == *all_expected_instants.rbegin());
+      CHECK_THROWS(actual.instantN(sz));
+    } else {
+      CHECK_THROWS(actual.startInstant());
+      CHECK_THROWS(actual.instantN(0));
+      CHECK_THROWS(actual.endInstant());
+      CHECK_THROWS(actual.instantN(1));
+    }
+  }
+
+  SECTION("period and timestamp related functions") {
+    size_t sz = all_expected_timestamps.size();
+    REQUIRE(actual.numTimestamps() == all_expected_timestamps.size());
+    REQUIRE_THAT(actual.timestamps(), UnorderedEquals(all_expected_timestamps));
+    if (sz > 0) {
+      Period p = actual.period();
+      REQUIRE(p.lower() == actual.startTimestamp());
+      REQUIRE(p.lower() == actual.timestampN(0));
+      REQUIRE(p.upper() == actual.endTimestamp());
+      REQUIRE(p.upper() == actual.timestampN(sz - 1));
+      CHECK_THROWS(actual.timestampN(sz));
+      REQUIRE(p.lower_inc() == true);
+      REQUIRE(p.upper_inc() == true);
+    } else {
+      CHECK_THROWS(actual.period());
+    }
+  }
+
+  SECTION("shift") {
+    set<TSequence<TestType>> shifted_sequences;
+    for (auto const &e : sequences)
+      shifted_sequences.insert(*e.shift(shift).get());
+    TSequenceSet<TestType> expected(shifted_sequences);
+    REQUIRE(*actual.shift(shift).get() == expected);
   }
 }
 
@@ -352,59 +318,6 @@ TEMPLATE_TEST_CASE("TSequenceSet.period() - gaps are ignored", "[tsequenceset]",
   Period expected = Period(unix_time_point(2012, 1, 1),
                            unix_time_point(2012, 1, 7), true, true);
   REQUIRE(sequence_set.period() == expected);
-}
-
-TEMPLATE_TEST_CASE("TSequenceSet timespan", "[tsequenceset]", int, float) {
-  TestType v1 = GENERATE(take(2, random(0, 1000)));
-  TestType v2 = GENERATE(take(2, random(0, 1000)));
-  auto t1 =
-      GENERATE(take(2, random(unix_time(2012, 1, 1), unix_time(2020, 1, 1))));
-  auto t2 =
-      GENERATE(take(2, random(unix_time(2012, 1, 1), unix_time(2020, 1, 1))));
-  time_point tp1 = std::chrono::system_clock::from_time_t(t1 / 1000L);
-  time_point tp2 = std::chrono::system_clock::from_time_t(t2 / 1000L);
-  auto sequence_1 = TInstant<TestType>(v1, tp1);
-  auto sequence_2 = TInstant<TestType>(v2, tp2);
-
-  set<TInstant<TestType>> instants;
-  instants.insert(sequence_1);
-  instants.insert(sequence_2);
-  auto sequences = set<TSequence<TestType>>{
-      TSequence<TestType>(instants),
-  };
-  TSequenceSet<TestType> sequence_set(sequences);
-
-  REQUIRE(sequence_set.timespan() ==
-          sequence_set.endTimestamp() - sequence_set.startTimestamp());
-}
-
-TEMPLATE_TEST_CASE("TSequenceSet shift", "[tsequenceset]", int, float) {
-  set<TInstant<TestType>> actual_instants;
-  set<TInstant<TestType>> expected_instants;
-  size_t size = GENERATE(take(4, random(1, 2)));
-  duration_ms shift(GENERATE(take(4, random(minute, day))));
-
-  for (size_t i = 0; i < size; i++) {
-    TestType v = random() % 1000;
-    time_point t = std::chrono::system_clock::from_time_t(
-        (unix_time(2012, 1, 1) + 10 * 365 * (random() % day)) / 1000L);
-    auto actual_instant = TInstant<TestType>(v, t);
-    actual_instants.insert(actual_instant);
-    auto expected_instant = TInstant<TestType>(v, t + shift);
-    expected_instants.insert(expected_instant);
-  }
-
-  auto actual_sequences = set<TSequence<TestType>>{
-      TSequence<TestType>(actual_instants),
-  };
-  TSequenceSet<TestType> actual(actual_sequences);
-
-  auto expected_sequences = set<TSequence<TestType>>{
-      TSequence<TestType>(expected_instants),
-  };
-  TSequenceSet<TestType> expected(expected_sequences);
-
-  REQUIRE(*actual.shift(shift).get() == expected);
 }
 
 TEMPLATE_TEST_CASE("TSequenceSet intersection functions", "[tsequenceset]", int,

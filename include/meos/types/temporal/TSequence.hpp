@@ -43,6 +43,7 @@ public:
    */
   set<TInstant<T>> instants() const;
 
+  duration_ms timespan() const override;
   set<Range<T>> getValues() const override;
   set<time_point> timestamps() const override;
   PeriodSet getTime() const;
@@ -102,6 +103,8 @@ private:
   set<TInstant<T>> m_instants;
   bool m_lower_inc;
   bool m_upper_inc;
+
+  void validate() const;
 
   TSequence<T> *clone_impl() const override { return new TSequence<T>(*this); };
 };

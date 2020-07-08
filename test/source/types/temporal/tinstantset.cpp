@@ -231,8 +231,7 @@ TEMPLATE_TEST_CASE("TInstantSet getTime", "[tinstantset]", int, float) {
   instants.insert(instant_2);
   TInstantSet<TestType> instant_set(instants);
 
-  REQUIRE(instant_set.timespan() ==
-          instant_set.endTimestamp() - instant_set.startTimestamp());
+  REQUIRE(instant_set.timespan() == duration_ms(0));
 }
 
 TEMPLATE_TEST_CASE("TInstantSet period and timestamp related functions",
@@ -296,8 +295,7 @@ TEMPLATE_TEST_CASE("TInstantSet timespan", "[tinstantset]", int, float) {
   instants.insert(instant_2);
   TInstantSet<TestType> instant_set(instants);
 
-  REQUIRE(instant_set.timespan() ==
-          instant_set.endTimestamp() - instant_set.startTimestamp());
+  REQUIRE(instant_set.timespan() == duration_ms(0));
 }
 
 TEMPLATE_TEST_CASE("TInstantSet shift", "[tinstantset]", int, float) {

@@ -49,10 +49,6 @@ template <typename T> time_point Temporal<T>::timestampN(size_t n) const {
   return *next(s.begin(), n);
 }
 
-template <typename T> duration_ms Temporal<T>::timespan() const {
-  return period().timespan();
-}
-
 template <typename T>
 unique_ptr<Temporal<T>> Temporal<T>::shift(duration_ms const timedelta) const {
   return unique_ptr<Temporal<T>>(this->shift_impl(timedelta));

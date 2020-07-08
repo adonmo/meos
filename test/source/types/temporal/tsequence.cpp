@@ -86,12 +86,14 @@ TEMPLATE_TEST_CASE("TSequence comparision operators", "[tsequence]", int,
   SECTION("lhs < rhs") {
     SECTION("different sizes") {
       set<TInstant<TestType>> lhs_instants = {
-          TInstant<TestType>(3, unix_time_point(2012, 1, 2)),
+          TInstant<TestType>(4, unix_time_point(2012, 1, 4)),
+          TInstant<TestType>(5, unix_time_point(2012, 1, 5)),
       };
       TSequence<TestType> lhs(lhs_instants, true, false);
       set<TInstant<TestType>> rhs_instants = {
-          TInstant<TestType>(1, unix_time_point(2012, 1, 2)),
+          TInstant<TestType>(1, unix_time_point(2012, 1, 1)),
           TInstant<TestType>(2, unix_time_point(2012, 1, 2)),
+          TInstant<TestType>(3, unix_time_point(2012, 1, 3)),
       };
       TSequence<TestType> rhs(rhs_instants, true, false);
       REQUIRE(!(lhs == rhs));
@@ -104,11 +106,13 @@ TEMPLATE_TEST_CASE("TSequence comparision operators", "[tsequence]", int,
     SECTION("same everything, except different bounds") {
       // TODO: This section could use some better tests
       set<TInstant<TestType>> lhs_instants = {
-          TInstant<TestType>(2, unix_time_point(2012, 1, 1)),
+          TInstant<TestType>(4, unix_time_point(2012, 1, 4)),
+          TInstant<TestType>(5, unix_time_point(2012, 1, 5)),
       };
       TSequence<TestType> lhs(lhs_instants, true, true);
       set<TInstant<TestType>> rhs_instants = {
-          TInstant<TestType>(2, unix_time_point(2012, 1, 1)),
+          TInstant<TestType>(4, unix_time_point(2012, 1, 4)),
+          TInstant<TestType>(5, unix_time_point(2012, 1, 5)),
       };
       TSequence<TestType> rhs(rhs_instants, false, true);
       REQUIRE(!(lhs == rhs));
@@ -120,11 +124,13 @@ TEMPLATE_TEST_CASE("TSequence comparision operators", "[tsequence]", int,
     }
     SECTION("same everything, except different timestamp") {
       set<TInstant<TestType>> lhs_instants = {
-          TInstant<TestType>(2, unix_time_point(2012, 1, 1)),
+          TInstant<TestType>(4, unix_time_point(2012, 1, 4)),
+          TInstant<TestType>(5, unix_time_point(2012, 1, 5)),
       };
       TSequence<TestType> lhs(lhs_instants, true, false);
       set<TInstant<TestType>> rhs_instants = {
-          TInstant<TestType>(2, unix_time_point(2012, 1, 2)),
+          TInstant<TestType>(4, unix_time_point(2012, 1, 4)),
+          TInstant<TestType>(5, unix_time_point(2012, 1, 6)),
       };
       TSequence<TestType> rhs(rhs_instants, true, false);
       REQUIRE(!(lhs == rhs));
@@ -136,11 +142,13 @@ TEMPLATE_TEST_CASE("TSequence comparision operators", "[tsequence]", int,
     }
     SECTION("same everything, except different values") {
       set<TInstant<TestType>> lhs_instants = {
-          TInstant<TestType>(1, unix_time_point(2012, 1, 1)),
+          TInstant<TestType>(1, unix_time_point(2012, 1, 4)),
+          TInstant<TestType>(2, unix_time_point(2012, 1, 5)),
       };
       TSequence<TestType> lhs(lhs_instants, true, false);
       set<TInstant<TestType>> rhs_instants = {
-          TInstant<TestType>(2, unix_time_point(2012, 1, 1)),
+          TInstant<TestType>(4, unix_time_point(2012, 1, 4)),
+          TInstant<TestType>(5, unix_time_point(2012, 1, 5)),
       };
       TSequence<TestType> rhs(rhs_instants, true, false);
       REQUIRE(!(lhs == rhs));
@@ -153,10 +161,12 @@ TEMPLATE_TEST_CASE("TSequence comparision operators", "[tsequence]", int,
     SECTION("different values, different timestamp") {
       set<TInstant<TestType>> lhs_instants = {
           TInstant<TestType>(1, unix_time_point(2012, 1, 1)),
+          TInstant<TestType>(2, unix_time_point(2012, 1, 2)),
       };
       TSequence<TestType> lhs(lhs_instants, true, false);
       set<TInstant<TestType>> rhs_instants = {
-          TInstant<TestType>(2, unix_time_point(2012, 1, 2)),
+          TInstant<TestType>(4, unix_time_point(2012, 1, 4)),
+          TInstant<TestType>(5, unix_time_point(2012, 1, 5)),
       };
       TSequence<TestType> rhs(rhs_instants, true, false);
       REQUIRE(!(lhs == rhs));
@@ -171,10 +181,7 @@ TEMPLATE_TEST_CASE("TSequence comparision operators", "[tsequence]", int,
 
 TEMPLATE_TEST_CASE("TSequence duration function returns Sequence",
                    "[tsequence]", int, float, bool, string, Geometry) {
-  auto lower_inc = GENERATE(true, false);
-  auto upper_inc = GENERATE(true, false);
-  set<TInstant<TestType>> v;
-  TSequence<TestType> sequence(v, lower_inc, upper_inc);
+  TSequence<TestType> sequence;
   REQUIRE(sequence.duration() == TemporalDuration::Sequence);
 }
 
@@ -209,7 +216,8 @@ TEMPLATE_TEST_CASE("TSequence instant functions", "[tsequence]", int, float) {
   set<TInstant<TestType>> instants;
   set<TInstant<TestType>> expected_instants;
 
-  size_t size = GENERATE(0, take(4, random(1, 100)));
+  // TODO test size = 1
+  size_t size = GENERATE(take(4, random(2, 100)));
 
   for (size_t i = 0; i < size; i++) {
     TestType v = random() % 1000;
@@ -269,7 +277,8 @@ TEMPLATE_TEST_CASE("TSequence period and timestamp related functions",
   auto upper_inc = GENERATE(true, false);
   set<TInstant<TestType>> instants;
 
-  size_t size = GENERATE(0, take(4, random(1, 100)));
+  // TODO test size = 1
+  size_t size = GENERATE(take(4, random(2, 100)));
 
   for (size_t i = 0; i < size; i++) {
     TestType v = random() % 1000;
@@ -341,7 +350,7 @@ TEMPLATE_TEST_CASE("TSequence shift", "[tsequence]", int, float) {
 
   set<TInstant<TestType>> expected_instants;
   set<TInstant<TestType>> actual_instants;
-  size_t size = GENERATE(take(4, random(1, 2)));
+  size_t size = GENERATE(take(4, random(2, 24)));
   duration_ms shift(GENERATE(take(4, random(minute, day))));
 
   for (size_t i = 0; i < size; i++) {
