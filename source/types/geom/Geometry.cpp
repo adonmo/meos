@@ -48,7 +48,7 @@ void Geometry::free() {
   }
 }
 
-Geometry Geometry::operator+(Geometry const &other) {
+Geometry Geometry::operator+(Geometry const &other) const {
   double x, y;
   GEOSGeomGetX_r(geos_context, this->geom, &x);
   GEOSGeomGetY_r(geos_context, this->geom, &y);
@@ -60,7 +60,7 @@ Geometry Geometry::operator+(Geometry const &other) {
   return Geometry(x + ox, y + oy);
 }
 
-Geometry Geometry::operator-(Geometry const &other) {
+Geometry Geometry::operator-(Geometry const &other) const {
   double x, y;
   GEOSGeomGetX_r(geos_context, this->geom, &x);
   GEOSGeomGetY_r(geos_context, this->geom, &y);

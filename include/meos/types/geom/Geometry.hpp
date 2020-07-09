@@ -25,8 +25,8 @@ public:
   void fromWKT(std::string wkt);
   std::string toWKT() const;
 
-  Geometry operator+(Geometry const &g);
-  Geometry operator-(Geometry const &g);
+  Geometry operator+(Geometry const &g) const;
+  Geometry operator-(Geometry const &g) const;
 
   int compare(Geometry const &other) const;
 
