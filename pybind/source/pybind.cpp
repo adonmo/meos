@@ -32,6 +32,8 @@ PYBIND11_MODULE(pymeos, m) {
              return s.str();
            })
       .def("compare", &Geometry::compare, py::arg("other"))
+      .def_property_readonly("x", &Geometry::x)
+      .def_property_readonly("y", &Geometry::y)
       .def("fromWKT", &Geometry::fromWKT)
       .def("toWKT", &Geometry::toWKT);
 

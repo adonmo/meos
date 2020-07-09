@@ -48,6 +48,18 @@ void Geometry::free() {
   }
 }
 
+double Geometry::x() const {
+  double x;
+  GEOSGeomGetX_r(geos_context, this->geom, &x);
+  return x;
+}
+
+double Geometry::y() const {
+  double y;
+  GEOSGeomGetY_r(geos_context, this->geom, &y);
+  return y;
+}
+
 Geometry Geometry::operator+(Geometry const &other) const {
   double x, y;
   GEOSGeomGetX_r(geos_context, this->geom, &x);
