@@ -1,14 +1,14 @@
 Welcome to PyMEOS's documentation
 ===================================
 
-PyMEOS provides python bindings to MEOS. Check `README <https://github.com/chaitan94/meos>`_ on GitHub for more infromation.
+PyMEOS provides python bindings to MEOS. Check `README <https://github.com/adonmo/meos>`_ on GitHub for more infromation.
 
 Installation (Python)
 ---------------------
 
 .. code-block:: bash
 
-    pip install git+https://github.com/chaitan94/meos
+    pip install git+https://github.com/adonmo/meos
 
 
 .. toctree::
