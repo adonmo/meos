@@ -11,10 +11,10 @@
 ### Installation
 
 ```sh
-$ pip install git+https://github.com/adonmo/meos
+$ pip install pymeos
 ```
 
-Note: This assumes libgeos-dev is already installed on your system.
+Note: libgeos-dev might need to be installed on your system.
 
 ### Code sample
 
@@ -78,65 +78,11 @@ Minimalistic C++ app example: https://github.com/adonmo/meos-cpp-example
 
 C++ API Reference: https://meos.netlify.app
 
-# Development
-MEOS uses the [CMake](https://cmake.org/) and [setuptools](https://setuptools.readthedocs.io/en/latest/) for the build system, and [Catch2](https://github.com/catchorg/Catch2) and [pytest](https://docs.pytest.org/en/latest/) for tests.
-
-## Building
-
-```sh
-$ cmake -B build -S .
-$ cmake --build build
-```
-
-## Testing
-
-### C++
-
-```sh
-$ cmake -B build/test -S test -DCMAKE_BUILD_TYPE=Release
-$ cmake --build build/test --config Release
-$ ./build/test/libmeos-tests
-```
-
-### Python
-
-```sh
-$ pip install .
-$ pip install -r tests/python/requirements.txt
-$ pytest
-```
-
-## Building docs
-
-### C++ (Doxygen)
-
-```sh
-$ cmake -B build/docs -S documentation
-$ cmake --build build/docs
-$ cmake --build build/docs --target cppdocs
-```
-You can then proceed to host the docs locally, for example on http://0.0.0.0:8000/
-```sh
-$ python -m http.server --directory build/docs/doxygen/html
-```
-
-### Python (Sphinx)
-
-```sh
-$ pip install .[docs]
-$ cmake -B build/docs -S documentation
-$ cmake --build build/docs
-$ cmake --build build/docs --target pydocs
-```
-You can then proceed to host the docs locally, for example on http://0.0.0.0:8000/
-```sh
-$ python -m http.server --directory documentation/python/_build/html
-```
-
 ## Contributing
 
 Issues and pull requests are welcome.
 
 * For proposing new features/improvements or reporting bugs, [create an issue](https://github.com/adonmo/meos/issues/new/choose).
 * Check [open issues](https://github.com/adonmo/meos/issues) for viewing existing ideas, verify if it is already proposed/being worked upon.
+* Instruction on how to build, test and generate documentation can be found in [DEVELOPMENT.md](DEVELOPMENT.md)
 * When implementing new features make sure to add relevant tests and documentation before sending pull requests.
