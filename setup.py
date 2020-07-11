@@ -117,6 +117,7 @@ if platform.system() == "Windows":
     extra_compile_args.append('/std:c++14')
 else:
     extra_compile_args.append('-std=c++14')
+    extra_compile_args.append('-g0')
 
 extra_link_args = geos_paths.get("extra_link_args", [])
 

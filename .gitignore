@@ -3,6 +3,7 @@ ENV
 __pycache__
 .pyc
 dist
+.eggs
 *.egg-info
 *.local
 
