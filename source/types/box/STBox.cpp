@@ -1,8 +1,9 @@
 #include <cmath>
+#include <sstream>
+
 #include <meos/io/utils.hpp>
 #include <meos/types/box/STBox.hpp>
 #include <meos/util/serializing.hpp>
-#include <sstream>
 
 extern int const SRID_DEFAULT = 0;
 

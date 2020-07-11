@@ -1,4 +1,4 @@
-#include <meos/geos.h>
+#include <meos/geos.hpp>
 
 GEOSContextHandle_t geos_context = NULL;
 

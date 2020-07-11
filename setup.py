@@ -40,7 +40,7 @@ def get_geos_config(option):
 def get_geos_paths():
     """Obtain the paths for compiling and linking with the GEOS C-API
 
-    First the presence of the GEOS_INCLUDE_PATH and GEOS_INCLUDE_PATH environment
+    First the presence of the GEOS_INCLUDE_PATH and GEOS_LIBRARY_PATH environment
     variables is checked. If they are both present, these are taken.
 
     If one of the two paths was not present, geos-config is called (it should be on the
@@ -105,7 +105,7 @@ geos_paths = get_geos_paths()
 
 sources = ['pybind/source/pybind.cpp']
 for root, dirnames, filenames in os.walk('./source'):
-    for filename in fnmatch.filter(filenames, '*.c') or fnmatch.filter(filenames, '*.cpp'):
+    for filename in fnmatch.filter(filenames, '*.cpp'):
         sources.append(os.path.join(root, filename))
 
 include_dirs = ['include', 'pybind/include', PyBind11Include()] + geos_paths.get("include_dirs", [])

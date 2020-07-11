@@ -1,4 +1,7 @@
 #include <iomanip>
+#include <sstream>
+#include <string>
+
 #include <meos/types/temporal/TInstant.hpp>
 
 template <typename T> TInstant<T>::TInstant() {}

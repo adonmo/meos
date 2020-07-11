@@ -1,4 +1,7 @@
 #include <iomanip>
+#include <sstream>
+#include <string>
+
 #include <meos/types/temporal/TSequenceSet.hpp>
 
 template <typename T> TSequenceSet<T>::TSequenceSet() {}

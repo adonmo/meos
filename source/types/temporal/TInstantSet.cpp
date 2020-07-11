@@ -1,4 +1,7 @@
 #include <iomanip>
+#include <sstream>
+#include <string>
+
 #include <meos/types/temporal/TInstantSet.hpp>
 
 template <typename T> TInstantSet<T>::TInstantSet() {}

@@ -1,8 +1,13 @@
-#include "../../common/matchers.hpp"
-#include "../../common/time_utils.hpp"
+#include <sstream>
+#include <string>
+
 #include <catch2/catch.hpp>
+
 #include <meos/types/range/Range.hpp>
 #include <meos/types/temporal/TInstant.hpp>
+
+#include "../../common/matchers.hpp"
+#include "../../common/time_utils.hpp"
 
 time_t const day = 24 * 60 * 60 * 1000L;
 

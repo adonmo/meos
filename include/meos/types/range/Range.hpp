@@ -16,6 +16,7 @@ private:
 public:
   Range(T const lower, T const upper, bool const lower_inc = true,
         bool const upper_inc = false);
+  virtual ~Range();
 
   virtual unique_ptr<Range> clone() { return make_unique<Range>(*this); }
 

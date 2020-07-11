@@ -1,9 +1,9 @@
 #ifndef MEOS_TYPES_GEOM_GEOMETRY_HPP
 #define MEOS_TYPES_GEOM_GEOMETRY_HPP
 
-#include <iosfwd>
-#include <meos/geos.h>
 #include <string>
+
+#include <meos/geos.hpp>
 
 /**
  * Mostly just a wrapper on top of GEOSGeometry*

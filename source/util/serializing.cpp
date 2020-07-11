@@ -1,7 +1,9 @@
 #include <iomanip>
+#include <sstream>
+#include <string>
+
 #include <meos/types/geom/Geometry.hpp>
 #include <meos/util/serializing.hpp>
-#include <sstream>
 
 std::string write_ISO8601_time(time_point const &t) {
   std::stringstream textStream;
@@ -14,7 +16,7 @@ std::string write_ISO8601_time(time_point const &t) {
   return textStream.str();
 }
 
-template <typename T> std::string write_value(T const &value) {
+template <typename T> std::string write_value(T const &) {
   // Check specialized template functions below for supported types
   throw std::invalid_argument("Unsupported type");
 }

@@ -1,3 +1,6 @@
+#include <sstream>
+#include <string>
+
 #include <meos/io/SerializationException.hpp>
 #include <meos/io/Serializer.hpp>
 #include <meos/util/serializing.hpp>
@@ -22,7 +25,7 @@ template <typename T> string Serializer<T>::write(Temporal<T> const *temporal) {
   throw SerializationException("Unsupported type");
 }
 
-template <typename T> string Serializer<T>::write(T const &value) {
+template <typename T> string Serializer<T>::write(T const &) {
   // Check specialized template functions below for supported types
   throw SerializationException("Unsupported type");
 }

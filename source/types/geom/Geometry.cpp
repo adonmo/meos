@@ -1,4 +1,6 @@
 #include <cstdlib>
+#include <string>
+
 #include <meos/types/geom/Geometry.hpp>
 
 Geometry::Geometry() { point(0, 0); }

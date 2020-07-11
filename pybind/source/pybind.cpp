@@ -1,13 +1,16 @@
+#include <sstream>
+#include <string>
+
+#include <pybind11/operators.h>
+#include <pybind11/pybind11.h>
+
+#include <meos/geos.hpp>
+
 #include "box_module.hpp"
 #include "io_module.hpp"
 #include "range_module.hpp"
 #include "temporal_module.hpp"
 #include "time_module.hpp"
-#include <pybind11/operators.h>
-#include <pybind11/pybind11.h>
-extern "C" {
-#include <meos/geos.h>
-}
 
 namespace py = pybind11;
 

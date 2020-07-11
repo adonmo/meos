@@ -1,4 +1,7 @@
 #include <iomanip>
+#include <sstream>
+#include <string>
+
 #include <meos/io/utils.hpp>
 #include <meos/types/time/TimestampSet.hpp>
 

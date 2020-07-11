@@ -1,12 +1,14 @@
 #pragma once
 
+#include <sstream>
+
 #include "chrono.h"
-#include <meos/types/box/STBox.hpp>
-#include <meos/types/box/TBox.hpp>
 #include <pybind11/operators.h>
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
-#include <sstream>
+
+#include <meos/types/box/STBox.hpp>
+#include <meos/types/box/TBox.hpp>
 
 namespace py = pybind11;
 

@@ -1,11 +1,15 @@
+#include <sstream>
+#include <string>
+
+#include <catch2/catch.hpp>
+
+#include <meos/types/temporal/TSequence.hpp>
+
 #include "../../common/matchers.hpp"
 #include "../../common/time_utils.hpp"
-#include <catch2/catch.hpp>
-#include <meos/types/temporal/TSequence.hpp>
 
 time_t const minute = 60 * 1000L;
 time_t const day = 24 * 60 * 60 * 1000L;
-time_t const year = 365 * 24 * 60 * 60 * 1000L;
 
 TEMPLATE_TEST_CASE("TSequences are constructed properly", "[tinstset]", int,
                    float) {

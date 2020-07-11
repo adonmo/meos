@@ -9,8 +9,6 @@
 
 using namespace std;
 
-long const millis_in_day = 86400000L;
-
 TEST_CASE("TimestampSets are serialized", "[serializer][timestampset]") {
   Serializer<> w;
   SECTION("empty set") {

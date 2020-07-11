@@ -6,6 +6,8 @@ Range<T>::Range(T const lower, T const upper, bool const lower_inc,
     : m_lower(lower), m_upper(upper), m_lower_inc(lower_inc),
       m_upper_inc(upper_inc) {}
 
+template <typename T> Range<T>::~Range() {}
+
 template <typename T> int Range<T>::compare(Range<T> const &other) const {
   if (lower() < other.lower())
     return -1;

@@ -32,7 +32,9 @@ public:
     return std::unique_ptr<TSequenceSet<T>>(this->clone_impl());
   }
 
-  TemporalDuration duration() const { return TemporalDuration::SequenceSet; };
+  TemporalDuration duration() const override {
+    return TemporalDuration::SequenceSet;
+  };
 
   /**
    * Set of sequences.
@@ -67,7 +69,7 @@ public:
   duration_ms timespan() const override;
   set<Range<T>> getValues() const override;
   set<time_point> timestamps() const override;
-  PeriodSet getTime() const;
+  PeriodSet getTime() const override;
   Period period() const override;
   unique_ptr<TSequenceSet<T>> shift(duration_ms const timedelta) const;
   TSequenceSet<T> *shift_impl(duration_ms const timedelta) const override;

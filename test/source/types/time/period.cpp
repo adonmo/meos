@@ -1,7 +1,12 @@
+#include <sstream>
+#include <string>
+
+#include <catch2/catch.hpp>
+
+#include <meos/types/time/Period.hpp>
+
 #include "../../common/time_utils.hpp"
 #include "../../common/utils.hpp"
-#include <catch2/catch.hpp>
-#include <meos/types/time/Period.hpp>
 
 TEST_CASE("periods are validated and constructed properly", "[period]") {
   SECTION("reads from istream") {

@@ -1,4 +1,7 @@
 #include <iomanip>
+#include <sstream>
+#include <string>
+
 #include <meos/types/temporal/TSequence.hpp>
 
 template <typename T> TSequence<T>::TSequence() {}

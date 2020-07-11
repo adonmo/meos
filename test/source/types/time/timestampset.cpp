@@ -1,12 +1,16 @@
-#include "../../common/matchers.hpp"
-#include "../../common/time_utils.hpp"
+#include <sstream>
+#include <string>
+
 #include <catch2/catch.hpp>
+
 #include <meos/types/time/Period.hpp>
 #include <meos/types/time/TimestampSet.hpp>
 
+#include "../../common/matchers.hpp"
+#include "../../common/time_utils.hpp"
+
 time_t const minute = 60 * 1000L;
 time_t const day = 24 * 60 * 60 * 1000L;
-time_t const year = 365 * 24 * 60 * 60 * 1000L;
 
 TEST_CASE("TimestampSets are constructed properly", "[timestampset]") {
   SECTION("reads from istream") {

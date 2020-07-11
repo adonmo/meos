@@ -1,7 +1,11 @@
-#include "../../common/time_utils.hpp"
-#include <catch2/catch.hpp>
-#include <meos/types/box/STBox.hpp>
 #include <sstream>
+#include <string>
+
+#include <catch2/catch.hpp>
+
+#include <meos/types/box/STBox.hpp>
+
+#include "../../common/time_utils.hpp"
 
 TEST_CASE("STBoxes are constructed and serialized properly", "[stbox]") {
   std::stringstream output;

@@ -36,7 +36,9 @@ public:
   bool lower_inc() const;
   bool upper_inc() const;
 
-  TemporalDuration duration() const { return TemporalDuration::Sequence; };
+  TemporalDuration duration() const override {
+    return TemporalDuration::Sequence;
+  };
 
   /**
    * Set of instants.
@@ -46,7 +48,7 @@ public:
   duration_ms timespan() const override;
   set<Range<T>> getValues() const override;
   set<time_point> timestamps() const override;
-  PeriodSet getTime() const;
+  PeriodSet getTime() const override;
   Period period() const override;
   unique_ptr<TSequence<T>> shift(duration_ms const timedelta) const;
   TSequence<T> *shift_impl(duration_ms const timedelta) const override;

@@ -1,11 +1,15 @@
+#include <sstream>
+#include <string>
+
+#include <catch2/catch.hpp>
+
+#include <meos/types/temporal/TSequenceSet.hpp>
+
 #include "../../common/matchers.hpp"
 #include "../../common/time_utils.hpp"
-#include <catch2/catch.hpp>
-#include <meos/types/temporal/TSequenceSet.hpp>
 
 time_t const minute = 60 * 1000L;
 time_t const day = 24 * 60 * 60 * 1000L;
-time_t const year = 365 * 24 * 60 * 60 * 1000L;
 
 template <typename T> TSequence<T> getSampleSequence1() {
   set<TInstant<T>> instants{

@@ -1,3 +1,6 @@
+#include <sstream>
+#include <string>
+
 #include <meos/io/utils.hpp>
 #include <meos/types/time/Period.hpp>
 #include <meos/util/serializing.hpp>

@@ -1,13 +1,14 @@
 #include <algorithm>
-#include <meos/io/utils.hpp>
-#include <meos/types/geom/Geometry.hpp>
-#include <meos/util/string.hpp>
 #include <sstream>
 #include <stdexcept>
 
+#include <meos/io/utils.hpp>
+#include <meos/types/geom/Geometry.hpp>
+#include <meos/util/string.hpp>
+
 using namespace std;
 
-template <typename T> T nextValue(istream &in) {
+template <typename T> T nextValue(istream &) {
   // Check specialized template functions below for supported types
   throw std::invalid_argument("Unsupported type");
 }

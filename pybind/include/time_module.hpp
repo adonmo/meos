@@ -1,12 +1,14 @@
 #pragma once
 
 #include "chrono.h"
-#include <meos/types/time/Period.hpp>
-#include <meos/types/time/PeriodSet.hpp>
-#include <meos/types/time/TimestampSet.hpp>
+
 #include <pybind11/operators.h>
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
+
+#include <meos/types/time/Period.hpp>
+#include <meos/types/time/PeriodSet.hpp>
+#include <meos/types/time/TimestampSet.hpp>
 
 namespace py = pybind11;
 

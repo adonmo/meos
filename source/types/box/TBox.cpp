@@ -1,7 +1,8 @@
+#include <sstream>
+
 #include <meos/io/utils.hpp>
 #include <meos/types/box/TBox.hpp>
 #include <meos/util/serializing.hpp>
-#include <sstream>
 
 TBox::TBox() {}
 

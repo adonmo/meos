@@ -1,9 +1,11 @@
 #include <algorithm>
 #include <ctime>
+#include <sstream>
+
 #include <meos/io/DeserializationException.hpp>
 #include <meos/io/Deserializer.hpp>
 #include <meos/io/utils.hpp>
-#include <sstream>
+
 using namespace std;
 
 template <typename T>

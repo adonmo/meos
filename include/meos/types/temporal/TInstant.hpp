@@ -47,7 +47,9 @@ public:
     return std::unique_ptr<TInstant<T>>(this->clone_impl());
   }
 
-  TemporalDuration duration() const { return TemporalDuration::Instant; };
+  TemporalDuration duration() const override {
+    return TemporalDuration::Instant;
+  };
 
   /**
    * Set of instants.
@@ -57,7 +59,7 @@ public:
   duration_ms timespan() const override;
   set<Range<T>> getValues() const override;
   set<time_point> timestamps() const override;
-  PeriodSet getTime() const;
+  PeriodSet getTime() const override;
   Period period() const override;
   unique_ptr<TInstant> shift(duration_ms const timedelta) const;
   bool intersectsTimestamp(time_point const datetime) const override;

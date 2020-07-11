@@ -1,8 +1,6 @@
 #define CATCH_CONFIG_RUNNER
 #include <catch2/catch.hpp>
-extern "C" {
-#include <meos/geos.h>
-}
+#include <meos/geos.hpp>
 
 int main(int argc, char *argv[]) {
   // global setup...
