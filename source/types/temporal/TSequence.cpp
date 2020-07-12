@@ -8,15 +8,17 @@ template <typename T> TSequence<T>::TSequence() {}
 
 template <typename T>
 TSequence<T>::TSequence(set<TInstant<T>> &instants, bool lower_inc,
-                        bool upper_inc)
-    : m_instants(instants), m_lower_inc(lower_inc), m_upper_inc(upper_inc) {
+                        bool upper_inc, Interpolation interpolation)
+    : m_instants(instants), m_lower_inc(lower_inc), m_upper_inc(upper_inc),
+      m_interpolation(interpolation) {
   validate();
 }
 
 template <typename T>
 TSequence<T>::TSequence(set<string> const &instants, bool lower_inc,
-                        bool upper_inc)
-    : m_lower_inc(lower_inc), m_upper_inc(upper_inc) {
+                        bool upper_inc, Interpolation interpolation)
+    : m_lower_inc(lower_inc), m_upper_inc(upper_inc),
+      m_interpolation(interpolation) {
   TSequence<T> instant_set;
   for (auto const &e : instants)
     m_instants.insert(TInstant<T>(e));
@@ -27,6 +29,7 @@ template <typename T> TSequence<T>::TSequence(string const &serialized) {
   stringstream ss(serialized);
   TSequence<T> seq;
   ss >> seq;
+  this->m_interpolation = seq.interpolation();
   this->m_instants = seq.instants();
   this->m_lower_inc = seq.lower_inc();
   this->m_upper_inc = seq.upper_inc();
@@ -35,6 +38,10 @@ template <typename T> TSequence<T>::TSequence(string const &serialized) {
 
 template <typename T> void TSequence<T>::validate() const {
   if (m_instants.size() < 1) {
+    throw invalid_argument("A sequence should have at least one instant");
+  }
+
+  if (m_interpolation == Interpolation::Linear && is_discrete_v<T>) {
     throw invalid_argument("A sequence should have at least one instant");
   }
 
@@ -105,6 +112,10 @@ template <typename T> bool TSequence<T>::upper_inc() const {
 
 template <typename T> set<TInstant<T>> TSequence<T>::instants() const {
   return this->m_instants;
+}
+
+template <typename T> Interpolation TSequence<T>::interpolation() const {
+  return this->m_interpolation;
 }
 
 template <typename T> duration_ms TSequence<T>::timespan() const {

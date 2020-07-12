@@ -3,6 +3,7 @@
 
 #include <meos/io/utils.hpp>
 #include <meos/types/geom/Geometry.hpp>
+#include <meos/types/temporal/Interpolation.hpp>
 #include <meos/types/temporal/TInstant.hpp>
 #include <meos/types/temporal/TInstantFunctions.hpp>
 #include <meos/types/temporal/Temporal.hpp>
@@ -22,9 +23,11 @@ class TSequence : public Temporal<T>,
 public:
   TSequence();
   TSequence(set<TInstant<T>> &instants_, bool lower_inc = true,
-            bool upper_inc = false);
+            bool upper_inc = false,
+            Interpolation interpolation = default_interp_v<T>);
   TSequence(set<string> const &instants, bool lower_inc = true,
-            bool upper_inc = false);
+            bool upper_inc = false,
+            Interpolation interpolation = default_interp_v<T>);
   TSequence(string const &serialized);
 
   int compare(Temporal<T> const &other) const override;
@@ -44,7 +47,7 @@ public:
    * Set of instants.
    */
   set<TInstant<T>> instants() const;
-
+  Interpolation interpolation() const;
   duration_ms timespan() const override;
   set<Range<T>> getValues() const override;
   set<time_point> timestamps() const override;
@@ -57,6 +60,31 @@ public:
 
   friend istream &operator>>(istream &in, TSequence &sequence) {
     char c;
+
+    // First we check for interpolation, if specified, else we stick with
+    // default value (Stepwise for discrete base types, Linear otherwise)
+    Interpolation interp =
+        is_discrete_v<T> ? Interpolation::Stepwise : Interpolation::Linear;
+    in >> std::ws;
+    int pos = in.tellg();
+    char prefix[6];
+    in.read(prefix, 6);
+    bool interp_specified = string(prefix) == "Interp";
+    if (interp_specified) {
+      consume(in, '=');
+      std::string interp_string = read_until_one_of(in, "; \n\t");
+      if (interp_string == "Stepwise") {
+        interp = Interpolation::Stepwise;
+      } else if (interp_string == "Linear") {
+        interp = Interpolation::Linear;
+      } else {
+        throw invalid_argument("Unsupported interpolation specified: " +
+                               interp_string);
+      }
+      consume(in, ';');
+    } else {
+      in.seekg(pos);
+    }
 
     c = consume_one_of(in, "[(");
     bool const lower_inc = c == '[';
@@ -83,6 +111,7 @@ public:
     sequence.m_instants = s;
     sequence.m_lower_inc = lower_inc;
     sequence.m_upper_inc = upper_inc;
+    sequence.m_interpolation = interp;
 
     return in;
   }
@@ -105,6 +134,7 @@ private:
   set<TInstant<T>> m_instants;
   bool m_lower_inc;
   bool m_upper_inc;
+  Interpolation m_interpolation;
 
   void validate() const;
 

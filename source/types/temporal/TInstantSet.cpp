@@ -10,9 +10,6 @@ template <typename T>
 TInstantSet<T>::TInstantSet(set<TInstant<T>> const &instants)
     : m_instants(instants) {}
 
-template <typename T>
-TInstantSet<T>::TInstantSet(TInstantSet const &t) : m_instants(t.m_instants) {}
-
 template <typename T> TInstantSet<T>::TInstantSet(set<string> const &instants) {
   for (auto const &e : instants)
     this->m_instants.insert(TInstant<T>(e));

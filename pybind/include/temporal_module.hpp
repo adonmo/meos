@@ -4,6 +4,7 @@
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
 
+#include <meos/types/temporal/Interpolation.hpp>
 #include <meos/types/temporal/TInstant.hpp>
 #include <meos/types/temporal/TInstantSet.hpp>
 #include <meos/types/temporal/TSequence.hpp>
@@ -167,6 +168,7 @@ void def_temporal_types(py::module &m, std::string const &typesuffix) {
       .def_property_readonly("upper_inc", &TSequence<T>::upper_inc)
       .def_property_readonly("duration", &TSequence<T>::duration)
       .def_property_readonly("instants", &TSequence<T>::instants)
+      .def_property_readonly("interpolation", &TSequence<T>::interpolation)
       .def_property_readonly("timespan", &TSequence<T>::timespan)
       .def_property_readonly("getValues", &TSequence<T>::getValues)
       .def_property_readonly("timestamps", &TSequence<T>::timestamps)
@@ -231,6 +233,10 @@ void def_temporal_module(py::module &m) {
       .value("InstantSet", TemporalDuration::InstantSet)
       .value("Sequence", TemporalDuration::Sequence)
       .value("SequenceSet", TemporalDuration::SequenceSet);
+
+  py::enum_<Interpolation>(temporal_module, "Interpolation")
+      .value("Stepwise", Interpolation::Stepwise)
+      .value("Linear", Interpolation::Linear);
 
   def_temporal_types<bool>(temporal_module, "Bool");
   def_temporal_types<int>(temporal_module, "Int");

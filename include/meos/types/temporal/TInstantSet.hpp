@@ -92,9 +92,6 @@ public:
     return os;
   }
 
-protected:
-  TInstantSet(TInstantSet const &t);
-
 private:
   set<TInstant<T>> m_instants;
 

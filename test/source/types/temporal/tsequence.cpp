@@ -3,6 +3,7 @@
 
 #include <catch2/catch.hpp>
 
+#include <meos/types/temporal/Interpolation.hpp>
 #include <meos/types/temporal/TSequence.hpp>
 
 #include "../../common/matchers.hpp"
@@ -30,6 +31,7 @@ TEMPLATE_TEST_CASE("TSequences are constructed properly", "[tinstset]", int,
     unique_ptr<TSequence<TestType>> seq;
     TInstant<TestType> instant_1(10, unix_time_point(2020, 9, 10));
     TInstant<TestType> instant_2(20, unix_time_point(2019, 9, 10));
+    Interpolation expected_interp = default_interp_v<TestType>;
 
     SECTION("no strings constructor") {
       TInstant<TestType> instant_3(20,
@@ -38,15 +40,40 @@ TEMPLATE_TEST_CASE("TSequences are constructed properly", "[tinstset]", int,
       seq = make_unique<TSequence<TestType>>(v, false, true);
     }
 
+    SECTION("set of strings constructor") {
+      seq = make_unique<TSequence<TestType>>(
+          set<string>{"10@2020-09-10 01:00:00+01", "20@2019-09-10 01:00:00+01"},
+          false, true);
+    }
+
     SECTION("string constructor") {
       seq = make_unique<TSequence<TestType>>(
           "(10@2020-09-10 01:00:00+01, 20@2019-09-10 01:00:00+01]");
     }
 
-    SECTION("set of strings constructor") {
-      seq = make_unique<TSequence<TestType>>(
-          set<string>{"10@2020-09-10 01:00:00+01", "20@2019-09-10 01:00:00+01"},
-          false, true);
+    SECTION("with interpolation specified") {
+      expected_interp = Interpolation::Stepwise;
+
+      SECTION("no strings constructor") {
+        TInstant<TestType> instant_3(
+            20, unix_time_point(2019, 9, 10)); // Duplicate!
+        set<TInstant<TestType>> v = {instant_1, instant_2, instant_3};
+        seq = make_unique<TSequence<TestType>>(v, false, true,
+                                               Interpolation::Stepwise);
+      }
+
+      SECTION("set of strings constructor") {
+        seq = make_unique<TSequence<TestType>>(
+            set<string>{"10@2020-09-10 01:00:00+01",
+                        "20@2019-09-10 01:00:00+01"},
+            false, true, Interpolation::Stepwise);
+      }
+
+      SECTION("string constructor") {
+        seq = make_unique<TSequence<TestType>>(
+            "Interp=Stepwise;(10@2020-09-10 01:00:00+01, 20@2019-09-10 "
+            "01:00:00+01]");
+      }
     }
 
     REQUIRE(seq->instants().size() == 2);
@@ -60,6 +87,7 @@ TEMPLATE_TEST_CASE("TSequences are constructed properly", "[tinstset]", int,
 
     REQUIRE(seq->lower_inc() == false);
     REQUIRE(seq->upper_inc() == true);
+    REQUIRE(seq->interpolation() == expected_interp);
   }
 }
 
