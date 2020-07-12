@@ -1,6 +1,6 @@
 import pytest
 
-from pymeos.temporal import Interpolation, TInstantFloat, TSequenceFloat, TemporalDuration
+from pymeos.temporal import Interpolation, TInstantInt, TSequenceInt, TInstantFloat, TSequenceFloat, TemporalDuration
 
 from ..utils import unix_dt
 
@@ -12,12 +12,37 @@ def get_sample_tsequence():
 
 
 @pytest.mark.parametrize("actual", [
+    TSequenceInt({TInstantInt(10, unix_dt(2020, 9, 10)), TInstantInt(20, unix_dt(2019, 9, 10))}, False, True),
+    TSequenceInt({"10@2020-09-10 01:00:00+01", "20@2019-09-10 01:00:00+01"}, False, True),
+    TSequenceInt({TInstantInt(10, unix_dt(2020, 9, 10)), TInstantInt(20, unix_dt(2019, 9, 10))}, False, True, Interpolation.Stepwise),
+    TSequenceInt({"10@2020-09-10 01:00:00+01", "20@2019-09-10 01:00:00+01"}, False, True, Interpolation.Stepwise),
+    TSequenceInt("(10@2020-09-10 01:00:00+01, 20@2019-09-10 01:00:00+01]"),
+    TSequenceInt("Interp=Stepwise;(10@2020-09-10 01:00:00+01, 20@2019-09-10 01:00:00+01]"),
+])
+def test_different_constructors_with_discrete_base_type(actual):
+    assert actual.duration == TemporalDuration.Sequence
+    assert actual.duration.name == 'Sequence'
+
+    assert actual.interpolation == Interpolation.Stepwise
+    assert actual.interpolation.name == 'Stepwise'
+
+    assert len(actual.instants) == 2
+    assert actual.startInstant == TInstantInt(20, unix_dt(2019, 9, 10))
+    assert actual.endInstant == TInstantInt(10, unix_dt(2020, 9, 10))
+
+    assert actual.lower_inc == False
+    assert actual.upper_inc == True
+
+
+@pytest.mark.parametrize("actual", [
     TSequenceFloat({TInstantFloat(10, unix_dt(2020, 9, 10)), TInstantFloat(20, unix_dt(2019, 9, 10))}, False, True),
     TSequenceFloat({"10@2020-09-10 01:00:00+01", "20@2019-09-10 01:00:00+01"}, False, True),
+    TSequenceFloat({TInstantFloat(10, unix_dt(2020, 9, 10)), TInstantFloat(20, unix_dt(2019, 9, 10))}, False, True, Interpolation.Linear),
+    TSequenceFloat({"10@2020-09-10 01:00:00+01", "20@2019-09-10 01:00:00+01"}, False, True, Interpolation.Linear),
     TSequenceFloat("(10@2020-09-10 01:00:00+01, 20@2019-09-10 01:00:00+01]"),
     TSequenceFloat("Interp=Linear;(10@2020-09-10 01:00:00+01, 20@2019-09-10 01:00:00+01]"),
 ])
-def test_different_constructors(actual):
+def test_different_constructors_with_continuous_base_type(actual):
     assert actual.duration == TemporalDuration.Sequence
     assert actual.duration.name == 'Sequence'
 
@@ -30,6 +55,14 @@ def test_different_constructors(actual):
 
     assert actual.lower_inc == False
     assert actual.upper_inc == True
+
+
+def test_bad_constructors():
+    with pytest.raises(ValueError, match="Unsupported interpolation specified: Invalid"):
+        TSequenceInt("Interp=Invalid;(10@2020-09-10 01:00:00+01, 20@2019-09-10 01:00:00+01]")
+
+    with pytest.raises(ValueError, match="Cannot assign linear interpolation to a discrete base type"):
+        TSequenceInt("Interp=Linear;(10@2020-09-10 01:00:00+01, 20@2019-09-10 01:00:00+01]")
 
 
 def test_constructor():

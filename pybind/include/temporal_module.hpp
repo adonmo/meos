@@ -133,10 +133,14 @@ void def_temporal_types(py::module &m, std::string const &typesuffix) {
   py::class_<TSequence<T>, Temporal<T>, TemporalComparators<TSequence<T>>,
              TInstantFunctions<TSequence<T>, TInstant<T>, T>>(
       m, ("TSequence" + typesuffix).c_str())
-      .def(py::init<set<TInstant<T>> &, bool, bool>(), py::arg("instants"),
-           py::arg("lower_inc") = true, py::arg("upper_inc") = false)
-      .def(py::init<set<string> &, bool, bool>(), py::arg("instants"),
-           py::arg("lower_inc") = true, py::arg("upper_inc") = false)
+      .def(py::init<set<TInstant<T>> &, bool, bool, Interpolation>(),
+           py::arg("instants"), py::arg("lower_inc") = true,
+           py::arg("upper_inc") = false,
+           py::arg("interpolation") = default_interp_v<T>)
+      .def(py::init<set<string> &, bool, bool, Interpolation>(),
+           py::arg("instants"), py::arg("lower_inc") = true,
+           py::arg("upper_inc") = false,
+           py::arg("interpolation") = default_interp_v<T>)
       .def(py::init<string>(), py::arg("serialized"))
       .def(py::self == py::self, py::arg("other"))
       .def(py::self != py::self, py::arg("other"))

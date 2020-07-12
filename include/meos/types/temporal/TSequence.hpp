@@ -76,6 +76,10 @@ public:
       if (interp_string == "Stepwise") {
         interp = Interpolation::Stepwise;
       } else if (interp_string == "Linear") {
+        if (is_discrete_v<T>) {
+          throw invalid_argument(
+              "Cannot assign linear interpolation to a discrete base type");
+        }
         interp = Interpolation::Linear;
       } else {
         throw invalid_argument("Unsupported interpolation specified: " +
