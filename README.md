@@ -1,3 +1,5 @@
+[![Tests Status](https://github.com/adonmo/meos/workflows/Tests/badge.svg)](https://github.com/adonmo/meos/actions) [![Codacy Badge](https://app.codacy.com/project/badge/Grade/7e51e8a09bdd424f83af953585fd14b9)](https://www.codacy.com/gh/adonmo/meos?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=adonmo/meos&amp;utm_campaign=Badge_Grade) [![MIT License](https://img.shields.io/github/license/adonmo/meos.svg)](https://github.com/adonmo/meos/blob/master/LICENSE.txt)
+
 ![MEOS Logo](https://i.imgur.com/ppfYUeT.png)
 
 **MEOS (Mobility Engine, Open Source)** is a C++ library which makes it easy to work with temporal and spatio-temporal data. It is based on [MobilityDB](https://github.com/ULB-CoDE-WIT/MobilityDB)'s data types and functions. MEOS's code is heavily inspired from a similar library called [GEOS](https://github.com/libgeos/geos) - hence the name. This repository also includes **PyMEOS** - python bindings to MEOS using [pybind11](https://github.com/pybind/pybind11).
