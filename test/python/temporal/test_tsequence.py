@@ -12,12 +12,12 @@ def get_sample_tsequence():
 
 
 @pytest.mark.parametrize("actual", [
-    TSequenceInt({TInstantInt(10, unix_dt(2020, 9, 10)), TInstantInt(20, unix_dt(2019, 9, 10))}, False, True),
-    TSequenceInt({"10@2020-09-10 01:00:00+01", "20@2019-09-10 01:00:00+01"}, False, True),
-    TSequenceInt({TInstantInt(10, unix_dt(2020, 9, 10)), TInstantInt(20, unix_dt(2019, 9, 10))}, False, True, Interpolation.Stepwise),
-    TSequenceInt({"10@2020-09-10 01:00:00+01", "20@2019-09-10 01:00:00+01"}, False, True, Interpolation.Stepwise),
-    TSequenceInt("(10@2020-09-10 01:00:00+01, 20@2019-09-10 01:00:00+01]"),
-    TSequenceInt("Interp=Stepwise;(10@2020-09-10 01:00:00+01, 20@2019-09-10 01:00:00+01]"),
+    TSequenceInt({TInstantInt(10, unix_dt(2020, 9, 10)), TInstantInt(20, unix_dt(2019, 9, 10))}),
+    TSequenceInt({"10@2020-09-10 01:00:00+01", "20@2019-09-10 01:00:00+01"}),
+    TSequenceInt({TInstantInt(10, unix_dt(2020, 9, 10)), TInstantInt(20, unix_dt(2019, 9, 10))}, True, False, Interpolation.Stepwise),
+    TSequenceInt({"10@2020-09-10 01:00:00+01", "20@2019-09-10 01:00:00+01"}, True, False, Interpolation.Stepwise),
+    TSequenceInt("[10@2020-09-10 01:00:00+01, 20@2019-09-10 01:00:00+01)"),
+    TSequenceInt("Interp=Stepwise;[10@2020-09-10 01:00:00+01, 20@2019-09-10 01:00:00+01)"),
 ])
 def test_different_constructors_with_discrete_base_type(actual):
     assert actual.duration == TemporalDuration.Sequence
@@ -30,8 +30,11 @@ def test_different_constructors_with_discrete_base_type(actual):
     assert actual.startInstant == TInstantInt(20, unix_dt(2019, 9, 10))
     assert actual.endInstant == TInstantInt(10, unix_dt(2020, 9, 10))
 
-    assert actual.lower_inc == False
-    assert actual.upper_inc == True
+    assert actual.lower_inc == True
+    assert actual.upper_inc == False
+
+    assert str(actual) == "[20@2019-09-10T00:00:00+0000, 10@2020-09-10T00:00:00+0000)"
+    assert repr(actual) == "[20@2019-09-10T00:00:00+0000, 10@2020-09-10T00:00:00+0000)"
 
 
 @pytest.mark.parametrize("actual", [
@@ -55,6 +58,9 @@ def test_different_constructors_with_continuous_base_type(actual):
 
     assert actual.lower_inc == False
     assert actual.upper_inc == True
+
+    assert str(actual) == "(20@2019-09-10T00:00:00+0000, 10@2020-09-10T00:00:00+0000]"
+    assert repr(actual) == "(20@2019-09-10T00:00:00+0000, 10@2020-09-10T00:00:00+0000]"
 
 
 def test_bad_constructors():

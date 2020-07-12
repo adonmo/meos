@@ -1,5 +1,6 @@
 #include <sstream>
 #include <string>
+#include <type_traits>
 
 #include <catch2/catch.hpp>
 
@@ -12,11 +13,14 @@
 time_t const minute = 60 * 1000L;
 time_t const day = 24 * 60 * 60 * 1000L;
 
-TEMPLATE_TEST_CASE("TSequences are constructed properly", "[tinstset]", int,
-                   float) {
+TEMPLATE_TEST_CASE("TSequences are constructed and serialized properly",
+                   "[tsequence]", int, float) {
   SECTION("reads from istream") {
     TSequence<TestType> seq;
     stringstream ss("(    10@2012-01-01  ,      20@2012-01-02 09:40:00+0530 )");
+    string expected =
+        "(10@2012-01-01T00:00:00+0000, 20@2012-01-02T04:10:00+0000)";
+
     ss >> seq;
     REQUIRE(seq.instants().size() == 2);
     REQUIRE(seq.startInstant() ==
@@ -25,10 +29,14 @@ TEMPLATE_TEST_CASE("TSequences are constructed properly", "[tinstset]", int,
             TInstant<TestType>(20, unix_time_point(2012, 1, 2, 4, 10)));
     REQUIRE(seq.lower_inc() == false);
     REQUIRE(seq.upper_inc() == false);
+
+    std::stringstream output;
+    output << seq;
+    REQUIRE(output.str() == expected);
   }
 
   SECTION("all constructors work") {
-    unique_ptr<TSequence<TestType>> seq;
+    TSequence<TestType> seq;
     TInstant<TestType> instant_1(10, unix_time_point(2020, 9, 10));
     TInstant<TestType> instant_2(20, unix_time_point(2019, 9, 10));
     Interpolation expected_interp = default_interp_v<TestType>;
@@ -37,17 +45,17 @@ TEMPLATE_TEST_CASE("TSequences are constructed properly", "[tinstset]", int,
       TInstant<TestType> instant_3(20,
                                    unix_time_point(2019, 9, 10)); // Duplicate!
       set<TInstant<TestType>> v = {instant_1, instant_2, instant_3};
-      seq = make_unique<TSequence<TestType>>(v, false, true);
+      seq = TSequence<TestType>(v, false, true);
     }
 
     SECTION("set of strings constructor") {
-      seq = make_unique<TSequence<TestType>>(
+      seq = TSequence<TestType>(
           set<string>{"10@2020-09-10 01:00:00+01", "20@2019-09-10 01:00:00+01"},
           false, true);
     }
 
     SECTION("string constructor") {
-      seq = make_unique<TSequence<TestType>>(
+      seq = TSequence<TestType>(
           "(10@2020-09-10 01:00:00+01, 20@2019-09-10 01:00:00+01]");
     }
 
@@ -58,36 +66,46 @@ TEMPLATE_TEST_CASE("TSequences are constructed properly", "[tinstset]", int,
         TInstant<TestType> instant_3(
             20, unix_time_point(2019, 9, 10)); // Duplicate!
         set<TInstant<TestType>> v = {instant_1, instant_2, instant_3};
-        seq = make_unique<TSequence<TestType>>(v, false, true,
-                                               Interpolation::Stepwise);
+        seq = TSequence<TestType>(v, false, true, Interpolation::Stepwise);
       }
 
       SECTION("set of strings constructor") {
-        seq = make_unique<TSequence<TestType>>(
-            set<string>{"10@2020-09-10 01:00:00+01",
-                        "20@2019-09-10 01:00:00+01"},
-            false, true, Interpolation::Stepwise);
+        seq = TSequence<TestType>(set<string>{"10@2020-09-10 01:00:00+01",
+                                              "20@2019-09-10 01:00:00+01"},
+                                  false, true, Interpolation::Stepwise);
       }
 
       SECTION("string constructor") {
-        seq = make_unique<TSequence<TestType>>(
+        seq = TSequence<TestType>(
             "Interp=Stepwise;(10@2020-09-10 01:00:00+01, 20@2019-09-10 "
             "01:00:00+01]");
       }
     }
 
-    REQUIRE(seq->instants().size() == 2);
+    REQUIRE(seq.instants().size() == 2);
 
     // We gave the instants out-of-order!
-    REQUIRE(seq->startInstant() == instant_2);
-    REQUIRE(seq->instantN(0) == instant_2);
-    REQUIRE(seq->endInstant() == instant_1);
-    REQUIRE(seq->instantN(1) == instant_1);
-    CHECK_THROWS(seq->instantN(2));
+    REQUIRE(seq.startInstant() == instant_2);
+    REQUIRE(seq.instantN(0) == instant_2);
+    REQUIRE(seq.endInstant() == instant_1);
+    REQUIRE(seq.instantN(1) == instant_1);
+    CHECK_THROWS(seq.instantN(2));
 
-    REQUIRE(seq->lower_inc() == false);
-    REQUIRE(seq->upper_inc() == true);
-    REQUIRE(seq->interpolation() == expected_interp);
+    REQUIRE(seq.lower_inc() == false);
+    REQUIRE(seq.upper_inc() == true);
+    REQUIRE(seq.interpolation() == expected_interp);
+
+    stringstream output;
+    output << seq;
+    string expected_prefix =
+        is_floating_point<TestType>::value &&
+                seq.interpolation() == Interpolation::Stepwise
+            ? "Interp=Stepwise;"
+            : "";
+    string expected =
+        expected_prefix +
+        "(20@2019-09-10T00:00:00+0000, 10@2020-09-10T00:00:00+0000]";
+    REQUIRE(output.str() == expected);
   }
 }
 

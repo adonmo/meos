@@ -120,7 +120,11 @@ public:
     return in;
   }
 
-  friend ostream &operator<<(ostream &os, TSequence const &sequence) {
+  friend ostream &operator<<(ostream &os, TSequence<T> const &sequence) {
+    if (sequence.interpolation() != default_interp_v<T>) {
+      os << "Interp=" << sequence.interpolation() << ";";
+    }
+
     bool first = true;
     os << (sequence.m_lower_inc ? "[" : "(");
     for (auto const &instant : sequence.instants()) {
