@@ -10,6 +10,8 @@
 #include <meos/types/box/STBox.hpp>
 #include <meos/types/box/TBox.hpp>
 
+#include "common.hpp"
+
 namespace py = pybind11;
 
 void def_box_module(py::module &m) {
@@ -35,12 +37,8 @@ void def_box_module(py::module &m) {
       .def(py::self <= py::self)
       .def(py::self > py::self)
       .def(py::self >= py::self)
-      .def("__str__",
-           [](TBox const &self) {
-             std::ostringstream s;
-             s << self;
-             return s.str();
-           })
+      .def("__str__", &to_ostream<TBox>)
+      .def("__repr__", &to_ostream<TBox>)
       .def_property_readonly("xmin", &TBox::xmin)
       .def_property_readonly("tmin", &TBox::tmin)
       .def_property_readonly("xmax", &TBox::xmax)
@@ -84,12 +82,8 @@ void def_box_module(py::module &m) {
       .def(py::self <= py::self)
       .def(py::self > py::self)
       .def(py::self >= py::self)
-      .def("__str__",
-           [](STBox const &self) {
-             std::ostringstream s;
-             s << self;
-             return s.str();
-           })
+      .def("__str__", &to_ostream<STBox>)
+      .def("__repr__", &to_ostream<STBox>)
       .def_property_readonly("xmin", &STBox::xmin)
       .def_property_readonly("ymin", &STBox::ymin)
       .def_property_readonly("zmin", &STBox::zmin)

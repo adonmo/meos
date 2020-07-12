@@ -10,6 +10,8 @@
 #include <meos/types/time/PeriodSet.hpp>
 #include <meos/types/time/TimestampSet.hpp>
 
+#include "common.hpp"
+
 namespace py = pybind11;
 
 void def_time_module(py::module &m) {
@@ -31,17 +33,13 @@ void def_time_module(py::module &m) {
       .def(py::self <= py::self)
       .def(py::self > py::self)
       .def(py::self >= py::self)
+      .def("__str__", &to_ostream<Period>)
+      .def("__repr__", &to_ostream<Period>)
       .def("__hash__",
            [](Period const &period) {
              return py::hash(py::make_tuple(period.lower(), period.upper(),
                                             period.lower_inc(),
                                             period.upper_inc()));
-           })
-      .def("__str__",
-           [](Period const &self) {
-             std::ostringstream s;
-             s << self;
-             return s.str();
            })
       .def_property_readonly("lower", &Period::lower)
       .def_property_readonly("upper", &Period::upper)
@@ -63,12 +61,8 @@ void def_time_module(py::module &m) {
       .def(py::self <= py::self)
       .def(py::self > py::self)
       .def(py::self >= py::self)
-      .def("__str__",
-           [](PeriodSet const &self) {
-             std::ostringstream s;
-             s << self;
-             return s.str();
-           })
+      .def("__str__", &to_ostream<PeriodSet>)
+      .def("__repr__", &to_ostream<PeriodSet>)
       .def_property_readonly("periods", &PeriodSet::periods)
       .def_property_readonly("period", &PeriodSet::period)
       .def_property_readonly("numPeriods", &PeriodSet::numPeriods)
@@ -93,12 +87,8 @@ void def_time_module(py::module &m) {
       .def(py::self <= py::self)
       .def(py::self > py::self)
       .def(py::self >= py::self)
-      .def("__str__",
-           [](TimestampSet const &self) {
-             std::ostringstream s;
-             s << self;
-             return s.str();
-           })
+      .def("__str__", &to_ostream<TimestampSet>)
+      .def("__repr__", &to_ostream<TimestampSet>)
       .def_property_readonly("periods", &TimestampSet::periods)
       .def_property_readonly("period", &TimestampSet::period)
       .def_property_readonly("numPeriods", &TimestampSet::numPeriods)

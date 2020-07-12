@@ -12,6 +12,8 @@
 #include <meos/types/temporal/Temporal.hpp>
 #include <meos/types/temporal/TemporalDuration.hpp>
 
+#include "common.hpp"
+
 namespace py = pybind11;
 
 template <class Interface>
@@ -70,12 +72,8 @@ void def_temporal_types(py::module &m, std::string const &typesuffix) {
       .def(py::self <= py::self, py::arg("other"))
       .def(py::self > py::self, py::arg("other"))
       .def(py::self >= py::self, py::arg("other"))
-      .def("__str__",
-           [](TInstant<T> const &self) {
-             std::ostringstream s;
-             s << self;
-             return s.str();
-           })
+      .def("__str__", &to_ostream<TInstant<T>>)
+      .def("__repr__", &to_ostream<TInstant<T>>)
       .def("__hash__",
            [](TInstant<T> const &instant) {
              return py::hash(
@@ -113,12 +111,8 @@ void def_temporal_types(py::module &m, std::string const &typesuffix) {
       .def(py::self <= py::self, py::arg("other"))
       .def(py::self > py::self, py::arg("other"))
       .def(py::self >= py::self, py::arg("other"))
-      .def("__str__",
-           [](TInstantSet<T> const &self) {
-             std::ostringstream s;
-             s << self;
-             return s.str();
-           })
+      .def("__str__", &to_ostream<TInstantSet<T>>)
+      .def("__repr__", &to_ostream<TInstantSet<T>>)
       .def("compare", &TInstantSet<T>::compare, py::arg("other"))
       .def_property_readonly("duration", &TInstantSet<T>::duration)
       .def_property_readonly("instants", &TInstantSet<T>::instants)
@@ -150,12 +144,8 @@ void def_temporal_types(py::module &m, std::string const &typesuffix) {
       .def(py::self <= py::self, py::arg("other"))
       .def(py::self > py::self, py::arg("other"))
       .def(py::self >= py::self, py::arg("other"))
-      .def("__str__",
-           [](TSequence<T> const &self) {
-             std::ostringstream s;
-             s << self;
-             return s.str();
-           })
+      .def("__str__", &to_ostream<TSequence<T>>)
+      .def("__repr__", &to_ostream<TSequence<T>>)
       .def("__hash__",
            [](TSequence<T> const &self) {
              // TODO is there a better way?
@@ -196,12 +186,8 @@ void def_temporal_types(py::module &m, std::string const &typesuffix) {
       .def(py::self <= py::self, py::arg("other"))
       .def(py::self > py::self, py::arg("other"))
       .def(py::self >= py::self, py::arg("other"))
-      .def("__str__",
-           [](TSequenceSet<T> const &self) {
-             std::ostringstream s;
-             s << self;
-             return s.str();
-           })
+      .def("__str__", &to_ostream<TSequenceSet<T>>)
+      .def("__repr__", &to_ostream<TSequenceSet<T>>)
       .def("compare", &TSequenceSet<T>::compare, py::arg("other"))
       .def_property_readonly("duration", &TSequenceSet<T>::duration)
       .def_property_readonly("sequences", &TSequenceSet<T>::sequences)

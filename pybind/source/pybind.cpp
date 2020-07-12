@@ -7,6 +7,7 @@
 #include <meos/geos.hpp>
 
 #include "box_module.hpp"
+#include "common.hpp"
 #include "io_module.hpp"
 #include "range_module.hpp"
 #include "temporal_module.hpp"
@@ -28,12 +29,8 @@ PYBIND11_MODULE(pymeos, m) {
       .def(py::self <= py::self, py::arg("other"))
       .def(py::self > py::self, py::arg("other"))
       .def(py::self >= py::self, py::arg("other"))
-      .def("__str__",
-           [](Geometry const &self) {
-             std::ostringstream s;
-             s << self;
-             return s.str();
-           })
+      .def("__str__", &to_ostream<Geometry>)
+      .def("__repr__", &to_ostream<Geometry>)
       .def("compare", &Geometry::compare, py::arg("other"))
       .def_property_readonly("x", &Geometry::x)
       .def_property_readonly("y", &Geometry::y)

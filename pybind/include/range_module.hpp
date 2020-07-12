@@ -10,6 +10,8 @@
 #include <meos/types/temporal/TInstant.hpp>
 #include <meos/types/temporal/TInstantSet.hpp>
 
+#include "common.hpp"
+
 namespace py = pybind11;
 
 template <typename T>
@@ -23,17 +25,13 @@ void def_range_type(py::module &m, std::string const &typesuffix) {
       .def(py::self <= py::self)
       .def(py::self > py::self)
       .def(py::self >= py::self)
+      .def("__str__", &to_ostream<Range<T>>)
+      .def("__repr__", &to_ostream<Range<T>>)
       .def("__hash__",
            [](Range<T> const &range) {
              return py::hash(py::make_tuple(range.lower(), range.upper(),
                                             range.lower_inc(),
                                             range.upper_inc()));
-           })
-      .def("__str__",
-           [](Range<T> const &self) {
-             std::ostringstream s;
-             s << self;
-             return s.str();
            })
       .def_property_readonly("lower", &Range<T>::lower)
       .def_property_readonly("upper", &Range<T>::upper)
