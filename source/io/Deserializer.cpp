@@ -15,8 +15,36 @@ Deserializer<T>::Deserializer(string const &in_) : in(in_) {
 
 template <typename T> unique_ptr<Temporal<T>> Deserializer<T>::nextTemporal() {
   skipWhitespaces();
-  char const lookahead1 = peek(0);
-  char const lookahead2 = peek(1);
+  auto current_pos = iter - in.begin();
+
+  // We use two lookaheads to decide along the way
+  // Temporals are at least 2 characters long, so its safe to do this
+  char lookahead1 = peek(0);
+  char lookahead2 = peek(1);
+
+  // In case SRID prefix (SRID=...;) is present
+  if (lookahead1 == 'S') {
+    current_pos = in.find_first_of(';', current_pos);
+    lookahead1 = in.at(current_pos + 1);
+    lookahead2 = in.at(current_pos + 2);
+  }
+
+  // In case interpolation prefix (Interp=...;) is present
+  // This means we are looking at either a Sequence or a Sequence Set
+  if (lookahead1 == 'I') {
+    current_pos = in.find_first_of(';', current_pos);
+    lookahead1 = in.at(current_pos + 1);
+    lookahead2 = in.at(current_pos + 2);
+
+    if (lookahead1 == '{') {
+      return nextTSequenceSet();
+    } else {
+      return nextTSequence();
+    }
+
+    throw new DeserializationException("Invalid Temporal");
+  }
+
   if (lookahead1 != '{' && lookahead1 != '[' && lookahead1 != '(') {
     return nextTInstant();
   } else if (lookahead1 == '[' || lookahead1 == '(') {
@@ -28,97 +56,51 @@ template <typename T> unique_ptr<Temporal<T>> Deserializer<T>::nextTemporal() {
       return nextTInstantSet();
     }
   }
+
   throw new DeserializationException("Invalid Temporal");
 }
 
 template <typename T>
 unique_ptr<TSequenceSet<T>> Deserializer<T>::nextTSequenceSet() {
-  skipWhitespaces();
-  consumeChar('{');
-  set<TSequence<T>> s = {};
-  s.insert(*nextTSequence().get());
-  skipWhitespaces();
-
-  while (hasNext() && peek(0) == ',') {
-    consumeChar(',');
-    s.insert(*nextTSequence().get());
-    skipWhitespaces();
-  }
-
-  if (!hasNext() || peek(0) != '}') {
-    throw DeserializationException("Expected a '}'");
-  }
-  consumeChar('}');
-
-  return make_unique<TSequenceSet<T>>(s);
+  string::size_type current_pos = iter - in.begin();
+  string s = in.substr(current_pos, 2048);
+  stringstream ss(s);
+  TSequenceSet<T> t;
+  ss >> t;
+  iter += ss.tellg();
+  return make_unique<TSequenceSet<T>>(t);
 }
 
 template <typename T>
 unique_ptr<TSequence<T>> Deserializer<T>::nextTSequence() {
-  skipWhitespaces();
-
-  if (!hasNext() || !(peek(0) == '[' || peek(0) == '(')) {
-    throw DeserializationException("Expected either a '[' or '('");
-  }
-
-  char const opening = peek(0);
-  consumeChar(opening);
-  bool const lower_inc = opening == '[';
-
-  set<TInstant<T>> s = {};
-  s.insert(*(nextTInstant().get()));
-  skipWhitespaces();
-
-  while (hasNext() && peek(0) == ',') {
-    consumeChar(',');
-    s.insert(*(nextTInstant().get()));
-    skipWhitespaces();
-  }
-
-  if (!hasNext() || !(peek(0) == ']' || peek(0) == ')')) {
-    throw DeserializationException("Expected either a ']' or ')'");
-  }
-
-  char const closing = peek(0);
-  consumeChar(closing);
-  bool const upper_inc = closing == ']';
-
-  return make_unique<TSequence<T>>(s, lower_inc, upper_inc);
+  string::size_type current_pos = iter - in.begin();
+  string s = in.substr(current_pos, 2048);
+  stringstream ss(s);
+  TSequence<T> t;
+  ss >> t;
+  iter += ss.tellg();
+  return make_unique<TSequence<T>>(t);
 }
 
 template <typename T>
 unique_ptr<TInstantSet<T>> Deserializer<T>::nextTInstantSet() {
-  skipWhitespaces();
-  consumeChar('{');
-  set<TInstant<T>> s = {};
-  s.insert(*nextTInstant().get());
-  skipWhitespaces();
-
-  while (hasNext() && peek(0) == ',') {
-    consumeChar(',');
-    s.insert(*nextTInstant().get());
-    skipWhitespaces();
-  }
-
-  if (!hasNext() || peek(0) != '}') {
-    throw DeserializationException("Expected a '}'");
-  }
-  consumeChar('}');
-
-  return make_unique<TInstantSet<T>>(s);
+  string::size_type current_pos = iter - in.begin();
+  string s = in.substr(current_pos, 2048);
+  stringstream ss(s);
+  TInstantSet<T> t;
+  ss >> t;
+  iter += ss.tellg();
+  return make_unique<TInstantSet<T>>(t);
 }
 
 template <typename T> unique_ptr<TInstant<T>> Deserializer<T>::nextTInstant() {
-  skipWhitespaces();
-  T value = nextValue();
-  string::size_type pos = in.find_first_of("@", iter - in.begin());
-  if (pos == string::npos) {
-    throw DeserializationException("Invalid TInstant: needs to contain @");
-  }
-  consumeChar('@');
-  time_point t = nextTime();
-
-  return make_unique<TInstant<T>>(value, t);
+  string::size_type current_pos = iter - in.begin();
+  string s = in.substr(current_pos, 2048);
+  stringstream ss(s);
+  TInstant<T> t;
+  ss >> t;
+  iter += ss.tellg();
+  return make_unique<TInstant<T>>(t);
 }
 
 template <typename T> unique_ptr<Period> Deserializer<T>::nextPeriod() {

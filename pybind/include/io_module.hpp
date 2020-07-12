@@ -25,6 +25,7 @@ void declare_serdes(py::module &m, std::string const &typesuffix) {
 
   py::class_<Deserializer<T>>(m, ("Deserializer" + typesuffix).c_str())
       .def(py::init<string const &>())
+      .def("nextTemporal", &Deserializer<T>::nextTemporal)
       .def("nextTInstant", &Deserializer<T>::nextTInstant)
       .def("nextTInstantSet", &Deserializer<T>::nextTInstantSet)
       .def("nextTSequence", &Deserializer<T>::nextTSequence)

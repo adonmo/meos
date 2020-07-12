@@ -119,4 +119,20 @@ TEMPLATE_TEST_CASE("TSequence are deserialized", "[deserializer][tsequence]",
 
     CHECK_THROWS(r.nextTSequence());
   }
+
+  SECTION("Interp prefix present") {
+    Deserializer<TestType> r("Interp=Stepwise;[10@2012-11-01]");
+
+    unique_ptr<TSequence<TestType>> tseq = r.nextTSequence();
+    set<TInstant<TestType>> actual = tseq->instants();
+    set<TInstant<TestType>> s = {
+        TInstant<TestType>(10, unix_time_point(2012, 11, 1))};
+    auto x = UnorderedEquals(s);
+    REQUIRE_THAT(actual, x);
+    REQUIRE(tseq->lower_inc() == true);
+    REQUIRE(tseq->upper_inc() == true);
+    REQUIRE(tseq->interpolation() == Interpolation::Stepwise);
+
+    CHECK_THROWS(r.nextTSequence());
+  }
 }
