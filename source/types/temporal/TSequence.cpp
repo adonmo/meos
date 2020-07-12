@@ -29,21 +29,26 @@ template <typename T> TSequence<T>::TSequence(string const &serialized) {
   stringstream ss(serialized);
   TSequence<T> seq;
   ss >> seq;
-  this->m_interpolation = seq.interpolation();
   this->m_instants = seq.instants();
   this->m_lower_inc = seq.lower_inc();
   this->m_upper_inc = seq.upper_inc();
+  this->m_interpolation = seq.interpolation();
   validate();
 }
 
 template <typename T> void TSequence<T>::validate() const {
-  if (m_instants.size() < 1) {
+  size_t sz = this->m_instants.size();
+  if (sz < 1) {
     throw invalid_argument("A sequence should have at least one instant");
   }
 
-  if (m_interpolation == Interpolation::Linear && is_discrete_v<T>) {
-    throw invalid_argument("A sequence should have at least one instant");
+  if (this->m_interpolation == Interpolation::Linear && is_discrete_v<T>) {
+    throw invalid_argument(
+        "Cannot assign linear interpolation to a discrete base type");
   }
+
+  // TODO
+  // For stepwise interp and exclusive upper bound, last two values should match
 
   time_point start = this->startTimestamp();
   time_point end = this->endTimestamp();
@@ -180,4 +185,89 @@ bool TSequence<T>::intersectsTimestamp(time_point const datetime) const {
 template <typename T>
 bool TSequence<T>::intersectsPeriod(Period const period) const {
   return this->period().overlap(period);
+}
+
+template <typename T>
+istream &TSequence<T>::read(istream &in, bool with_interp) {
+  char c;
+
+  Interpolation interp =
+      is_discrete_v<T> ? Interpolation::Stepwise : Interpolation::Linear;
+
+  if (with_interp) {
+    // First we check for interpolation, if specified, else we stick with
+    // default value (Stepwise for discrete base types, Linear otherwise)
+    in >> std::ws;
+    int pos = in.tellg();
+    char prefix[6];
+    in.read(prefix, 6);
+    bool interp_specified = string(prefix) == "Interp";
+    if (interp_specified) {
+      consume(in, '=');
+      std::string interp_string = read_until_one_of(in, "; \n\t");
+      if (interp_string == "Stepwise") {
+        interp = Interpolation::Stepwise;
+      } else if (interp_string == "Linear") {
+        if (is_discrete_v<T>) {
+          throw invalid_argument(
+              "Cannot assign linear interpolation to a discrete base type");
+        }
+        interp = Interpolation::Linear;
+      } else {
+        throw invalid_argument("Unsupported interpolation specified: " +
+                               interp_string);
+      }
+      consume(in, ';');
+    } else {
+      in.seekg(pos);
+    }
+  }
+
+  c = consume_one_of(in, "[(");
+  bool const lower_inc = c == '[';
+
+  set<TInstant<T>> s = {};
+
+  TInstant<T> instant;
+  in >> instant;
+  s.insert(instant);
+
+  while (true) {
+    in >> c;
+    if (c != ',')
+      break;
+    in >> instant;
+    s.insert(instant);
+  }
+
+  if (c != ']' && c != ')') {
+    throw invalid_argument("Expected either a ']' or ')'");
+  }
+  bool const upper_inc = c == ']';
+
+  this->m_instants = s;
+  this->m_lower_inc = lower_inc;
+  this->m_upper_inc = upper_inc;
+  this->m_interpolation = interp;
+
+  return in;
+}
+
+template <typename T>
+ostream &TSequence<T>::write(ostream &os, bool with_interp) const {
+  if (with_interp && this->interpolation() != default_interp_v<T>) {
+    os << "Interp=" << this->interpolation() << ";";
+  }
+
+  bool first = true;
+  os << (this->m_lower_inc ? "[" : "(");
+  for (auto const &instant : this->instants()) {
+    if (first)
+      first = false;
+    else
+      os << ", ";
+    os << instant;
+  }
+  os << (this->m_upper_inc ? "]" : ")");
+  return os;
 }

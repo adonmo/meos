@@ -2,17 +2,25 @@
 #include <sstream>
 #include <string>
 
+#include <meos/types/temporal/Interpolation.hpp>
 #include <meos/types/temporal/TSequenceSet.hpp>
 
 template <typename T> TSequenceSet<T>::TSequenceSet() {}
 
 template <typename T>
-TSequenceSet<T>::TSequenceSet(set<TSequence<T>> const &sequences)
-    : m_sequences(sequences) {}
+TSequenceSet<T>::TSequenceSet(set<TSequence<T>> const &sequences,
+                              Interpolation interpolation)
+    : m_sequences(sequences), m_interpolation(interpolation) {
+  validate();
+}
 
-template <typename T> TSequenceSet<T>::TSequenceSet(set<string> const &ss) {
+template <typename T>
+TSequenceSet<T>::TSequenceSet(set<string> const &ss,
+                              Interpolation interpolation)
+    : m_interpolation(interpolation) {
   for (auto const &e : ss)
     this->m_sequences.insert(TSequence<T>(e));
+  validate();
 }
 
 template <typename T> TSequenceSet<T>::TSequenceSet(string const &serialized) {
@@ -20,6 +28,29 @@ template <typename T> TSequenceSet<T>::TSequenceSet(string const &serialized) {
   TSequenceSet<T> sequence_set;
   ss >> sequence_set;
   this->m_sequences = sequence_set.sequences();
+  this->m_interpolation = sequence_set.interpolation();
+  validate();
+}
+
+template <typename T> void TSequenceSet<T>::validate() const {
+  if (this->m_sequences.size() < 1) {
+    throw invalid_argument("A sequence should have at least one temporal unit");
+  }
+
+  if (this->m_interpolation == Interpolation::Linear && is_discrete_v<T>) {
+    throw invalid_argument(
+        "Cannot assign linear interpolation to a discrete base type");
+  }
+
+  for (auto const &e : this->m_sequences) {
+    if (this->m_interpolation != e.interpolation()) {
+      throw invalid_argument(
+          "All sequences should have the same interpolation");
+    }
+  }
+
+  // TODO
+  // All sequences should be non overlapping
 }
 
 template <typename T>
@@ -51,6 +82,10 @@ int TSequenceSet<T>::compare(Temporal<T> const &other) const {
 
   // The two are equal
   return 0;
+}
+
+template <typename T> Interpolation TSequenceSet<T>::interpolation() const {
+  return this->m_interpolation;
 }
 
 template <typename T> set<TSequence<T>> TSequenceSet<T>::sequences() const {

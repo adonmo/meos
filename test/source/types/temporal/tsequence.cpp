@@ -76,9 +76,8 @@ TEMPLATE_TEST_CASE("TSequences are constructed and serialized properly",
       }
 
       SECTION("string constructor") {
-        seq = TSequence<TestType>(
-            "Interp=Stepwise;(10@2020-09-10 01:00:00+01, 20@2019-09-10 "
-            "01:00:00+01]");
+        seq = TSequence<TestType>("Interp=Stepwise;(10@2020-09-10 01:00:00+01, "
+                                  "20@2019-09-10 01:00:00+01]");
       }
     }
 

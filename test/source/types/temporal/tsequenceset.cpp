@@ -3,6 +3,7 @@
 
 #include <catch2/catch.hpp>
 
+#include <meos/types/temporal/Interpolation.hpp>
 #include <meos/types/temporal/TSequenceSet.hpp>
 
 #include "../../common/matchers.hpp"
@@ -11,20 +12,24 @@
 time_t const minute = 60 * 1000L;
 time_t const day = 24 * 60 * 60 * 1000L;
 
-template <typename T> TSequence<T> getSampleSequence1() {
+template <typename T>
+TSequence<T>
+getSampleSequence1(Interpolation interpolation = default_interp_v<T>) {
   set<TInstant<T>> instants{
       TInstant<T>(10, unix_time_point(2012, 1, 1)),
       TInstant<T>(20, unix_time_point(2012, 1, 2, 4, 10)),
   };
-  return TSequence<T>(instants, false, true);
+  return TSequence<T>(instants, false, true, interpolation);
 }
 
-template <typename T> TSequence<T> getSampleSequence2() {
+template <typename T>
+TSequence<T>
+getSampleSequence2(Interpolation interpolation = default_interp_v<T>) {
   set<TInstant<T>> instants{
       TInstant<T>(40, unix_time_point(2012, 1, 7)),
       TInstant<T>(50, unix_time_point(2012, 1, 8)),
   };
-  return TSequence<T>(instants, false, true);
+  return TSequence<T>(instants, false, true, interpolation);
 }
 
 TEMPLATE_TEST_CASE("TSequenceSets are constructed properly", "[tinstset]", int,
@@ -33,45 +38,95 @@ TEMPLATE_TEST_CASE("TSequenceSets are constructed properly", "[tinstset]", int,
     TSequenceSet<TestType> sequence_set;
     stringstream ss("{(    10@2012-01-01  ,      20@2012-01-02 09:40:00+0530]"
                     ",( 40@2012-01-07,50@2012-01-08]}");
-    ss >> sequence_set;
+    string expected =
+        "{(10@2012-01-01T00:00:00+0000, 20@2012-01-02T04:10:00+0000], "
+        "(40@2012-01-07T00:00:00+0000, 50@2012-01-08T00:00:00+0000]}";
 
+    ss >> sequence_set;
     REQUIRE(sequence_set.sequences().size() == 2);
     REQUIRE(sequence_set.startSequence() == getSampleSequence1<TestType>());
     REQUIRE(sequence_set.sequenceN(0) == getSampleSequence1<TestType>());
     REQUIRE(sequence_set.endSequence() == getSampleSequence2<TestType>());
     REQUIRE(sequence_set.sequenceN(1) == getSampleSequence2<TestType>());
     CHECK_THROWS(sequence_set.sequenceN(2));
+
+    std::stringstream output;
+    output << sequence_set;
+    REQUIRE(output.str() == expected);
   }
 
   SECTION("all constructors work") {
-    unique_ptr<TSequenceSet<TestType>> sequence_set;
+    TSequenceSet<TestType> sequence_set;
     TSequence<TestType> sequence_1 = getSampleSequence2<TestType>();
     TSequence<TestType> sequence_2 = getSampleSequence1<TestType>();
+    Interpolation expected_interp = default_interp_v<TestType>;
 
     SECTION("no strings constructor") {
       TSequence<TestType> sequence_3 =
           getSampleSequence1<TestType>(); // Duplicate!
       set<TSequence<TestType>> s = {sequence_1, sequence_2, sequence_3};
-      sequence_set = make_unique<TSequenceSet<TestType>>(s);
-    }
-
-    SECTION("string constructor") {
-      sequence_set = make_unique<TSequenceSet<TestType>>(
-          "{(10@2012-01-01, 20@2012-01-02 09:40:00+0530], (40@2012-01-07, "
-          "50@2012-01-08]}");
+      sequence_set = TSequenceSet<TestType>(s);
     }
 
     SECTION("set of strings constructor") {
-      sequence_set = make_unique<TSequenceSet<TestType>>(
+      sequence_set = TSequenceSet<TestType>(
           set<string>{"(10@2012-01-01, 20@2012-01-02 09:40:00+0530]",
                       "(40@2012-01-07, 50@2012-01-08]"});
     }
 
-    REQUIRE(sequence_set->sequences().size() == 2);
+    SECTION("string constructor") {
+      sequence_set = TSequenceSet<TestType>(
+          "{(10@2012-01-01, 20@2012-01-02 09:40:00+0530], "
+          "(40@2012-01-07, 50@2012-01-08]}");
+    }
+
+    SECTION("with interpolation specified") {
+      expected_interp = Interpolation::Stepwise;
+
+      SECTION("no strings constructor") {
+        TSequence<TestType> sequence_3 =
+            getSampleSequence1<TestType>(Interpolation::Stepwise); // Duplicate!
+        set<TSequence<TestType>> s = {
+            getSampleSequence2<TestType>(Interpolation::Stepwise),
+            getSampleSequence1<TestType>(Interpolation::Stepwise), sequence_3};
+        sequence_set = TSequenceSet<TestType>(s, Interpolation::Stepwise);
+      }
+
+      SECTION("set of strings constructor") {
+        sequence_set = TSequenceSet<TestType>(
+            set<string>{
+                "Interp=Stepwise;(10@2012-01-01, 20@2012-01-02 09:40:00+0530]",
+                "Interp=Stepwise;(40@2012-01-07, 50@2012-01-08]"},
+            Interpolation::Stepwise);
+      }
+
+      SECTION("string constructor") {
+        sequence_set = TSequenceSet<TestType>(
+            "Interp=Stepwise;{(10@2012-01-01, 20@2012-01-02 09:40:00+0530], "
+            "(40@2012-01-07, 50@2012-01-08]}");
+      }
+    }
+
+    REQUIRE(sequence_set.sequences().size() == 2);
 
     // We gave the sequences out-of-order!
-    REQUIRE(sequence_set->startSequence() == sequence_2);
-    REQUIRE(sequence_set->endSequence() == sequence_1);
+    REQUIRE(sequence_set.startSequence() == sequence_2);
+    REQUIRE(sequence_set.endSequence() == sequence_1);
+
+    REQUIRE(sequence_set.interpolation() == expected_interp);
+
+    stringstream output;
+    output << sequence_set;
+    string expected_prefix =
+        is_floating_point<TestType>::value &&
+                sequence_set.interpolation() == Interpolation::Stepwise
+            ? "Interp=Stepwise;"
+            : "";
+    string expected =
+        expected_prefix +
+        "{(10@2012-01-01T00:00:00+0000, 20@2012-01-02T04:10:00+0000], "
+        "(40@2012-01-07T00:00:00+0000, 50@2012-01-08T00:00:00+0000]}";
+    REQUIRE(output.str() == expected);
   }
 }
 
@@ -212,7 +267,7 @@ TEMPLATE_TEST_CASE("TSequenceSet value functions", "[tsequenceset]", int,
 TEMPLATE_TEST_CASE("TSequenceSet getTime and timespan", "[tsequenceset]", int,
                    float) {
   set<TSequence<TestType>> sequences;
-  size_t size = GENERATE(0, take(4, random(1, 24)));
+  size_t size = GENERATE(1, take(4, random(2, 24)));
   set<TInstant<TestType>> all_expected_instants;
   set<time_point> all_expected_timestamps;
   duration_ms expected_timespan(0);

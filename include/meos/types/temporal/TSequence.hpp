@@ -58,84 +58,15 @@ public:
   bool intersectsTimestamp(time_point const datetime) const override;
   bool intersectsPeriod(Period const period) const override;
 
+  istream &read(istream &in, bool with_interp = true);
+  ostream &write(ostream &os, bool with_interp = true) const;
+
   friend istream &operator>>(istream &in, TSequence &sequence) {
-    char c;
-
-    // First we check for interpolation, if specified, else we stick with
-    // default value (Stepwise for discrete base types, Linear otherwise)
-    Interpolation interp =
-        is_discrete_v<T> ? Interpolation::Stepwise : Interpolation::Linear;
-    in >> std::ws;
-    int pos = in.tellg();
-    char prefix[6];
-    in.read(prefix, 6);
-    bool interp_specified = string(prefix) == "Interp";
-    if (interp_specified) {
-      consume(in, '=');
-      std::string interp_string = read_until_one_of(in, "; \n\t");
-      if (interp_string == "Stepwise") {
-        interp = Interpolation::Stepwise;
-      } else if (interp_string == "Linear") {
-        if (is_discrete_v<T>) {
-          throw invalid_argument(
-              "Cannot assign linear interpolation to a discrete base type");
-        }
-        interp = Interpolation::Linear;
-      } else {
-        throw invalid_argument("Unsupported interpolation specified: " +
-                               interp_string);
-      }
-      consume(in, ';');
-    } else {
-      in.seekg(pos);
-    }
-
-    c = consume_one_of(in, "[(");
-    bool const lower_inc = c == '[';
-
-    set<TInstant<T>> s = {};
-
-    TInstant<T> instant;
-    in >> instant;
-    s.insert(instant);
-
-    while (true) {
-      in >> c;
-      if (c != ',')
-        break;
-      in >> instant;
-      s.insert(instant);
-    }
-
-    if (c != ']' && c != ')') {
-      throw invalid_argument("Expected either a ']' or ')'");
-    }
-    bool const upper_inc = c == ']';
-
-    sequence.m_instants = s;
-    sequence.m_lower_inc = lower_inc;
-    sequence.m_upper_inc = upper_inc;
-    sequence.m_interpolation = interp;
-
-    return in;
+    return sequence.read(in);
   }
 
   friend ostream &operator<<(ostream &os, TSequence<T> const &sequence) {
-    if (sequence.interpolation() != default_interp_v<T>) {
-      os << "Interp=" << sequence.interpolation() << ";";
-    }
-
-    bool first = true;
-    os << (sequence.m_lower_inc ? "[" : "(");
-    for (auto const &instant : sequence.instants()) {
-      if (first)
-        first = false;
-      else
-        os << ", ";
-      os << instant;
-    }
-    os << (sequence.m_upper_inc ? "]" : ")");
-    return os;
+    return sequence.write(os);
   }
 
 private:

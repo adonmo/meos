@@ -83,3 +83,8 @@ def test_constructor():
 def test_str():
     tseqf = get_sample_tsequence()
     assert str(tseqf) == '(1.25@2011-01-01T00:00:00+0000, 6.25@2011-01-02T00:00:00+0000]'
+    assert repr(tseqf) == '(1.25@2011-01-01T00:00:00+0000, 6.25@2011-01-02T00:00:00+0000]'
+
+    tseqf = TSequenceFloat({TInstantFloat(10, unix_dt(2020, 9, 10)), TInstantFloat(20, unix_dt(2019, 9, 10))}, False, True, Interpolation.Stepwise)
+    assert str(tseqf) == "Interp=Stepwise;(20@2019-09-10T00:00:00+0000, 10@2020-09-10T00:00:00+0000]"
+    assert repr(tseqf) == "Interp=Stepwise;(20@2019-09-10T00:00:00+0000, 10@2020-09-10T00:00:00+0000]"

@@ -181,8 +181,10 @@ void def_temporal_types(py::module &m, std::string const &typesuffix) {
   py::class_<TSequenceSet<T>, Temporal<T>, TemporalComparators<TSequenceSet<T>>,
              TInstantFunctions<TSequenceSet<T>, TInstant<T>, T>>(
       m, ("TSequenceSet" + typesuffix).c_str())
-      .def(py::init<set<TSequence<T>> &>(), py::arg("sequences"))
-      .def(py::init<set<string> &>(), py::arg("sequences"))
+      .def(py::init<set<TSequence<T>> &, Interpolation>(), py::arg("sequences"),
+           py::arg("interpolation") = default_interp_v<T>)
+      .def(py::init<set<string> &, Interpolation>(), py::arg("sequences"),
+           py::arg("interpolation") = default_interp_v<T>)
       .def(py::init<string>(), py::arg("serialized"))
       .def(py::self == py::self, py::arg("other"))
       .def(py::self != py::self, py::arg("other"))
@@ -194,6 +196,7 @@ void def_temporal_types(py::module &m, std::string const &typesuffix) {
       .def("__repr__", &to_ostream<TSequenceSet<T>>)
       .def("compare", &TSequenceSet<T>::compare, py::arg("other"))
       .def_property_readonly("duration", &TSequenceSet<T>::duration)
+      .def_property_readonly("interpolation", &TSequenceSet<T>::interpolation)
       .def_property_readonly("sequences", &TSequenceSet<T>::sequences)
       .def_property_readonly("numSequences", &TSequenceSet<T>::numSequences)
       .def_property_readonly("startSequence", &TSequenceSet<T>::startSequence)
