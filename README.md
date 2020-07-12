@@ -42,6 +42,23 @@ print(trajectory)
 [POINT (0 0)@2012-01-01T08:00:00+0000, POINT (2 0)@2012-01-01T08:10:00+0000, POINT (2 1)@2012-01-01T08:15:00+0000)
 ```
 
+Some more operations over this data:
+```python
+# Work with individual
+>>> trajectory.instants
+{POINT (2 0)@2012-01-01T08:10:00+0000, POINT (2 1)@2012-01-01T08:15:00+0000, POINT (0 0)@2012-01-01T08:00:00+0000}
+
+>>> trajectory.startValue
+POINT (0 0)
+
+>>> trajectory.endValue
+POINT (2 1)
+
+# Extract just the temporal aspect
+>>> trajectory.timestamps
+{datetime.datetime(2012, 1, 1, 8, 15, tzinfo=datetime.timezone.utc), datetime.datetime(2012, 1, 1, 8, 10, tzinfo=datetime.timezone.utc), datetime.datetime(2012, 1, 1, 8, 0, tzinfo=datetime.timezone.utc)}
+```
+
 ### Documentation
 
 Docs and API Reference: https://pymeos.netlify.app
@@ -68,6 +85,10 @@ int main() {
     cout << tseq << endl;
     return 0;
 }
+```
+
+```
+[POINT (0 0)@2012-01-01T08:00:00+0000, POINT (2 0)@2012-01-01T08:10:00+0000, POINT (2 1)@2012-01-01T08:15:00+0000)
 ```
 
 ### Example
