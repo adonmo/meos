@@ -4,13 +4,13 @@
 #include <chrono>
 #include <string>
 
+#include <meos/types/geom/SRIDMembers.hpp>
+
 using namespace std;
 
 using time_point = std::chrono::system_clock::time_point;
 
-extern int const SRID_DEFAULT;
-
-class STBox {
+class STBox : public SRIDMembers {
 public:
   STBox();
   STBox(string const &serialized);
@@ -57,7 +57,6 @@ public:
   double zmax() const;
   time_point tmax() const;
 
-  int srid() const;
   bool geodetic() const;
 
   friend bool operator==(STBox const &lhs, STBox const &rhs);
@@ -80,7 +79,6 @@ private:
   double m_zmax = INFINITY;
   time_point m_tmax = time_point(time_point::duration::max());
 
-  int m_srid = SRID_DEFAULT;
   bool m_geodetic = false;
 
   /**
@@ -102,11 +100,6 @@ private:
    * @return true if T bounds are finite
    */
   bool has_t() const;
-
-  /**
-   * @return true if SRID != SRID_DEFAULT
-   */
-  bool has_srid() const;
 
   void init();
   void setup_defaults();

@@ -5,8 +5,6 @@
 #include <meos/types/box/STBox.hpp>
 #include <meos/util/serializing.hpp>
 
-extern int const SRID_DEFAULT = 0;
-
 STBox::STBox() {}
 
 // XYZT
@@ -14,8 +12,8 @@ STBox::STBox(double const xmin, double const ymin, double const zmin,
              time_point const tmin, double const xmax, double const ymax,
              double const zmax, time_point const tmax, int const srid,
              bool const geodetic)
-    : m_xmin(xmin), m_ymin(ymin), m_zmin(zmin), m_tmin(tmin), m_xmax(xmax),
-      m_ymax(ymax), m_zmax(zmax), m_tmax(tmax), m_srid(srid),
+    : SRIDMembers(srid), m_xmin(xmin), m_ymin(ymin), m_zmin(zmin), m_tmin(tmin),
+      m_xmax(xmax), m_ymax(ymax), m_zmax(zmax), m_tmax(tmax),
       m_geodetic(geodetic) {
   init();
 }
@@ -25,8 +23,8 @@ STBox::STBox(double const xmin, double const ymin, double const zmin,
              string const &tmin, double const xmax, double const ymax,
              double const zmax, string const &tmax, int const srid,
              bool const geodetic)
-    : m_xmin(xmin), m_ymin(ymin), m_zmin(zmin), m_xmax(xmax), m_ymax(ymax),
-      m_zmax(zmax), m_srid(srid), m_geodetic(geodetic) {
+    : SRIDMembers(srid), m_xmin(xmin), m_ymin(ymin), m_zmin(zmin), m_xmax(xmax),
+      m_ymax(ymax), m_zmax(zmax), m_geodetic(geodetic) {
   stringstream tmin_ss(tmin);
   this->m_tmin = nextTime(tmin_ss);
   stringstream tmax_ss(tmax);
@@ -38,8 +36,8 @@ STBox::STBox(double const xmin, double const ymin, double const zmin,
 STBox::STBox(double const xmin, double const ymin, double const zmin,
              double const xmax, double const ymax, double const zmax,
              int const srid, bool const geodetic)
-    : m_xmin(xmin), m_ymin(ymin), m_zmin(zmin), m_xmax(xmax), m_ymax(ymax),
-      m_zmax(zmax), m_srid(srid), m_geodetic(geodetic) {
+    : SRIDMembers(srid), m_xmin(xmin), m_ymin(ymin), m_zmin(zmin), m_xmax(xmax),
+      m_ymax(ymax), m_zmax(zmax), m_geodetic(geodetic) {
   init();
 }
 
@@ -47,8 +45,8 @@ STBox::STBox(double const xmin, double const ymin, double const zmin,
 STBox::STBox(double const xmin, double const ymin, time_point const tmin,
              double const xmax, double const ymax, time_point const tmax,
              int const srid)
-    : m_xmin(xmin), m_ymin(ymin), m_tmin(tmin), m_xmax(xmax), m_ymax(ymax),
-      m_tmax(tmax), m_srid(srid) {
+    : SRIDMembers(srid), m_xmin(xmin), m_ymin(ymin), m_tmin(tmin), m_xmax(xmax),
+      m_ymax(ymax), m_tmax(tmax) {
   init();
 }
 
@@ -56,7 +54,8 @@ STBox::STBox(double const xmin, double const ymin, time_point const tmin,
 STBox::STBox(double const xmin, double const ymin, string const &tmin,
              double const xmax, double const ymax, string const &tmax,
              int const srid)
-    : m_xmin(xmin), m_ymin(ymin), m_xmax(xmax), m_ymax(ymax), m_srid(srid) {
+    : SRIDMembers(srid), m_xmin(xmin), m_ymin(ymin), m_xmax(xmax),
+      m_ymax(ymax) {
   stringstream tmin_ss(tmin);
   this->m_tmin = nextTime(tmin_ss);
   stringstream tmax_ss(tmax);
@@ -67,20 +66,21 @@ STBox::STBox(double const xmin, double const ymin, string const &tmin,
 // XY
 STBox::STBox(double const xmin, double const ymin, double const xmax,
              double const ymax, int const srid)
-    : m_xmin(xmin), m_ymin(ymin), m_xmax(xmax), m_ymax(ymax), m_srid(srid) {
+    : SRIDMembers(srid), m_xmin(xmin), m_ymin(ymin), m_xmax(xmax),
+      m_ymax(ymax) {
   init();
 }
 
 // T
 STBox::STBox(time_point const tmin, time_point const tmax, int const srid,
              bool const geodetic)
-    : m_tmin(tmin), m_tmax(tmax), m_srid(srid), m_geodetic(geodetic) {
+    : SRIDMembers(srid), m_tmin(tmin), m_tmax(tmax), m_geodetic(geodetic) {
   init();
 }
 
 STBox::STBox(string const &tmin, string const &tmax, int const srid,
              bool const geodetic)
-    : m_srid(srid), m_geodetic(geodetic) {
+    : SRIDMembers(srid), m_geodetic(geodetic) {
   stringstream tmin_ss(tmin);
   this->m_tmin = nextTime(tmin_ss);
   stringstream tmax_ss(tmax);
@@ -147,7 +147,6 @@ double STBox::ymax() const { return this->m_ymax; }
 double STBox::zmax() const { return this->m_zmax; }
 time_point STBox::tmax() const { return this->m_tmax; }
 
-int STBox::srid() const { return this->m_srid; }
 bool STBox::geodetic() const { return this->m_geodetic; }
 
 bool STBox::has_x() const { return this->m_xmin != -INFINITY; }
@@ -156,7 +155,6 @@ bool STBox::has_z() const { return this->m_zmin != -INFINITY; }
 bool STBox::has_t() const {
   return this->m_tmin != time_point(time_point::duration::min());
 }
-bool STBox::has_srid() const { return this->m_srid != SRID_DEFAULT; }
 
 int STBox::compare(STBox const &other) const {
   if (srid() < other.srid())
