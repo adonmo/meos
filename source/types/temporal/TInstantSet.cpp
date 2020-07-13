@@ -123,3 +123,45 @@ bool TInstantSet<T>::intersectsPeriod(Period const period) const {
   }
   return false;
 }
+
+template <typename T> istream &TInstantSet<T>::read(istream &in) {
+  char c;
+
+  consume(in, '{');
+
+  set<TInstant<T>> s = {};
+
+  TInstant<T> instant;
+  in >> instant;
+  s.insert(instant);
+
+  while (true) {
+    in >> c;
+    if (c != ',')
+      break;
+    in >> instant;
+    s.insert(instant);
+  }
+
+  if (c != '}') {
+    throw invalid_argument("Expected '}'");
+  }
+
+  this->m_instants = s;
+
+  return in;
+}
+
+template <typename T> ostream &TInstantSet<T>::write(ostream &os) const {
+  bool first = true;
+  os << "{";
+  for (auto instant : this->m_instants) {
+    if (first)
+      first = false;
+    else
+      os << ", ";
+    os << instant;
+  }
+  os << "}";
+  return os;
+}

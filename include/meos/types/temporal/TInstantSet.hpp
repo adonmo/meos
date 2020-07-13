@@ -1,6 +1,8 @@
 #ifndef MEOS_TYPES_TEMPORAL_TINSTANTSET_HPP
 #define MEOS_TYPES_TEMPORAL_TINSTANTSET_HPP
 
+#include <set>
+
 #include <meos/io/utils.hpp>
 #include <meos/types/geom/Geometry.hpp>
 #include <meos/types/temporal/TInstant.hpp>
@@ -8,7 +10,6 @@
 #include <meos/types/temporal/Temporal.hpp>
 #include <meos/types/temporal/TemporalComparators.hpp>
 #include <meos/util/serializing.hpp>
-#include <set>
 
 using namespace std;
 
@@ -50,46 +51,15 @@ public:
   bool intersectsTimestamp(time_point const datetime) const override;
   bool intersectsPeriod(Period const period) const override;
 
-  friend istream &operator>>(istream &in, TInstantSet<T> &instant_set) {
-    char c;
+  istream &read(istream &in);
+  ostream &write(ostream &os) const;
 
-    consume(in, '{');
-
-    set<TInstant<T>> s = {};
-
-    TInstant<T> instant;
-    in >> instant;
-    s.insert(instant);
-
-    while (true) {
-      in >> c;
-      if (c != ',')
-        break;
-      in >> instant;
-      s.insert(instant);
-    }
-
-    if (c != '}') {
-      throw invalid_argument("Expected '}'");
-    }
-
-    instant_set.m_instants = s;
-
-    return in;
+  friend istream &operator>>(istream &in, TInstantSet &instant_set) {
+    return instant_set.read(in);
   }
 
-  friend ostream &operator<<(ostream &os, TInstantSet const &instant_set) {
-    bool first = true;
-    os << "{";
-    for (auto instant : instant_set.instants()) {
-      if (first)
-        first = false;
-      else
-        os << ", ";
-      os << instant;
-    }
-    os << "}";
-    return os;
+  friend ostream &operator<<(ostream &os, TInstantSet<T> const &instant_set) {
+    return instant_set.write(os);
   }
 
 private:

@@ -113,3 +113,16 @@ template <typename T>
 bool TInstant<T>::intersectsPeriod(Period const period) const {
   return period.contains_timestamp(this->t);
 }
+
+template <typename T> istream &TInstant<T>::read(istream &in) {
+  this->value = nextValue<T>(in);
+  consume(in, '@');
+  this->t = nextTime(in);
+  return in;
+}
+
+template <typename T> ostream &TInstant<T>::write(ostream &os) const {
+  os << write_value(this->getValue()) << "@"
+     << write_ISO8601_time(this->getTimestamp());
+  return os;
+}

@@ -216,3 +216,84 @@ bool TSequenceSet<T>::intersectsPeriod(Period const period) const {
   }
   return false;
 }
+
+template <typename T> istream &TSequenceSet<T>::read(istream &in) {
+  char c;
+
+  // First we check for interpolation, if specified, else we stick with
+  // default value (Stepwise for discrete base types, Linear otherwise)
+  Interpolation interp =
+      is_discrete_v<T> ? Interpolation::Stepwise : Interpolation::Linear;
+  in >> std::ws;
+  int pos = in.tellg();
+  char prefix[6];
+  in.read(prefix, 6);
+  bool interp_specified = string(prefix, 6) == "Interp";
+  if (interp_specified) {
+    consume(in, '=');
+    std::string interp_string = read_until_one_of(in, "; \n\t");
+    if (interp_string == "Stepwise") {
+      interp = Interpolation::Stepwise;
+    } else if (interp_string == "Linear") {
+      if (is_discrete_v<T>) {
+        throw invalid_argument(
+            "Cannot assign linear interpolation to a discrete base type");
+      }
+      interp = Interpolation::Linear;
+    } else {
+      throw invalid_argument("Unsupported interpolation specified: " +
+                             interp_string);
+    }
+    consume(in, ';');
+  } else {
+    in.seekg(pos);
+  }
+
+  consume(in, '{');
+
+  set<TSequence<T>> s = {};
+
+  // When reading sequences, we assume no "Interp=..;" prefix is present
+  // We then create sequence objects with the sequence set's interp value
+  // TODO - code can be more cleaner / efficient
+  TSequence<T> seq;
+  seq.read(in, false);
+  set<TInstant<T>> instants = seq.instants();
+  s.insert(TSequence<T>(instants, seq.lower_inc(), seq.upper_inc(), interp));
+
+  while (true) {
+    in >> c;
+    if (c != ',')
+      break;
+    seq.read(in, false);
+    instants = seq.instants();
+    s.insert(TSequence<T>(instants, seq.lower_inc(), seq.upper_inc(), interp));
+  }
+
+  if (c != '}') {
+    throw invalid_argument("Expected '}'");
+  }
+
+  this->m_sequences = s;
+  this->m_interpolation = interp;
+
+  return in;
+}
+
+template <typename T> ostream &TSequenceSet<T>::write(ostream &os) const {
+  if (this->m_interpolation != default_interp_v<T>) {
+    os << "Interp=" << this->m_interpolation << ";";
+  }
+
+  bool first = true;
+  os << "{";
+  for (auto sequence : this->m_sequences) {
+    if (first)
+      first = false;
+    else
+      os << ", ";
+    sequence.write(os, false);
+  }
+  os << "}";
+  return os;
+}

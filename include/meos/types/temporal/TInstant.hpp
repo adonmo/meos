@@ -25,19 +25,6 @@ public:
   TInstant(pair<string const, string const> p);
   TInstant(string const serialized);
 
-  friend istream &operator>>(istream &in, TInstant &instant) {
-    instant.value = nextValue<T>(in);
-    consume(in, '@');
-    instant.t = nextTime(in);
-    return in;
-  }
-
-  friend ostream &operator<<(ostream &os, TInstant const &instant) {
-    os << write_value(instant.getValue()) << "@"
-       << write_ISO8601_time(instant.getTimestamp());
-    return os;
-  }
-
   int compare(Temporal<T> const &other) const override;
 
   T getValue() const;
@@ -64,6 +51,17 @@ public:
   unique_ptr<TInstant> shift(duration_ms const timedelta) const;
   bool intersectsTimestamp(time_point const datetime) const override;
   bool intersectsPeriod(Period const period) const override;
+
+  istream &read(istream &in);
+  ostream &write(ostream &os) const;
+
+  friend istream &operator>>(istream &in, TInstant &instant) {
+    return instant.read(in);
+  }
+
+  friend ostream &operator<<(ostream &os, TInstant<T> const &instant) {
+    return instant.write(os);
+  }
 
 private:
   T value;
