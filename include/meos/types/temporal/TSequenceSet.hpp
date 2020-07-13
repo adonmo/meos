@@ -1,6 +1,8 @@
 #ifndef MEOS_TYPES_TEMPORAL_TSEQUENCESET_HPP
 #define MEOS_TYPES_TEMPORAL_TSEQUENCESET_HPP
 
+#include <set>
+
 #include <meos/io/utils.hpp>
 #include <meos/types/geom/Geometry.hpp>
 #include <meos/types/temporal/Interpolation.hpp>
@@ -10,7 +12,6 @@
 #include <meos/types/temporal/Temporal.hpp>
 #include <meos/types/temporal/TemporalComparators.hpp>
 #include <meos/util/serializing.hpp>
-#include <set>
 
 using namespace std;
 
@@ -92,7 +93,7 @@ public:
     int pos = in.tellg();
     char prefix[6];
     in.read(prefix, 6);
-    bool interp_specified = string(prefix) == "Interp";
+    bool interp_specified = string(prefix, 6) == "Interp";
     if (interp_specified) {
       consume(in, '=');
       std::string interp_string = read_until_one_of(in, "; \n\t");

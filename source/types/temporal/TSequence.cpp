@@ -201,7 +201,7 @@ istream &TSequence<T>::read(istream &in, bool with_interp) {
     int pos = in.tellg();
     char prefix[6];
     in.read(prefix, 6);
-    bool interp_specified = string(prefix) == "Interp";
+    bool interp_specified = string(prefix, 6) == "Interp";
     if (interp_specified) {
       consume(in, '=');
       std::string interp_string = read_until_one_of(in, "; \n\t");

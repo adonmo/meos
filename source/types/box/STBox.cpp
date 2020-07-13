@@ -241,7 +241,7 @@ istream &operator>>(istream &in, STBox &stbox) {
   int pos = in.tellg();
   char prefix[4];
   in.read(prefix, 4);
-  bool srid_specified = string(prefix) == "SRID";
+  bool srid_specified = string(prefix, 4) == "SRID";
   if (srid_specified) {
     consume(in, '=');
     in >> srid;
