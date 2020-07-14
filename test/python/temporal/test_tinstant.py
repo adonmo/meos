@@ -1,9 +1,7 @@
 import pytest
-
 from pymeos import Geometry
-from pymeos.temporal import (TInstantBool, TInstantFloat, TInstantGeom,
-                             TInstantInt, TInstantSetBool, TInstantText,
-                             TSequenceFloat, TemporalDuration)
+from pymeos.temporal import (TemporalDuration, TInstantBool, TInstantFloat,
+                             TInstantGeom, TInstantInt, TInstantText)
 
 from ..utils import unix_dt
 
@@ -15,11 +13,31 @@ from ..utils import unix_dt
     TInstantInt(("10", "2011-01-01")),
     TInstantInt("10@2011-01-01"),
 ])
-def test_different_constructors(actual):
+def test_different_int_constructors(actual):
     assert actual.duration == TemporalDuration.Instant
     assert actual.duration.name == 'Instant'
     assert actual.getValue == 10
     assert actual.getTimestamp == unix_dt(2011, 1, 1)
+
+
+@pytest.mark.parametrize("actual, expected_srid", [
+    (TInstantGeom(Geometry(20, 30), unix_dt(2011, 1, 1)), 0),
+    (TInstantGeom((Geometry(20, 30), unix_dt(2011, 1, 1))), 0),
+    (TInstantGeom("POINT (20 30)", "2011-01-01"), 0),
+    (TInstantGeom(("POINT (20 30)", "2011-01-01")), 0),
+    (TInstantGeom("POINT (20 30)@2011-01-01"), 0),
+    (TInstantGeom(Geometry(20, 30), unix_dt(2011, 1, 1), 4326), 4326),
+    # TODO
+    # (TInstantGeom("SRID=4326;POINT (20 30)@2011-01-01"), 4326),
+])
+def test_different_geom_constructors(actual, expected_srid):
+    assert actual.duration == TemporalDuration.Instant
+    assert actual.duration.name == 'Instant'
+    assert actual.getValue == Geometry(20, 30)
+    assert actual.getTimestamp == unix_dt(2011, 1, 1)
+    srid_prefix = 'SRID={};'.format(expected_srid) if expected_srid != 0 else ''
+    assert str(actual) == srid_prefix + 'POINT (20 30)@2011-01-01T00:00:00+0000'
+    assert actual.srid == expected_srid
 
 
 def test_constructor_different_base_types():

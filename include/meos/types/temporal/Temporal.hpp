@@ -19,7 +19,7 @@ using duration_ms = std::chrono::milliseconds;
 /**
  * Declares an empty type
  */
-#define Empty tuple<>
+typedef tuple<> Empty;
 
 /**
  * Temporal is the base class for all the temporal types which are

@@ -1,5 +1,7 @@
 #pragma once
 
+#include <type_traits>
+
 #include <pybind11/operators.h>
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
@@ -42,8 +44,13 @@ void def_tinstant_functions(const pybind11::module &m,
 }
 
 template <typename BaseType>
-void def_temporal_types(py::module &m, std::string const &typesuffix) {
-  py::class_<Temporal<BaseType>>(m, ("Temporal" + typesuffix).c_str())
+using py_temporal = py::class_<
+    Temporal<BaseType>,
+    conditional_t<is_same<BaseType, Geometry>::value, SRIDMembers, Empty>>;
+
+template <typename BaseType>
+void def_temporal_class(py::module &m, std::string const &typesuffix) {
+  py_temporal<BaseType>(m, ("Temporal" + typesuffix).c_str())
       .def_property_readonly("minValue", &Temporal<BaseType>::minValue)
       .def_property_readonly("maxValue", &Temporal<BaseType>::maxValue)
       .def_property_readonly("numTimestamps",
@@ -56,17 +63,23 @@ void def_temporal_types(py::module &m, std::string const &typesuffix) {
            &Temporal<BaseType>::intersectsTimestampSet, py::arg("timestampset"))
       .def("intersectsPeriodSet", &Temporal<BaseType>::intersectsPeriodSet,
            py::arg("periodset"));
+}
 
+template <typename BaseType>
+using py_tinstant = py::class_<
+    TInstant<BaseType>, Temporal<BaseType>,
+    TemporalComparators<TInstant<BaseType>>,
+    TInstantFunctions<TInstant<BaseType>, TInstant<BaseType>, BaseType>>;
+
+template <typename BaseType>
+py_tinstant<BaseType> _def_tinstant_class_basic(py::module &m,
+                                                std::string const &typesuffix) {
   def_comparator<TemporalComparators<TInstant<BaseType>>>(m, "TInstant",
                                                           typesuffix);
   def_tinstant_functions<
       TInstantFunctions<TInstant<BaseType>, TInstant<BaseType>, BaseType>>(
       m, "TInstant", typesuffix);
-  py::class_<
-      TInstant<BaseType>, Temporal<BaseType>,
-      TemporalComparators<TInstant<BaseType>>,
-      TInstantFunctions<TInstant<BaseType>, TInstant<BaseType>, BaseType>>(
-      m, ("TInstant" + typesuffix).c_str())
+  return py_tinstant<BaseType>(m, ("TInstant" + typesuffix).c_str())
       .def(py::init<BaseType, time_point>(), py::arg("value"),
            py::arg("timestamp"))
       .def(py::init<pair<BaseType, time_point>>(), py::arg("instant"))
@@ -101,7 +114,29 @@ void def_temporal_types(py::module &m, std::string const &typesuffix) {
            py::arg("datetime"))
       .def("intersectsPeriod", &TInstant<BaseType>::intersectsPeriod,
            py::arg("period"));
+}
 
+template <typename BaseType>
+void _def_tinstant_class_specializations(py_tinstant<BaseType> &c,
+                                         std::string const &typesuffix) {
+  // No specializations by default
+}
+
+template <>
+void _def_tinstant_class_specializations(py_tinstant<Geometry> &c,
+                                         std::string const &typesuffix) {
+  c.def(py::init<Geometry, time_point, int>(), py::arg("value"),
+        py::arg("timestamp"), py::arg("srid"));
+}
+
+template <typename BaseType>
+void def_tinstant_class(py::module &m, std::string const &typesuffix) {
+  auto tinstant_class = _def_tinstant_class_basic<BaseType>(m, typesuffix);
+  _def_tinstant_class_specializations<BaseType>(tinstant_class, typesuffix);
+}
+
+template <typename BaseType>
+void def_tinstantset_class(py::module &m, std::string const &typesuffix) {
   def_comparator<TemporalComparators<TInstantSet<BaseType>>>(m, "TInstantSet",
                                                              typesuffix);
   def_tinstant_functions<
@@ -136,7 +171,10 @@ void def_temporal_types(py::module &m, std::string const &typesuffix) {
            py::arg("datetime"))
       .def("intersectsPeriod", &TInstantSet<BaseType>::intersectsPeriod,
            py::arg("period"));
+}
 
+template <typename BaseType>
+void def_tsequence_class(py::module &m, std::string const &typesuffix) {
   def_comparator<TemporalComparators<TSequence<BaseType>>>(m, "TSequence",
                                                            typesuffix);
   def_tinstant_functions<
@@ -188,7 +226,10 @@ void def_temporal_types(py::module &m, std::string const &typesuffix) {
            py::arg("datetime"))
       .def("intersectsPeriod", &TSequence<BaseType>::intersectsPeriod,
            py::arg("period"));
+}
 
+template <typename BaseType>
+void def_tsequenceset_class(py::module &m, std::string const &typesuffix) {
   def_comparator<TemporalComparators<TSequenceSet<BaseType>>>(m, "TSequenceSet",
                                                               typesuffix);
   def_tinstant_functions<
@@ -238,6 +279,15 @@ void def_temporal_types(py::module &m, std::string const &typesuffix) {
            py::arg("period"));
 }
 
+template <typename BaseType>
+void def_temporal_types(py::module &m, std::string const &typesuffix) {
+  def_temporal_class<BaseType>(m, typesuffix);
+  def_tinstant_class<BaseType>(m, typesuffix);
+  def_tinstantset_class<BaseType>(m, typesuffix);
+  def_tsequence_class<BaseType>(m, typesuffix);
+  def_tsequenceset_class<BaseType>(m, typesuffix);
+}
+
 void def_temporal_module(py::module &m) {
   py::module temporal_module = m.def_submodule(
       "temporal", "This module defines MobilityDB's temporal types: Temporal, "
@@ -253,6 +303,11 @@ void def_temporal_module(py::module &m) {
   py::enum_<Interpolation>(temporal_module, "Interpolation")
       .value("Stepwise", Interpolation::Stepwise)
       .value("Linear", Interpolation::Linear);
+
+  py::class_<Empty>(m, "Empty");
+
+  py::class_<SRIDMembers>(m, "SRIDMembers")
+      .def_property_readonly("srid", &SRIDMembers::srid);
 
   def_temporal_types<bool>(temporal_module, "Bool");
   def_temporal_types<int>(temporal_module, "Int");
