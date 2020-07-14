@@ -1,7 +1,10 @@
 #ifndef MEOS_TYPES_TEMPORAL_TEMPORAL_HPP
 #define MEOS_TYPES_TEMPORAL_TEMPORAL_HPP
 
+#include <type_traits>
+
 #include <meos/types/geom/Geometry.hpp>
+#include <meos/types/geom/SRIDMembers.hpp>
 #include <meos/types/range/Range.hpp>
 #include <meos/types/temporal/TemporalDuration.hpp>
 #include <meos/types/time/Period.hpp>
@@ -13,13 +16,30 @@ using namespace std;
 using time_point = std::chrono::system_clock::time_point;
 using duration_ms = std::chrono::milliseconds;
 
-template <typename T = float> class Temporal {
+/**
+ * Declares an empty type
+ */
+#define Empty tuple<>
+
+/**
+ * Temporal is the base class for all the temporal types which are
+ * TInstant, TInstantSet, TSequence and TSequenceSet.
+ *
+ * This is a template class and takes in a BaseType as the template parameter.
+ * BaseType can be bool, int, float, string or Geometry.
+ *
+ * When the BaseType is Geometry, we add additional support for SRIDs.
+ * We do this by conditionally inheriting from SRIDMembers.
+ */
+template <typename BaseType = float>
+class Temporal : public conditional_t<is_same<BaseType, Geometry>::value,
+                                      SRIDMembers, Empty> {
 public:
   Temporal();
   virtual ~Temporal();
 
-  unique_ptr<Temporal<T>> clone() const {
-    return unique_ptr<Temporal<T>>(this->clone_impl());
+  unique_ptr<Temporal<BaseType>> clone() const {
+    return unique_ptr<Temporal<BaseType>>(this->clone_impl());
   };
 
   virtual int compare(Temporal const &other) const = 0;
@@ -35,7 +55,7 @@ public:
   /**
    * Set of values taken by the temporal value.
    */
-  virtual set<Range<T>> getValues() const = 0;
+  virtual set<Range<BaseType>> getValues() const = 0;
 
   /**
    * Minimum value.
@@ -43,7 +63,7 @@ public:
    * The function does not take into account whether the bounds are inclusive or
    * not.
    */
-  T minValue() const;
+  BaseType minValue() const;
 
   /**
    * Maximum value.
@@ -51,7 +71,7 @@ public:
    * The function does not take into account whether the bounds are inclusive or
    * not.
    */
-  T maxValue() const;
+  BaseType maxValue() const;
 
   /**
    * Period set on which the temporal value is defined.
@@ -101,7 +121,7 @@ public:
   /**
    * Shift the temporal value by a time interval
    */
-  unique_ptr<Temporal<T>> shift(duration_ms const timedelta) const;
+  unique_ptr<Temporal<BaseType>> shift(duration_ms const timedelta) const;
 
   /**
    * Does the temporal value intersect the timestamp?
@@ -124,9 +144,9 @@ public:
   bool intersectsPeriodSet(PeriodSet const periodset) const;
 
 private:
-  virtual Temporal<T> *clone_impl() const = 0;
+  virtual Temporal<BaseType> *clone_impl() const = 0;
 
-  virtual Temporal<T> *shift_impl(duration_ms const timedelta) const = 0;
+  virtual Temporal<BaseType> *shift_impl(duration_ms const timedelta) const = 0;
 };
 
 template class Temporal<bool>;

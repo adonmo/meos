@@ -4,44 +4,61 @@
 
 #include <meos/types/temporal/TInstant.hpp>
 
-template <typename T> TInstant<T>::TInstant() {}
+template <typename BaseType> TInstant<BaseType>::TInstant() {}
 
-template <typename T>
-TInstant<T>::TInstant(T value_, time_point t_) : value(value_), t(t_) {}
+template <typename BaseType>
+TInstant<BaseType>::TInstant(BaseType value_, time_point t_)
+    : value(value_), t(t_) {}
 
-template <typename T>
-TInstant<T>::TInstant(pair<T, time_point> p) : value(p.first), t(p.second) {}
+template <typename BaseType>
+TInstant<BaseType>::TInstant(pair<BaseType, time_point> p)
+    : value(p.first), t(p.second) {}
 
-template <typename T>
-TInstant<T>::TInstant(string const value, string const t) {
+template <typename BaseType>
+TInstant<BaseType>::TInstant(string const value, string const t) {
   stringstream lss(value);
-  this->value = nextValue<T>(lss);
+  this->value = nextValue<BaseType>(lss);
   stringstream uss(t);
   this->t = nextTime(uss);
 }
 
-template <typename T>
-TInstant<T>::TInstant(pair<string const, string const> p) {
+template <typename BaseType>
+TInstant<BaseType>::TInstant(pair<string const, string const> p) {
   stringstream lss(p.first);
-  this->value = nextValue<T>(lss);
+  this->value = nextValue<BaseType>(lss);
   stringstream uss(p.second);
   this->t = nextTime(uss);
 }
 
-template <typename T> TInstant<T>::TInstant(string const serialized) {
+template <typename BaseType>
+TInstant<BaseType>::TInstant(string const serialized) {
   stringstream ss(serialized);
-  TInstant<T> instant;
+  TInstant<BaseType> instant;
   ss >> instant;
   this->value = instant.value;
   this->t = instant.t;
 }
 
-template <typename T> int TInstant<T>::compare(Temporal<T> const &other) const {
+// Extra constructors for Geometry base type
+// Note: Don't forget to instantiate the templates!
+
+template <typename BaseType>
+template <typename B, typename is_geometry<B>::type *>
+TInstant<BaseType>::TInstant(BaseType value_, time_point t_, int srid)
+    : value(value_), t(t_) {
+  this->m_srid = srid;
+}
+
+template TInstant<Geometry>::TInstant(Geometry, time_point, int);
+
+template <typename BaseType>
+int TInstant<BaseType>::compare(Temporal<BaseType> const &other) const {
   if (this->duration() != other.duration()) {
     throw std::invalid_argument("Unsupported types for comparision");
   }
 
-  TInstant<T> const *that = dynamic_cast<TInstant<T> const *>(&other);
+  TInstant<BaseType> const *that =
+      dynamic_cast<TInstant<BaseType> const *>(&other);
 
   // Compare timestamps
   if (this->t < that->t)
@@ -59,69 +76,118 @@ template <typename T> int TInstant<T>::compare(Temporal<T> const &other) const {
   return 0;
 }
 
-template <typename T> T TInstant<T>::getValue() const { return this->value; }
+template <typename BaseType> BaseType TInstant<BaseType>::getValue() const {
+  return this->value;
+}
 
-template <typename T> time_point TInstant<T>::getTimestamp() const {
+template <typename BaseType>
+time_point TInstant<BaseType>::getTimestamp() const {
   return this->t;
 }
 
-template <typename T> set<TInstant<T>> TInstant<T>::instants() const {
+template <typename BaseType>
+set<TInstant<BaseType>> TInstant<BaseType>::instants() const {
   return {*this};
 }
 
-template <typename T> duration_ms TInstant<T>::timespan() const {
+template <typename BaseType> duration_ms TInstant<BaseType>::timespan() const {
   return duration_ms(0);
 }
 
-template <typename T> set<Range<T>> TInstant<T>::getValues() const {
-  return {Range<T>(this->getValue(), this->getValue(), true, true)};
+template <typename BaseType>
+set<Range<BaseType>> TInstant<BaseType>::getValues() const {
+  return {Range<BaseType>(this->getValue(), this->getValue(), true, true)};
 }
 
-template <typename T> set<time_point> TInstant<T>::timestamps() const {
+template <typename BaseType>
+set<time_point> TInstant<BaseType>::timestamps() const {
   return {getTimestamp()};
 }
 
-template <typename T> PeriodSet TInstant<T>::getTime() const {
+template <typename BaseType> PeriodSet TInstant<BaseType>::getTime() const {
   set<Period> s = {this->period()};
   return PeriodSet(s);
 }
 
-template <typename T> Period TInstant<T>::period() const {
+template <typename BaseType> Period TInstant<BaseType>::period() const {
   return Period(this->getTimestamp(), this->getTimestamp(), true, true);
 }
 
-template <typename T>
-unique_ptr<TInstant<T>> TInstant<T>::shift(duration_ms const timedelta) const {
-  return unique_ptr<TInstant<T>>(this->shift_impl(timedelta));
+template <typename BaseType>
+unique_ptr<TInstant<BaseType>>
+TInstant<BaseType>::shift(duration_ms const timedelta) const {
+  return unique_ptr<TInstant<BaseType>>(this->shift_impl(timedelta));
 }
 
-template <typename T> TInstant<T> *TInstant<T>::clone_impl() const {
-  return new TInstant<T>(this->value, this->t);
+template <typename BaseType>
+TInstant<BaseType> *TInstant<BaseType>::clone_impl() const {
+  return new TInstant<BaseType>(this->value, this->t);
 }
 
-template <typename T>
-TInstant<T> *TInstant<T>::shift_impl(duration_ms const timedelta) const {
-  return new TInstant<T>(this->getValue(), this->getTimestamp() + timedelta);
+template <typename BaseType>
+TInstant<BaseType> *
+TInstant<BaseType>::shift_impl(duration_ms const timedelta) const {
+  return new TInstant<BaseType>(this->getValue(),
+                                this->getTimestamp() + timedelta);
 }
 
-template <typename T>
-bool TInstant<T>::intersectsTimestamp(time_point const datetime) const {
+template <typename BaseType>
+bool TInstant<BaseType>::intersectsTimestamp(time_point const datetime) const {
   return datetime == this->t;
 }
 
-template <typename T>
-bool TInstant<T>::intersectsPeriod(Period const period) const {
+template <typename BaseType>
+bool TInstant<BaseType>::intersectsPeriod(Period const period) const {
   return period.contains_timestamp(this->t);
 }
 
-template <typename T> istream &TInstant<T>::read(istream &in) {
-  this->value = nextValue<T>(in);
+template <typename BaseType> istream &TInstant<BaseType>::read(istream &in) {
+  this->value = nextValue<BaseType>(in);
   consume(in, '@');
   this->t = nextTime(in);
   return in;
 }
 
-template <typename T> ostream &TInstant<T>::write(ostream &os) const {
+template <> istream &TInstant<Geometry>::read(istream &in) {
+  int srid = 0;
+
+  // In the case of BaseType being Geometry,
+  // we first check if a SRID prefix is present
+  in >> std::ws;
+  int pos = in.tellg();
+  char prefix[4];
+  in.read(prefix, 4);
+  bool srid_specified = string(prefix, 4) == "SRID";
+  if (srid_specified) {
+    consume(in, '=');
+    in >> srid;
+    consume(in, ';');
+  } else {
+    in.seekg(pos);
+  }
+
+  this->value = nextValue<Geometry>(in);
+  consume(in, '@');
+  this->t = nextTime(in);
+  this->m_srid = srid;
+
+  return in;
+}
+
+template <typename BaseType>
+ostream &TInstant<BaseType>::write(ostream &os) const {
+  os << write_value(this->getValue()) << "@"
+     << write_ISO8601_time(this->getTimestamp());
+  return os;
+}
+
+template <> ostream &TInstant<Geometry>::write(ostream &os) const {
+  // In the case of BaseType being Geometry,
+  // we first output the SRID prefix is it's not the default
+  if (is_geometry_v<Geometry> && this->srid() != 0) {
+    os << "SRID=" << this->srid() << ";";
+  }
+
   os << write_value(this->getValue()) << "@"
      << write_ISO8601_time(this->getTimestamp());
   return os;

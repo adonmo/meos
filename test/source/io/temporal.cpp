@@ -2,7 +2,6 @@
 #include "../common/time_utils.hpp"
 #include "../common/utils.hpp"
 #include <catch2/catch.hpp>
-#include <iostream>
 #include <meos/io/Deserializer.hpp>
 #include <meos/types/temporal/TInstant.hpp>
 #include <meos/types/temporal/TInstantSet.hpp>

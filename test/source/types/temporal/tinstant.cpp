@@ -19,6 +19,11 @@ TEMPLATE_TEST_CASE("TInstants are constructed properly", "[tinstant]", int,
     ss >> instant;
     REQUIRE(instant.getValue() == 1);
     REQUIRE(instant.getTimestamp() == unix_time_point(2012, 1, 2, 4, 10));
+
+    std::stringstream output;
+    output << instant;
+    string expected = "1@2012-01-02T04:10:00+0000";
+    REQUIRE(output.str() == expected);
   }
 
   SECTION("all constructors work") {
@@ -233,4 +238,34 @@ TEMPLATE_TEST_CASE("TInstant intersection functions", "[tinstantset]", int,
                 true)};
     REQUIRE(instant.intersectsPeriodSet(PeriodSet(s)) == false);
   }
+}
+
+TEST_CASE("TInstant<Geometry>", "[tinst]") {
+  SECTION("without SRID") {
+    TInstant<Geometry> instant(Geometry(20, 30), unix_time_point(2012, 11, 1));
+    REQUIRE(instant.srid() == 0);
+
+    std::stringstream output;
+    output << instant;
+    string expected = "POINT (20 30)@2012-11-01T00:00:00+0000";
+    REQUIRE(output.str() == expected);
+  }
+
+  SECTION("with SRID") {
+    TInstant<Geometry> instant(Geometry(20, 30), unix_time_point(2012, 11, 1),
+                               4326);
+    REQUIRE(instant.srid() == 4326);
+
+    std::stringstream output;
+    output << instant;
+    string expected = "SRID=4326;POINT (20 30)@2012-11-01T00:00:00+0000";
+    REQUIRE(output.str() == expected);
+  }
+
+  // TODO
+  // Testing for this would be more involved, probably we need to use SFINAE
+  //
+  // SECTION("Non geometries cannot be constructed with SRIDs") {
+  //
+  // }
 }

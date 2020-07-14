@@ -1,4 +1,4 @@
-#include <iostream>
+#include <ostream>
 
 #include <meos/types/temporal/Interpolation.hpp>
 

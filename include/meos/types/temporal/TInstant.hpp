@@ -1,6 +1,8 @@
 #ifndef MEOS_TYPES_TEMPORAL_TINSTANT_HPP
 #define MEOS_TYPES_TEMPORAL_TINSTANT_HPP
 
+#include <type_traits>
+
 #include <meos/io/utils.hpp>
 #include <meos/types/geom/Geometry.hpp>
 #include <meos/types/temporal/TInstantFunctions.hpp>
@@ -13,25 +15,38 @@ using namespace std;
 using time_point = std::chrono::system_clock::time_point;
 using duration_ms = std::chrono::milliseconds;
 
-template <typename T>
-class TInstant : public Temporal<T>,
-                 public TemporalComparators<TInstant<T>>,
-                 public TInstantFunctions<TInstant<T>, TInstant<T>, T> {
+/**
+ * Class for representing temporals of instant duration.
+ *
+ * A temporal instant represents a value at a particular instant in time.
+ */
+template <typename BaseType>
+class TInstant : public Temporal<BaseType>,
+                 public TemporalComparators<TInstant<BaseType>>,
+                 public TInstantFunctions<TInstant<BaseType>,
+                                          TInstant<BaseType>, BaseType> {
 public:
+  // Constructors
   TInstant();
-  TInstant(T value, time_point t);
-  TInstant(pair<T, time_point> p);
+  TInstant(BaseType value, time_point t);
+  TInstant(pair<BaseType, time_point> p);
   TInstant(string const value, string const t);
   TInstant(pair<string const, string const> p);
   TInstant(string const serialized);
 
-  int compare(Temporal<T> const &other) const override;
+  // Additional constructors for Geometry type
+  template <typename B = BaseType, typename is_geometry<B>::type * = nullptr>
+  TInstant(BaseType value_, time_point t_, int srid);
 
-  T getValue() const;
+  // Comparision functions
+  int compare(Temporal<BaseType> const &other) const override;
+
+  // Accessor functions
+  BaseType getValue() const;
   time_point getTimestamp() const;
 
-  unique_ptr<TInstant<T>> clone() const {
-    return std::unique_ptr<TInstant<T>>(this->clone_impl());
+  unique_ptr<TInstant<BaseType>> clone() const {
+    return std::unique_ptr<TInstant<BaseType>>(this->clone_impl());
   }
 
   TemporalDuration duration() const override {
@@ -44,7 +59,7 @@ public:
   set<TInstant> instants() const;
 
   duration_ms timespan() const override;
-  set<Range<T>> getValues() const override;
+  set<Range<BaseType>> getValues() const override;
   set<time_point> timestamps() const override;
   PeriodSet getTime() const override;
   Period period() const override;
@@ -52,6 +67,7 @@ public:
   bool intersectsTimestamp(time_point const datetime) const override;
   bool intersectsPeriod(Period const period) const override;
 
+  // IO functions
   istream &read(istream &in);
   ostream &write(ostream &os) const;
 
@@ -59,12 +75,12 @@ public:
     return instant.read(in);
   }
 
-  friend ostream &operator<<(ostream &os, TInstant<T> const &instant) {
+  friend ostream &operator<<(ostream &os, TInstant<BaseType> const &instant) {
     return instant.write(os);
   }
 
 private:
-  T value;
+  BaseType value;
   time_point t;
 
   TInstant *clone_impl() const override;

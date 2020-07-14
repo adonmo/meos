@@ -41,28 +41,35 @@ void def_tinstant_functions(const pybind11::module &m,
       .def("valueN", &Interface::valueN, py::arg("n"));
 }
 
-template <typename T>
+template <typename BaseType>
 void def_temporal_types(py::module &m, std::string const &typesuffix) {
-  py::class_<Temporal<T>>(m, ("Temporal" + typesuffix).c_str())
-      .def_property_readonly("minValue", &Temporal<T>::minValue)
-      .def_property_readonly("maxValue", &Temporal<T>::maxValue)
-      .def_property_readonly("numTimestamps", &Temporal<T>::numTimestamps)
-      .def_property_readonly("startTimestamp", &Temporal<T>::startTimestamp)
-      .def_property_readonly("endTimestamp", &Temporal<T>::endTimestamp)
-      .def("timestampN", &Temporal<T>::timestampN, py::arg("n"))
-      .def("intersectsTimestampSet", &Temporal<T>::intersectsTimestampSet,
-           py::arg("timestampset"))
-      .def("intersectsPeriodSet", &Temporal<T>::intersectsPeriodSet,
+  py::class_<Temporal<BaseType>>(m, ("Temporal" + typesuffix).c_str())
+      .def_property_readonly("minValue", &Temporal<BaseType>::minValue)
+      .def_property_readonly("maxValue", &Temporal<BaseType>::maxValue)
+      .def_property_readonly("numTimestamps",
+                             &Temporal<BaseType>::numTimestamps)
+      .def_property_readonly("startTimestamp",
+                             &Temporal<BaseType>::startTimestamp)
+      .def_property_readonly("endTimestamp", &Temporal<BaseType>::endTimestamp)
+      .def("timestampN", &Temporal<BaseType>::timestampN, py::arg("n"))
+      .def("intersectsTimestampSet",
+           &Temporal<BaseType>::intersectsTimestampSet, py::arg("timestampset"))
+      .def("intersectsPeriodSet", &Temporal<BaseType>::intersectsPeriodSet,
            py::arg("periodset"));
 
-  def_comparator<TemporalComparators<TInstant<T>>>(m, "TInstant", typesuffix);
-  def_tinstant_functions<TInstantFunctions<TInstant<T>, TInstant<T>, T>>(
+  def_comparator<TemporalComparators<TInstant<BaseType>>>(m, "TInstant",
+                                                          typesuffix);
+  def_tinstant_functions<
+      TInstantFunctions<TInstant<BaseType>, TInstant<BaseType>, BaseType>>(
       m, "TInstant", typesuffix);
-  py::class_<TInstant<T>, Temporal<T>, TemporalComparators<TInstant<T>>,
-             TInstantFunctions<TInstant<T>, TInstant<T>, T>>(
+  py::class_<
+      TInstant<BaseType>, Temporal<BaseType>,
+      TemporalComparators<TInstant<BaseType>>,
+      TInstantFunctions<TInstant<BaseType>, TInstant<BaseType>, BaseType>>(
       m, ("TInstant" + typesuffix).c_str())
-      .def(py::init<T, time_point>(), py::arg("value"), py::arg("timestamp"))
-      .def(py::init<pair<T, time_point>>(), py::arg("instant"))
+      .def(py::init<BaseType, time_point>(), py::arg("value"),
+           py::arg("timestamp"))
+      .def(py::init<pair<BaseType, time_point>>(), py::arg("instant"))
       .def(py::init<string, string>(), py::arg("value"), py::arg("timestamp"))
       .def(py::init<pair<string, string>>(), py::arg("instant"))
       .def(py::init<string>(), py::arg("serialized"))
@@ -72,37 +79,40 @@ void def_temporal_types(py::module &m, std::string const &typesuffix) {
       .def(py::self <= py::self, py::arg("other"))
       .def(py::self > py::self, py::arg("other"))
       .def(py::self >= py::self, py::arg("other"))
-      .def("__str__", &to_ostream<TInstant<T>>)
-      .def("__repr__", &to_ostream<TInstant<T>>)
+      .def("__str__", &to_ostream<TInstant<BaseType>>)
+      .def("__repr__", &to_ostream<TInstant<BaseType>>)
       .def("__hash__",
-           [](TInstant<T> const &instant) {
+           [](TInstant<BaseType> const &instant) {
              return py::hash(
                  py::make_tuple(instant.getValue(), instant.getTimestamp()));
            })
-      .def("compare", &TInstant<T>::compare, py::arg("other"))
-      .def_property_readonly("getTimestamp", &TInstant<T>::getTimestamp)
-      .def_property_readonly("getValue", &TInstant<T>::getValue)
-      .def_property_readonly("duration", &TInstant<T>::duration)
-      .def_property_readonly("instants", &TInstant<T>::instants)
-      .def_property_readonly("timespan", &TInstant<T>::timespan)
-      .def_property_readonly("getValues", &TInstant<T>::getValues)
-      .def_property_readonly("timestamps", &TInstant<T>::timestamps)
-      .def_property_readonly("getTime", &TInstant<T>::getTime)
-      .def_property_readonly("period", &TInstant<T>::period)
-      .def("shift", &TInstant<T>::shift, py::arg("timedelta"))
-      .def("intersectsTimestamp", &TInstant<T>::intersectsTimestamp,
+      .def("compare", &TInstant<BaseType>::compare, py::arg("other"))
+      .def_property_readonly("getTimestamp", &TInstant<BaseType>::getTimestamp)
+      .def_property_readonly("getValue", &TInstant<BaseType>::getValue)
+      .def_property_readonly("duration", &TInstant<BaseType>::duration)
+      .def_property_readonly("instants", &TInstant<BaseType>::instants)
+      .def_property_readonly("timespan", &TInstant<BaseType>::timespan)
+      .def_property_readonly("getValues", &TInstant<BaseType>::getValues)
+      .def_property_readonly("timestamps", &TInstant<BaseType>::timestamps)
+      .def_property_readonly("getTime", &TInstant<BaseType>::getTime)
+      .def_property_readonly("period", &TInstant<BaseType>::period)
+      .def("shift", &TInstant<BaseType>::shift, py::arg("timedelta"))
+      .def("intersectsTimestamp", &TInstant<BaseType>::intersectsTimestamp,
            py::arg("datetime"))
-      .def("intersectsPeriod", &TInstant<T>::intersectsPeriod,
+      .def("intersectsPeriod", &TInstant<BaseType>::intersectsPeriod,
            py::arg("period"));
 
-  def_comparator<TemporalComparators<TInstantSet<T>>>(m, "TInstantSet",
-                                                      typesuffix);
-  def_tinstant_functions<TInstantFunctions<TInstantSet<T>, TInstant<T>, T>>(
+  def_comparator<TemporalComparators<TInstantSet<BaseType>>>(m, "TInstantSet",
+                                                             typesuffix);
+  def_tinstant_functions<
+      TInstantFunctions<TInstantSet<BaseType>, TInstant<BaseType>, BaseType>>(
       m, "TInstantSet", typesuffix);
-  py::class_<TInstantSet<T>, Temporal<T>, TemporalComparators<TInstantSet<T>>,
-             TInstantFunctions<TInstantSet<T>, TInstant<T>, T>>(
+  py::class_<
+      TInstantSet<BaseType>, Temporal<BaseType>,
+      TemporalComparators<TInstantSet<BaseType>>,
+      TInstantFunctions<TInstantSet<BaseType>, TInstant<BaseType>, BaseType>>(
       m, ("TInstantSet" + typesuffix).c_str())
-      .def(py::init<set<TInstant<T>> &>(), py::arg("instants"))
+      .def(py::init<set<TInstant<BaseType>> &>(), py::arg("instants"))
       .def(py::init<set<string> &>(), py::arg("instants"))
       .def(py::init<string>(), py::arg("serialized"))
       .def(py::self == py::self, py::arg("other"))
@@ -111,36 +121,40 @@ void def_temporal_types(py::module &m, std::string const &typesuffix) {
       .def(py::self <= py::self, py::arg("other"))
       .def(py::self > py::self, py::arg("other"))
       .def(py::self >= py::self, py::arg("other"))
-      .def("__str__", &to_ostream<TInstantSet<T>>)
-      .def("__repr__", &to_ostream<TInstantSet<T>>)
-      .def("compare", &TInstantSet<T>::compare, py::arg("other"))
-      .def_property_readonly("duration", &TInstantSet<T>::duration)
-      .def_property_readonly("instants", &TInstantSet<T>::instants)
-      .def_property_readonly("timespan", &TInstantSet<T>::timespan)
-      .def_property_readonly("getValues", &TInstantSet<T>::getValues)
-      .def_property_readonly("timestamps", &TInstantSet<T>::timestamps)
-      .def_property_readonly("getTime", &TInstantSet<T>::getTime)
-      .def_property_readonly("period", &TInstantSet<T>::period)
-      .def("shift", &TInstantSet<T>::shift, py::arg("timedelta"))
-      .def("intersectsTimestamp", &TInstantSet<T>::intersectsTimestamp,
+      .def("__str__", &to_ostream<TInstantSet<BaseType>>)
+      .def("__repr__", &to_ostream<TInstantSet<BaseType>>)
+      .def("compare", &TInstantSet<BaseType>::compare, py::arg("other"))
+      .def_property_readonly("duration", &TInstantSet<BaseType>::duration)
+      .def_property_readonly("instants", &TInstantSet<BaseType>::instants)
+      .def_property_readonly("timespan", &TInstantSet<BaseType>::timespan)
+      .def_property_readonly("getValues", &TInstantSet<BaseType>::getValues)
+      .def_property_readonly("timestamps", &TInstantSet<BaseType>::timestamps)
+      .def_property_readonly("getTime", &TInstantSet<BaseType>::getTime)
+      .def_property_readonly("period", &TInstantSet<BaseType>::period)
+      .def("shift", &TInstantSet<BaseType>::shift, py::arg("timedelta"))
+      .def("intersectsTimestamp", &TInstantSet<BaseType>::intersectsTimestamp,
            py::arg("datetime"))
-      .def("intersectsPeriod", &TInstantSet<T>::intersectsPeriod,
+      .def("intersectsPeriod", &TInstantSet<BaseType>::intersectsPeriod,
            py::arg("period"));
 
-  def_comparator<TemporalComparators<TSequence<T>>>(m, "TSequence", typesuffix);
-  def_tinstant_functions<TInstantFunctions<TSequence<T>, TInstant<T>, T>>(
+  def_comparator<TemporalComparators<TSequence<BaseType>>>(m, "TSequence",
+                                                           typesuffix);
+  def_tinstant_functions<
+      TInstantFunctions<TSequence<BaseType>, TInstant<BaseType>, BaseType>>(
       m, "TSequence", typesuffix);
-  py::class_<TSequence<T>, Temporal<T>, TemporalComparators<TSequence<T>>,
-             TInstantFunctions<TSequence<T>, TInstant<T>, T>>(
+  py::class_<
+      TSequence<BaseType>, Temporal<BaseType>,
+      TemporalComparators<TSequence<BaseType>>,
+      TInstantFunctions<TSequence<BaseType>, TInstant<BaseType>, BaseType>>(
       m, ("TSequence" + typesuffix).c_str())
-      .def(py::init<set<TInstant<T>> &, bool, bool, Interpolation>(),
+      .def(py::init<set<TInstant<BaseType>> &, bool, bool, Interpolation>(),
            py::arg("instants"), py::arg("lower_inc") = true,
            py::arg("upper_inc") = false,
-           py::arg("interpolation") = default_interp_v<T>)
+           py::arg("interpolation") = default_interp_v<BaseType>)
       .def(py::init<set<string> &, bool, bool, Interpolation>(),
            py::arg("instants"), py::arg("lower_inc") = true,
            py::arg("upper_inc") = false,
-           py::arg("interpolation") = default_interp_v<T>)
+           py::arg("interpolation") = default_interp_v<BaseType>)
       .def(py::init<string>(), py::arg("serialized"))
       .def(py::self == py::self, py::arg("other"))
       .def(py::self != py::self, py::arg("other"))
@@ -148,43 +162,48 @@ void def_temporal_types(py::module &m, std::string const &typesuffix) {
       .def(py::self <= py::self, py::arg("other"))
       .def(py::self > py::self, py::arg("other"))
       .def(py::self >= py::self, py::arg("other"))
-      .def("__str__", &to_ostream<TSequence<T>>)
-      .def("__repr__", &to_ostream<TSequence<T>>)
+      .def("__str__", &to_ostream<TSequence<BaseType>>)
+      .def("__repr__", &to_ostream<TSequence<BaseType>>)
       .def("__hash__",
-           [](TSequence<T> const &self) {
+           [](TSequence<BaseType> const &self) {
              // TODO is there a better way?
              std::ostringstream s;
              s << self;
              return py::hash(py::make_tuple(s.str()));
            })
-      .def("compare", &TSequence<T>::compare, py::arg("other"))
-      .def_property_readonly("lower_inc", &TSequence<T>::lower_inc)
-      .def_property_readonly("upper_inc", &TSequence<T>::upper_inc)
-      .def_property_readonly("duration", &TSequence<T>::duration)
-      .def_property_readonly("instants", &TSequence<T>::instants)
-      .def_property_readonly("interpolation", &TSequence<T>::interpolation)
-      .def_property_readonly("timespan", &TSequence<T>::timespan)
-      .def_property_readonly("getValues", &TSequence<T>::getValues)
-      .def_property_readonly("timestamps", &TSequence<T>::timestamps)
-      .def_property_readonly("getTime", &TSequence<T>::getTime)
-      .def_property_readonly("period", &TSequence<T>::period)
-      .def("shift", &TSequence<T>::shift, py::arg("timedelta"))
-      .def("intersectsTimestamp", &TSequence<T>::intersectsTimestamp,
+      .def("compare", &TSequence<BaseType>::compare, py::arg("other"))
+      .def_property_readonly("lower_inc", &TSequence<BaseType>::lower_inc)
+      .def_property_readonly("upper_inc", &TSequence<BaseType>::upper_inc)
+      .def_property_readonly("duration", &TSequence<BaseType>::duration)
+      .def_property_readonly("instants", &TSequence<BaseType>::instants)
+      .def_property_readonly("interpolation",
+                             &TSequence<BaseType>::interpolation)
+      .def_property_readonly("timespan", &TSequence<BaseType>::timespan)
+      .def_property_readonly("getValues", &TSequence<BaseType>::getValues)
+      .def_property_readonly("timestamps", &TSequence<BaseType>::timestamps)
+      .def_property_readonly("getTime", &TSequence<BaseType>::getTime)
+      .def_property_readonly("period", &TSequence<BaseType>::period)
+      .def("shift", &TSequence<BaseType>::shift, py::arg("timedelta"))
+      .def("intersectsTimestamp", &TSequence<BaseType>::intersectsTimestamp,
            py::arg("datetime"))
-      .def("intersectsPeriod", &TSequence<T>::intersectsPeriod,
+      .def("intersectsPeriod", &TSequence<BaseType>::intersectsPeriod,
            py::arg("period"));
 
-  def_comparator<TemporalComparators<TSequenceSet<T>>>(m, "TSequenceSet",
-                                                       typesuffix);
-  def_tinstant_functions<TInstantFunctions<TSequenceSet<T>, TInstant<T>, T>>(
+  def_comparator<TemporalComparators<TSequenceSet<BaseType>>>(m, "TSequenceSet",
+                                                              typesuffix);
+  def_tinstant_functions<
+      TInstantFunctions<TSequenceSet<BaseType>, TInstant<BaseType>, BaseType>>(
       m, "TSequenceSet", typesuffix);
-  py::class_<TSequenceSet<T>, Temporal<T>, TemporalComparators<TSequenceSet<T>>,
-             TInstantFunctions<TSequenceSet<T>, TInstant<T>, T>>(
+  py::class_<
+      TSequenceSet<BaseType>, Temporal<BaseType>,
+      TemporalComparators<TSequenceSet<BaseType>>,
+      TInstantFunctions<TSequenceSet<BaseType>, TInstant<BaseType>, BaseType>>(
       m, ("TSequenceSet" + typesuffix).c_str())
-      .def(py::init<set<TSequence<T>> &, Interpolation>(), py::arg("sequences"),
-           py::arg("interpolation") = default_interp_v<T>)
+      .def(py::init<set<TSequence<BaseType>> &, Interpolation>(),
+           py::arg("sequences"),
+           py::arg("interpolation") = default_interp_v<BaseType>)
       .def(py::init<set<string> &, Interpolation>(), py::arg("sequences"),
-           py::arg("interpolation") = default_interp_v<T>)
+           py::arg("interpolation") = default_interp_v<BaseType>)
       .def(py::init<string>(), py::arg("serialized"))
       .def(py::self == py::self, py::arg("other"))
       .def(py::self != py::self, py::arg("other"))
@@ -192,26 +211,30 @@ void def_temporal_types(py::module &m, std::string const &typesuffix) {
       .def(py::self <= py::self, py::arg("other"))
       .def(py::self > py::self, py::arg("other"))
       .def(py::self >= py::self, py::arg("other"))
-      .def("__str__", &to_ostream<TSequenceSet<T>>)
-      .def("__repr__", &to_ostream<TSequenceSet<T>>)
-      .def("compare", &TSequenceSet<T>::compare, py::arg("other"))
-      .def_property_readonly("duration", &TSequenceSet<T>::duration)
-      .def_property_readonly("interpolation", &TSequenceSet<T>::interpolation)
-      .def_property_readonly("sequences", &TSequenceSet<T>::sequences)
-      .def_property_readonly("numSequences", &TSequenceSet<T>::numSequences)
-      .def_property_readonly("startSequence", &TSequenceSet<T>::startSequence)
-      .def_property_readonly("endSequence", &TSequenceSet<T>::endSequence)
-      .def("sequenceN", &TSequenceSet<T>::sequenceN, py::arg("n"))
-      .def_property_readonly("instants", &TSequenceSet<T>::instants)
-      .def_property_readonly("timespan", &TSequenceSet<T>::timespan)
-      .def_property_readonly("getValues", &TSequenceSet<T>::getValues)
-      .def_property_readonly("timestamps", &TSequenceSet<T>::timestamps)
-      .def_property_readonly("getTime", &TSequenceSet<T>::getTime)
-      .def_property_readonly("period", &TSequenceSet<T>::period)
-      .def("shift", &TSequenceSet<T>::shift, py::arg("timedelta"))
-      .def("intersectsTimestamp", &TSequenceSet<T>::intersectsTimestamp,
+      .def("__str__", &to_ostream<TSequenceSet<BaseType>>)
+      .def("__repr__", &to_ostream<TSequenceSet<BaseType>>)
+      .def("compare", &TSequenceSet<BaseType>::compare, py::arg("other"))
+      .def_property_readonly("duration", &TSequenceSet<BaseType>::duration)
+      .def_property_readonly("interpolation",
+                             &TSequenceSet<BaseType>::interpolation)
+      .def_property_readonly("sequences", &TSequenceSet<BaseType>::sequences)
+      .def_property_readonly("numSequences",
+                             &TSequenceSet<BaseType>::numSequences)
+      .def_property_readonly("startSequence",
+                             &TSequenceSet<BaseType>::startSequence)
+      .def_property_readonly("endSequence",
+                             &TSequenceSet<BaseType>::endSequence)
+      .def("sequenceN", &TSequenceSet<BaseType>::sequenceN, py::arg("n"))
+      .def_property_readonly("instants", &TSequenceSet<BaseType>::instants)
+      .def_property_readonly("timespan", &TSequenceSet<BaseType>::timespan)
+      .def_property_readonly("getValues", &TSequenceSet<BaseType>::getValues)
+      .def_property_readonly("timestamps", &TSequenceSet<BaseType>::timestamps)
+      .def_property_readonly("getTime", &TSequenceSet<BaseType>::getTime)
+      .def_property_readonly("period", &TSequenceSet<BaseType>::period)
+      .def("shift", &TSequenceSet<BaseType>::shift, py::arg("timedelta"))
+      .def("intersectsTimestamp", &TSequenceSet<BaseType>::intersectsTimestamp,
            py::arg("datetime"))
-      .def("intersectsPeriod", &TSequenceSet<T>::intersectsPeriod,
+      .def("intersectsPeriod", &TSequenceSet<BaseType>::intersectsPeriod,
            py::arg("period"));
 }
 

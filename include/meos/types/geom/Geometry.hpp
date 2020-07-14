@@ -49,4 +49,23 @@ private:
   void free();
 };
 
+/**
+ * Helps find out if a base type is geometry or not
+ *
+ * Also check is_geometry_v<BaseType>, which should be more easy to use
+ */
+template <typename BaseType> struct is_geometry {
+  static const bool value = false;
+};
+template <> struct is_geometry<Geometry> {
+  static const bool value = true;
+  typedef Geometry type;
+};
+
+/**
+ * Shorthand for is_geometry<BaseType>::value
+ */
+template <typename BaseType>
+constexpr bool is_geometry_v = is_geometry<BaseType>::value;
+
 #endif

@@ -1,31 +1,32 @@
 #include <iomanip>
 #include <meos/types/temporal/Temporal.hpp>
 
-template <typename T> Temporal<T>::Temporal() {}
+template <typename BaseType> Temporal<BaseType>::Temporal() {}
 
-template <typename T> Temporal<T>::~Temporal() {}
+template <typename BaseType> Temporal<BaseType>::~Temporal() {}
 
-template <typename T> T Temporal<T>::minValue() const {
-  set<Range<T>> s = getValues();
+template <typename BaseType> BaseType Temporal<BaseType>::minValue() const {
+  set<Range<BaseType>> s = getValues();
   if (s.size() <= 0) {
     throw "At least one value expected";
   }
   return s.begin()->lower();
 }
 
-template <typename T> T Temporal<T>::maxValue() const {
-  set<Range<T>> s = getValues();
+template <typename BaseType> BaseType Temporal<BaseType>::maxValue() const {
+  set<Range<BaseType>> s = getValues();
   if (s.size() <= 0) {
     throw "At least one value expected";
   }
   return s.rbegin()->upper();
 }
 
-template <typename T> size_t Temporal<T>::numTimestamps() const {
+template <typename BaseType> size_t Temporal<BaseType>::numTimestamps() const {
   return timestamps().size();
 }
 
-template <typename T> time_point Temporal<T>::startTimestamp() const {
+template <typename BaseType>
+time_point Temporal<BaseType>::startTimestamp() const {
   set<time_point> s = timestamps();
   if (s.size() <= 0) {
     throw "At least one timestamp expected";
@@ -33,7 +34,8 @@ template <typename T> time_point Temporal<T>::startTimestamp() const {
   return *s.begin();
 }
 
-template <typename T> time_point Temporal<T>::endTimestamp() const {
+template <typename BaseType>
+time_point Temporal<BaseType>::endTimestamp() const {
   set<time_point> s = timestamps();
   if (s.size() <= 0) {
     throw "At least one timestamp expected";
@@ -41,7 +43,8 @@ template <typename T> time_point Temporal<T>::endTimestamp() const {
   return *s.rbegin();
 }
 
-template <typename T> time_point Temporal<T>::timestampN(size_t n) const {
+template <typename BaseType>
+time_point Temporal<BaseType>::timestampN(size_t n) const {
   set<time_point> s = timestamps();
   if (s.size() <= n) {
     throw "At least " + to_string(n) + " timestamp(s) expected";
@@ -49,13 +52,14 @@ template <typename T> time_point Temporal<T>::timestampN(size_t n) const {
   return *next(s.begin(), n);
 }
 
-template <typename T>
-unique_ptr<Temporal<T>> Temporal<T>::shift(duration_ms const timedelta) const {
-  return unique_ptr<Temporal<T>>(this->shift_impl(timedelta));
+template <typename BaseType>
+unique_ptr<Temporal<BaseType>>
+Temporal<BaseType>::shift(duration_ms const timedelta) const {
+  return unique_ptr<Temporal<BaseType>>(this->shift_impl(timedelta));
 }
 
-template <typename T>
-bool Temporal<T>::intersectsTimestampSet(
+template <typename BaseType>
+bool Temporal<BaseType>::intersectsTimestampSet(
     TimestampSet const timestampset) const {
   for (auto const &t : timestampset.timestamps()) {
     if (intersectsTimestamp(t)) {
@@ -65,8 +69,8 @@ bool Temporal<T>::intersectsTimestampSet(
   return false;
 }
 
-template <typename T>
-bool Temporal<T>::intersectsPeriodSet(PeriodSet const periodset) const {
+template <typename BaseType>
+bool Temporal<BaseType>::intersectsPeriodSet(PeriodSet const periodset) const {
   for (auto const &p : periodset.periods()) {
     if (intersectsPeriod(p)) {
       return true;
