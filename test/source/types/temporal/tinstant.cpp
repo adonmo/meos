@@ -252,13 +252,45 @@ TEST_CASE("TInstant<Geometry>", "[tinst]") {
   }
 
   SECTION("with SRID") {
-    TInstant<Geometry> instant(Geometry(20, 30), unix_time_point(2012, 11, 1),
-                               4326);
-    REQUIRE(instant.srid() == 4326);
+    TInstant<Geometry> instant;
+    Geometry expected_geom = Geometry(20, 30);
+    string expected_geom_s = "POINT (20 30)";
+    time_point expected_time = unix_time_point(2012, 11, 1);
+    string expected_time_s = "2012-11-01T00:00:00+0000";
+    int expected_srid = 4326;
+
+    SECTION("no strings constructor") {
+      instant = TInstant<Geometry>(expected_geom, expected_time, 4326);
+    }
+
+    SECTION("two strings constructor") {
+      instant = TInstant<Geometry>(expected_geom_s, expected_time_s, 4326);
+    }
+
+    SECTION("one string constructor") {
+      instant = TInstant<Geometry>("SRID=" + to_string(expected_srid) + ";" +
+                                   expected_geom_s + "@" + expected_time_s);
+    }
+
+    SECTION("pair constructor") {
+      SECTION("no strings") {
+        instant =
+            TInstant<Geometry>(make_pair(expected_geom, expected_time), 4326);
+      }
+      SECTION("two strings") {
+        instant = TInstant<Geometry>(
+            make_pair(expected_geom_s, expected_time_s), 4326);
+      }
+    }
+
+    REQUIRE(instant.getValue() == expected_geom);
+    REQUIRE(instant.getTimestamp() == expected_time);
+    REQUIRE(instant.srid() == expected_srid);
 
     std::stringstream output;
     output << instant;
-    string expected = "SRID=4326;POINT (20 30)@2012-11-01T00:00:00+0000";
+    string expected = "SRID=" + to_string(expected_srid) + ";" +
+                      expected_geom_s + "@" + expected_time_s;
     REQUIRE(output.str() == expected);
   }
 

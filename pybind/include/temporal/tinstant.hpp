@@ -70,7 +70,13 @@ template <>
 void _def_tinstant_class_specializations(py_tinstant<Geometry> &c,
                                          std::string const &typesuffix) {
   c.def(py::init<Geometry, time_point, int>(), py::arg("value"),
-        py::arg("timestamp"), py::arg("srid"));
+        py::arg("timestamp"), py::arg("srid"))
+      .def(py::init<pair<Geometry, time_point>, int>(), py::arg("instant"),
+           py::arg("srid"))
+      .def(py::init<string, string, int>(), py::arg("value"),
+           py::arg("timestamp"), py::arg("srid"))
+      .def(py::init<pair<string, string>, int>(), py::arg("instant"),
+           py::arg("srid"));
 }
 
 template <typename BaseType>

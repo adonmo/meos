@@ -34,9 +34,18 @@ public:
   TInstant(pair<string const, string const> p);
   TInstant(string const serialized);
 
-  // Additional constructors for Geometry type
+  // Additional constructors for Geometry type to specify SRID
   template <typename B = BaseType, typename is_geometry<B>::type * = nullptr>
   TInstant(BaseType value_, time_point t_, int srid);
+
+  template <typename B = BaseType, typename is_geometry<B>::type * = nullptr>
+  TInstant(pair<BaseType, time_point> p, int srid);
+
+  template <typename B = BaseType, typename is_geometry<B>::type * = nullptr>
+  TInstant(string const value, string const t, int srid);
+
+  template <typename B = BaseType, typename is_geometry<B>::type * = nullptr>
+  TInstant(pair<string const, string const> p, int srid);
 
   // Comparision functions
   int compare(Temporal<BaseType> const &other) const override;
@@ -75,7 +84,7 @@ public:
     return instant.read(in);
   }
 
-  friend ostream &operator<<(ostream &os, TInstant<BaseType> const &instant) {
+  friend ostream &operator<<(ostream &os, TInstant const &instant) {
     return instant.write(os);
   }
 

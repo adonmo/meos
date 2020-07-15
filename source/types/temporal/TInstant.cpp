@@ -35,8 +35,7 @@ TInstant<BaseType>::TInstant(string const serialized) {
   stringstream ss(serialized);
   TInstant<BaseType> instant;
   ss >> instant;
-  this->value = instant.value;
-  this->t = instant.t;
+  *this = instant;
 }
 
 // Extra constructors for Geometry base type
@@ -49,7 +48,39 @@ TInstant<BaseType>::TInstant(BaseType value_, time_point t_, int srid)
   this->m_srid = srid;
 }
 
+template <typename BaseType>
+template <typename B, typename is_geometry<B>::type *>
+TInstant<BaseType>::TInstant(pair<BaseType, time_point> p, int srid)
+    : value(p.first), t(p.second) {
+  this->m_srid = srid;
+}
+
+template <typename BaseType>
+template <typename B, typename is_geometry<B>::type *>
+TInstant<BaseType>::TInstant(string const value, string const t, int srid) {
+  stringstream lss(value);
+  this->value = nextValue<BaseType>(lss);
+  stringstream uss(t);
+  this->t = nextTime(uss);
+  this->m_srid = srid;
+}
+
+template <typename BaseType>
+template <typename B, typename is_geometry<B>::type *>
+TInstant<BaseType>::TInstant(pair<string const, string const> p, int srid) {
+  stringstream lss(p.first);
+  this->value = nextValue<BaseType>(lss);
+  stringstream uss(p.second);
+  this->t = nextTime(uss);
+  this->m_srid = srid;
+}
+
 template TInstant<Geometry>::TInstant(Geometry, time_point, int);
+template TInstant<Geometry>::TInstant(pair<Geometry, time_point> p, int srid);
+template TInstant<Geometry>::TInstant(string const value, string const t,
+                                      int srid);
+template TInstant<Geometry>::TInstant(pair<string const, string const> p,
+                                      int srid);
 
 template <typename BaseType>
 int TInstant<BaseType>::compare(Temporal<BaseType> const &other) const {

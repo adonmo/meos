@@ -27,8 +27,10 @@ def test_different_int_constructors(actual):
     (TInstantGeom(("POINT (20 30)", "2011-01-01")), 0),
     (TInstantGeom("POINT (20 30)@2011-01-01"), 0),
     (TInstantGeom(Geometry(20, 30), unix_dt(2011, 1, 1), 4326), 4326),
-    # TODO
-    # (TInstantGeom("SRID=4326;POINT (20 30)@2011-01-01"), 4326),
+    (TInstantGeom((Geometry(20, 30), unix_dt(2011, 1, 1)), 4326), 4326),
+    (TInstantGeom("POINT (20 30)", "2011-01-01", 4326), 4326),
+    (TInstantGeom(("POINT (20 30)", "2011-01-01"), 4326), 4326),
+    (TInstantGeom("SRID=4326;POINT (20 30)@2011-01-01"), 4326),
 ])
 def test_different_geom_constructors(actual, expected_srid):
     assert actual.duration == TemporalDuration.Instant
