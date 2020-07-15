@@ -1,8 +1,5 @@
-import pytest
-
 from pymeos import Geometry
 from pymeos.range import RangeInt, RangeBool, RangeFloat, RangeText, RangeGeom
-from ..utils import unix_dt
 
 
 def test_constructor_different_base_types():

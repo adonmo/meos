@@ -52,7 +52,7 @@ def get_sample_float_tseq_set():
     TSequenceSetInt({"[10@2011-01-01, 40@2011-01-02)", "[20@2011-01-03, 30@2011-01-04)"}, Interpolation.Stepwise),
     TSequenceSetInt("Interp=Stepwise;{[10@2011-01-01, 40@2011-01-02), [20@2011-01-03, 30@2011-01-04)}"),
 ])
-def test_different_constructors(actual):
+def test_different_constructors_with_discrete_base_type(actual):
     assert actual.duration == TemporalDuration.SequenceSet
     assert actual.duration.name == 'SequenceSet'
 
@@ -76,7 +76,7 @@ def test_different_constructors(actual):
     TSequenceSetFloat({"Interp=Linear;[10@2011-01-01, 40@2011-01-02)", "Interp=Linear;[20@2011-01-03, 30@2011-01-04)"}),
     TSequenceSetFloat("Interp=Linear;{[10@2011-01-01, 40@2011-01-02), [20@2011-01-03, 30@2011-01-04)}"),
 ])
-def test_different_constructors(actual):
+def test_different_constructors_with_continuous_base_type(actual):
     assert actual.duration == TemporalDuration.SequenceSet
     assert actual.duration.name == 'SequenceSet'
 

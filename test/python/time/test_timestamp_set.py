@@ -12,10 +12,10 @@ from ..utils import unix_dt
 ])
 def test_different_constructors(actual):
     assert len(actual.timestamps) == 2
-    actual.startTimestamp == unix_dt(2011, 1, 1)
-    actual.endTimestamp == unix_dt(2011, 1, 2)
-    actual.timestampN(0) == unix_dt(2011, 1, 1)
-    actual.timestampN(1) == unix_dt(2011, 1, 2)
+    assert actual.startTimestamp == unix_dt(2011, 1, 1)
+    assert actual.endTimestamp == unix_dt(2011, 1, 2)
+    assert actual.timestampN(0) == unix_dt(2011, 1, 1)
+    assert actual.timestampN(1) == unix_dt(2011, 1, 2)
 
 
 def test_constructor():

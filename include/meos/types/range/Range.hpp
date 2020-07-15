@@ -14,7 +14,7 @@ private:
   bool const m_upper_inc;
 
 public:
-  Range(T const lower, T const upper, bool const lower_inc = true,
+  Range(T const &lower, T const &upper, bool const lower_inc = true,
         bool const upper_inc = false);
   virtual ~Range();
 
@@ -26,9 +26,9 @@ public:
   T upper() const;
   bool lower_inc() const;
   bool upper_inc() const;
-  unique_ptr<Range> shift(T const offset) const;
+  unique_ptr<Range> shift(T const &offset) const;
   bool overlap(Range const &p) const;
-  bool contains(T const t) const;
+  bool contains(T const &t) const;
 
   friend bool operator==(Range<T> const &lhs, Range<T> const &rhs) {
     return lhs.compare(rhs) == 0;

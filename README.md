@@ -13,7 +13,7 @@
 ### Installation
 
 ```sh
-$ pip install pymeos
+pip install pymeos
 ```
 
 Note: libgeos-dev might need to be installed on your system.
@@ -40,7 +40,7 @@ trajectory = TSequenceGeom({
 print(trajectory)
 ```
 
-```
+```python
 [POINT (0 0)@2012-01-01T08:00:00+0000, POINT (2 0)@2012-01-01T08:10:00+0000, POINT (2 1)@2012-01-01T08:15:00+0000)
 ```
 
@@ -63,9 +63,9 @@ POINT (2 1)
 
 ### Documentation
 
-Docs and API Reference: https://pymeos.netlify.app
+Docs and API Reference: [https://pymeos.netlify.app](https://pymeos.netlify.app)
 
-More detailed usage guide/quickstart: https://pymeos.netlify.app/quickstart.html
+More detailed usage guide/quickstart: [https://pymeos.netlify.app/quickstart.html](https://pymeos.netlify.app/quickstart.html)
 
 ## C++
 
@@ -89,17 +89,17 @@ int main() {
 }
 ```
 
-```
+```python
 [POINT (0 0)@2012-01-01T08:00:00+0000, POINT (2 0)@2012-01-01T08:10:00+0000, POINT (2 1)@2012-01-01T08:15:00+0000)
 ```
 
 ### Example
 
-Minimalistic C++ app example: https://github.com/adonmo/meos-cpp-example
+Minimalistic C++ app example: [https://github.com/adonmo/meos-cpp-example](https://github.com/adonmo/meos-cpp-example)
 
 ### Documentation
 
-C++ API Reference: https://meos.netlify.app
+C++ API Reference: [https://meos.netlify.app](https://meos.netlify.app)
 
 ## Contributing
 

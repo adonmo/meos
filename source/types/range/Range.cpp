@@ -1,7 +1,7 @@
 #include <meos/types/range/Range.hpp>
 
 template <typename T>
-Range<T>::Range(T const lower, T const upper, bool const lower_inc,
+Range<T>::Range(T const &lower, T const &upper, bool const lower_inc,
                 bool const upper_inc)
     : m_lower(lower), m_upper(upper), m_lower_inc(lower_inc),
       m_upper_inc(upper_inc) {}
@@ -39,14 +39,14 @@ template <typename T> bool Range<T>::upper_inc() const {
 }
 
 template <typename T>
-unique_ptr<Range<T>> Range<T>::shift(T const offset) const {
+unique_ptr<Range<T>> Range<T>::shift(T const &offset) const {
   return make_unique<Range>(this->lower() + offset, this->upper() + offset,
                             this->lower_inc(), this->upper_inc());
 }
 
 template <>
 unique_ptr<Range<Geometry>>
-Range<Geometry>::shift(Geometry const offset) const {
+Range<Geometry>::shift(Geometry const &offset) const {
   return make_unique<Range>(this->lower() + offset, this->upper() + offset,
                             this->lower_inc(), this->upper_inc());
 }
@@ -60,7 +60,7 @@ template <typename T> bool Range<T>::overlap(Range const &p) const {
   return min_upper > max_lower;
 }
 
-template <typename T> bool Range<T>::contains(T const t) const {
+template <typename T> bool Range<T>::contains(T const &t) const {
   return ((this->lower() < t && t < this->upper()) ||
           (this->lower_inc() && this->lower() == t) ||
           (this->upper_inc() && this->upper() == t));

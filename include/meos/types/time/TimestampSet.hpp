@@ -17,7 +17,7 @@ public:
   TimestampSet();
   TimestampSet(set<time_point> &timestamps);
   TimestampSet(set<string> &timestamps);
-  TimestampSet(string const serialized);
+  TimestampSet(string const &serialized);
 
   set<Period> periods() const;
   Period period() const;

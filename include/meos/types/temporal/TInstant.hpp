@@ -30,9 +30,9 @@ public:
   TInstant();
   TInstant(BaseType value, time_point t);
   TInstant(pair<BaseType, time_point> p);
-  TInstant(string const value, string const t);
+  TInstant(string const &value, string const &t);
   TInstant(pair<string const, string const> p);
-  TInstant(string const serialized);
+  TInstant(string const &serialized);
 
   // Additional constructors for Geometry type to specify SRID
   template <typename B = BaseType, typename is_geometry<B>::type * = nullptr>
@@ -42,7 +42,7 @@ public:
   TInstant(pair<BaseType, time_point> p, int srid);
 
   template <typename B = BaseType, typename is_geometry<B>::type * = nullptr>
-  TInstant(string const value, string const t, int srid);
+  TInstant(string const &value, string const &t, int srid);
 
   template <typename B = BaseType, typename is_geometry<B>::type * = nullptr>
   TInstant(pair<string const, string const> p, int srid);

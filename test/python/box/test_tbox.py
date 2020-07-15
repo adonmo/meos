@@ -1,4 +1,3 @@
-import datetime
 import pytest
 
 from pymeos.box import TBox

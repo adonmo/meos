@@ -19,7 +19,7 @@ TimestampSet::TimestampSet(set<string> &timestamps) {
   }
 }
 
-TimestampSet::TimestampSet(string const serialized) {
+TimestampSet::TimestampSet(string const &serialized) {
   stringstream ss(serialized);
   TimestampSet timestamp_set;
   ss >> timestamp_set;
