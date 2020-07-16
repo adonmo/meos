@@ -135,70 +135,13 @@ unique_ptr<TimestampSet> Deserializer<T>::nextTimestampSet() {
   return make_unique<TimestampSet>(timestamp_set);
 }
 
-/**
- * Parse time in ISO8601 format
- * Skips initial whitespaces, reads until one of ",)]}\n" is reached, and tries
- * to parse everything in between as time in ISO8601 format
- *
- * Example patterns:
- * 1234-12-12
- * 1234-12-12 12:12
- * 1234-12-12T12:12
- * 1234-12-12 12:12:12
- * 1234-12-12T12:12:12
- * 1234-12-12 12:12:12Z
- * 1234-12-12 12:12:12+05
- * 1234-12-12 12:12:12-0530  // normalized pattern
- */
 template <typename T> time_point Deserializer<T>::nextTime() {
-  // TODO add support for UTC offset/timezone
-  // TODO allow strings like 2012-1-1 instead of just 2012-01-01
-
-  skipWhitespaces();
   string::size_type current_pos = iter - in.begin();
-  string::size_type end_pos = in.find_first_of(",)]}\n", current_pos);
-  if (end_pos == string::npos) {
-    end_pos = in.end() - in.begin();
-  }
-  int length = end_pos - current_pos;
-
-  if (length != 24) {
-    // We only parse normalized patterns (length 24)
-    // If not already normalized, we normalize first and then parse
-    string input = normalized_ISO8601(in.substr(current_pos, length));
-    Deserializer<T> mini_deserializer(input);
-    iter += length;
-    return mini_deserializer.nextTime();
-  }
-
-  validate_ISO8601(in.substr(current_pos, length));
-
-  tm time = {};
-  time.tm_year = nextInt() - 1900;
-  consumeChar('-');
-  time.tm_mon = nextInt() - 1;
-  consumeChar('-');
-  time.tm_mday = nextInt();
-
-  consumeChar(*iter); // skip the character
-  time.tm_hour = nextInt();
-  consumeChar(':');
-  time.tm_min = nextInt();
-  consumeChar(':');
-  time.tm_sec = nextInt();
-  time.tm_isdst = 0;
-  int millis = 0;
-  // int millis = input.length() > 20 ? nextInt() : 0;
-
-  int sign = *iter == '+' ? 1 : -1;
-  consumeChar(*iter); // skip the character
-  int offset = nextInt();
-  int h_offset = offset / 100;
-  int m_offset = offset % 100;
-  int tz_offset_secs = sign * (h_offset * 60 + m_offset) * 60;
-
-  duration_ms duration((timegm(&time) - tz_offset_secs) * 1000L + millis);
-  return time_point(duration);
+  string s = in.substr(current_pos, 256);
+  stringstream ss(s);
+  auto t = ::nextTime(ss);
+  iter += ss.tellg();
+  return t;
 }
 
 template <typename T> T Deserializer<T>::nextValue() {

@@ -10,9 +10,16 @@ std::string write_ISO8601_time(time_point const &t) {
   long int tt = std::chrono::time_point_cast<std::chrono::milliseconds>(t)
                     .time_since_epoch()
                     .count();
-  // TODO: FIXME as of now, milliseconds are dropped
+  int millis = tt % 1000;
   tt = tt / 1000;
-  textStream << std::put_time(gmtime(&tt), "%FT%T%z");
+
+  textStream << std::put_time(gmtime(&tt), "%FT%T");
+
+  if (millis > 0) {
+    textStream << "." << std::setfill('0') << std::setw(3) << millis;
+  }
+
+  textStream << std::put_time(gmtime(&tt), "%z");
   return textStream.str();
 }
 

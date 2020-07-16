@@ -15,14 +15,15 @@ TEMPLATE_TEST_CASE("TInstants are constructed properly", "[tinstant]", int,
                    float) {
   SECTION("reads from istream") {
     TInstant<TestType> instant;
-    stringstream ss("    1 @     2012-01-02 09:40:00+0530 ");
+    stringstream ss("    1 @     2012-01-02 09:40:00.789+0530 ");
     ss >> instant;
     REQUIRE(instant.getValue() == 1);
-    REQUIRE(instant.getTimestamp() == unix_time_point(2012, 1, 2, 4, 10));
+    REQUIRE(instant.getTimestamp() ==
+            unix_time_point(2012, 1, 2, 4, 10, 0, 789));
 
     std::stringstream output;
     output << instant;
-    string expected = "1@2012-01-02T04:10:00+0000";
+    string expected = "1@2012-01-02T04:10:00.789+0000";
     REQUIRE(output.str() == expected);
   }
 

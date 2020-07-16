@@ -9,7 +9,7 @@ using duration_ms = std::chrono::milliseconds;
 
 template <typename T> T nextValue(std::istream &in);
 
-void validate_ISO8601(const std::string &s);
+void validate_normalized_ISO8601(const std::string &s);
 
 std::string normalized_ISO8601(std::string s);
 
