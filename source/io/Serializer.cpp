@@ -49,7 +49,9 @@ template <> string Serializer<string>::write(string const &value) {
 }
 
 template <> string Serializer<Geometry>::write(Geometry const &value) {
-  return value.toWKT();
+  stringstream ss;
+  ss << value;
+  return ss.str();
 }
 
 template <typename T> string Serializer<T>::writeTime(time_point const &t) {

@@ -28,14 +28,22 @@ def test_different_int_constructors(actual):
     (TInstantGeom("POINT (20 30)@2011-01-01"), 0),
     (TInstantGeom(Geometry(20, 30), unix_dt(2011, 1, 1), 4326), 4326),
     (TInstantGeom((Geometry(20, 30), unix_dt(2011, 1, 1)), 4326), 4326),
+    (TInstantGeom(Geometry(20, 30, 4326), unix_dt(2011, 1, 1)), 4326),
+    (TInstantGeom((Geometry(20, 30, 4326), unix_dt(2011, 1, 1))), 4326),
+    (TInstantGeom(Geometry(20, 30, 4326), unix_dt(2011, 1, 1), 4326), 4326),
+    (TInstantGeom((Geometry(20, 30, 4326), unix_dt(2011, 1, 1)), 4326), 4326),
     (TInstantGeom("POINT (20 30)", "2011-01-01", 4326), 4326),
     (TInstantGeom(("POINT (20 30)", "2011-01-01"), 4326), 4326),
+    (TInstantGeom("SRID=4326;POINT (20 30)", "2011-01-01"), 4326),
+    (TInstantGeom(("SRID=4326;POINT (20 30)", "2011-01-01")), 4326),
+    (TInstantGeom("SRID=4326;POINT (20 30)", "2011-01-01", 4326), 4326),
+    (TInstantGeom(("SRID=4326;POINT (20 30)", "2011-01-01"), 4326), 4326),
     (TInstantGeom("SRID=4326;POINT (20 30)@2011-01-01"), 4326),
 ])
 def test_different_geom_constructors(actual, expected_srid):
     assert actual.duration == TemporalDuration.Instant
     assert actual.duration.name == 'Instant'
-    assert actual.getValue == Geometry(20, 30)
+    assert actual.getValue == Geometry(20, 30, expected_srid)
     assert actual.getTimestamp == unix_dt(2011, 1, 1)
     srid_prefix = 'SRID={};'.format(expected_srid) if expected_srid != 0 else ''
     assert str(actual) == srid_prefix + 'POINT (20 30)@2011-01-01T00:00:00+0000'

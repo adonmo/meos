@@ -92,6 +92,15 @@ private:
   BaseType value;
   time_point t;
 
+  void init();
+  void setup_defaults();
+  void validate() const;
+
+  /**
+   * Compares timestamp and value. Does not take SRID into account.
+   */
+  int compare_internal(Temporal<BaseType> const &other) const;
+
   TInstant *clone_impl() const override;
   TInstant *shift_impl(duration_ms const timedelta) const override;
 };

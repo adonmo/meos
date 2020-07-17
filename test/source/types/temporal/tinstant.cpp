@@ -254,18 +254,37 @@ TEST_CASE("TInstant<Geometry>", "[tinst]") {
 
   SECTION("with SRID") {
     TInstant<Geometry> instant;
-    Geometry expected_geom = Geometry(20, 30);
-    string expected_geom_s = "POINT (20 30)";
+    int expected_srid = 4326;
+    Geometry expected_geom = Geometry(20, 30, expected_srid);
+    string expected_geom_s = "SRID=4326;POINT (20 30)";
     time_point expected_time = unix_time_point(2012, 11, 1);
     string expected_time_s = "2012-11-01T00:00:00+0000";
-    int expected_srid = 4326;
 
     SECTION("no strings constructor") {
-      instant = TInstant<Geometry>(expected_geom, expected_time, 4326);
+      instant = TInstant<Geometry>(expected_geom, expected_time, expected_srid);
     }
 
     SECTION("two strings constructor") {
-      instant = TInstant<Geometry>(expected_geom_s, expected_time_s, 4326);
+      SECTION("with SRID int") {
+        instant =
+            TInstant<Geometry>("POINT (20 30)", expected_time_s, expected_srid);
+      }
+
+      SECTION("with SRID in geom only") {
+        instant = TInstant<Geometry>(expected_geom_s, expected_time_s, 0);
+      }
+
+      SECTION("with SRID int and SRID in geom both") {
+        instant =
+            TInstant<Geometry>(expected_geom_s, expected_time_s, expected_srid);
+      }
+
+      SECTION("conflicting SRIDs") {
+        REQUIRE_THROWS_AS((TInstant<Geometry>{"SRID=5676;POINT (20 30)",
+                                              expected_time_s, expected_srid}),
+                          std::invalid_argument);
+        return;
+      }
     }
 
     SECTION("one string constructor") {
@@ -275,12 +294,12 @@ TEST_CASE("TInstant<Geometry>", "[tinst]") {
 
     SECTION("pair constructor") {
       SECTION("no strings") {
-        instant =
-            TInstant<Geometry>(make_pair(expected_geom, expected_time), 4326);
+        instant = TInstant<Geometry>(make_pair(expected_geom, expected_time),
+                                     expected_srid);
       }
       SECTION("two strings") {
         instant = TInstant<Geometry>(
-            make_pair(expected_geom_s, expected_time_s), 4326);
+            make_pair(expected_geom_s, expected_time_s), expected_srid);
       }
     }
 
@@ -290,8 +309,7 @@ TEST_CASE("TInstant<Geometry>", "[tinst]") {
 
     std::stringstream output;
     output << instant;
-    string expected = "SRID=" + to_string(expected_srid) + ";" +
-                      expected_geom_s + "@" + expected_time_s;
+    string expected = expected_geom_s + "@" + expected_time_s;
     REQUIRE(output.str() == expected);
   }
 

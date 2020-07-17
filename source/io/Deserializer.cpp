@@ -219,22 +219,12 @@ template <> string Deserializer<string>::nextValue() {
 }
 
 template <> Geometry Deserializer<Geometry>::nextValue() {
-  skipWhitespaces();
   string::size_type current_pos = iter - in.begin();
-  string::size_type end_pos = in.find_first_of("@", current_pos);
-  if (end_pos == string::npos) {
-    end_pos = in.end() - in.begin();
-  }
-  int length = end_pos - current_pos;
-  string input = in.substr(current_pos, length);
-
-  Geometry value(input);
-
-  if (value.geom == nullptr) {
-    throw DeserializationException("Could not parse geometry");
-  }
-
-  iter += length;
+  string s = in.substr(current_pos, 2048);
+  stringstream ss(s);
+  Geometry value;
+  ss >> value;
+  iter += ss.tellg();
   return value;
 }
 

@@ -6,9 +6,11 @@
 #include <meos/geos.hpp>
 
 /**
- * Mostly just a wrapper on top of GEOSGeometry*
+ * Mostly a wrapper on top of GEOSGeometry*
+ * Additionally, we allow specifying SRID, similar to how PostGIS EWKT does.
+ *
  * Main reason we have this is that pybind11 can't work with GEOSGeometry*
- * directly, as it is exposed as an opaque type from the GEOS C API
+ * directly, as it is exposed as an opaque type from the GEOS C API.
  *
  * We only use this class to represent Points for now
  * Probably we should either generalize for any geometry or rename this to Point
@@ -18,8 +20,10 @@ public:
   GEOSGeometry *geom = nullptr;
 
   Geometry();
-  Geometry(std::string wkt);
+  Geometry(std::string serialized);
   Geometry(double x, double y);
+  Geometry(std::string serialized, int srid);
+  Geometry(double x, double y, int srid);
   Geometry(Geometry const &g);
   void operator=(Geometry const &g);
   ~Geometry();
@@ -29,6 +33,7 @@ public:
 
   double x() const;
   double y() const;
+  int srid() const;
 
   Geometry operator+(Geometry const &g) const;
   Geometry operator-(Geometry const &g) const;
@@ -42,6 +47,7 @@ public:
   friend bool operator>(Geometry const &lhs, Geometry const &rhs);
   friend bool operator>=(Geometry const &lhs, Geometry const &rhs);
 
+  friend std::istream &operator>>(std::istream &in, Geometry &g);
   friend std::ostream &operator<<(std::ostream &os, Geometry const &g);
 
 private:

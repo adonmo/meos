@@ -18,9 +18,13 @@ namespace py = pybind11;
 PYBIND11_MODULE(pymeos, m) {
   // TODO will we ever get a chance to do finish_geos()?
   init_geos();
+
   py::class_<Geometry>(m, "Geometry")
       .def(py::init<std::string>())
       .def(py::init<double, double>())
+      .def(py::init<std::string, int>())
+      .def(py::init<double, double, int>())
+      .def(py::init<Geometry>())
       .def(py::self + py::self, py::arg("other"))
       .def(py::self - py::self, py::arg("other"))
       .def(py::self == py::self, py::arg("other"))
