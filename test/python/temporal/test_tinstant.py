@@ -20,29 +20,33 @@ def test_different_int_constructors(actual):
     assert actual.getTimestamp == unix_dt(2011, 1, 1)
 
 
-@pytest.mark.parametrize("actual, expected_srid", [
-    (TInstantGeom(Geometry(20, 30), unix_dt(2011, 1, 1)), 0),
-    (TInstantGeom((Geometry(20, 30), unix_dt(2011, 1, 1))), 0),
-    (TInstantGeom("POINT (20 30)", "2011-01-01"), 0),
-    (TInstantGeom(("POINT (20 30)", "2011-01-01")), 0),
-    (TInstantGeom("POINT (20 30)@2011-01-01"), 0),
-    (TInstantGeom(Geometry(20, 30), unix_dt(2011, 1, 1), 4326), 4326),
-    (TInstantGeom((Geometry(20, 30), unix_dt(2011, 1, 1)), 4326), 4326),
-    (TInstantGeom(Geometry(20, 30, 4326), unix_dt(2011, 1, 1)), 4326),
-    (TInstantGeom((Geometry(20, 30, 4326), unix_dt(2011, 1, 1))), 4326),
-    (TInstantGeom(Geometry(20, 30, 4326), unix_dt(2011, 1, 1), 4326), 4326),
-    (TInstantGeom((Geometry(20, 30, 4326), unix_dt(2011, 1, 1)), 4326), 4326),
-    (TInstantGeom("POINT (20 30)", "2011-01-01", 4326), 4326),
-    (TInstantGeom(("POINT (20 30)", "2011-01-01"), 4326), 4326),
-    (TInstantGeom("SRID=4326;POINT (20 30)", "2011-01-01"), 4326),
-    (TInstantGeom(("SRID=4326;POINT (20 30)", "2011-01-01")), 4326),
-    (TInstantGeom("SRID=4326;POINT (20 30)", "2011-01-01", 4326), 4326),
-    (TInstantGeom(("SRID=4326;POINT (20 30)", "2011-01-01"), 4326), 4326),
-    (TInstantGeom("POINT (20 30)@2011-01-01", 4326), 4326),
-    (TInstantGeom("SRID=4326;POINT (20 30)@2011-01-01"), 4326),
-    (TInstantGeom("SRID=4326;POINT (20 30)@2011-01-01", 4326), 4326),
+@pytest.mark.parametrize("expected_srid, actual", [
+    (0,    TInstantGeom(Geometry(20, 30), unix_dt(2011, 1, 1))),
+    (4326, TInstantGeom(Geometry(20, 30), unix_dt(2011, 1, 1), 4326)),
+    (4326, TInstantGeom(Geometry(20, 30, 4326), unix_dt(2011, 1, 1))),
+    (4326, TInstantGeom(Geometry(20, 30, 4326), unix_dt(2011, 1, 1), 4326)),
+
+    (0,    TInstantGeom((Geometry(20, 30), unix_dt(2011, 1, 1)))),
+    (4326, TInstantGeom((Geometry(20, 30), unix_dt(2011, 1, 1)), 4326)),
+    (4326, TInstantGeom((Geometry(20, 30, 4326), unix_dt(2011, 1, 1)))),
+    (4326, TInstantGeom((Geometry(20, 30, 4326), unix_dt(2011, 1, 1)), 4326)),
+
+    (0,    TInstantGeom("POINT (20 30)", "2011-01-01")),
+    (4326, TInstantGeom("POINT (20 30)", "2011-01-01", 4326)),
+    (4326, TInstantGeom("SRID=4326;POINT (20 30)", "2011-01-01")),
+    (4326, TInstantGeom("SRID=4326;POINT (20 30)", "2011-01-01", 4326)),
+
+    (0,    TInstantGeom(("POINT (20 30)", "2011-01-01"))),
+    (4326, TInstantGeom(("POINT (20 30)", "2011-01-01"), 4326)),
+    (4326, TInstantGeom(("SRID=4326;POINT (20 30)", "2011-01-01"))),
+    (4326, TInstantGeom(("SRID=4326;POINT (20 30)", "2011-01-01"), 4326)),
+
+    (0,    TInstantGeom("POINT (20 30)@2011-01-01")),
+    (4326, TInstantGeom("POINT (20 30)@2011-01-01", 4326)),
+    (4326, TInstantGeom("SRID=4326;POINT (20 30)@2011-01-01")),
+    (4326, TInstantGeom("SRID=4326;POINT (20 30)@2011-01-01", 4326)),
 ])
-def test_different_geom_constructors(actual, expected_srid):
+def test_different_geom_constructors(expected_srid, actual):
     assert actual.duration == TemporalDuration.Instant
     assert actual.duration.name == 'Instant'
     assert actual.getValue == Geometry(20, 30, expected_srid)
@@ -60,7 +64,7 @@ def test_different_geom_constructors(actual, expected_srid):
     ("SRID=5676;POINT (20 30)@2011-01-01", 4326),
 ])
 def test_constructors_with_conflicting_srids(args):
-    with pytest.raises(ValueError, match="Conflicting SRIDs provided. Given: 4326, which Geometry contains: 5676"):
+    with pytest.raises(ValueError, match="Conflicting SRIDs provided. Given: 4326, while Geometry contains: 5676"):
         TInstantGeom(*args)
 
 
@@ -81,3 +85,4 @@ def test_constructor_different_base_types():
 def test_str():
     tg = TInstantGeom(Geometry(10.0, 15.0), unix_dt(2011, 1, 1))
     assert str(tg) == "POINT (10 15)@2011-01-01T00:00:00+0000"
+    assert repr(tg) == "POINT (10 15)@2011-01-01T00:00:00+0000"

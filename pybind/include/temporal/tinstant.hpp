@@ -24,12 +24,13 @@ py_tinstant<BaseType> _def_tinstant_class_basic(py::module &m,
       TInstantFunctions<TInstant<BaseType>, TInstant<BaseType>, BaseType>>(
       m, "TInstant", typesuffix);
   return py_tinstant<BaseType>(m, ("TInstant" + typesuffix).c_str())
-      .def(py::init<BaseType, time_point>(), py::arg("value"),
+      .def(py::init<BaseType &, time_point>(), py::arg("value"),
            py::arg("timestamp"))
       .def(py::init<pair<BaseType, time_point>>(), py::arg("instant"))
-      .def(py::init<string, string>(), py::arg("value"), py::arg("timestamp"))
+      .def(py::init<string &, string &>(), py::arg("value"),
+           py::arg("timestamp"))
       .def(py::init<pair<string, string>>(), py::arg("instant"))
-      .def(py::init<string>(), py::arg("serialized"))
+      .def(py::init<string &>(), py::arg("serialized"))
       .def(py::self == py::self, py::arg("other"))
       .def(py::self != py::self, py::arg("other"))
       .def(py::self < py::self, py::arg("other"))

@@ -9,13 +9,13 @@ template <typename BaseType> TInstant<BaseType>::TInstant() {}
 template <typename BaseType>
 TInstant<BaseType>::TInstant(BaseType value_, time_point t_)
     : value(value_), t(t_) {
-  init();
+  validate();
 }
 
 template <typename BaseType>
 TInstant<BaseType>::TInstant(pair<BaseType, time_point> p)
     : value(p.first), t(p.second) {
-  init();
+  validate();
 }
 
 template <typename BaseType>
@@ -24,7 +24,7 @@ TInstant<BaseType>::TInstant(string const &value, string const &t) {
   this->value = nextValue<BaseType>(lss);
   stringstream uss(t);
   this->t = nextTime(uss);
-  init();
+  validate();
 }
 
 template <typename BaseType>
@@ -33,7 +33,7 @@ TInstant<BaseType>::TInstant(pair<string const, string const> p) {
   this->value = nextValue<BaseType>(lss);
   stringstream uss(p.second);
   this->t = nextTime(uss);
-  init();
+  validate();
 }
 
 template <typename BaseType>
@@ -42,7 +42,7 @@ TInstant<BaseType>::TInstant(string const &serialized) {
   TInstant<BaseType> instant;
   ss >> instant;
   *this = instant;
-  init();
+  validate();
 }
 
 // Extra constructors for Geometry base type
@@ -53,7 +53,7 @@ template <typename B, typename is_geometry<B>::type *>
 TInstant<BaseType>::TInstant(BaseType value_, time_point t_, int srid)
     : value(value_), t(t_) {
   this->m_srid = srid;
-  init();
+  validate();
 }
 
 template <typename BaseType>
@@ -61,7 +61,7 @@ template <typename B, typename is_geometry<B>::type *>
 TInstant<BaseType>::TInstant(pair<BaseType, time_point> p, int srid)
     : value(p.first), t(p.second) {
   this->m_srid = srid;
-  init();
+  validate();
 }
 
 template <typename BaseType>
@@ -72,7 +72,7 @@ TInstant<BaseType>::TInstant(string const &value, string const &t, int srid) {
   stringstream uss(t);
   this->t = nextTime(uss);
   this->m_srid = srid;
-  init();
+  validate();
 }
 
 template <typename BaseType>
@@ -83,7 +83,7 @@ TInstant<BaseType>::TInstant(pair<string const, string const> p, int srid) {
   stringstream uss(p.second);
   this->t = nextTime(uss);
   this->m_srid = srid;
-  init();
+  validate();
 }
 
 template <typename BaseType>
@@ -94,7 +94,7 @@ TInstant<BaseType>::TInstant(string const &serialized, int srid) {
   ss >> instant;
   *this = instant;
   this->m_srid = srid;
-  init();
+  validate();
 }
 
 template TInstant<Geometry>::TInstant(Geometry, time_point, int);
@@ -105,17 +105,13 @@ template TInstant<Geometry>::TInstant(pair<string const, string const> p,
                                       int srid);
 template TInstant<Geometry>::TInstant(string const &serialized, int srid);
 
-template <typename BaseType> void TInstant<BaseType>::init() {
-  setup_defaults();
-  validate();
+template <typename BaseType> void TInstant<BaseType>::validate() {
+  // None yet, check template specialization for Geometry for more validation
 }
 
-template <typename BaseType> void TInstant<BaseType>::setup_defaults() {
-  // None yet, check specialization for Geometry
-}
-
-template <> void TInstant<Geometry>::setup_defaults() {
-  // If EXACTLY one of two the SRIDs is 0, replace it with the non-zero SRID
+template <> void TInstant<Geometry>::validate() {
+  // If the SRIDs is EXACTLY once, i.e, either on the object or on the
+  // geometries, use it both places
   if (this->value.srid() * this->m_srid == 0) {
     if (this->m_srid != 0) {
       this->value = Geometry(this->value.x(), this->value.y(), this->m_srid);
@@ -123,17 +119,12 @@ template <> void TInstant<Geometry>::setup_defaults() {
       this->m_srid = this->value.srid();
     }
   }
-}
 
-template <typename BaseType> void TInstant<BaseType>::validate() const {
-  // None yet, check specialization for Geometry
-}
-
-template <> void TInstant<Geometry>::validate() const {
-  if (this->srid() != this->value.srid()) {
+  // If the SRID was specified on both, ensure that they are the same value
+  if (this->m_srid != this->value.srid()) {
     throw std::invalid_argument(
         "Conflicting SRIDs provided. Given: " + to_string(this->srid()) +
-        ", which Geometry contains: " + to_string(this->value.srid()));
+        ", while Geometry contains: " + to_string(this->value.srid()));
   }
 }
 
@@ -270,15 +261,26 @@ template <> istream &TInstant<Geometry>::read(istream &in) {
 }
 
 template <typename BaseType>
-ostream &TInstant<BaseType>::write(ostream &os) const {
-  // All base types except boolean follow this
-  // For bool, check the specialized implemenation
+ostream &TInstant<BaseType>::write(ostream &os, bool) const {
+  // All base types except bool and Geometry follow this
+  // For them, check the specialized implemenation
   os << this->getValue() << "@" << write_ISO8601_time(this->getTimestamp());
   return os;
 }
 
-template <> ostream &TInstant<bool>::write(ostream &os) const {
+template <> ostream &TInstant<bool>::write(ostream &os, bool) const {
   string serialized_value = this->getValue() ? "t" : "f";
   os << serialized_value << "@" << write_ISO8601_time(this->getTimestamp());
+  return os;
+}
+
+template <>
+ostream &TInstant<Geometry>::write(ostream &os, bool with_srid) const {
+  if (with_srid) {
+    os << this->getValue() << "@" << write_ISO8601_time(this->getTimestamp());
+  } else {
+    os << this->getValue().toWKT() << "@"
+       << write_ISO8601_time(this->getTimestamp());
+  }
   return os;
 }

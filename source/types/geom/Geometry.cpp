@@ -25,7 +25,7 @@ Geometry::Geometry(std::string serialized, int srid) {
   if (g.srid() != srid && g.srid() * srid != 0) {
     throw std::invalid_argument(
         "Conflicting SRIDs provided. Given: " + std::to_string(srid) +
-        ", which Geometry contains: " + std::to_string(g.srid()));
+        ", while Geometry contains: " + std::to_string(g.srid()));
   }
 
   if (srid != 0) {

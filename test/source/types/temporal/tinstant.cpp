@@ -54,6 +54,105 @@ TEMPLATE_TEST_CASE("TInstants are constructed properly", "[tinstant]", int,
   }
 }
 
+TEST_CASE("TInstant<Geometry> constructors", "[tinst]") {
+  SECTION("without SRID") {
+    TInstant<Geometry> instant(Geometry(20, 30), unix_time_point(2012, 11, 1));
+    REQUIRE(instant.srid() == 0);
+
+    std::stringstream output;
+    output << instant;
+    string expected = "POINT (20 30)@2012-11-01T00:00:00+0000";
+    REQUIRE(output.str() == expected);
+  }
+
+  SECTION("with SRID") {
+    TInstant<Geometry> instant;
+    int expected_srid = 4326;
+    Geometry expected_geom = Geometry(20, 30, expected_srid);
+    string expected_geom_s = "SRID=4326;POINT (20 30)";
+    time_point expected_time = unix_time_point(2012, 11, 1);
+    string expected_time_s = "2012-11-01T00:00:00+0000";
+
+    SECTION("no strings constructor") {
+      instant = TInstant<Geometry>(expected_geom, expected_time, expected_srid);
+    }
+
+    SECTION("two strings constructor") {
+      SECTION("with SRID int") {
+        instant =
+            TInstant<Geometry>("POINT (20 30)", expected_time_s, expected_srid);
+      }
+
+      SECTION("with SRID in geom only") {
+        instant = TInstant<Geometry>(expected_geom_s, expected_time_s, 0);
+      }
+
+      SECTION("with SRID int and SRID in geom both") {
+        instant =
+            TInstant<Geometry>(expected_geom_s, expected_time_s, expected_srid);
+      }
+
+      SECTION("conflicting SRIDs") {
+        REQUIRE_THROWS_AS((TInstant<Geometry>{"SRID=5676;POINT (20 30)",
+                                              expected_time_s, expected_srid}),
+                          std::invalid_argument);
+        return;
+      }
+    }
+
+    SECTION("one string constructor") {
+      SECTION("with SRID int") {
+        instant = TInstant<Geometry>("POINT (20 30)@" + expected_time_s,
+                                     expected_srid);
+      }
+
+      SECTION("with SRID in geom only") {
+        instant =
+            TInstant<Geometry>(expected_geom_s + "@" + expected_time_s, 0);
+      }
+
+      SECTION("with SRID int and SRID in geom both") {
+        instant = TInstant<Geometry>(expected_geom_s + "@" + expected_time_s,
+                                     expected_srid);
+      }
+
+      SECTION("conflicting SRIDs") {
+        REQUIRE_THROWS_AS(
+            (TInstant<Geometry>{expected_geom_s + "@" + expected_time_s, 5676}),
+            std::invalid_argument);
+        return;
+      }
+    }
+
+    SECTION("pair constructor") {
+      SECTION("no strings") {
+        instant = TInstant<Geometry>(make_pair(expected_geom, expected_time),
+                                     expected_srid);
+      }
+      SECTION("two strings") {
+        instant = TInstant<Geometry>(
+            make_pair(expected_geom_s, expected_time_s), expected_srid);
+      }
+    }
+
+    REQUIRE(instant.getValue() == expected_geom);
+    REQUIRE(instant.getTimestamp() == expected_time);
+    REQUIRE(instant.srid() == expected_srid);
+
+    std::stringstream output;
+    output << instant;
+    string expected = expected_geom_s + "@" + expected_time_s;
+    REQUIRE(output.str() == expected);
+  }
+
+  // TODO
+  // Testing for this would be more involved, probably we need to use SFINAE
+  //
+  // SECTION("Non geometries cannot be constructed with SRIDs") {
+  //
+  // }
+}
+
 TEMPLATE_TEST_CASE("TInstant comparision operators", "[tinst]", int, float,
                    bool) {
   SECTION("lhs == rhs") {
@@ -239,103 +338,4 @@ TEMPLATE_TEST_CASE("TInstant intersection functions", "[tinstantset]", int,
                 true)};
     REQUIRE(instant.intersectsPeriodSet(PeriodSet(s)) == false);
   }
-}
-
-TEST_CASE("TInstant<Geometry>", "[tinst]") {
-  SECTION("without SRID") {
-    TInstant<Geometry> instant(Geometry(20, 30), unix_time_point(2012, 11, 1));
-    REQUIRE(instant.srid() == 0);
-
-    std::stringstream output;
-    output << instant;
-    string expected = "POINT (20 30)@2012-11-01T00:00:00+0000";
-    REQUIRE(output.str() == expected);
-  }
-
-  SECTION("with SRID") {
-    TInstant<Geometry> instant;
-    int expected_srid = 4326;
-    Geometry expected_geom = Geometry(20, 30, expected_srid);
-    string expected_geom_s = "SRID=4326;POINT (20 30)";
-    time_point expected_time = unix_time_point(2012, 11, 1);
-    string expected_time_s = "2012-11-01T00:00:00+0000";
-
-    SECTION("no strings constructor") {
-      instant = TInstant<Geometry>(expected_geom, expected_time, expected_srid);
-    }
-
-    SECTION("two strings constructor") {
-      SECTION("with SRID int") {
-        instant =
-            TInstant<Geometry>("POINT (20 30)", expected_time_s, expected_srid);
-      }
-
-      SECTION("with SRID in geom only") {
-        instant = TInstant<Geometry>(expected_geom_s, expected_time_s, 0);
-      }
-
-      SECTION("with SRID int and SRID in geom both") {
-        instant =
-            TInstant<Geometry>(expected_geom_s, expected_time_s, expected_srid);
-      }
-
-      SECTION("conflicting SRIDs") {
-        REQUIRE_THROWS_AS((TInstant<Geometry>{"SRID=5676;POINT (20 30)",
-                                              expected_time_s, expected_srid}),
-                          std::invalid_argument);
-        return;
-      }
-    }
-
-    SECTION("one string constructor") {
-      SECTION("with SRID int") {
-        instant = TInstant<Geometry>("POINT (20 30)@" + expected_time_s,
-                                     expected_srid);
-      }
-
-      SECTION("with SRID in geom only") {
-        instant =
-            TInstant<Geometry>(expected_geom_s + "@" + expected_time_s, 0);
-      }
-
-      SECTION("with SRID int and SRID in geom both") {
-        instant = TInstant<Geometry>(expected_geom_s + "@" + expected_time_s,
-                                     expected_srid);
-      }
-
-      SECTION("conflicting SRIDs") {
-        REQUIRE_THROWS_AS(
-            (TInstant<Geometry>{expected_geom_s + "@" + expected_time_s, 5676}),
-            std::invalid_argument);
-        return;
-      }
-    }
-
-    SECTION("pair constructor") {
-      SECTION("no strings") {
-        instant = TInstant<Geometry>(make_pair(expected_geom, expected_time),
-                                     expected_srid);
-      }
-      SECTION("two strings") {
-        instant = TInstant<Geometry>(
-            make_pair(expected_geom_s, expected_time_s), expected_srid);
-      }
-    }
-
-    REQUIRE(instant.getValue() == expected_geom);
-    REQUIRE(instant.getTimestamp() == expected_time);
-    REQUIRE(instant.srid() == expected_srid);
-
-    std::stringstream output;
-    output << instant;
-    string expected = expected_geom_s + "@" + expected_time_s;
-    REQUIRE(output.str() == expected);
-  }
-
-  // TODO
-  // Testing for this would be more involved, probably we need to use SFINAE
-  //
-  // SECTION("Non geometries cannot be constructed with SRIDs") {
-  //
-  // }
 }

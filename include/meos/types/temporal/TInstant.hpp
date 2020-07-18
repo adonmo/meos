@@ -34,7 +34,7 @@ public:
   TInstant(pair<string const, string const> p);
   TInstant(string const &serialized);
 
-  // Additional constructors for Geometry type to specify SRID
+  // Additional constructors for Geometry base type to specify SRID
   template <typename B = BaseType, typename is_geometry<B>::type * = nullptr>
   TInstant(BaseType value_, time_point t_, int srid);
 
@@ -81,7 +81,7 @@ public:
 
   // IO functions
   istream &read(istream &in);
-  ostream &write(ostream &os) const;
+  ostream &write(ostream &os, bool with_srid = true) const;
 
   friend istream &operator>>(istream &in, TInstant &instant) {
     return instant.read(in);
@@ -95,9 +95,7 @@ private:
   BaseType value;
   time_point t;
 
-  void init();
-  void setup_defaults();
-  void validate() const;
+  void validate();
 
   /**
    * Compares timestamp and value. Does not take SRID into account.
