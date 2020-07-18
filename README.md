@@ -6,6 +6,17 @@
 
 ⚠️ Currently this library is an early, **experimental** stage - breaking changes might occur as it evolves.
 
+## Design goals and tenets
+- Extensibility
+- Ease of use and getting started
+- Interoperability
+- Functionality over performance (for now)
+
+## Projects built using MEOS
+MEOS aims to the base on which more libraries can be built. Right now work is underway for the following to be rewritten on top of MEOS/PyMEOS:
+- [mobilitydb-sqlalchemy](mobilitydb-sqlalchemy) - The SQLAchemy bindings for MobilityDB. (WIP in [meos branch](https://github.com/adonmo/mobilitydb-sqlalchemy/tree/meos))
+- [MobilityDB-python](https://github.com/MobilityDB/MobilityDB-python/) - The official python driver for MobilityDB. (WIP [pull request](https://github.com/MobilityDB/MobilityDB-python/pull/4))
+
 # Usage
 
 ## Python
