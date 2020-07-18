@@ -76,7 +76,8 @@ void _def_tinstant_class_specializations(py_tinstant<Geometry> &c,
       .def(py::init<string, string, int>(), py::arg("value"),
            py::arg("timestamp"), py::arg("srid"))
       .def(py::init<pair<string, string>, int>(), py::arg("instant"),
-           py::arg("srid"));
+           py::arg("srid"))
+      .def(py::init<string, int>(), py::arg("serialized"), py::arg("srid"));
 }
 
 template <typename BaseType>

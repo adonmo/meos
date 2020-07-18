@@ -38,7 +38,9 @@ def test_different_int_constructors(actual):
     (TInstantGeom(("SRID=4326;POINT (20 30)", "2011-01-01")), 4326),
     (TInstantGeom("SRID=4326;POINT (20 30)", "2011-01-01", 4326), 4326),
     (TInstantGeom(("SRID=4326;POINT (20 30)", "2011-01-01"), 4326), 4326),
+    (TInstantGeom("POINT (20 30)@2011-01-01", 4326), 4326),
     (TInstantGeom("SRID=4326;POINT (20 30)@2011-01-01"), 4326),
+    (TInstantGeom("SRID=4326;POINT (20 30)@2011-01-01", 4326), 4326),
 ])
 def test_different_geom_constructors(actual, expected_srid):
     assert actual.duration == TemporalDuration.Instant
@@ -48,6 +50,18 @@ def test_different_geom_constructors(actual, expected_srid):
     srid_prefix = 'SRID={};'.format(expected_srid) if expected_srid != 0 else ''
     assert str(actual) == srid_prefix + 'POINT (20 30)@2011-01-01T00:00:00+0000'
     assert actual.srid == expected_srid
+
+
+@pytest.mark.parametrize("args", [
+    (Geometry(20, 30, 5676), unix_dt(2011, 1, 1), 4326),
+    ((Geometry(20, 30, 5676), unix_dt(2011, 1, 1)), 4326),
+    ("SRID=5676;POINT (20 30)", "2011-01-01", 4326),
+    (("SRID=5676;POINT (20 30)", "2011-01-01"), 4326),
+    ("SRID=5676;POINT (20 30)@2011-01-01", 4326),
+])
+def test_constructors_with_conflicting_srids(args):
+    with pytest.raises(ValueError, match="Conflicting SRIDs provided. Given: 4326, which Geometry contains: 5676"):
+        TInstantGeom(*args)
 
 
 def test_constructor_different_base_types():

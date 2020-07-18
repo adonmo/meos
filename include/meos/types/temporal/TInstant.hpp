@@ -47,6 +47,9 @@ public:
   template <typename B = BaseType, typename is_geometry<B>::type * = nullptr>
   TInstant(pair<string const, string const> p, int srid);
 
+  template <typename B = BaseType, typename is_geometry<B>::type * = nullptr>
+  TInstant(string const &serialized, int srid);
+
   // Comparision functions
   int compare(Temporal<BaseType> const &other) const override;
 

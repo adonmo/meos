@@ -68,6 +68,16 @@ TEST_CASE("geometries are deserialized", "[deserializer][geom]") {
     CHECK_THROWS(r.nextValue());
   }
 
+  SECTION("ending with @ should work") {
+    expected_srid = 4326;
+    string serialized = "SRID=4326;POINT (" + to_string(expectedX) + " " +
+                        to_string(expectedY) + ")@";
+    Deserializer<Geometry> r(serialized);
+
+    g = r.nextValue();
+    CHECK_THROWS(r.nextValue());
+  }
+
   GEOSGeomGetX_r(geos_context, g.geom, &x);
   GEOSGeomGetY_r(geos_context, g.geom, &y);
   REQUIRE(x == expectedX);

@@ -288,8 +288,27 @@ TEST_CASE("TInstant<Geometry>", "[tinst]") {
     }
 
     SECTION("one string constructor") {
-      instant = TInstant<Geometry>("SRID=" + to_string(expected_srid) + ";" +
-                                   expected_geom_s + "@" + expected_time_s);
+      SECTION("with SRID int") {
+        instant = TInstant<Geometry>("POINT (20 30)@" + expected_time_s,
+                                     expected_srid);
+      }
+
+      SECTION("with SRID in geom only") {
+        instant =
+            TInstant<Geometry>(expected_geom_s + "@" + expected_time_s, 0);
+      }
+
+      SECTION("with SRID int and SRID in geom both") {
+        instant = TInstant<Geometry>(expected_geom_s + "@" + expected_time_s,
+                                     expected_srid);
+      }
+
+      SECTION("conflicting SRIDs") {
+        REQUIRE_THROWS_AS(
+            (TInstant<Geometry>{expected_geom_s + "@" + expected_time_s, 5676}),
+            std::invalid_argument);
+        return;
+      }
     }
 
     SECTION("pair constructor") {

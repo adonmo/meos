@@ -86,12 +86,24 @@ TInstant<BaseType>::TInstant(pair<string const, string const> p, int srid) {
   init();
 }
 
+template <typename BaseType>
+template <typename B, typename is_geometry<B>::type *>
+TInstant<BaseType>::TInstant(string const &serialized, int srid) {
+  stringstream ss(serialized);
+  TInstant<BaseType> instant;
+  ss >> instant;
+  *this = instant;
+  this->m_srid = srid;
+  init();
+}
+
 template TInstant<Geometry>::TInstant(Geometry, time_point, int);
 template TInstant<Geometry>::TInstant(pair<Geometry, time_point> p, int srid);
 template TInstant<Geometry>::TInstant(string const &value, string const &t,
                                       int srid);
 template TInstant<Geometry>::TInstant(pair<string const, string const> p,
                                       int srid);
+template TInstant<Geometry>::TInstant(string const &serialized, int srid);
 
 template <typename BaseType> void TInstant<BaseType>::init() {
   setup_defaults();
@@ -250,28 +262,10 @@ template <typename BaseType> istream &TInstant<BaseType>::read(istream &in) {
 }
 
 template <> istream &TInstant<Geometry>::read(istream &in) {
-  int srid = 0;
-
-  // In the case of BaseType being Geometry,
-  // we first check if a SRID prefix is present
-  in >> std::ws;
-  int pos = in.tellg();
-  char prefix[4];
-  in.read(prefix, 4);
-  bool srid_specified = string(prefix, 4) == "SRID";
-  if (srid_specified) {
-    consume(in, '=');
-    in >> srid;
-    consume(in, ';');
-  } else {
-    in.seekg(pos);
-  }
-
   this->value = nextValue<Geometry>(in);
   consume(in, '@');
   this->t = nextTime(in);
-  this->m_srid = srid;
-
+  this->m_srid = this->value.srid();
   return in;
 }
 
