@@ -90,6 +90,13 @@ TEST_CASE("TInstantSet<Geometry> constructors", "[tinstset]") {
     set<string> inst_s_set_s = {expected_inst_s_1_s, expected_inst_s_2_s};
     set<string> inst_s_set_ds = {expected_inst_s_1_ds, expected_inst_s_2_ds};
 
+    string expected_prefix =
+        expected_srid != 0 ? "SRID=" + to_string(expected_srid) + ";" : "";
+    string expected_str_without_srid =
+        "{" + expected_inst_s_1 + ", " + expected_inst_s_2 + "}";
+    string expected_str = expected_prefix + expected_str_without_srid;
+    string expected_str_diff_srid = "SRID=5676;" + expected_str_without_srid;
+
     SECTION("no strings constructor") {
       instant_set = TInstantSet<Geometry>(inst_set, expected_srid);
     }
@@ -116,20 +123,22 @@ TEST_CASE("TInstantSet<Geometry> constructors", "[tinstset]") {
 
     SECTION("one string constructor") {
       SECTION("with SRID int") {
-        instant_set = TInstantSet<Geometry>(inst_s_set, expected_srid);
+        instant_set =
+            TInstantSet<Geometry>(expected_str_without_srid, expected_srid);
       }
 
       SECTION("with SRID in geom only") {
-        instant_set = TInstantSet<Geometry>(inst_s_set_s, 0);
+        instant_set = TInstantSet<Geometry>(expected_str, 0);
       }
 
       SECTION("with SRID int and SRID in geom both") {
-        instant_set = TInstantSet<Geometry>(inst_s_set_s, expected_srid);
+        instant_set = TInstantSet<Geometry>(expected_str, expected_srid);
       }
 
       SECTION("conflicting SRIDs") {
-        REQUIRE_THROWS_AS((TInstantSet<Geometry>{inst_s_set_ds, expected_srid}),
-                          std::invalid_argument);
+        REQUIRE_THROWS_AS(
+            (TInstantSet<Geometry>{expected_str_diff_srid, expected_srid}),
+            std::invalid_argument);
         return;
       }
     }
@@ -143,11 +152,7 @@ TEST_CASE("TInstantSet<Geometry> constructors", "[tinstset]") {
 
     std::stringstream output;
     output << instant_set;
-    string expected_prefix =
-        expected_srid != 0 ? "SRID=" + to_string(expected_srid) + ";" : "";
-    string expected = expected_prefix + "{" + expected_inst_s_1 + ", " +
-                      expected_inst_s_2 + "}";
-    REQUIRE(output.str() == expected);
+    REQUIRE(output.str() == expected_str);
   }
 }
 

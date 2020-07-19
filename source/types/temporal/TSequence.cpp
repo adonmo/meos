@@ -4,45 +4,108 @@
 
 #include <meos/types/temporal/TSequence.hpp>
 
-template <typename T> TSequence<T>::TSequence() {}
+template <typename BaseType> TSequence<BaseType>::TSequence() {}
 
-template <typename T>
-TSequence<T>::TSequence(set<TInstant<T>> &instants, bool lower_inc,
-                        bool upper_inc, Interpolation interpolation)
+template <typename BaseType>
+TSequence<BaseType>::TSequence(set<TInstant<BaseType>> &instants,
+                               bool lower_inc, bool upper_inc,
+                               Interpolation interpolation)
     : m_instants(instants), m_lower_inc(lower_inc), m_upper_inc(upper_inc),
       m_interpolation(interpolation) {
   validate();
 }
 
-template <typename T>
-TSequence<T>::TSequence(set<string> const &instants, bool lower_inc,
-                        bool upper_inc, Interpolation interpolation)
+template <typename BaseType>
+TSequence<BaseType>::TSequence(set<string> const &instants, bool lower_inc,
+                               bool upper_inc, Interpolation interpolation)
     : m_lower_inc(lower_inc), m_upper_inc(upper_inc),
       m_interpolation(interpolation) {
-  TSequence<T> instant_set;
+  TSequence<BaseType> instant_set;
   for (auto const &e : instants)
-    m_instants.insert(TInstant<T>(e));
+    m_instants.insert(TInstant<BaseType>(e));
   validate();
 }
 
-template <typename T> TSequence<T>::TSequence(string const &serialized) {
+template <typename BaseType>
+TSequence<BaseType>::TSequence(string const &serialized) {
   stringstream ss(serialized);
-  TSequence<T> seq;
+  TSequence<BaseType> seq;
   ss >> seq;
-  this->m_instants = seq.instants();
-  this->m_lower_inc = seq.lower_inc();
-  this->m_upper_inc = seq.upper_inc();
-  this->m_interpolation = seq.interpolation();
+  *this = seq;
   validate();
 }
 
-template <typename T> void TSequence<T>::validate() const {
+// Extra constructors for Geometry base type
+// Note: Don't forget to instantiate the templates!
+
+template <typename BaseType>
+template <typename B, typename is_geometry<B>::type *>
+TSequence<BaseType>::TSequence(set<TInstant<BaseType>> &instants,
+                               bool lower_inc, bool upper_inc, int srid,
+                               Interpolation interpolation)
+    : m_instants(instants), m_lower_inc(lower_inc), m_upper_inc(upper_inc),
+      m_interpolation(interpolation) {
+  this->m_srid = srid;
+  validate();
+}
+
+template <typename BaseType>
+template <typename B, typename is_geometry<B>::type *>
+TSequence<BaseType>::TSequence(set<string> const &instants, bool lower_inc,
+                               bool upper_inc, int srid,
+                               Interpolation interpolation)
+    : m_lower_inc(lower_inc), m_upper_inc(upper_inc),
+      m_interpolation(interpolation) {
+  TSequence<BaseType> instant_set;
+  for (auto const &e : instants)
+    m_instants.insert(TInstant<BaseType>(e));
+  this->m_srid = srid;
+  validate();
+}
+
+template <typename BaseType>
+template <typename B, typename is_geometry<B>::type *>
+TSequence<BaseType>::TSequence(string const &serialized, int srid) {
+  stringstream ss(serialized);
+  TSequence<BaseType> seq;
+  ss >> seq;
+  *this = seq;
+
+  // When both string and int have non zero SRIDs, it gets a bit tricky
+  if (srid * this->m_srid != 0) {
+    // That is because of possibility of conflicting SRID
+    if (this->m_srid != srid) {
+      throw std::invalid_argument(
+          "Conflicting SRIDs provided. Given: " + to_string(srid) +
+          ", while Geometry contains: " + to_string(this->m_srid));
+    }
+  }
+
+  // We need set SRID a bit carefully here, as indvidual instant inside the set
+  // need not necessarily specify the SRID when a set is serialized as a whole
+  if (srid != 0) {
+    this->m_srid = srid;
+  }
+
+  validate();
+}
+
+template TSequence<Geometry>::TSequence(set<TInstant<Geometry>> &instants,
+                                        bool lower_inc, bool upper_inc,
+                                        int srid, Interpolation interpolation);
+template TSequence<Geometry>::TSequence(set<string> const &instants,
+                                        bool lower_inc, bool upper_inc,
+                                        int srid, Interpolation interpolation);
+template TSequence<Geometry>::TSequence(string const &serialized, int srid);
+
+template <typename BaseType> void TSequence<BaseType>::validate_common() {
   size_t sz = this->m_instants.size();
   if (sz < 1) {
     throw invalid_argument("A sequence should have at least one instant");
   }
 
-  if (this->m_interpolation == Interpolation::Linear && is_discrete_v<T>) {
+  if (this->m_interpolation == Interpolation::Linear &&
+      is_discrete_v<BaseType>) {
     throw invalid_argument(
         "Cannot assign linear interpolation to a discrete base type");
   }
@@ -67,13 +130,49 @@ template <typename T> void TSequence<T>::validate() const {
   }
 }
 
-template <typename T>
-int TSequence<T>::compare(Temporal<T> const &other) const {
+template <typename BaseType> void TSequence<BaseType>::validate() {
+  validate_common();
+  // Check template specialization on Geometry for more validation
+}
+
+template <> void TSequence<Geometry>::validate() {
+  validate_common();
+
+  // If the SRIDs is EXACTLY once, i.e, either on the object or on the
+  // geometries, use it both places
+  Geometry g = this->startValue();
+  if (g.srid() * this->m_srid == 0) {
+    if (this->m_srid != 0) {
+      set<TInstant<Geometry>> _instants;
+      for (TInstant<Geometry> const &instant : this->m_instants) {
+        _instants.insert(TInstant<Geometry>(
+            instant.getValue(), instant.getTimestamp(), this->m_srid));
+      };
+      this->m_instants = _instants;
+    } else {
+      this->m_srid = g.srid();
+    }
+  }
+
+  // All SRIDs must be equal
+  for (TInstant<Geometry> const &instant : this->m_instants) {
+    if (this->m_srid != instant.getValue().srid()) {
+      throw std::invalid_argument(
+          "Conflicting SRIDs provided. Given: " + to_string(this->m_srid) +
+          ", while Geometry contains: " + to_string(g.srid()));
+    }
+  }
+}
+
+template <typename BaseType>
+int TSequence<BaseType>::compare_internal(
+    Temporal<BaseType> const &other) const {
   if (this->duration() != other.duration()) {
     throw std::invalid_argument("Unsupported types for comparision");
   }
 
-  TSequence<T> const *that = dynamic_cast<TSequence<T> const *>(&other);
+  TSequence<BaseType> const *that =
+      dynamic_cast<TSequence<BaseType> const *>(&other);
   // Compare number of instants
   if (this->m_instants.size() < that->m_instants.size())
     return -1;
@@ -108,31 +207,60 @@ int TSequence<T>::compare(Temporal<T> const &other) const {
   return 0;
 }
 
-template <typename T> bool TSequence<T>::lower_inc() const {
+template <typename BaseType>
+int TSequence<BaseType>::compare(Temporal<BaseType> const &other) const {
+  return compare_internal(other);
+}
+
+template <>
+int TSequence<Geometry>::compare(Temporal<Geometry> const &other) const {
+  // Compare instants and bounds
+  int cmp = compare_internal(other);
+  if (cmp != 0) {
+    return cmp;
+  }
+
+  TInstant<Geometry> const *that =
+      dynamic_cast<TInstant<Geometry> const *>(&other);
+
+  // Compare SRID
+  if (this->srid() < that->srid())
+    return -1;
+  if (this->srid() > that->srid())
+    return 1;
+
+  // The two are equal
+  return 0;
+}
+
+template <typename BaseType> bool TSequence<BaseType>::lower_inc() const {
   return this->m_lower_inc;
 }
-template <typename T> bool TSequence<T>::upper_inc() const {
+template <typename BaseType> bool TSequence<BaseType>::upper_inc() const {
   return this->m_upper_inc;
 }
 
-template <typename T> set<TInstant<T>> TSequence<T>::instants() const {
+template <typename BaseType>
+set<TInstant<BaseType>> TSequence<BaseType>::instants() const {
   return this->m_instants;
 }
 
-template <typename T> Interpolation TSequence<T>::interpolation() const {
+template <typename BaseType>
+Interpolation TSequence<BaseType>::interpolation() const {
   return this->m_interpolation;
 }
 
-template <typename T> duration_ms TSequence<T>::timespan() const {
+template <typename BaseType> duration_ms TSequence<BaseType>::timespan() const {
   return std::chrono::duration_cast<duration_ms>(this->endTimestamp() -
                                                  this->startTimestamp());
 }
 
-template <typename T> set<Range<T>> TSequence<T>::getValues() const {
+template <typename BaseType>
+set<Range<BaseType>> TSequence<BaseType>::getValues() const {
   if (this->m_instants.size() == 0)
     return {};
-  T min = this->m_instants.begin()->getValue();
-  T max = this->m_instants.begin()->getValue();
+  BaseType min = this->m_instants.begin()->getValue();
+  BaseType max = this->m_instants.begin()->getValue();
   for (auto const &e : this->m_instants) {
     if (e.getValue() < min) {
       min = e.getValue();
@@ -141,10 +269,11 @@ template <typename T> set<Range<T>> TSequence<T>::getValues() const {
       max = e.getValue();
     }
   }
-  return {Range<T>(min, max, this->m_lower_inc, this->m_upper_inc)};
+  return {Range<BaseType>(min, max, this->m_lower_inc, this->m_upper_inc)};
 }
 
-template <typename T> set<time_point> TSequence<T>::timestamps() const {
+template <typename BaseType>
+set<time_point> TSequence<BaseType>::timestamps() const {
   set<time_point> s;
   for (auto const &e : this->m_instants) {
     s.insert(e.getTimestamp());
@@ -152,47 +281,48 @@ template <typename T> set<time_point> TSequence<T>::timestamps() const {
   return s;
 }
 
-template <typename T> PeriodSet TSequence<T>::getTime() const {
+template <typename BaseType> PeriodSet TSequence<BaseType>::getTime() const {
   set<Period> s = {this->period()};
   return PeriodSet(s);
 }
 
-template <typename T> Period TSequence<T>::period() const {
+template <typename BaseType> Period TSequence<BaseType>::period() const {
   return Period(this->startTimestamp(), this->endTimestamp(), m_lower_inc,
                 m_upper_inc);
 }
 
-template <typename T>
-unique_ptr<TSequence<T>>
-TSequence<T>::shift(duration_ms const timedelta) const {
-  return unique_ptr<TSequence<T>>(this->shift_impl(timedelta));
+template <typename BaseType>
+unique_ptr<TSequence<BaseType>>
+TSequence<BaseType>::shift(duration_ms const timedelta) const {
+  return unique_ptr<TSequence<BaseType>>(this->shift_impl(timedelta));
 }
 
-template <typename T>
-TSequence<T> *TSequence<T>::shift_impl(duration_ms const timedelta) const {
-  set<TInstant<T>> s;
+template <typename BaseType>
+TSequence<BaseType> *
+TSequence<BaseType>::shift_impl(duration_ms const timedelta) const {
+  set<TInstant<BaseType>> s;
   for (auto const &e : this->m_instants) {
-    s.insert(TInstant<T>(e.getValue(), e.getTimestamp() + timedelta));
+    s.insert(TInstant<BaseType>(e.getValue(), e.getTimestamp() + timedelta));
   }
-  return new TSequence<T>(s, m_lower_inc, m_upper_inc);
+  return new TSequence<BaseType>(s, m_lower_inc, m_upper_inc);
 }
 
-template <typename T>
-bool TSequence<T>::intersectsTimestamp(time_point const datetime) const {
+template <typename BaseType>
+bool TSequence<BaseType>::intersectsTimestamp(time_point const datetime) const {
   return this->period().contains_timestamp(datetime);
 }
 
-template <typename T>
-bool TSequence<T>::intersectsPeriod(Period const period) const {
+template <typename BaseType>
+bool TSequence<BaseType>::intersectsPeriod(Period const period) const {
   return this->period().overlap(period);
 }
 
-template <typename T>
-istream &TSequence<T>::read(istream &in, bool with_interp) {
+template <typename BaseType>
+istream &TSequence<BaseType>::read_internal(istream &in, bool with_interp) {
   char c;
 
   Interpolation interp =
-      is_discrete_v<T> ? Interpolation::Stepwise : Interpolation::Linear;
+      is_discrete_v<BaseType> ? Interpolation::Stepwise : Interpolation::Linear;
 
   if (with_interp) {
     // First we check for interpolation, if specified, else we stick with
@@ -208,7 +338,7 @@ istream &TSequence<T>::read(istream &in, bool with_interp) {
       if (interp_string == "Stepwise") {
         interp = Interpolation::Stepwise;
       } else if (interp_string == "Linear") {
-        if (is_discrete_v<T>) {
+        if (is_discrete_v<BaseType>) {
           throw invalid_argument(
               "Cannot assign linear interpolation to a discrete base type");
         }
@@ -226,9 +356,9 @@ istream &TSequence<T>::read(istream &in, bool with_interp) {
   c = consume_one_of(in, "[(");
   bool const lower_inc = c == '[';
 
-  set<TInstant<T>> s = {};
+  set<TInstant<BaseType>> s = {};
 
-  TInstant<T> instant;
+  TInstant<BaseType> instant;
   in >> instant;
   s.insert(instant);
 
@@ -253,9 +383,37 @@ istream &TSequence<T>::read(istream &in, bool with_interp) {
   return in;
 }
 
-template <typename T>
-ostream &TSequence<T>::write(ostream &os, bool with_interp) const {
-  if (with_interp && this->interpolation() != default_interp_v<T>) {
+template <typename BaseType>
+istream &TSequence<BaseType>::read(istream &in, bool with_interp) {
+  read_internal(in, with_interp);
+  return in;
+}
+
+template <> istream &TSequence<Geometry>::read(istream &in, bool with_interp) {
+  // First we check if SRID prefix is present, and if so, read it first
+  int srid = 0;
+  in >> std::ws;
+  int pos = in.tellg();
+  char prefix[4];
+  in.read(prefix, 4);
+  bool srid_specified = string(prefix, 4) == "SRID";
+  if (srid_specified) {
+    consume(in, '=');
+    in >> srid;
+    consume(in, ';');
+  } else {
+    in.seekg(pos);
+  }
+
+  read_internal(in, with_interp);
+  this->m_srid = srid;
+  return in;
+}
+
+template <typename BaseType>
+ostream &TSequence<BaseType>::write_internal(ostream &os,
+                                             bool with_interp) const {
+  if (with_interp && this->interpolation() != default_interp_v<BaseType>) {
     os << "Interp=" << this->interpolation() << ";";
   }
 
@@ -266,8 +424,25 @@ ostream &TSequence<T>::write(ostream &os, bool with_interp) const {
       first = false;
     else
       os << ", ";
-    os << instant;
+    // We do not output SRID coming from instant
+    instant.write(os, false);
   }
   os << (this->m_upper_inc ? "]" : ")");
+  return os;
+}
+
+template <typename BaseType>
+ostream &TSequence<BaseType>::write(ostream &os, bool with_interp) const {
+  write_internal(os, with_interp);
+  return os;
+}
+
+template <>
+ostream &TSequence<Geometry>::write(ostream &os, bool with_interp) const {
+  if (this->srid() != 0) {
+    os << "SRID=" << this->srid() << ";";
+  }
+
+  write_internal(os, with_interp);
   return os;
 }

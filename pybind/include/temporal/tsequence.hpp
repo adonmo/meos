@@ -12,17 +12,20 @@
 namespace py = pybind11;
 
 template <typename BaseType>
-void def_tsequence_class(py::module &m, std::string const &typesuffix) {
+using py_tsequence = py::class_<
+    TSequence<BaseType>, Temporal<BaseType>,
+    TemporalComparators<TSequence<BaseType>>,
+    TInstantFunctions<TSequence<BaseType>, TInstant<BaseType>, BaseType>>;
+
+template <typename BaseType>
+py_tsequence<BaseType>
+_def_tsequence_class_basic(py::module &m, std::string const &typesuffix) {
   def_comparator<TemporalComparators<TSequence<BaseType>>>(m, "TSequence",
                                                            typesuffix);
   def_tinstant_functions<
       TInstantFunctions<TSequence<BaseType>, TInstant<BaseType>, BaseType>>(
       m, "TSequence", typesuffix);
-  py::class_<
-      TSequence<BaseType>, Temporal<BaseType>,
-      TemporalComparators<TSequence<BaseType>>,
-      TInstantFunctions<TSequence<BaseType>, TInstant<BaseType>, BaseType>>(
-      m, ("TSequence" + typesuffix).c_str())
+  return py_tsequence<BaseType>(m, ("TSequence" + typesuffix).c_str())
       .def(py::init<set<TInstant<BaseType>> &, bool, bool, Interpolation>(),
            py::arg("instants"), py::arg("lower_inc") = true,
            py::arg("upper_inc") = false,
@@ -64,4 +67,30 @@ void def_tsequence_class(py::module &m, std::string const &typesuffix) {
            py::arg("datetime"))
       .def("intersectsPeriod", &TSequence<BaseType>::intersectsPeriod,
            py::arg("period"));
+}
+
+template <typename BaseType>
+void _def_tsequence_class_specializations(py_tsequence<BaseType> &c,
+                                          std::string const &typesuffix) {
+  // No specializations by default
+}
+
+template <>
+void _def_tsequence_class_specializations(py_tsequence<Geometry> &c,
+                                          std::string const &typesuffix) {
+  c.def(py::init<set<TInstant<Geometry>> &, bool, bool, int, Interpolation>(),
+        py::arg("instants"), py::arg("lower_inc") = true,
+        py::arg("upper_inc") = false, py::arg("srid") = 0,
+        py::arg("interpolation") = default_interp_v<Geometry>)
+      .def(py::init<set<string> &, bool, bool, int, Interpolation>(),
+           py::arg("instants"), py::arg("lower_inc") = true,
+           py::arg("upper_inc") = false, py::arg("srid") = 0,
+           py::arg("interpolation") = default_interp_v<Geometry>)
+      .def(py::init<string, int>(), py::arg("serialized"), py::arg("srid"));
+}
+
+template <typename BaseType>
+void def_tsequence_class(py::module &m, std::string const &typesuffix) {
+  auto tsequence_class = _def_tsequence_class_basic<BaseType>(m, typesuffix);
+  _def_tsequence_class_specializations<BaseType>(tsequence_class, typesuffix);
 }

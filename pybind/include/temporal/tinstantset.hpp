@@ -3,6 +3,7 @@
 #include <pybind11/operators.h>
 #include <pybind11/pybind11.h>
 
+#include <meos/types/temporal/TInstant.hpp>
 #include <meos/types/temporal/TInstantSet.hpp>
 
 #include "common.hpp"

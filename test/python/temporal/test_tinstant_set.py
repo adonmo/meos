@@ -1,4 +1,5 @@
 import pytest
+
 from pymeos import Geometry
 from pymeos.temporal import (TemporalDuration, TInstantBool, TInstantGeom,
                              TInstantInt, TInstantSetBool, TInstantSetGeom,

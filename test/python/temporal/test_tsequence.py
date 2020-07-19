@@ -1,6 +1,9 @@
 import pytest
 
-from pymeos.temporal import Interpolation, TInstantInt, TSequenceInt, TInstantFloat, TSequenceFloat, TemporalDuration
+from pymeos import Geometry
+from pymeos.temporal import (Interpolation, TemporalDuration, TInstantFloat,
+                             TInstantGeom, TInstantInt, TSequenceFloat,
+                             TSequenceGeom, TSequenceInt)
 
 from ..utils import unix_dt
 
@@ -61,6 +64,51 @@ def test_different_constructors_with_continuous_base_type(actual):
 
     assert str(actual) == "(20@2019-09-10T00:00:00+0000, 10@2020-09-10T00:00:00+0000]"
     assert repr(actual) == "(20@2019-09-10T00:00:00+0000, 10@2020-09-10T00:00:00+0000]"
+
+
+@pytest.mark.parametrize("expected_srid, actual", [
+    (0,    TSequenceGeom({TInstantGeom(Geometry(20, 30), unix_dt(2020, 9, 10)), TInstantGeom(Geometry(24, 32), unix_dt(2019, 9, 10))}, True, False)),
+    (4326, TSequenceGeom({TInstantGeom(Geometry(20, 30), unix_dt(2020, 9, 10)), TInstantGeom(Geometry(24, 32), unix_dt(2019, 9, 10))}, True, False, 4326)),
+    (4326, TSequenceGeom({TInstantGeom(Geometry(20, 30, 4326), unix_dt(2020, 9, 10)), TInstantGeom(Geometry(24, 32, 4326), unix_dt(2019, 9, 10))}, True, False)),
+    (4326, TSequenceGeom({TInstantGeom(Geometry(20, 30, 4326), unix_dt(2020, 9, 10)), TInstantGeom(Geometry(24, 32, 4326), unix_dt(2019, 9, 10))}, True, False, 0)),
+    (4326, TSequenceGeom({TInstantGeom(Geometry(20, 30, 4326), unix_dt(2020, 9, 10)), TInstantGeom(Geometry(24, 32, 4326), unix_dt(2019, 9, 10))}, True, False, 4326)),
+
+    (0,    TSequenceGeom({"POINT (20 30)@2020-09-10 01:00:00+01", "POINT (24 32)@2019-09-10 01:00:00+01"}, True, False)),
+    (4326, TSequenceGeom({"POINT (20 30)@2020-09-10 01:00:00+01", "POINT (24 32)@2019-09-10 01:00:00+01"}, True, False, 4326)),
+    (4326, TSequenceGeom({"SRID=4326;POINT (20 30)@2020-09-10 01:00:00+01", "SRID=4326;POINT (24 32)@2019-09-10 01:00:00+01"}, True, False)),
+    (4326, TSequenceGeom({"SRID=4326;POINT (20 30)@2020-09-10 01:00:00+01", "SRID=4326;POINT (24 32)@2019-09-10 01:00:00+01"}, True, False, 0)),
+    (4326, TSequenceGeom({"SRID=4326;POINT (20 30)@2020-09-10 01:00:00+01", "SRID=4326;POINT (24 32)@2019-09-10 01:00:00+01"}, True, False, 4326)),
+
+    (0,    TSequenceGeom("[POINT (20 30)@2020-09-10 01:00:00+01, POINT (24 32)@2019-09-10 01:00:00+01)")),
+    (4326, TSequenceGeom("[POINT (20 30)@2020-09-10 01:00:00+01, POINT (24 32)@2019-09-10 01:00:00+01)", 4326)),
+    (4326, TSequenceGeom("[SRID=4326;POINT (20 30)@2020-09-10 01:00:00+01, SRID=4326;POINT (24 32)@2019-09-10 01:00:00+01)")),
+    (4326, TSequenceGeom("[SRID=4326;POINT (20 30)@2020-09-10 01:00:00+01, SRID=4326;POINT (24 32)@2019-09-10 01:00:00+01)", 0)),
+    (4326, TSequenceGeom("[SRID=4326;POINT (20 30)@2020-09-10 01:00:00+01, SRID=4326;POINT (24 32)@2019-09-10 01:00:00+01)", 4326)),
+    (4326, TSequenceGeom("SRID=4326;[POINT (20 30)@2020-09-10 01:00:00+01, POINT (24 32)@2019-09-10 01:00:00+01)")),
+    (4326, TSequenceGeom("SRID=4326;[POINT (20 30)@2020-09-10 01:00:00+01, POINT (24 32)@2019-09-10 01:00:00+01)", 0)),
+    (4326, TSequenceGeom("SRID=4326;[POINT (20 30)@2020-09-10 01:00:00+01, POINT (24 32)@2019-09-10 01:00:00+01)", 4326)),
+])
+def test_different_geom_constructors(expected_srid, actual):
+    assert actual.duration == TemporalDuration.Sequence
+    assert actual.duration.name == 'Sequence'
+    assert len(actual.instants) == 2
+    assert actual.startInstant == TInstantGeom(Geometry(24, 32, expected_srid), unix_dt(2019, 9, 10))
+    assert actual.endInstant == TInstantGeom(Geometry(20, 30, expected_srid), unix_dt(2020, 9, 10))
+    assert actual.lower_inc == True
+    assert actual.upper_inc == False
+    assert actual.srid == expected_srid
+    assert actual.startValue.srid == expected_srid
+
+
+@pytest.mark.parametrize("args", [
+    ({TInstantGeom(Geometry(20, 30, 5676), unix_dt(2020, 9, 10)), TInstantGeom(Geometry(24, 32, 5676), unix_dt(2019, 9, 10))}, True, False, 4326),
+    ({"SRID=5676;POINT (20 30)@2020-09-10 01:00:00+01", "SRID=5676;POINT (24 32)@2019-09-10 01:00:00+01"}, True, False, 4326),
+    ("[SRID=5676;POINT (20 30)@2020-09-10 01:00:00+01, SRID=5676;POINT (24 32)@2019-09-10 01:00:00+01)", 4326),
+    ("SRID=5676;[POINT (20 30)@2020-09-10 01:00:00+01, POINT (24 32)@2019-09-10 01:00:00+01)", 4326),
+])
+def test_constructors_with_conflicting_srids(args):
+    with pytest.raises(ValueError, match="Conflicting SRIDs provided. Given: 4326, while Geometry contains: 5676"):
+        TSequenceGeom(*args)
 
 
 def test_bad_constructors():
