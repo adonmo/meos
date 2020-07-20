@@ -1,14 +1,13 @@
 #ifndef MEOS_TYPES_TEMPORAL_TINSTANT_HPP
 #define MEOS_TYPES_TEMPORAL_TINSTANT_HPP
 
-#include <type_traits>
-
 #include <meos/io/utils.hpp>
 #include <meos/types/geom/Geometry.hpp>
 #include <meos/types/temporal/TInstantFunctions.hpp>
 #include <meos/types/temporal/Temporal.hpp>
 #include <meos/types/temporal/TemporalComparators.hpp>
 #include <meos/util/serializing.hpp>
+#include <type_traits>
 
 using namespace std;
 
@@ -20,11 +19,10 @@ using duration_ms = std::chrono::milliseconds;
  *
  * A temporal instant represents a value at a particular instant in time.
  */
-template <typename BaseType>
-class TInstant : public Temporal<BaseType>,
-                 public TemporalComparators<TInstant<BaseType>>,
-                 public TInstantFunctions<TInstant<BaseType>,
-                                          TInstant<BaseType>, BaseType> {
+template <typename BaseType> class TInstant
+    : public Temporal<BaseType>,
+      public TemporalComparators<TInstant<BaseType>>,
+      public TInstantFunctions<TInstant<BaseType>, TInstant<BaseType>, BaseType> {
 public:
   // Constructors
   TInstant();
@@ -50,6 +48,9 @@ public:
   template <typename B = BaseType, typename is_geometry<B>::type * = nullptr>
   TInstant(string const &serialized, int srid);
 
+  template <typename B = BaseType, typename is_geometry<B>::type * = nullptr>
+  TInstant<BaseType> with_srid(int srid) const;
+
   // Comparision functions
   int compare(Temporal<BaseType> const &other) const override;
 
@@ -61,9 +62,7 @@ public:
     return std::unique_ptr<TInstant<BaseType>>(this->clone_impl());
   }
 
-  TemporalDuration duration() const override {
-    return TemporalDuration::Instant;
-  };
+  TemporalDuration duration() const override { return TemporalDuration::Instant; };
 
   /**
    * Set of instants.
@@ -83,13 +82,9 @@ public:
   istream &read(istream &in);
   ostream &write(ostream &os, bool with_srid = true) const;
 
-  friend istream &operator>>(istream &in, TInstant &instant) {
-    return instant.read(in);
-  }
+  friend istream &operator>>(istream &in, TInstant &instant) { return instant.read(in); }
 
-  friend ostream &operator<<(ostream &os, TInstant const &instant) {
-    return instant.write(os);
-  }
+  friend ostream &operator<<(ostream &os, TInstant const &instant) { return instant.write(os); }
 
 private:
   BaseType value;

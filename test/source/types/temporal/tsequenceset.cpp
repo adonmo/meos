@@ -1,10 +1,8 @@
-#include <sstream>
-#include <string>
-
 #include <catch2/catch.hpp>
-
 #include <meos/types/temporal/Interpolation.hpp>
 #include <meos/types/temporal/TSequenceSet.hpp>
+#include <sstream>
+#include <string>
 
 #include "../../common/matchers.hpp"
 #include "../../common/time_utils.hpp"
@@ -13,8 +11,7 @@ time_t const minute = 60 * 1000L;
 time_t const day = 24 * 60 * 60 * 1000L;
 
 template <typename T>
-TSequence<T>
-getSampleSequence1(Interpolation interpolation = default_interp_v<T>) {
+TSequence<T> getSampleSequence1(Interpolation interpolation = default_interp_v<T>) {
   set<TInstant<T>> instants{
       TInstant<T>(10, unix_time_point(2012, 1, 1)),
       TInstant<T>(20, unix_time_point(2012, 1, 2, 4, 10)),
@@ -23,8 +20,7 @@ getSampleSequence1(Interpolation interpolation = default_interp_v<T>) {
 }
 
 template <typename T>
-TSequence<T>
-getSampleSequence2(Interpolation interpolation = default_interp_v<T>) {
+TSequence<T> getSampleSequence2(Interpolation interpolation = default_interp_v<T>) {
   set<TInstant<T>> instants{
       TInstant<T>(40, unix_time_point(2012, 1, 7)),
       TInstant<T>(50, unix_time_point(2012, 1, 8)),
@@ -32,15 +28,15 @@ getSampleSequence2(Interpolation interpolation = default_interp_v<T>) {
   return TSequence<T>(instants, false, true, interpolation);
 }
 
-TEMPLATE_TEST_CASE("TSequenceSets are constructed properly", "[tinstset]", int,
-                   float) {
+TEMPLATE_TEST_CASE("TSequenceSets are constructed properly", "[tinstset]", int, float) {
   SECTION("reads from istream") {
     TSequenceSet<TestType> sequence_set;
-    stringstream ss("{(    10@2012-01-01  ,      20@2012-01-02 09:40:00+0530]"
-                    ",( 40@2012-01-07,50@2012-01-08]}");
-    string expected =
-        "{(10@2012-01-01T00:00:00+0000, 20@2012-01-02T04:10:00+0000], "
-        "(40@2012-01-07T00:00:00+0000, 50@2012-01-08T00:00:00+0000]}";
+    stringstream ss(
+        "{(    10@2012-01-01  ,      20@2012-01-02 09:40:00+0530]"
+        ",( 40@2012-01-07,50@2012-01-08]}");
+    string expected
+        = "{(10@2012-01-01T00:00:00+0000, 20@2012-01-02T04:10:00+0000], "
+          "(40@2012-01-07T00:00:00+0000, 50@2012-01-08T00:00:00+0000]}";
 
     ss >> sequence_set;
     REQUIRE(sequence_set.sequences().size() == 2);
@@ -62,16 +58,14 @@ TEMPLATE_TEST_CASE("TSequenceSets are constructed properly", "[tinstset]", int,
     Interpolation expected_interp = default_interp_v<TestType>;
 
     SECTION("no strings constructor") {
-      TSequence<TestType> sequence_3 =
-          getSampleSequence1<TestType>(); // Duplicate!
+      TSequence<TestType> sequence_3 = getSampleSequence1<TestType>();  // Duplicate!
       set<TSequence<TestType>> s = {sequence_1, sequence_2, sequence_3};
       sequence_set = TSequenceSet<TestType>(s);
     }
 
     SECTION("set of strings constructor") {
-      sequence_set = TSequenceSet<TestType>(
-          set<string>{"(10@2012-01-01, 20@2012-01-02 09:40:00+0530]",
-                      "(40@2012-01-07, 50@2012-01-08]"});
+      sequence_set = TSequenceSet<TestType>(set<string>{
+          "(10@2012-01-01, 20@2012-01-02 09:40:00+0530]", "(40@2012-01-07, 50@2012-01-08]"});
     }
 
     SECTION("string constructor") {
@@ -84,19 +78,18 @@ TEMPLATE_TEST_CASE("TSequenceSets are constructed properly", "[tinstset]", int,
       expected_interp = Interpolation::Stepwise;
 
       SECTION("no strings constructor") {
-        TSequence<TestType> sequence_3 =
-            getSampleSequence1<TestType>(Interpolation::Stepwise); // Duplicate!
-        set<TSequence<TestType>> s = {
-            getSampleSequence2<TestType>(Interpolation::Stepwise),
-            getSampleSequence1<TestType>(Interpolation::Stepwise), sequence_3};
+        TSequence<TestType> sequence_3
+            = getSampleSequence1<TestType>(Interpolation::Stepwise);  // Duplicate!
+        set<TSequence<TestType>> s
+            = {getSampleSequence2<TestType>(Interpolation::Stepwise),
+               getSampleSequence1<TestType>(Interpolation::Stepwise), sequence_3};
         sequence_set = TSequenceSet<TestType>(s, Interpolation::Stepwise);
       }
 
       SECTION("set of strings constructor") {
         sequence_set = TSequenceSet<TestType>(
-            set<string>{
-                "Interp=Stepwise;(10@2012-01-01, 20@2012-01-02 09:40:00+0530]",
-                "Interp=Stepwise;(40@2012-01-07, 50@2012-01-08]"},
+            set<string>{"Interp=Stepwise;(10@2012-01-01, 20@2012-01-02 09:40:00+0530]",
+                        "Interp=Stepwise;(40@2012-01-07, 50@2012-01-08]"},
             Interpolation::Stepwise);
       }
 
@@ -110,18 +103,17 @@ TEMPLATE_TEST_CASE("TSequenceSets are constructed properly", "[tinstset]", int,
     REQUIRE(sequence_set.sequences().size() == 2);
 
     // We gave the sequences out-of-order!
-    REQUIRE(sequence_set.startSequence() == sequence_2);
-    REQUIRE(sequence_set.endSequence() == sequence_1);
+    REQUIRE(sequence_set.startSequence() == sequence_2.with_interp(expected_interp));
+    REQUIRE(sequence_set.endSequence() == sequence_1.with_interp(expected_interp));
 
     REQUIRE(sequence_set.interpolation() == expected_interp);
 
     stringstream output;
     output << sequence_set;
-    string expected_prefix =
-        is_floating_point<TestType>::value &&
-                sequence_set.interpolation() == Interpolation::Stepwise
-            ? "Interp=Stepwise;"
-            : "";
+    string expected_prefix = is_floating_point<TestType>::value
+                                     && sequence_set.interpolation() == Interpolation::Stepwise
+                                 ? "Interp=Stepwise;"
+                                 : "";
     string expected =
         expected_prefix +
         "{(10@2012-01-01T00:00:00+0000, 20@2012-01-02T04:10:00+0000], "
@@ -130,8 +122,122 @@ TEMPLATE_TEST_CASE("TSequenceSets are constructed properly", "[tinstset]", int,
   }
 }
 
-TEMPLATE_TEST_CASE("TSequenceSet comparision operators", "[tinstset]", int,
-                   float) {
+auto getSampleSequenceGeom1(int srid = 0) {
+  set<TInstant<Geometry>> instants{
+      TInstant<Geometry>(Geometry(10, 12), unix_time_point(2012, 1, 1)),
+      TInstant<Geometry>(Geometry(20, 22), unix_time_point(2012, 1, 2, 4, 10)),
+  };
+  return TSequence<Geometry>(instants, false, true, srid);
+}
+
+auto getSampleSequenceGeom2(int srid = 0) {
+  set<TInstant<Geometry>> instants{
+      TInstant<Geometry>(Geometry(40, 42), unix_time_point(2012, 1, 7)),
+      TInstant<Geometry>(Geometry(50, 52), unix_time_point(2012, 1, 8)),
+  };
+  return TSequence<Geometry>(instants, false, true, srid);
+}
+
+TEST_CASE("TSequenceSet<Geometry> constructors", "[tsequenceset]") {
+  TSequenceSet<Geometry> seqset;
+  int expected_srid = 4326;
+  TSequence<Geometry> expected_seq_1 = getSampleSequenceGeom1(expected_srid);
+  TSequence<Geometry> expected_seq_2 = getSampleSequenceGeom2(expected_srid);
+  // Setup sequence strings without SRID
+  std::stringstream output;
+  output.str("");
+  output << getSampleSequenceGeom1(0);
+  string expected_seq_s_1 = output.str();
+
+  output.str("");
+  output << getSampleSequenceGeom2(0);
+  string expected_seq_s_2 = output.str();
+
+  // Setup sequence strings with 4326 SRID
+  output.str("");
+  output << expected_seq_1;
+  string expected_seq_s_1_s = output.str();
+
+  output.str("");
+  output << expected_seq_2;
+  string expected_seq_s_2_s = output.str();
+
+  // Setup sequence strings with 5676 SRID
+  output.str("");
+  output << getSampleSequenceGeom1(5676);
+  string expected_seq_s_1_ds = output.str();
+
+  output.str("");
+  output << getSampleSequenceGeom2(5676);
+  string expected_seq_s_2_ds = output.str();
+
+  set<TSequence<Geometry>> ss = {expected_seq_1, expected_seq_2};
+  set<string> seq_s_set = {expected_seq_s_1, expected_seq_s_2};
+  set<string> seq_s_set_s = {expected_seq_s_1_s, expected_seq_s_2_s};
+  set<string> seq_s_set_ds = {expected_seq_s_1_ds, expected_seq_s_2_ds};
+
+  string expected_prefix = expected_srid != 0 ? "SRID=" + to_string(expected_srid) + ";" : "";
+  string expected_str_without_srid = "{" + expected_seq_s_1 + ", " + expected_seq_s_2 + "}";
+  string expected_str = expected_prefix + expected_str_without_srid;
+  string expected_str_diff_srid = "SRID=5676;" + expected_str_without_srid;
+
+  SECTION("without SRID") {
+    seqset = TSequenceSet<Geometry>(seq_s_set);
+    REQUIRE(seqset.srid() == 0);
+    output.str("");
+    output << seqset;
+    REQUIRE(output.str() == expected_str_without_srid);
+  }
+
+  SECTION("with SRID") {
+    SECTION("no strings constructor") { seqset = TSequenceSet<Geometry>(ss, expected_srid); }
+
+    SECTION("set of strings constructor") {
+      SECTION("with SRID int") { seqset = TSequenceSet<Geometry>(seq_s_set, expected_srid); }
+
+      SECTION("with SRID in geom only") { seqset = TSequenceSet<Geometry>(seq_s_set_s, 0); }
+
+      SECTION("with SRID int and SRID in geom both") {
+        seqset = TSequenceSet<Geometry>(seq_s_set_s, expected_srid);
+      }
+
+      SECTION("conflicting SRIDs") {
+        REQUIRE_THROWS_AS((TSequenceSet<Geometry>{seq_s_set_ds, expected_srid}),
+                          std::invalid_argument);
+        return;
+      }
+    }
+
+    SECTION("one string constructor") {
+      SECTION("with SRID int") {
+        seqset = TSequenceSet<Geometry>(expected_str_without_srid, expected_srid);
+      }
+
+      SECTION("with SRID in geom only") { seqset = TSequenceSet<Geometry>(expected_str, 0); }
+
+      SECTION("with SRID int and SRID in geom both") {
+        seqset = TSequenceSet<Geometry>(expected_str, expected_srid);
+      }
+
+      SECTION("conflicting SRIDs") {
+        REQUIRE_THROWS_AS((TSequenceSet<Geometry>{expected_str_diff_srid, expected_srid}),
+                          std::invalid_argument);
+        return;
+      }
+    }
+
+    REQUIRE(seqset.numSequences() == 2);
+    REQUIRE(seqset.startSequence() == expected_seq_1);
+    REQUIRE(seqset.endSequence() == expected_seq_2);
+    REQUIRE(seqset.srid() == expected_srid);
+
+    output.str("");
+    output << seqset;
+    REQUIRE(output.str() == expected_str);
+  }
+}
+
+TEMPLATE_TEST_CASE("TSequenceSet comparision operators", "[tinstset]", int, float) {
   SECTION("lhs == rhs") {
     auto lhs_sequences = set<TSequence<TestType>>{
         getSampleSequence2<TestType>(),
@@ -238,14 +344,13 @@ TEMPLATE_TEST_CASE("TSequenceSet comparision operators", "[tinstset]", int,
   }
 }
 
-TEMPLATE_TEST_CASE("TSequenceSet duration function returns SequenceSet",
-                   "[tsequenceset]", int, float, bool, string, Geometry) {
+TEMPLATE_TEST_CASE("TSequenceSet duration function returns SequenceSet", "[tsequenceset]", int,
+                   float, bool, string, Geometry) {
   TSequenceSet<TestType> sequence_set;
   REQUIRE(sequence_set.duration() == TemporalDuration::SequenceSet);
 }
 
-TEMPLATE_TEST_CASE("TSequenceSet value functions", "[tsequenceset]", int,
-                   float) {
+TEMPLATE_TEST_CASE("TSequenceSet value functions", "[tsequenceset]", int, float) {
   auto sequences = set<TSequence<TestType>>{
       getSampleSequence1<TestType>(),
       getSampleSequence2<TestType>(),
@@ -254,8 +359,7 @@ TEMPLATE_TEST_CASE("TSequenceSet value functions", "[tsequenceset]", int,
 
   set<Range<TestType>> expected;
   for (auto const &e : sequences)
-    expected.insert(Range<TestType>(e.minValue(), e.maxValue(), e.lower_inc(),
-                                    e.upper_inc()));
+    expected.insert(Range<TestType>(e.minValue(), e.maxValue(), e.lower_inc(), e.upper_inc()));
 
   REQUIRE_THAT(sequence_set.getValues(), UnorderedEquals(expected));
   REQUIRE(sequence_set.minValue() == 10);
@@ -264,8 +368,7 @@ TEMPLATE_TEST_CASE("TSequenceSet value functions", "[tsequenceset]", int,
   REQUIRE(sequence_set.endValue() == 50);
 }
 
-TEMPLATE_TEST_CASE("TSequenceSet getTime and timespan", "[tsequenceset]", int,
-                   float) {
+TEMPLATE_TEST_CASE("TSequenceSet getTime and timespan", "[tsequenceset]", int, float) {
   set<TSequence<TestType>> sequences;
   size_t size = GENERATE(1, take(4, random(2, 24)));
   set<TInstant<TestType>> all_expected_instants;
@@ -280,8 +383,8 @@ TEMPLATE_TEST_CASE("TSequenceSet getTime and timespan", "[tsequenceset]", int,
 
     for (size_t j = 0; j < seq_size; j++) {
       TestType v = random() % 1000;
-      time_point t = std::chrono::system_clock::from_time_t(
-          unix_time(2012, 1, 1) + 10 * 365 * (random() % day));
+      time_point t = std::chrono::system_clock::from_time_t(unix_time(2012, 1, 1)
+                                                            + 10 * 365 * (random() % day));
       auto instant = TInstant<TestType>(v, t);
       instants.insert(instant);
       all_expected_instants.insert(instant);
@@ -296,8 +399,7 @@ TEMPLATE_TEST_CASE("TSequenceSet getTime and timespan", "[tsequenceset]", int,
 
   SECTION("getTime") {
     set<Period> periods = {};
-    for (auto const &e : sequences)
-      periods.insert(e.period());
+    for (auto const &e : sequences) periods.insert(e.period());
     PeriodSet expected(periods);
 
     REQUIRE(actual.getTime() == expected);
@@ -355,15 +457,13 @@ TEMPLATE_TEST_CASE("TSequenceSet getTime and timespan", "[tsequenceset]", int,
 
   SECTION("shift") {
     set<TSequence<TestType>> shifted_sequences;
-    for (auto const &e : sequences)
-      shifted_sequences.insert(*e.shift(shift).get());
+    for (auto const &e : sequences) shifted_sequences.insert(*e.shift(shift).get());
     TSequenceSet<TestType> expected(shifted_sequences);
     REQUIRE(*actual.shift(shift).get() == expected);
   }
 }
 
-TEMPLATE_TEST_CASE("TSequenceSet.period() - gaps are ignored", "[tsequenceset]",
-                   int, float) {
+TEMPLATE_TEST_CASE("TSequenceSet.period() - gaps are ignored", "[tsequenceset]", int, float) {
   set<TInstant<TestType>> instants = {
       TInstant<TestType>(1, unix_time_point(2012, 1, 1)),
       TInstant<TestType>(2, unix_time_point(2012, 1, 2)),
@@ -374,13 +474,11 @@ TEMPLATE_TEST_CASE("TSequenceSet.period() - gaps are ignored", "[tsequenceset]",
       TSequence<TestType>(instants),
   };
   TSequenceSet<TestType> sequence_set(sequences);
-  Period expected = Period(unix_time_point(2012, 1, 1),
-                           unix_time_point(2012, 1, 7), true, true);
+  Period expected = Period(unix_time_point(2012, 1, 1), unix_time_point(2012, 1, 7), true, true);
   REQUIRE(sequence_set.period() == expected);
 }
 
-TEMPLATE_TEST_CASE("TSequenceSet intersection functions", "[tsequenceset]", int,
-                   float) {
+TEMPLATE_TEST_CASE("TSequenceSet intersection functions", "[tsequenceset]", int, float) {
   set<TInstant<TestType>> instants = {
       TInstant<TestType>(10, unix_time_point(2012, 1, 2)),
       TInstant<TestType>(20, unix_time_point(2012, 1, 3)),
@@ -438,23 +536,17 @@ TEMPLATE_TEST_CASE("TSequenceSet intersection functions", "[tsequenceset]", int,
 
   SECTION("intersectsPeriodSet") {
     // Positive cases
-    set<Period> s = {Period(unix_time_point(2012, 1, 2),
-                            unix_time_point(2012, 1, 3), true, true)};
+    set<Period> s = {Period(unix_time_point(2012, 1, 2), unix_time_point(2012, 1, 3), true, true)};
     REQUIRE(sset.intersectsPeriodSet(PeriodSet(s)) == true);
-    s = {Period(unix_time_point(2012, 1, 2), unix_time_point(2012, 1, 5), true,
-                true)};
+    s = {Period(unix_time_point(2012, 1, 2), unix_time_point(2012, 1, 5), true, true)};
     REQUIRE(sset.intersectsPeriodSet(PeriodSet(s)) == true);
-    s = {Period(unix_time_point(2012, 1, 2), unix_time_point(2012, 1, 5), true,
-                true),
-         Period(unix_time_point(2012, 2, 2), unix_time_point(2012, 2, 3), true,
-                true)};
-    s = {Period(unix_time_point(2012, 1, 3), unix_time_point(2012, 1, 5), true,
-                true)};
+    s = {Period(unix_time_point(2012, 1, 2), unix_time_point(2012, 1, 5), true, true),
+         Period(unix_time_point(2012, 2, 2), unix_time_point(2012, 2, 3), true, true)};
+    s = {Period(unix_time_point(2012, 1, 3), unix_time_point(2012, 1, 5), true, true)};
     REQUIRE(sset.intersectsPeriodSet(PeriodSet(s)) == true);
 
     // Negative cases
-    s = {Period(unix_time_point(2012, 2, 2), unix_time_point(2012, 2, 3), true,
-                true)};
+    s = {Period(unix_time_point(2012, 2, 2), unix_time_point(2012, 2, 3), true, true)};
     REQUIRE(sset.intersectsPeriodSet(PeriodSet(s)) == false);
   }
 }

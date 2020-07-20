@@ -1,8 +1,6 @@
 #ifndef MEOS_TYPES_TEMPORAL_TSEQUENCE_HPP
 #define MEOS_TYPES_TEMPORAL_TSEQUENCE_HPP
 
-#include <set>
-
 #include <meos/io/utils.hpp>
 #include <meos/types/geom/Geometry.hpp>
 #include <meos/types/temporal/Interpolation.hpp>
@@ -11,40 +9,41 @@
 #include <meos/types/temporal/Temporal.hpp>
 #include <meos/types/temporal/TemporalComparators.hpp>
 #include <meos/util/serializing.hpp>
+#include <set>
 
 using namespace std;
 
 using time_point = std::chrono::system_clock::time_point;
 using duration_ms = std::chrono::milliseconds;
 
-template <typename BaseType = float>
-class TSequence : public Temporal<BaseType>,
-                  public TemporalComparators<TSequence<BaseType>>,
-                  public TInstantFunctions<TSequence<BaseType>,
-                                           TInstant<BaseType>, BaseType> {
+template <typename BaseType = float> class TSequence
+    : public Temporal<BaseType>,
+      public TemporalComparators<TSequence<BaseType>>,
+      public TInstantFunctions<TSequence<BaseType>, TInstant<BaseType>, BaseType> {
 public:
   TSequence();
-  TSequence(set<TInstant<BaseType>> &instants_, bool lower_inc = true,
-            bool upper_inc = false,
+  TSequence(set<TInstant<BaseType>> &instants_, bool lower_inc = true, bool upper_inc = false,
             Interpolation interpolation = default_interp_v<BaseType>);
-  TSequence(set<string> const &instants, bool lower_inc = true,
-            bool upper_inc = false,
+  TSequence(set<string> const &instants, bool lower_inc = true, bool upper_inc = false,
             Interpolation interpolation = default_interp_v<BaseType>);
   TSequence(string const &serialized);
 
   // Additional constructors for Geometry base type to specify SRID
   template <typename B = BaseType, typename is_geometry<B>::type * = nullptr>
-  TSequence(set<TInstant<BaseType>> &instants_, bool lower_inc = true,
-            bool upper_inc = false, int srid = SRID_DEFAULT,
-            Interpolation interpolation = default_interp_v<BaseType>);
+  TSequence(set<TInstant<BaseType>> &instants_, bool lower_inc = true, bool upper_inc = false,
+            int srid = SRID_DEFAULT, Interpolation interpolation = default_interp_v<BaseType>);
 
   template <typename B = BaseType, typename is_geometry<B>::type * = nullptr>
-  TSequence(set<string> const &instants, bool lower_inc = true,
-            bool upper_inc = false, int srid = SRID_DEFAULT,
-            Interpolation interpolation = default_interp_v<BaseType>);
+  TSequence(set<string> const &instants, bool lower_inc = true, bool upper_inc = false,
+            int srid = SRID_DEFAULT, Interpolation interpolation = default_interp_v<BaseType>);
 
   template <typename B = BaseType, typename is_geometry<B>::type * = nullptr>
   TSequence(string const &serialized, int srid);
+
+  template <typename B = BaseType, typename is_geometry<B>::type * = nullptr>
+  TSequence<BaseType> with_srid(int srid) const;
+
+  TSequence<BaseType> with_interp(Interpolation interpolation) const;
 
   int compare(Temporal<BaseType> const &other) const override;
 
@@ -55,9 +54,7 @@ public:
   bool lower_inc() const;
   bool upper_inc() const;
 
-  TemporalDuration duration() const override {
-    return TemporalDuration::Sequence;
-  };
+  TemporalDuration duration() const override { return TemporalDuration::Sequence; };
 
   /**
    * Set of instants.
@@ -74,24 +71,23 @@ public:
   bool intersectsTimestamp(time_point const datetime) const override;
   bool intersectsPeriod(Period const period) const override;
 
-  istream &read(istream &in, bool with_interp = true);
-  ostream &write(ostream &os, bool with_interp = true) const;
+  istream &read(istream &in, bool with_interp = true, bool with_srid = true);
+  ostream &write(ostream &os, bool with_interp = true, bool with_srid = true) const;
 
-  friend istream &operator>>(istream &in, TSequence &sequence) {
-    return sequence.read(in);
-  }
+  friend istream &operator>>(istream &in, TSequence &sequence) { return sequence.read(in); }
 
   friend ostream &operator<<(ostream &os, TSequence<BaseType> const &sequence) {
     return sequence.write(os);
   }
+
+  // TODO make this private
+  void validate();
 
 private:
   set<TInstant<BaseType>> m_instants;
   bool m_lower_inc;
   bool m_upper_inc;
   Interpolation m_interpolation;
-
-  void validate();
 
   /**
    * Only does validations common accross all base types.
@@ -109,7 +105,7 @@ private:
   /**
    * Contains common logic accross all base types.
    * Does not take SRID into account.
-   * Use read(istream &in, bool) for reading in general. It internally uses
+   * Use read(istream &in, bool, bool) for reading in general. It internally uses
    * this.
    */
   istream &read_internal(istream &in, bool with_interp = true);
@@ -117,14 +113,12 @@ private:
   /**
    * Contains common logic accross all base types.
    * Does not take SRID into account.
-   * Use write(ostream &os, bool) for writing in general. It internally uses
+   * Use write(ostream &os, bool, bool) for writing in general. It internally uses
    * this.
    */
   ostream &write_internal(ostream &os, bool with_interp = true) const;
 
-  TSequence<BaseType> *clone_impl() const override {
-    return new TSequence<BaseType>(*this);
-  };
+  TSequence<BaseType> *clone_impl() const override { return new TSequence<BaseType>(*this); };
 };
 
 template class TSequence<bool>;

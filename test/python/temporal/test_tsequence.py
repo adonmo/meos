@@ -97,6 +97,7 @@ def test_different_geom_constructors(expected_srid, actual):
     assert actual.lower_inc == True
     assert actual.upper_inc == False
     assert actual.srid == expected_srid
+    assert actual.startInstant.srid == expected_srid
     assert actual.startValue.srid == expected_srid
 
 
@@ -107,7 +108,7 @@ def test_different_geom_constructors(expected_srid, actual):
     ("SRID=5676;[POINT (20 30)@2020-09-10 01:00:00+01, POINT (24 32)@2019-09-10 01:00:00+01)", 4326),
 ])
 def test_constructors_with_conflicting_srids(args):
-    with pytest.raises(ValueError, match="Conflicting SRIDs provided. Given: 4326, while Geometry contains: 5676"):
+    with pytest.raises(ValueError, match="Conflicting SRIDs provided. Given: 4326, while (Instant|Geometry) contains: 5676"):
         TSequenceGeom(*args)
 
 

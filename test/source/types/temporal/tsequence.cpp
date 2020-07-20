@@ -1,11 +1,9 @@
+#include <catch2/catch.hpp>
+#include <meos/types/temporal/Interpolation.hpp>
+#include <meos/types/temporal/TSequence.hpp>
 #include <sstream>
 #include <string>
 #include <type_traits>
-
-#include <catch2/catch.hpp>
-
-#include <meos/types/temporal/Interpolation.hpp>
-#include <meos/types/temporal/TSequence.hpp>
 
 #include "../../common/matchers.hpp"
 #include "../../common/time_utils.hpp"
@@ -13,20 +11,17 @@
 time_t const minute = 60 * 1000L;
 time_t const day = 24 * 60 * 60 * 1000L;
 
-TEMPLATE_TEST_CASE("TSequences are constructed and serialized properly",
-                   "[tsequence]", int, float) {
+TEMPLATE_TEST_CASE("TSequences are constructed and serialized properly", "[tsequence]", int,
+                   float) {
   SECTION("reads from istream") {
     TSequence<TestType> seq;
     stringstream ss("(    10@2012-01-01  ,      20@2012-01-02 09:40:00+0530 )");
-    string expected =
-        "(10@2012-01-01T00:00:00+0000, 20@2012-01-02T04:10:00+0000)";
+    string expected = "(10@2012-01-01T00:00:00+0000, 20@2012-01-02T04:10:00+0000)";
 
     ss >> seq;
     REQUIRE(seq.instants().size() == 2);
-    REQUIRE(seq.startInstant() ==
-            TInstant<TestType>(10, unix_time_point(2012, 1, 1)));
-    REQUIRE(seq.endInstant() ==
-            TInstant<TestType>(20, unix_time_point(2012, 1, 2, 4, 10)));
+    REQUIRE(seq.startInstant() == TInstant<TestType>(10, unix_time_point(2012, 1, 1)));
+    REQUIRE(seq.endInstant() == TInstant<TestType>(20, unix_time_point(2012, 1, 2, 4, 10)));
     REQUIRE(seq.lower_inc() == false);
     REQUIRE(seq.upper_inc() == false);
 
@@ -42,42 +37,39 @@ TEMPLATE_TEST_CASE("TSequences are constructed and serialized properly",
     Interpolation expected_interp = default_interp_v<TestType>;
 
     SECTION("no strings constructor") {
-      TInstant<TestType> instant_3(20,
-                                   unix_time_point(2019, 9, 10)); // Duplicate!
+      TInstant<TestType> instant_3(20, unix_time_point(2019, 9, 10));  // Duplicate!
       set<TInstant<TestType>> v = {instant_1, instant_2, instant_3};
       seq = TSequence<TestType>(v, false, true);
     }
 
     SECTION("set of strings constructor") {
       seq = TSequence<TestType>(
-          set<string>{"10@2020-09-10 01:00:00+01", "20@2019-09-10 01:00:00+01"},
-          false, true);
+          set<string>{"10@2020-09-10 01:00:00+01", "20@2019-09-10 01:00:00+01"}, false, true);
     }
 
     SECTION("string constructor") {
-      seq = TSequence<TestType>(
-          "(10@2020-09-10 01:00:00+01, 20@2019-09-10 01:00:00+01]");
+      seq = TSequence<TestType>("(10@2020-09-10 01:00:00+01, 20@2019-09-10 01:00:00+01]");
     }
 
     SECTION("with interpolation specified") {
       expected_interp = Interpolation::Stepwise;
 
       SECTION("no strings constructor") {
-        TInstant<TestType> instant_3(
-            20, unix_time_point(2019, 9, 10)); // Duplicate!
+        TInstant<TestType> instant_3(20, unix_time_point(2019, 9, 10));  // Duplicate!
         set<TInstant<TestType>> v = {instant_1, instant_2, instant_3};
         seq = TSequence<TestType>(v, false, true, Interpolation::Stepwise);
       }
 
       SECTION("set of strings constructor") {
-        seq = TSequence<TestType>(set<string>{"10@2020-09-10 01:00:00+01",
-                                              "20@2019-09-10 01:00:00+01"},
-                                  false, true, Interpolation::Stepwise);
+        seq = TSequence<TestType>(
+            set<string>{"10@2020-09-10 01:00:00+01", "20@2019-09-10 01:00:00+01"}, false, true,
+            Interpolation::Stepwise);
       }
 
       SECTION("string constructor") {
-        seq = TSequence<TestType>("Interp=Stepwise;(10@2020-09-10 01:00:00+01, "
-                                  "20@2019-09-10 01:00:00+01]");
+        seq = TSequence<TestType>(
+            "Interp=Stepwise;(10@2020-09-10 01:00:00+01, "
+            "20@2019-09-10 01:00:00+01]");
       }
     }
 
@@ -96,14 +88,12 @@ TEMPLATE_TEST_CASE("TSequences are constructed and serialized properly",
 
     stringstream output;
     output << seq;
-    string expected_prefix =
-        is_floating_point<TestType>::value &&
-                seq.interpolation() == Interpolation::Stepwise
-            ? "Interp=Stepwise;"
-            : "";
-    string expected =
-        expected_prefix +
-        "(20@2019-09-10T00:00:00+0000, 10@2020-09-10T00:00:00+0000]";
+    string expected_prefix
+        = is_floating_point<TestType>::value && seq.interpolation() == Interpolation::Stepwise
+              ? "Interp=Stepwise;"
+              : "";
+    string expected
+        = expected_prefix + "(20@2019-09-10T00:00:00+0000, 10@2020-09-10T00:00:00+0000]";
     REQUIRE(output.str() == expected);
   }
 }
@@ -128,23 +118,17 @@ TEST_CASE("TSequence<Geometry> constructors", "[tsequence]") {
                                        unix_time_point(2012, 9, 21));
     string expected_inst_s_1 = "POINT (20 30)@2012-09-20T00:00:00+0000";
     string expected_inst_s_2 = "POINT (24 32)@2012-09-21T00:00:00+0000";
-    string expected_inst_s_1_s =
-        "SRID=4326;POINT (20 30)@2012-09-20T00:00:00+0000";
-    string expected_inst_s_2_s =
-        "SRID=4326;POINT (24 32)@2012-09-21T00:00:00+0000";
-    string expected_inst_s_1_ds =
-        "SRID=5676;POINT (20 30)@2012-09-20T00:00:00+0000";
-    string expected_inst_s_2_ds =
-        "SRID=5676;POINT (24 32)@2012-09-21T00:00:00+0000";
+    string expected_inst_s_1_s = "SRID=4326;POINT (20 30)@2012-09-20T00:00:00+0000";
+    string expected_inst_s_2_s = "SRID=4326;POINT (24 32)@2012-09-21T00:00:00+0000";
+    string expected_inst_s_1_ds = "SRID=5676;POINT (20 30)@2012-09-20T00:00:00+0000";
+    string expected_inst_s_2_ds = "SRID=5676;POINT (24 32)@2012-09-21T00:00:00+0000";
     set<TInstant<Geometry>> inst_set = {expected_inst_1, expected_inst_2};
     set<string> inst_s_set = {expected_inst_s_1, expected_inst_s_2};
     set<string> inst_s_set_s = {expected_inst_s_1_s, expected_inst_s_2_s};
     set<string> inst_s_set_ds = {expected_inst_s_1_ds, expected_inst_s_2_ds};
 
-    string expected_prefix =
-        expected_srid != 0 ? "SRID=" + to_string(expected_srid) + ";" : "";
-    string expected_str_without_srid =
-        "[" + expected_inst_s_1 + ", " + expected_inst_s_2 + ")";
+    string expected_prefix = expected_srid != 0 ? "SRID=" + to_string(expected_srid) + ";" : "";
+    string expected_str_without_srid = "[" + expected_inst_s_1 + ", " + expected_inst_s_2 + ")";
     string expected_str = expected_prefix + expected_str_without_srid;
     string expected_str_diff_srid = "SRID=5676;" + expected_str_without_srid;
 
@@ -157,18 +141,15 @@ TEST_CASE("TSequence<Geometry> constructors", "[tsequence]") {
         seq = TSequence<Geometry>(inst_s_set, true, false, expected_srid);
       }
 
-      SECTION("with SRID in geom only") {
-        seq = TSequence<Geometry>(inst_s_set_s, true, false, 0);
-      }
+      SECTION("with SRID in geom only") { seq = TSequence<Geometry>(inst_s_set_s, true, false, 0); }
 
       SECTION("with SRID int and SRID in geom both") {
         seq = TSequence<Geometry>(inst_s_set_s, true, false, expected_srid);
       }
 
       SECTION("conflicting SRIDs") {
-        REQUIRE_THROWS_AS(
-            (TSequence<Geometry>{inst_s_set_ds, true, false, expected_srid}),
-            std::invalid_argument);
+        REQUIRE_THROWS_AS((TSequence<Geometry>{inst_s_set_ds, true, false, expected_srid}),
+                          std::invalid_argument);
         return;
       }
     }
@@ -178,18 +159,15 @@ TEST_CASE("TSequence<Geometry> constructors", "[tsequence]") {
         seq = TSequence<Geometry>(expected_str_without_srid, expected_srid);
       }
 
-      SECTION("with SRID in geom only") {
-        seq = TSequence<Geometry>(expected_str, 0);
-      }
+      SECTION("with SRID in geom only") { seq = TSequence<Geometry>(expected_str, 0); }
 
       SECTION("with SRID int and SRID in geom both") {
         seq = TSequence<Geometry>(expected_str, expected_srid);
       }
 
       SECTION("conflicting SRIDs") {
-        REQUIRE_THROWS_AS(
-            (TSequence<Geometry>{expected_str_diff_srid, expected_srid}),
-            std::invalid_argument);
+        REQUIRE_THROWS_AS((TSequence<Geometry>{expected_str_diff_srid, expected_srid}),
+                          std::invalid_argument);
         return;
       }
     }
@@ -207,8 +185,7 @@ TEST_CASE("TSequence<Geometry> constructors", "[tsequence]") {
   }
 }
 
-TEMPLATE_TEST_CASE("TSequence comparision operators", "[tsequence]", int,
-                   float) {
+TEMPLATE_TEST_CASE("TSequence comparision operators", "[tsequence]", int, float) {
   SECTION("lhs == rhs") {
     set<TInstant<TestType>> lhs_instants = {
         TInstant<TestType>(2, unix_time_point(2012, 1, 1)),
@@ -327,8 +304,8 @@ TEMPLATE_TEST_CASE("TSequence comparision operators", "[tsequence]", int,
   }
 }
 
-TEMPLATE_TEST_CASE("TSequence duration function returns Sequence",
-                   "[tsequence]", int, float, bool, string, Geometry) {
+TEMPLATE_TEST_CASE("TSequence duration function returns Sequence", "[tsequence]", int, float, bool,
+                   string, Geometry) {
   TSequence<TestType> sequence;
   REQUIRE(sequence.duration() == TemporalDuration::Sequence);
 }
@@ -345,8 +322,8 @@ TEMPLATE_TEST_CASE("TSequence value functions", "[tsequence]", int, float) {
   };
   TSequence<TestType> sequence(instants, lower_inc, upper_inc);
 
-  set<Range<TestType>> expected = {Range<TestType>(
-      sequence.minValue(), sequence.maxValue(), lower_inc, upper_inc)};
+  set<Range<TestType>> expected
+      = {Range<TestType>(sequence.minValue(), sequence.maxValue(), lower_inc, upper_inc)};
 
   REQUIRE_THAT(sequence.getValues(), UnorderedEquals(expected));
   REQUIRE(sequence.minValue() == 1);
@@ -369,8 +346,8 @@ TEMPLATE_TEST_CASE("TSequence instant functions", "[tsequence]", int, float) {
 
   for (size_t i = 0; i < size; i++) {
     TestType v = random() % 1000;
-    time_point t = std::chrono::system_clock::from_time_t(
-        unix_time(2012, 1, 1) + 10 * 365 * (random() % day));
+    time_point t = std::chrono::system_clock::from_time_t(unix_time(2012, 1, 1)
+                                                          + 10 * 365 * (random() % day));
     auto instant = TInstant<TestType>(v, t);
     instants.insert(instant);
     expected_instants.insert(instant);
@@ -398,10 +375,8 @@ TEMPLATE_TEST_CASE("TSequence getTime", "[tsequence]", int, float) {
   auto upper_inc = GENERATE(true, false);
   TestType v1 = GENERATE(take(2, random(0, 1000)));
   TestType v2 = GENERATE(take(2, random(0, 1000)));
-  auto t1 =
-      GENERATE(take(2, random(unix_time(2012, 1, 1), unix_time(2020, 1, 1))));
-  auto t2 =
-      GENERATE(take(2, random(unix_time(2012, 1, 1), unix_time(2020, 1, 1))));
+  auto t1 = GENERATE(take(2, random(unix_time(2012, 1, 1), unix_time(2020, 1, 1))));
+  auto t2 = GENERATE(take(2, random(unix_time(2012, 1, 1), unix_time(2020, 1, 1))));
   time_point tp1 = std::chrono::system_clock::from_time_t(t1 / 1000L);
   time_point tp2 = std::chrono::system_clock::from_time_t(t2 / 1000L);
   auto instant_1 = TInstant<TestType>(v1, tp1);
@@ -419,8 +394,7 @@ TEMPLATE_TEST_CASE("TSequence getTime", "[tsequence]", int, float) {
   REQUIRE(sequence.getTime() == expected);
 }
 
-TEMPLATE_TEST_CASE("TSequence period and timestamp related functions",
-                   "[tsequence]", int, float) {
+TEMPLATE_TEST_CASE("TSequence period and timestamp related functions", "[tsequence]", int, float) {
   auto lower_inc = GENERATE(true, false);
   auto upper_inc = GENERATE(true, false);
   set<TInstant<TestType>> instants;
@@ -430,8 +404,8 @@ TEMPLATE_TEST_CASE("TSequence period and timestamp related functions",
 
   for (size_t i = 0; i < size; i++) {
     TestType v = random() % 1000;
-    time_point t = std::chrono::system_clock::from_time_t(
-        unix_time(2012, 1, 1) + 10 * 365 * (random() % day));
+    time_point t = std::chrono::system_clock::from_time_t(unix_time(2012, 1, 1)
+                                                          + 10 * 365 * (random() % day));
     auto instant = TInstant<TestType>(v, t);
     instants.insert(instant);
   }
@@ -452,8 +426,7 @@ TEMPLATE_TEST_CASE("TSequence period and timestamp related functions",
   }
 }
 
-TEMPLATE_TEST_CASE("TSequence.period() - gaps are ignored", "[tsequence]", int,
-                   float) {
+TEMPLATE_TEST_CASE("TSequence.period() - gaps are ignored", "[tsequence]", int, float) {
   auto lower_inc = GENERATE(true, false);
   auto upper_inc = GENERATE(true, false);
   set<TInstant<TestType>> instants = {
@@ -463,8 +436,8 @@ TEMPLATE_TEST_CASE("TSequence.period() - gaps are ignored", "[tsequence]", int,
       TInstant<TestType>(4, unix_time_point(2012, 1, 7)),
   };
   TSequence<TestType> sequence(instants, lower_inc, upper_inc);
-  Period expected = Period(unix_time_point(2012, 1, 1),
-                           unix_time_point(2012, 1, 7), lower_inc, upper_inc);
+  Period expected
+      = Period(unix_time_point(2012, 1, 1), unix_time_point(2012, 1, 7), lower_inc, upper_inc);
   REQUIRE(sequence.period() == expected);
 }
 
@@ -473,10 +446,8 @@ TEMPLATE_TEST_CASE("TSequence timespan", "[tsequence]", int, float) {
   auto upper_inc = GENERATE(true, false);
   TestType v1 = GENERATE(take(2, random(0, 1000)));
   TestType v2 = GENERATE(take(2, random(0, 1000)));
-  auto t1 =
-      GENERATE(take(2, random(unix_time(2012, 1, 1), unix_time(2020, 1, 1))));
-  auto t2 =
-      GENERATE(take(2, random(unix_time(2012, 1, 1), unix_time(2020, 1, 1))));
+  auto t1 = GENERATE(take(2, random(unix_time(2012, 1, 1), unix_time(2020, 1, 1))));
+  auto t2 = GENERATE(take(2, random(unix_time(2012, 1, 1), unix_time(2020, 1, 1))));
   time_point tp1 = std::chrono::system_clock::from_time_t(t1);
   time_point tp2 = std::chrono::system_clock::from_time_t(t2);
   auto instant_1 = TInstant<TestType>(v1, tp1);
@@ -487,9 +458,9 @@ TEMPLATE_TEST_CASE("TSequence timespan", "[tsequence]", int, float) {
   instants.insert(instant_2);
   TSequence<TestType> sequence(instants, lower_inc, upper_inc);
 
-  REQUIRE(sequence.timespan() ==
-          std::chrono::duration_cast<duration_ms>(sequence.endTimestamp() -
-                                                  sequence.startTimestamp()));
+  REQUIRE(sequence.timespan()
+          == std::chrono::duration_cast<duration_ms>(sequence.endTimestamp()
+                                                     - sequence.startTimestamp()));
 }
 
 TEMPLATE_TEST_CASE("TSequence shift", "[tsequence]", int, float) {
@@ -503,8 +474,8 @@ TEMPLATE_TEST_CASE("TSequence shift", "[tsequence]", int, float) {
 
   for (size_t i = 0; i < size; i++) {
     TestType v = random() % 1000;
-    time_point t = std::chrono::system_clock::from_time_t(
-        unix_time(2012, 1, 1) + 10 * 365 * (random() % day));
+    time_point t = std::chrono::system_clock::from_time_t(unix_time(2012, 1, 1)
+                                                          + 10 * 365 * (random() % day));
     auto instant = TInstant<TestType>(v, t);
     actual_instants.insert(*instant.shift(shift).get());
     auto expected_instant = TInstant<TestType>(v, t + shift);
@@ -516,8 +487,7 @@ TEMPLATE_TEST_CASE("TSequence shift", "[tsequence]", int, float) {
   REQUIRE_THAT(actual.instants(), UnorderedEquals(expected.instants()));
 }
 
-TEMPLATE_TEST_CASE("TSequence intersection functions", "[tsequence]", int,
-                   float) {
+TEMPLATE_TEST_CASE("TSequence intersection functions", "[tsequence]", int, float) {
   set<TInstant<TestType>> instants = {
       TInstant<TestType>(10, unix_time_point(2012, 1, 2)),
       TInstant<TestType>(20, unix_time_point(2012, 1, 3)),
@@ -528,15 +498,13 @@ TEMPLATE_TEST_CASE("TSequence intersection functions", "[tsequence]", int,
   SECTION("intersectsTimestamp") {
     // Positive cases
     REQUIRE(sequence.intersectsTimestamp(unix_time_point(2012, 1, 2)) == true);
-    REQUIRE(sequence.intersectsTimestamp(unix_time_point(2012, 1, 2, 1)) ==
-            true);
+    REQUIRE(sequence.intersectsTimestamp(unix_time_point(2012, 1, 2, 1)) == true);
     REQUIRE(sequence.intersectsTimestamp(unix_time_point(2012, 1, 3)) == true);
     REQUIRE(sequence.intersectsTimestamp(unix_time_point(2012, 1, 4)) == true);
 
     // Negative cases
     REQUIRE(sequence.intersectsTimestamp(unix_time_point(2012, 1, 1)) == false);
-    REQUIRE(sequence.intersectsTimestamp(unix_time_point(2012, 1, 4, 1)) ==
-            false);
+    REQUIRE(sequence.intersectsTimestamp(unix_time_point(2012, 1, 4, 1)) == false);
     REQUIRE(sequence.intersectsTimestamp(unix_time_point(2012, 1, 5)) == false);
     REQUIRE(sequence.intersectsTimestamp(unix_time_point(2012, 2, 1)) == false);
   }
@@ -574,23 +542,29 @@ TEMPLATE_TEST_CASE("TSequence intersection functions", "[tsequence]", int,
 
   SECTION("intersectsPeriodSet") {
     // Positive cases
-    set<Period> s = {Period(unix_time_point(2012, 1, 2),
-                            unix_time_point(2012, 1, 3), true, true)};
+    set<Period> s = {Period(unix_time_point(2012, 1, 2), unix_time_point(2012, 1, 3), true, true)};
     REQUIRE(sequence.intersectsPeriodSet(PeriodSet(s)) == true);
-    s = {Period(unix_time_point(2012, 1, 2), unix_time_point(2012, 1, 5), true,
-                true)};
+    s = {Period(unix_time_point(2012, 1, 2), unix_time_point(2012, 1, 5), true, true)};
     REQUIRE(sequence.intersectsPeriodSet(PeriodSet(s)) == true);
-    s = {Period(unix_time_point(2012, 1, 2), unix_time_point(2012, 1, 5), true,
-                true),
-         Period(unix_time_point(2012, 2, 2), unix_time_point(2012, 2, 3), true,
-                true)};
-    s = {Period(unix_time_point(2012, 1, 3), unix_time_point(2012, 1, 5), true,
-                true)};
+    s = {Period(unix_time_point(2012, 1, 2), unix_time_point(2012, 1, 5), true, true),
+         Period(unix_time_point(2012, 2, 2), unix_time_point(2012, 2, 3), true, true)};
+    s = {Period(unix_time_point(2012, 1, 3), unix_time_point(2012, 1, 5), true, true)};
     REQUIRE(sequence.intersectsPeriodSet(PeriodSet(s)) == true);
 
     // Negative cases
-    s = {Period(unix_time_point(2012, 2, 2), unix_time_point(2012, 2, 3), true,
-                true)};
+    s = {Period(unix_time_point(2012, 2, 2), unix_time_point(2012, 2, 3), true, true)};
     REQUIRE(sequence.intersectsPeriodSet(PeriodSet(s)) == false);
   }
+}
+
+TEST_CASE("TSequence<Geometry> with_srid", "[tsequence]") {
+  TSequence<Geometry> g(
+      "[POINT (10 12)@2011-01-01T00:00:00+0000, POINT (40 42)@2011-01-02T00:00:00+0000)");
+  REQUIRE(g.srid() == 0);
+  REQUIRE(g.startInstant().srid() == 0);
+  REQUIRE(g.startValue().srid() == 0);
+  g = g.with_srid(4326);
+  REQUIRE(g.srid() == 4326);
+  REQUIRE(g.startInstant().srid() == 4326);
+  REQUIRE(g.startValue().srid() == 4326);
 }
