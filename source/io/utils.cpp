@@ -1,11 +1,10 @@
 #include <algorithm>
-#include <sstream>
-#include <stdexcept>
-#include <string>
-
 #include <meos/io/utils.hpp>
 #include <meos/types/geom/Geometry.hpp>
 #include <meos/util/string.hpp>
+#include <sstream>
+#include <stdexcept>
+#include <string>
 
 using namespace std;
 
@@ -25,8 +24,8 @@ template <> bool nextValue(istream &in) {
   } else if (s == "f" || s == "false") {
     value = false;
   } else {
-    throw std::invalid_argument(
-        "Boolean value can only be one of (t, f, true, false), but got: " + s);
+    throw std::invalid_argument("Boolean value can only be one of (t, f, true, false), but got: "
+                                + s);
   }
 
   return value;
@@ -76,9 +75,10 @@ template <> Geometry nextValue(istream &in) {
 
 void validate_normalized_ISO8601(const string &s) {
   if (s.size() != 28) {
-    throw invalid_argument("Expected in YYYY-MM-DDThh:mm:ss.uuu+ZZZZ format "
-                           "(28 characters), got: " +
-                           s);
+    throw invalid_argument(
+        "Expected in YYYY-MM-DDThh:mm:ss.uuu+ZZZZ format "
+        "(28 characters), got: "
+        + s);
   }
 
   if ((s[4] != '-') || (s[7] != '-')) {
@@ -89,9 +89,8 @@ void validate_normalized_ISO8601(const string &s) {
   // TODO check date according to year and month
 
   if ((s[10] != ' ') && (s[10] != 'T')) {
-    throw invalid_argument(
-        "Expected either a space or a 'T' after day, got: '" +
-        string(1, s[10]) + "'");
+    throw invalid_argument("Expected either a space or a 'T' after day, got: '" + string(1, s[10])
+                           + "'");
   }
 
   if (s[13] != ':') {
@@ -108,8 +107,8 @@ void validate_normalized_ISO8601(const string &s) {
 
   // Milliseconds should be three characters
   if ((s[23] != '+') && (s[23] != '-')) {
-    throw invalid_argument("Expected either a '+' or a '-' after time, got: '" +
-                           string(1, s[23]) + "'");
+    throw invalid_argument("Expected either a '+' or a '-' after time, got: '" + string(1, s[23])
+                           + "'");
   }
 }
 
@@ -119,25 +118,26 @@ string normalized_ISO8601(string s) {
   if (length < 10 || length > 28) {
     throw invalid_argument(
         "Empty or unexpected length for the provided ISO 8601 "
-        "date/time string: " +
-        s);
+        "date/time string: "
+        + s);
   }
 
-  if (length == 10) { // 1234-12-12
+  if (length == 10) {  // 1234-12-12
     s += " 00:00:00.000+0000";
-  } else if (length == 16) { // 1234-12-12T12:12
+  } else if (length == 16) {  // 1234-12-12T12:12
     s += ":00.000+0000";
-  } else if (length == 19) { // 1234-12-12T12:12:12
+  } else if (length == 19) {  // 1234-12-12T12:12:12
     s += ".000+0000";
-  } else if (length == 20) { // 1234-12-12T12:12:12Z
+  } else if (length == 20) {  // 1234-12-12T12:12:12Z
     if (s[19] != 'Z') {
-      throw invalid_argument("For a ISO8601 string of length 20, "
-                             "expected 'Z' as the last character, got: '" +
-                             string(1, s[19]) + "'");
+      throw invalid_argument(
+          "For a ISO8601 string of length 20, "
+          "expected 'Z' as the last character, got: '"
+          + string(1, s[19]) + "'");
     }
     s[19] = '.';
     s += "000+0000";
-  } else if (s[19] == '.') { // 1234-12-12T12:12:12.[...]
+  } else if (s[19] == '.') {  // 1234-12-12T12:12:12.[...]
     // Milliseconds present - one character at min, three characters at max
     size_t tz_pos = s.find_first_of("+-Z", 21, 3);
     if (21 <= tz_pos && tz_pos <= 23) {
@@ -147,9 +147,10 @@ string normalized_ISO8601(string s) {
       if (tz.length() == 2) {
         tz += "00";
       } else if (tz.length() != 4) {
-        throw invalid_argument("Unexpected tz offset: has to be either two or "
-                               "four characters long. Ex: +05, +0530, got: " +
-                               s);
+        throw invalid_argument(
+            "Unexpected tz offset: has to be either two or "
+            "four characters long. Ex: +05, +0530, got: "
+            + s);
       }
       s = s.substr(0, 19) + zero_padded_ms + "+" + tz;
     } else if (tz_pos == string::npos) {
@@ -158,15 +159,16 @@ string normalized_ISO8601(string s) {
       s = s.substr(0, 19) + zero_padded_ms + "+0000";
     } else {
       // TZ also (possibly) present, but beyond three characters
-      throw invalid_argument("Unexpected pattern, milliseconds can have a min "
-                             "of 1 characters and max of 3 characters, got: " +
-                             s);
+      throw invalid_argument(
+          "Unexpected pattern, milliseconds can have a min "
+          "of 1 characters and max of 3 characters, got: "
+          + s);
     }
   } else {
     // Milliseconds not present
-    if (length == 22) { // 1234-12-12T12:12:12+05
+    if (length == 22) {  // 1234-12-12T12:12:12+05
       s = s.substr(0, 19) + ".000" + s.substr(19) + "00";
-    } else if (length == 24) { // 1234-12-12T12:12:12+0530
+    } else if (length == 24) {  // 1234-12-12T12:12:12+0530
       s = s.substr(0, 19) + ".000" + s.substr(19);
     } else {
       throw invalid_argument("Unexpected pattern, got: " + s);
@@ -222,7 +224,7 @@ time_point nextTime(istream &in) {
   time.tm_year -= 1900;
   time.tm_mon -= 1;
 
-  ss.get(); // skip the character
+  ss.get();  // skip the character
   ss >> time.tm_hour;
   consume_one_of(ss, ":");
   ss >> time.tm_min;
@@ -248,29 +250,23 @@ time_point nextTime(istream &in) {
 }
 
 void consume(istream &in, char expectedCharacter, bool skip_ws) {
-  if (skip_ws)
-    in >> std::ws;
+  if (skip_ws) in >> std::ws;
   char c = in.get();
   if (c != expectedCharacter)
-    throw invalid_argument("Expected '" + string(1, expectedCharacter) +
-                           "', got '" + c + "'");
+    throw invalid_argument("Expected '" + string(1, expectedCharacter) + "', got '" + c + "'");
 }
 
 void consume(istream &in, string expectedString, bool skip_ws) {
-  if (skip_ws)
-    in >> std::ws;
+  if (skip_ws) in >> std::ws;
   for (auto c : expectedString)
-    if (c != in.get())
-      throw invalid_argument("Expected '" + expectedString + "'");
+    if (c != in.get()) throw invalid_argument("Expected '" + expectedString + "'");
 }
 
 char consume_one_of(istream &in, string charSet, bool skip_ws) {
-  if (skip_ws)
-    in >> std::ws;
+  if (skip_ws) in >> std::ws;
   char c;
   if (charSet.find(c = in.get()) == string::npos) {
-    throw invalid_argument("Expected one of '" + charSet + "', got: '" +
-                           string(1, c) + "'");
+    throw invalid_argument("Expected one of '" + charSet + "', got: '" + string(1, c) + "'");
   }
   return c;
 }

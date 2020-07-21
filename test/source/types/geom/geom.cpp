@@ -12,7 +12,11 @@ TEST_CASE("Geometries are constructed and serialized properly", "[geometry]") {
 
   SECTION("<double, double> constructor") { geometry = Geometry(2, 3); }
 
-  SECTION("<string> constructor") { geometry = Geometry("POINT (2 3)"); }
+  SECTION("<string> constructor") {
+    SECTION("WKT") { geometry = Geometry("POINT (2 3)"); }
+
+    SECTION("WKB (Hex)") { geometry = Geometry("010100000000000000000000400000000000000840"); }
+  }
 
   SECTION("<Geomety> constructor") {
     Geometry g(2, 3, 4326);

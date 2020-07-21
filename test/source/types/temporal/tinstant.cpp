@@ -49,7 +49,11 @@ TEMPLATE_TEST_CASE("TInstants are constructed properly", "[tinstant]", int, floa
 
 TEST_CASE("TInstant<Geometry> constructors", "[tinst]") {
   SECTION("without SRID") {
-    TInstant<Geometry> instant(Geometry(20, 30), unix_time_point(2012, 11, 1));
+    TInstant<Geometry> instant;
+    SECTION("WKT") { instant = TInstant<Geometry>(Geometry(20, 30), unix_time_point(2012, 11, 1)); }
+    SECTION("WKB (Hex)") {
+      instant = TInstant<Geometry>("010100000000000000000034400000000000003E40@2012-11-01");
+    }
     REQUIRE(instant.srid() == 0);
 
     std::stringstream output;

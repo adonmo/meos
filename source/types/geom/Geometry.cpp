@@ -1,7 +1,9 @@
+#include <algorithm>
 #include <cstdlib>
 #include <iomanip>
 #include <meos/io/utils.hpp>
 #include <meos/types/geom/Geometry.hpp>
+#include <meos/util/string.hpp>
 #include <string>
 
 Geometry::Geometry() { point(0, 0); }
@@ -61,9 +63,17 @@ void Geometry::point(double x, double y) {
 void Geometry::fromWKB(std::istream &is) {
   free();
   const size_t BUFFER_SIZE = 2048;
-  unsigned char buf[BUFFER_SIZE];
+  unsigned char *buf = new unsigned char[BUFFER_SIZE];
+
   is.read(reinterpret_cast<char *>(buf), BUFFER_SIZE);
-  geom = GEOSGeomFromWKB_buf_r(geos_context, buf, is.gcount());
+  auto length = is.gcount();
+  buf[length] = '\0';
+  geom = GEOSGeomFromWKB_buf_r(geos_context, buf, length);
+
+  delete[] buf;
+  if (geom == nullptr) {
+    throw std::invalid_argument("Could not parse WKB (binary)");
+  }
 }
 
 void Geometry::toWKB(std::ostream &os) const {
@@ -82,6 +92,9 @@ void Geometry::toWKB(std::ostream &os) const {
 void Geometry::fromWKT(std::string wkt) {
   free();
   geom = GEOSGeomFromWKT_r(geos_context, wkt.c_str());
+  if (geom == nullptr) {
+    throw std::invalid_argument("Could not parse WKT");
+  }
 }
 
 std::string Geometry::toWKT() const {
@@ -97,13 +110,21 @@ std::string Geometry::toWKT() const {
   }
   throw "Geometry not initiated.";
 }
-
+#include <iostream>
 void Geometry::fromHEX(std::istream &is) {
   free();
   const size_t BUFFER_SIZE = 2048;
-  unsigned char buf[BUFFER_SIZE];
+  unsigned char *buf = new unsigned char[BUFFER_SIZE];
+
   is.read(reinterpret_cast<char *>(buf), BUFFER_SIZE);
-  geom = GEOSGeomFromHEX_buf_r(geos_context, buf, is.gcount());
+  auto length = is.gcount();
+  buf[length] = '\0';
+  geom = GEOSGeomFromHEX_buf_r(geos_context, buf, length);
+
+  delete[] buf;
+  if (geom == nullptr) {
+    throw std::invalid_argument("Could not parse WKB (hex)");
+  }
 }
 
 void Geometry::toHEX(std::ostream &os) const {
@@ -218,29 +239,47 @@ std::istream &operator>>(std::istream &in, Geometry &g) {
     in.seekg(pos);
   }
 
-  // Geometries are in the patter GEOMTYPENAME(...), with possible nested braces
-  // This piece of code reads until all braces are closed
+  // Geometries could be in either WKT or WKB (Hex) formats
+  // So first we detect which one of them is the case
   in >> std::ws;
-  size_t start_pos = in.tellg();
-  read_until_one_of(in, "(");
-  consume(in, '(');
-  int brace_nesting = 1;
-  while (brace_nesting != 0) {
-    read_until_one_of(in, "()");
-    brace_nesting += (in.get() == '(' ? 1 : -1);
+  auto start_pos = in.tellg();
+  auto buffer = read_until_one_of(in, "(@");
+  auto final_pos = in.tellg();
+  auto length = final_pos - start_pos;
+  bool is_wkt = in.peek() == '(';
+
+  if (is_wkt) {
+    // WKT follows the pattern GEOMTYPENAME(...), with possible nested braces
+    // This piece of code reads until all braces are closed
+
+    std::transform(buffer.begin(), buffer.end(), buffer.begin(), toupper);
+    if (trim(buffer) != "POINT") {
+      throw std::invalid_argument("Only POINT geometry supported as of now");
+    }
+
+    consume(in, '(');
+    int brace_nesting = 1;
+    while (brace_nesting != 0) {
+      read_until_one_of(in, "()");
+      brace_nesting += (in.get() == '(' ? 1 : -1);
+    }
+    final_pos = in.tellg();
+    length = final_pos - start_pos;
+    in.seekg(start_pos);
+
+    char *buf = new char[length + 1];
+    in.read(buf, length);
+    buf[length] = '\0';
+
+    g.geom = GEOSGeomFromWKT_r(geos_context, buf);
+
+    delete[] buf;
+  } else {
+    std::stringstream ss(buffer);
+    g.fromHEX(ss);
   }
-  size_t final_pos = in.tellg();
-  size_t length = final_pos - start_pos;
-  in.seekg(start_pos);
 
-  char *wkt_buffer = new char[length + 1];
-  in.read(wkt_buffer, length);
-  wkt_buffer[length] = '\0';
-
-  g.geom = GEOSGeomFromWKT_r(geos_context, wkt_buffer);
-  delete[] wkt_buffer;
   GEOSSetSRID_r(geos_context, g.geom, srid);
-
   return in;
 }
 
