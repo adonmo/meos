@@ -59,6 +59,30 @@ TEST_CASE("test read and write to WKB", "[geometry]") {
   REQUIRE(g.srid() == 0);
 }
 
+TEST_CASE("test read and write to WKT", "[geometry]") {
+  Geometry g(2, 3, 4326);
+  REQUIRE(g.srid() == 4326);
+  std::string output = g.toWKT();  // SRID would be lost in this process
+
+  g.fromWKT(output);
+  REQUIRE(g.x() == 2);
+  REQUIRE(g.y() == 3);
+  REQUIRE(g.srid() == 0);
+}
+
+TEST_CASE("test read and write to HEX", "[geometry]") {
+  Geometry g(2, 3, 4326);
+  std::stringstream output;
+  REQUIRE(g.srid() == 4326);
+  g.toHEX(output);  // SRID would be lost in this process
+
+  output.seekg(0);
+  g.fromHEX(output);
+  REQUIRE(g.x() == 2);
+  REQUIRE(g.y() == 3);
+  REQUIRE(g.srid() == 0);
+}
+
 TEST_CASE("fromHex", "[geometry]") {
   Geometry g;
   std::stringstream is("010100000000000000000000400000000000000840");

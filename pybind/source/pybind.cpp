@@ -1,10 +1,9 @@
-#include <sstream>
-#include <string>
-
 #include <pybind11/operators.h>
 #include <pybind11/pybind11.h>
 
 #include <meos/geos.hpp>
+#include <sstream>
+#include <string>
 
 #include "box_module.hpp"
 #include "common.hpp"
@@ -39,8 +38,12 @@ PYBIND11_MODULE(pymeos, m) {
       .def_property_readonly("x", &Geometry::x)
       .def_property_readonly("y", &Geometry::y)
       .def_property_readonly("srid", &Geometry::srid)
+      .def("fromWKB", &Geometry::fromWKB)
+      .def("toWKB", &Geometry::toWKB)
       .def("fromWKT", &Geometry::fromWKT)
-      .def("toWKT", &Geometry::toWKT);
+      .def("toWKT", &Geometry::toWKT)
+      .def("fromHEX", &Geometry::fromHEX)
+      .def("toHEX", &Geometry::toHEX);
 
   def_box_module(m);
   def_io_module(m);
