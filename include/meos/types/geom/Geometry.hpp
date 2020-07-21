@@ -1,9 +1,8 @@
 #ifndef MEOS_TYPES_GEOM_GEOMETRY_HPP
 #define MEOS_TYPES_GEOM_GEOMETRY_HPP
 
-#include <string>
-
 #include <meos/geos.hpp>
+#include <string>
 
 /**
  * Mostly a wrapper on top of GEOSGeometry*
@@ -30,6 +29,9 @@ public:
 
   void fromWKT(std::string wkt);
   std::string toWKT() const;
+
+  void fromHEX(std::istream &is);
+  void toHEX(std::ostream &os) const;
 
   double x() const;
   double y() const;
@@ -60,9 +62,7 @@ private:
  *
  * Also check is_geometry_v<BaseType>, which should be more easy to use
  */
-template <typename BaseType> struct is_geometry {
-  static const bool value = false;
-};
+template <typename BaseType> struct is_geometry { static const bool value = false; };
 template <> struct is_geometry<Geometry> {
   static const bool value = true;
   typedef Geometry type;
@@ -71,7 +71,6 @@ template <> struct is_geometry<Geometry> {
 /**
  * Shorthand for is_geometry<BaseType>::value
  */
-template <typename BaseType>
-constexpr bool is_geometry_v = is_geometry<BaseType>::value;
+template <typename BaseType> constexpr bool is_geometry_v = is_geometry<BaseType>::value;
 
 #endif

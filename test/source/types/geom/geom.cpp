@@ -1,9 +1,7 @@
+#include <catch2/catch.hpp>
+#include <meos/types/geom/Geometry.hpp>
 #include <sstream>
 #include <string>
-
-#include <catch2/catch.hpp>
-
-#include <meos/types/geom/Geometry.hpp>
 
 TEST_CASE("Geometries are constructed and serialized properly", "[geometry]") {
   Geometry geometry;
@@ -39,12 +37,30 @@ TEST_CASE("Geometries are constructed and serialized properly", "[geometry]") {
     }
 
     SECTION("conflicting SRIDs provided") {
-      REQUIRE_THROWS_AS((Geometry{"SRID=5676;POINT (2 3)", 4326}),
-                        std::invalid_argument);
+      REQUIRE_THROWS_AS((Geometry{"SRID=5676;POINT (2 3)", 4326}), std::invalid_argument);
       return;
     }
   }
 
   output << geometry;
   REQUIRE(output.str() == expected);
+}
+
+TEST_CASE("fromHex", "[geometry]") {
+  Geometry g;
+  std::stringstream is("010100000000000000000000400000000000000840");
+  g.fromHEX(is);
+  REQUIRE(g.x() == 2);
+  REQUIRE(g.y() == 3);
+  REQUIRE(g.srid() == 0);
+}
+
+TEST_CASE("toHex", "[geometry]") {
+  Geometry g(2, 3, 4326);
+  std::stringstream output;
+  g.toHEX(output);
+  REQUIRE(output.str() == "010100000000000000000000400000000000000840");
+  REQUIRE(g.x() == 2);
+  REQUIRE(g.y() == 3);
+  REQUIRE(g.srid() == 4326);
 }

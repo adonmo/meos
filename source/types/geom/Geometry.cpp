@@ -1,9 +1,8 @@
 #include <cstdlib>
 #include <iomanip>
-#include <string>
-
 #include <meos/io/utils.hpp>
 #include <meos/types/geom/Geometry.hpp>
+#include <string>
 
 Geometry::Geometry() { point(0, 0); }
 
@@ -23,9 +22,8 @@ Geometry::Geometry(std::string serialized, int srid) {
 
   // If two different, non-zero SRIDs are provided, we throw an error
   if (g.srid() != srid && g.srid() * srid != 0) {
-    throw std::invalid_argument(
-        "Conflicting SRIDs provided. Given: " + std::to_string(srid) +
-        ", while Geometry contains: " + std::to_string(g.srid()));
+    throw std::invalid_argument("Conflicting SRIDs provided. Given: " + std::to_string(srid)
+                                + ", while Geometry contains: " + std::to_string(g.srid()));
   }
 
   if (srid != 0) {
@@ -77,6 +75,27 @@ std::string Geometry::toWKT() const {
     return s;
   }
   throw "Geometry not initiated.";
+}
+
+void Geometry::fromHEX(std::istream &is) {
+  free();
+  const size_t BUFFER_SIZE = 2048;
+  unsigned char buf[BUFFER_SIZE];
+  is.read(reinterpret_cast<char *>(buf), BUFFER_SIZE);
+  geom = GEOSGeomFromHEX_buf_r(geos_context, buf, is.gcount());
+}
+
+void Geometry::toHEX(std::ostream &os) const {
+  if (geom != nullptr) {
+    GEOSWKBWriter *wkbw_ = GEOSWKBWriter_create_r(geos_context);
+    size_t size;
+    unsigned char *wkb_c = GEOSWKBWriter_writeHEX_r(geos_context, wkbw_, geom, &size);
+    os.write(reinterpret_cast<char *>(wkb_c), size);
+    std::free(wkb_c);
+    GEOSWKBWriter_destroy_r(geos_context, wkbw_);
+  } else {
+    throw "Geometry not initiated.";
+  }
 }
 
 void Geometry::free() {
@@ -149,27 +168,17 @@ int Geometry::compare(Geometry const &other) const {
   return 0;
 }
 
-bool operator==(Geometry const &lhs, Geometry const &rhs) {
-  return lhs.compare(rhs) == 0;
-}
+bool operator==(Geometry const &lhs, Geometry const &rhs) { return lhs.compare(rhs) == 0; }
 
-bool operator!=(Geometry const &lhs, Geometry const &rhs) {
-  return lhs.compare(rhs) != 0;
-}
+bool operator!=(Geometry const &lhs, Geometry const &rhs) { return lhs.compare(rhs) != 0; }
 
-bool operator<(Geometry const &lhs, Geometry const &rhs) {
-  return lhs.compare(rhs) == -1;
-}
+bool operator<(Geometry const &lhs, Geometry const &rhs) { return lhs.compare(rhs) == -1; }
 
 bool operator>(Geometry const &lhs, Geometry const &rhs) { return rhs < lhs; }
 
-bool operator>=(Geometry const &lhs, Geometry const &rhs) {
-  return !(lhs < rhs);
-}
+bool operator>=(Geometry const &lhs, Geometry const &rhs) { return !(lhs < rhs); }
 
-bool operator<=(Geometry const &lhs, Geometry const &rhs) {
-  return !(rhs < lhs);
-}
+bool operator<=(Geometry const &lhs, Geometry const &rhs) { return !(rhs < lhs); }
 
 std::istream &operator>>(std::istream &in, Geometry &g) {
   int srid = 0;
