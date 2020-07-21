@@ -58,6 +58,27 @@ void Geometry::point(double x, double y) {
   geom = GEOSGeom_createPoint_r(geos_context, seq);
 }
 
+void Geometry::fromWKB(std::istream &is) {
+  free();
+  const size_t BUFFER_SIZE = 2048;
+  unsigned char buf[BUFFER_SIZE];
+  is.read(reinterpret_cast<char *>(buf), BUFFER_SIZE);
+  geom = GEOSGeomFromWKB_buf_r(geos_context, buf, is.gcount());
+}
+
+void Geometry::toWKB(std::ostream &os) const {
+  if (geom != nullptr) {
+    GEOSWKBWriter *wkbw_ = GEOSWKBWriter_create_r(geos_context);
+    size_t size;
+    unsigned char *wkb_c = GEOSWKBWriter_write_r(geos_context, wkbw_, geom, &size);
+    os.write(reinterpret_cast<char *>(wkb_c), size);
+    std::free(wkb_c);
+    GEOSWKBWriter_destroy_r(geos_context, wkbw_);
+  } else {
+    throw "Geometry not initiated.";
+  }
+}
+
 void Geometry::fromWKT(std::string wkt) {
   free();
   geom = GEOSGeomFromWKT_r(geos_context, wkt.c_str());

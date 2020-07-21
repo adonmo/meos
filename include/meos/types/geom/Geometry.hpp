@@ -27,6 +27,9 @@ public:
   void operator=(Geometry const &g);
   ~Geometry();
 
+  void fromWKB(std::istream &is);
+  void toWKB(std::ostream &os) const;
+
   void fromWKT(std::string wkt);
   std::string toWKT() const;
 

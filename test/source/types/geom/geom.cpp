@@ -46,6 +46,19 @@ TEST_CASE("Geometries are constructed and serialized properly", "[geometry]") {
   REQUIRE(output.str() == expected);
 }
 
+TEST_CASE("test read and write to WKB", "[geometry]") {
+  Geometry g(2, 3, 4326);
+  std::stringstream output;
+  REQUIRE(g.srid() == 4326);
+  g.toWKB(output);  // SRID would be lost in this process
+
+  output.seekg(0);
+  g.fromWKB(output);
+  REQUIRE(g.x() == 2);
+  REQUIRE(g.y() == 3);
+  REQUIRE(g.srid() == 0);
+}
+
 TEST_CASE("fromHex", "[geometry]") {
   Geometry g;
   std::stringstream is("010100000000000000000000400000000000000840");
@@ -58,9 +71,6 @@ TEST_CASE("fromHex", "[geometry]") {
 TEST_CASE("toHex", "[geometry]") {
   Geometry g(2, 3, 4326);
   std::stringstream output;
-  g.toHEX(output);
+  g.toHEX(output);  // SRID would be lost in this process
   REQUIRE(output.str() == "010100000000000000000000400000000000000840");
-  REQUIRE(g.x() == 2);
-  REQUIRE(g.y() == 3);
-  REQUIRE(g.srid() == 4326);
 }
