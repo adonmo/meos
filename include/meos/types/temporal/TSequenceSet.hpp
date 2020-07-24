@@ -1,8 +1,6 @@
 #ifndef MEOS_TYPES_TEMPORAL_TSEQUENCESET_HPP
 #define MEOS_TYPES_TEMPORAL_TSEQUENCESET_HPP
 
-#include <set>
-
 #include <meos/io/utils.hpp>
 #include <meos/types/geom/Geometry.hpp>
 #include <meos/types/temporal/Interpolation.hpp>
@@ -12,17 +10,17 @@
 #include <meos/types/temporal/Temporal.hpp>
 #include <meos/types/temporal/TemporalComparators.hpp>
 #include <meos/util/serializing.hpp>
+#include <set>
 
 using namespace std;
 
 using time_point = std::chrono::system_clock::time_point;
 using duration_ms = std::chrono::milliseconds;
 
-template <typename BaseType = float>
-class TSequenceSet : public Temporal<BaseType>,
-                     public TemporalComparators<TSequenceSet<BaseType>>,
-                     public TInstantFunctions<TSequenceSet<BaseType>,
-                                              TInstant<BaseType>, BaseType> {
+template <typename BaseType = float> class TSequenceSet
+    : public Temporal<BaseType>,
+      public TemporalComparators<TSequenceSet<BaseType>>,
+      public TInstantFunctions<TSequenceSet<BaseType>, TInstant<BaseType>, BaseType> {
 public:
   TSequenceSet();
   TSequenceSet(set<TSequence<BaseType>> const &sequences,
@@ -49,9 +47,7 @@ public:
     return std::unique_ptr<TSequenceSet<BaseType>>(this->clone_impl());
   }
 
-  TemporalDuration duration() const override {
-    return TemporalDuration::SequenceSet;
-  };
+  TemporalDuration duration() const override { return TemporalDuration::SequenceSet; };
 
   Interpolation interpolation() const;
 
@@ -91,8 +87,7 @@ public:
   PeriodSet getTime() const override;
   Period period() const override;
   unique_ptr<TSequenceSet<BaseType>> shift(duration_ms const timedelta) const;
-  TSequenceSet<BaseType> *
-  shift_impl(duration_ms const timedelta) const override;
+  TSequenceSet<BaseType> *shift_impl(duration_ms const timedelta) const override;
   bool intersectsTimestamp(time_point const datetime) const override;
   bool intersectsPeriod(Period const period) const override;
 
@@ -103,8 +98,7 @@ public:
     return sequence_set.read(in);
   }
 
-  friend ostream &operator<<(ostream &os,
-                             TSequenceSet<BaseType> const &sequence_set) {
+  friend ostream &operator<<(ostream &os, TSequenceSet<BaseType> const &sequence_set) {
     return sequence_set.write(os);
   }
 
@@ -141,15 +135,7 @@ private:
    */
   ostream &write_internal(ostream &os) const;
 
-  TSequenceSet<BaseType> *clone_impl() const override {
-    return new TSequenceSet<BaseType>(*this);
-  };
+  TSequenceSet<BaseType> *clone_impl() const override { return new TSequenceSet<BaseType>(*this); };
 };
-
-template class TSequenceSet<bool>;
-template class TSequenceSet<int>;
-template class TSequenceSet<float>;
-template class TSequenceSet<string>;
-template class TSequenceSet<Geometry>;
 
 #endif

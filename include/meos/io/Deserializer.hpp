@@ -45,10 +45,4 @@ private:
   bool hasNext();
 };
 
-template class Deserializer<bool>;
-template class Deserializer<int>;
-template class Deserializer<float>;
-template class Deserializer<string>;
-template class Deserializer<Geometry>;
-
 #endif

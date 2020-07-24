@@ -4,6 +4,40 @@
 #include <sstream>
 #include <string>
 
+template <typename BaseType> void TSequenceSet<BaseType>::validate() {
+  validate_common();
+  // Check template specialization on Geometry for more validation
+}
+
+template <> void TSequenceSet<Geometry>::validate() {
+  validate_common();
+
+  // If the SRIDs is AT MOST once, i.e, either on the object or on the
+  // sequences, use it both places
+  // TODO improve - we are checking only first object. This logic is not ideal
+  // when objects with a mix of different SRIDs are passed together
+  TSequence<Geometry> sequence = this->startSequence();
+  if (sequence.srid() * this->m_srid == 0) {
+    if (this->m_srid != 0) {
+      set<TSequence<Geometry>> _sequences;
+      for (TSequence<Geometry> const &sequence : this->m_sequences) {
+        _sequences.insert(sequence.with_srid(this->m_srid));
+      };
+      this->m_sequences = _sequences;
+    } else {
+      this->m_srid = sequence.srid();
+    }
+  }
+
+  // All SRIDs must be equal
+  for (TSequence<Geometry> const &sequence : this->m_sequences) {
+    if (this->m_srid != sequence.srid()) {
+      throw std::invalid_argument("Conflicting SRIDs provided. Given: " + to_string(this->m_srid)
+                                  + ", while Sequence contains: " + to_string(sequence.srid()));
+    }
+  }
+}
+
 template <typename BaseType> TSequenceSet<BaseType>::TSequenceSet() {}
 
 template <typename BaseType>
@@ -115,40 +149,6 @@ template <typename BaseType> void TSequenceSet<BaseType>::validate_common() {
 
   // TODO
   // All sequences should be non overlapping
-}
-
-template <typename BaseType> void TSequenceSet<BaseType>::validate() {
-  validate_common();
-  // Check template specialization on Geometry for more validation
-}
-
-template <> void TSequenceSet<Geometry>::validate() {
-  validate_common();
-
-  // If the SRIDs is AT MOST once, i.e, either on the object or on the
-  // sequences, use it both places
-  // TODO improve - we are checking only first object. This logic is not ideal
-  // when objects with a mix of different SRIDs are passed together
-  TSequence<Geometry> sequence = this->startSequence();
-  if (sequence.srid() * this->m_srid == 0) {
-    if (this->m_srid != 0) {
-      set<TSequence<Geometry>> _sequences;
-      for (TSequence<Geometry> const &sequence : this->m_sequences) {
-        _sequences.insert(sequence.with_srid(this->m_srid));
-      };
-      this->m_sequences = _sequences;
-    } else {
-      this->m_srid = sequence.srid();
-    }
-  }
-
-  // All SRIDs must be equal
-  for (TSequence<Geometry> const &sequence : this->m_sequences) {
-    if (this->m_srid != sequence.srid()) {
-      throw std::invalid_argument("Conflicting SRIDs provided. Given: " + to_string(this->m_srid)
-                                  + ", while Sequence contains: " + to_string(sequence.srid()));
-    }
-  }
 }
 
 template <typename BaseType>
@@ -448,3 +448,9 @@ template <> ostream &TSequenceSet<Geometry>::write(ostream &os) const {
   write_internal(os);
   return os;
 }
+
+template class TSequenceSet<bool>;
+template class TSequenceSet<int>;
+template class TSequenceSet<float>;
+template class TSequenceSet<string>;
+template class TSequenceSet<Geometry>;

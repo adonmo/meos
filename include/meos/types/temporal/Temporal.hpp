@@ -1,8 +1,6 @@
 #ifndef MEOS_TYPES_TEMPORAL_TEMPORAL_HPP
 #define MEOS_TYPES_TEMPORAL_TEMPORAL_HPP
 
-#include <type_traits>
-
 #include <meos/types/geom/Geometry.hpp>
 #include <meos/types/geom/SRIDMembers.hpp>
 #include <meos/types/range/Range.hpp>
@@ -10,6 +8,7 @@
 #include <meos/types/time/Period.hpp>
 #include <meos/types/time/PeriodSet.hpp>
 #include <meos/types/time/TimestampSet.hpp>
+#include <type_traits>
 
 using namespace std;
 
@@ -31,9 +30,8 @@ typedef tuple<> Empty;
  * When the BaseType is Geometry, we add additional support for SRIDs.
  * We do this by conditionally inheriting from SRIDMembers.
  */
-template <typename BaseType = float>
-class Temporal : public conditional_t<is_same<BaseType, Geometry>::value,
-                                      SRIDMembers, Empty> {
+template <typename BaseType = float> class Temporal
+    : public conditional_t<is_same<BaseType, Geometry>::value, SRIDMembers, Empty> {
 public:
   Temporal();
   virtual ~Temporal();
@@ -48,9 +46,7 @@ public:
    * Duration of the temporal value, that is, one of Instant, InstantSet,
    * Sequence, or SequenceSet.
    */
-  virtual TemporalDuration duration() const {
-    return TemporalDuration::Temporal;
-  };
+  virtual TemporalDuration duration() const { return TemporalDuration::Temporal; };
 
   /**
    * Set of values taken by the temporal value.
@@ -148,11 +144,5 @@ private:
 
   virtual Temporal<BaseType> *shift_impl(duration_ms const timedelta) const = 0;
 };
-
-template class Temporal<bool>;
-template class Temporal<int>;
-template class Temporal<float>;
-template class Temporal<string>;
-template class Temporal<Geometry>;
 
 #endif

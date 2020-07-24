@@ -25,8 +25,7 @@ template <typename BaseType> size_t Temporal<BaseType>::numTimestamps() const {
   return timestamps().size();
 }
 
-template <typename BaseType>
-time_point Temporal<BaseType>::startTimestamp() const {
+template <typename BaseType> time_point Temporal<BaseType>::startTimestamp() const {
   set<time_point> s = timestamps();
   if (s.size() <= 0) {
     throw "At least one timestamp expected";
@@ -34,8 +33,7 @@ time_point Temporal<BaseType>::startTimestamp() const {
   return *s.begin();
 }
 
-template <typename BaseType>
-time_point Temporal<BaseType>::endTimestamp() const {
+template <typename BaseType> time_point Temporal<BaseType>::endTimestamp() const {
   set<time_point> s = timestamps();
   if (s.size() <= 0) {
     throw "At least one timestamp expected";
@@ -43,8 +41,7 @@ time_point Temporal<BaseType>::endTimestamp() const {
   return *s.rbegin();
 }
 
-template <typename BaseType>
-time_point Temporal<BaseType>::timestampN(size_t n) const {
+template <typename BaseType> time_point Temporal<BaseType>::timestampN(size_t n) const {
   set<time_point> s = timestamps();
   if (s.size() <= n) {
     throw "At least " + to_string(n) + " timestamp(s) expected";
@@ -53,14 +50,12 @@ time_point Temporal<BaseType>::timestampN(size_t n) const {
 }
 
 template <typename BaseType>
-unique_ptr<Temporal<BaseType>>
-Temporal<BaseType>::shift(duration_ms const timedelta) const {
+unique_ptr<Temporal<BaseType>> Temporal<BaseType>::shift(duration_ms const timedelta) const {
   return unique_ptr<Temporal<BaseType>>(this->shift_impl(timedelta));
 }
 
 template <typename BaseType>
-bool Temporal<BaseType>::intersectsTimestampSet(
-    TimestampSet const timestampset) const {
+bool Temporal<BaseType>::intersectsTimestampSet(TimestampSet const timestampset) const {
   for (auto const &t : timestampset.timestamps()) {
     if (intersectsTimestamp(t)) {
       return true;
@@ -78,3 +73,9 @@ bool Temporal<BaseType>::intersectsPeriodSet(PeriodSet const periodset) const {
   }
   return false;
 }
+
+template class Temporal<bool>;
+template class Temporal<int>;
+template class Temporal<float>;
+template class Temporal<string>;
+template class Temporal<Geometry>;

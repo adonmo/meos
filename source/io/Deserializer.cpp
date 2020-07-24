@@ -1,15 +1,13 @@
 #include <algorithm>
 #include <ctime>
-#include <sstream>
-
 #include <meos/io/DeserializationException.hpp>
 #include <meos/io/Deserializer.hpp>
 #include <meos/io/utils.hpp>
+#include <sstream>
 
 using namespace std;
 
-template <typename T>
-Deserializer<T>::Deserializer(string const &in_) : in(in_) {
+template <typename T> Deserializer<T>::Deserializer(string const &in_) : in(in_) {
   iter = in.begin();
 }
 
@@ -60,8 +58,7 @@ template <typename T> unique_ptr<Temporal<T>> Deserializer<T>::nextTemporal() {
   throw new DeserializationException("Invalid Temporal");
 }
 
-template <typename T>
-unique_ptr<TSequenceSet<T>> Deserializer<T>::nextTSequenceSet() {
+template <typename T> unique_ptr<TSequenceSet<T>> Deserializer<T>::nextTSequenceSet() {
   string::size_type current_pos = iter - in.begin();
   string s = in.substr(current_pos, 2048);
   stringstream ss(s);
@@ -71,8 +68,7 @@ unique_ptr<TSequenceSet<T>> Deserializer<T>::nextTSequenceSet() {
   return make_unique<TSequenceSet<T>>(t);
 }
 
-template <typename T>
-unique_ptr<TSequence<T>> Deserializer<T>::nextTSequence() {
+template <typename T> unique_ptr<TSequence<T>> Deserializer<T>::nextTSequence() {
   string::size_type current_pos = iter - in.begin();
   string s = in.substr(current_pos, 2048);
   stringstream ss(s);
@@ -82,8 +78,7 @@ unique_ptr<TSequence<T>> Deserializer<T>::nextTSequence() {
   return make_unique<TSequence<T>>(t);
 }
 
-template <typename T>
-unique_ptr<TInstantSet<T>> Deserializer<T>::nextTInstantSet() {
+template <typename T> unique_ptr<TInstantSet<T>> Deserializer<T>::nextTInstantSet() {
   string::size_type current_pos = iter - in.begin();
   string s = in.substr(current_pos, 2048);
   stringstream ss(s);
@@ -124,8 +119,7 @@ template <typename T> unique_ptr<PeriodSet> Deserializer<T>::nextPeriodSet() {
   return period_set.clone();
 }
 
-template <typename T>
-unique_ptr<TimestampSet> Deserializer<T>::nextTimestampSet() {
+template <typename T> unique_ptr<TimestampSet> Deserializer<T>::nextTimestampSet() {
   string::size_type current_pos = iter - in.begin();
   string s = in.substr(current_pos, 2048);
   stringstream ss(s);
@@ -167,9 +161,8 @@ template <> bool Deserializer<bool>::nextValue() {
   } else if (input == "f" || input == "false") {
     value = false;
   } else {
-    throw DeserializationException(
-        "Boolean value can only be one of (t, f, true, false), but got: " +
-        input);
+    throw DeserializationException("Boolean value can only be one of (t, f, true, false), but got: "
+                                   + input);
   }
 
   iter += length;
@@ -210,8 +203,7 @@ template <> string Deserializer<string>::nextValue() {
   }
 
   if (length <= 0) {
-    throw DeserializationException(
-        "Could not parse text: empty, unquoted value");
+    throw DeserializationException("Could not parse text: empty, unquoted value");
   }
 
   iter += length;
@@ -250,9 +242,7 @@ template <typename T> char Deserializer<T>::peek(int lookahead) {
   return *(iter + lookahead);
 }
 
-template <typename T> void Deserializer<T>::skipWhitespaces() {
-  skipChars(" \t\n");
-}
+template <typename T> void Deserializer<T>::skipWhitespaces() { skipChars(" \t\n"); }
 
 template <typename T> void Deserializer<T>::consumeChar(char const c) {
   string::size_type current_pos = iter - in.begin();
@@ -274,6 +264,10 @@ template <typename T> void Deserializer<T>::skipChars(string const &chars) {
   iter += length;
 }
 
-template <typename T> bool Deserializer<T>::hasNext() {
-  return iter != in.end();
-}
+template <typename T> bool Deserializer<T>::hasNext() { return iter != in.end(); }
+
+template class Deserializer<bool>;
+template class Deserializer<int>;
+template class Deserializer<float>;
+template class Deserializer<string>;
+template class Deserializer<Geometry>;

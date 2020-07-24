@@ -121,10 +121,4 @@ private:
   TSequence<BaseType> *clone_impl() const override { return new TSequence<BaseType>(*this); };
 };
 
-template class TSequence<bool>;
-template class TSequence<int>;
-template class TSequence<float>;
-template class TSequence<string>;
-template class TSequence<Geometry>;
-
 #endif

@@ -4,6 +4,41 @@
 #include <sstream>
 #include <string>
 
+template <typename BaseType> void TInstantSet<BaseType>::validate() {
+  validate_common();
+  // Check template specialization on Geometry for more validation
+}
+
+template <> void TInstantSet<Geometry>::validate() {
+  validate_common();
+
+  // If the SRIDs is EXACTLY once, i.e, either on the object or on the
+  // geometries, use it both places
+  // TODO improve - we are checking only first object. This logic is not ideal
+  // when objects with a mix of different SRIDs are passed together
+  Geometry g = this->startValue();
+  if (g.srid() * this->m_srid == 0) {
+    if (this->m_srid != 0) {
+      set<TInstant<Geometry>> _instants;
+      for (TInstant<Geometry> const &instant : this->m_instants) {
+        _instants.insert(
+            TInstant<Geometry>(instant.getValue(), instant.getTimestamp(), this->m_srid));
+      };
+      this->m_instants = _instants;
+    } else {
+      this->m_srid = g.srid();
+    }
+  }
+
+  // All SRIDs must be equal
+  for (TInstant<Geometry> const &instant : this->m_instants) {
+    if (this->m_srid != instant.getValue().srid()) {
+      throw std::invalid_argument("Conflicting SRIDs provided. Given: " + to_string(this->m_srid)
+                                  + ", while Geometry contains: " + to_string(g.srid()));
+    }
+  }
+}
+
 template <typename BaseType> TInstantSet<BaseType>::TInstantSet() {}
 
 template <typename BaseType>
@@ -74,41 +109,6 @@ template <typename BaseType> void TInstantSet<BaseType>::validate_common() {
   size_t sz = this->m_instants.size();
   if (sz < 1) {
     throw invalid_argument("A sequence should have at least one instant");
-  }
-}
-
-template <typename BaseType> void TInstantSet<BaseType>::validate() {
-  validate_common();
-  // Check template specialization on Geometry for more validation
-}
-
-template <> void TInstantSet<Geometry>::validate() {
-  validate_common();
-
-  // If the SRIDs is EXACTLY once, i.e, either on the object or on the
-  // geometries, use it both places
-  // TODO improve - we are checking only first object. This logic is not ideal
-  // when objects with a mix of different SRIDs are passed together
-  Geometry g = this->startValue();
-  if (g.srid() * this->m_srid == 0) {
-    if (this->m_srid != 0) {
-      set<TInstant<Geometry>> _instants;
-      for (TInstant<Geometry> const &instant : this->m_instants) {
-        _instants.insert(
-            TInstant<Geometry>(instant.getValue(), instant.getTimestamp(), this->m_srid));
-      };
-      this->m_instants = _instants;
-    } else {
-      this->m_srid = g.srid();
-    }
-  }
-
-  // All SRIDs must be equal
-  for (TInstant<Geometry> const &instant : this->m_instants) {
-    if (this->m_srid != instant.getValue().srid()) {
-      throw std::invalid_argument("Conflicting SRIDs provided. Given: " + to_string(this->m_srid)
-                                  + ", while Geometry contains: " + to_string(g.srid()));
-    }
   }
 }
 
@@ -312,3 +312,9 @@ template <> ostream &TInstantSet<Geometry>::write(ostream &os) const {
   write_internal(os);
   return os;
 }
+
+template class TInstantSet<bool>;
+template class TInstantSet<int>;
+template class TInstantSet<float>;
+template class TInstantSet<string>;
+template class TInstantSet<Geometry>;

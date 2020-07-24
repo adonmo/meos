@@ -101,10 +101,4 @@ private:
   TInstant *shift_impl(duration_ms const timedelta) const override;
 };
 
-template class TInstant<bool>;
-template class TInstant<int>;
-template class TInstant<float>;
-template class TInstant<string>;
-template class TInstant<Geometry>;
-
 #endif

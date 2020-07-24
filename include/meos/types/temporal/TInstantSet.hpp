@@ -1,8 +1,6 @@
 #ifndef MEOS_TYPES_TEMPORAL_TINSTANTSET_HPP
 #define MEOS_TYPES_TEMPORAL_TINSTANTSET_HPP
 
-#include <set>
-
 #include <meos/io/utils.hpp>
 #include <meos/types/geom/Geometry.hpp>
 #include <meos/types/temporal/TInstant.hpp>
@@ -10,17 +8,17 @@
 #include <meos/types/temporal/Temporal.hpp>
 #include <meos/types/temporal/TemporalComparators.hpp>
 #include <meos/util/serializing.hpp>
+#include <set>
 
 using namespace std;
 
 using time_point = std::chrono::system_clock::time_point;
 using duration_ms = std::chrono::milliseconds;
 
-template <typename BaseType = float>
-class TInstantSet : public Temporal<BaseType>,
-                    public TemporalComparators<TInstantSet<BaseType>>,
-                    public TInstantFunctions<TInstantSet<BaseType>,
-                                             TInstant<BaseType>, BaseType> {
+template <typename BaseType = float> class TInstantSet
+    : public Temporal<BaseType>,
+      public TemporalComparators<TInstantSet<BaseType>>,
+      public TInstantFunctions<TInstantSet<BaseType>, TInstant<BaseType>, BaseType> {
 public:
   TInstantSet();
   TInstantSet(set<TInstant<BaseType>> const &instants);
@@ -43,9 +41,7 @@ public:
     return std::unique_ptr<TInstantSet<BaseType>>(this->clone_impl());
   }
 
-  TemporalDuration duration() const override {
-    return TemporalDuration::InstantSet;
-  };
+  TemporalDuration duration() const override { return TemporalDuration::InstantSet; };
 
   /**
    * Set of instants.
@@ -65,12 +61,9 @@ public:
   istream &read(istream &in);
   ostream &write(ostream &os) const;
 
-  friend istream &operator>>(istream &in, TInstantSet &instant_set) {
-    return instant_set.read(in);
-  }
+  friend istream &operator>>(istream &in, TInstantSet &instant_set) { return instant_set.read(in); }
 
-  friend ostream &operator<<(ostream &os,
-                             TInstantSet<BaseType> const &instant_set) {
+  friend ostream &operator<<(ostream &os, TInstantSet<BaseType> const &instant_set) {
     return instant_set.write(os);
   }
 
@@ -106,15 +99,7 @@ private:
    */
   ostream &write_internal(ostream &os) const;
 
-  TInstantSet<BaseType> *clone_impl() const override {
-    return new TInstantSet<BaseType>(*this);
-  };
+  TInstantSet<BaseType> *clone_impl() const override { return new TInstantSet<BaseType>(*this); };
 };
-
-template class TInstantSet<bool>;
-template class TInstantSet<int>;
-template class TInstantSet<float>;
-template class TInstantSet<string>;
-template class TInstantSet<Geometry>;
 
 #endif

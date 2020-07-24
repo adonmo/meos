@@ -3,6 +3,28 @@
 #include <sstream>
 #include <string>
 
+template <typename BaseType> void TInstant<BaseType>::validate() {
+  // None yet, check template specialization for Geometry for more validation
+}
+
+template <> void TInstant<Geometry>::validate() {
+  // If the SRIDs is EXACTLY once, i.e, either on the object or on the
+  // geometries, use it both places
+  if (this->value.srid() * this->m_srid == 0) {
+    if (this->m_srid != 0) {
+      this->value = Geometry(this->value.x(), this->value.y(), this->m_srid);
+    } else {
+      this->m_srid = this->value.srid();
+    }
+  }
+
+  // If the SRID was specified on both, ensure that they are the same value
+  if (this->m_srid != this->value.srid()) {
+    throw std::invalid_argument("Conflicting SRIDs provided. Given: " + to_string(this->srid())
+                                + ", while Geometry contains: " + to_string(this->value.srid()));
+  }
+}
+
 template <typename BaseType> TInstant<BaseType>::TInstant() {}
 
 template <typename BaseType> TInstant<BaseType>::TInstant(BaseType value_, time_point t_)
@@ -100,28 +122,6 @@ TInstant<BaseType> TInstant<BaseType>::with_srid(int srid) const {
 }
 
 template TInstant<Geometry> TInstant<Geometry>::with_srid(int srid) const;
-
-template <typename BaseType> void TInstant<BaseType>::validate() {
-  // None yet, check template specialization for Geometry for more validation
-}
-
-template <> void TInstant<Geometry>::validate() {
-  // If the SRIDs is EXACTLY once, i.e, either on the object or on the
-  // geometries, use it both places
-  if (this->value.srid() * this->m_srid == 0) {
-    if (this->m_srid != 0) {
-      this->value = Geometry(this->value.x(), this->value.y(), this->m_srid);
-    } else {
-      this->m_srid = this->value.srid();
-    }
-  }
-
-  // If the SRID was specified on both, ensure that they are the same value
-  if (this->m_srid != this->value.srid()) {
-    throw std::invalid_argument("Conflicting SRIDs provided. Given: " + to_string(this->srid())
-                                + ", while Geometry contains: " + to_string(this->value.srid()));
-  }
-}
 
 template <typename BaseType>
 int TInstant<BaseType>::compare_internal(Temporal<BaseType> const &other) const {
@@ -253,3 +253,9 @@ template <> ostream &TInstant<Geometry>::write(ostream &os, bool with_srid) cons
   }
   return os;
 }
+
+template class TInstant<bool>;
+template class TInstant<int>;
+template class TInstant<float>;
+template class TInstant<string>;
+template class TInstant<Geometry>;

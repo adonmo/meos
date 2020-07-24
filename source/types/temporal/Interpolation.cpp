@@ -1,6 +1,5 @@
-#include <ostream>
-
 #include <meos/types/temporal/Interpolation.hpp>
+#include <ostream>
 
 ostream &operator<<(ostream &os, const Interpolation &i) {
   if (i == Interpolation::Stepwise) {
@@ -9,7 +8,7 @@ ostream &operator<<(ostream &os, const Interpolation &i) {
     os << "Linear";
   } else {
     // Technically we'd never reach here
-    throw invalid_argument("Unsupported interpolation specified: " + int(i));
+    throw invalid_argument("Unsupported interpolation specified: " + to_string(int(i)));
   }
   return os;
 }

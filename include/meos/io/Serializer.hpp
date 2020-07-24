@@ -37,10 +37,4 @@ public:
 private:
 };
 
-template class Serializer<bool>;
-template class Serializer<int>;
-template class Serializer<float>;
-template class Serializer<string>;
-template class Serializer<Geometry>;
-
 #endif

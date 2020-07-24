@@ -14,8 +14,7 @@ private:
   bool const m_upper_inc;
 
 public:
-  Range(T const &lower, T const &upper, bool const lower_inc = true,
-        bool const upper_inc = false);
+  Range(T const &lower, T const &upper, bool const lower_inc = true, bool const upper_inc = false);
   virtual ~Range();
 
   virtual unique_ptr<Range> clone() { return make_unique<Range>(*this); }
@@ -30,29 +29,17 @@ public:
   bool overlap(Range const &p) const;
   bool contains(T const &t) const;
 
-  friend bool operator==(Range<T> const &lhs, Range<T> const &rhs) {
-    return lhs.compare(rhs) == 0;
-  }
+  friend bool operator==(Range<T> const &lhs, Range<T> const &rhs) { return lhs.compare(rhs) == 0; }
 
-  friend bool operator!=(Range<T> const &lhs, Range<T> const &rhs) {
-    return lhs.compare(rhs) != 0;
-  }
+  friend bool operator!=(Range<T> const &lhs, Range<T> const &rhs) { return lhs.compare(rhs) != 0; }
 
-  friend bool operator<(Range<T> const &lhs, Range<T> const &rhs) {
-    return lhs.compare(rhs) == -1;
-  }
+  friend bool operator<(Range<T> const &lhs, Range<T> const &rhs) { return lhs.compare(rhs) == -1; }
 
-  friend bool operator>(Range<T> const &lhs, Range<T> const &rhs) {
-    return rhs < lhs;
-  }
+  friend bool operator>(Range<T> const &lhs, Range<T> const &rhs) { return rhs < lhs; }
 
-  friend bool operator>=(Range<T> const &lhs, Range<T> const &rhs) {
-    return !(lhs < rhs);
-  }
+  friend bool operator>=(Range<T> const &lhs, Range<T> const &rhs) { return !(lhs < rhs); }
 
-  friend bool operator<=(Range<T> const &lhs, Range<T> const &rhs) {
-    return !(rhs < lhs);
-  }
+  friend bool operator<=(Range<T> const &lhs, Range<T> const &rhs) { return !(rhs < lhs); }
 
   friend ostream &operator<<(ostream &os, Range<T> const &range) {
     auto opening = range.lower_inc() ? "[" : "(";
@@ -61,11 +48,5 @@ public:
     return os;
   }
 };
-
-template class Range<bool>;
-template class Range<int>;
-template class Range<float>;
-template class Range<string>;
-template class Range<Geometry>;
 
 #endif

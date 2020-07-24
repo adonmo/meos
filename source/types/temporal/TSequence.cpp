@@ -3,6 +3,40 @@
 #include <sstream>
 #include <string>
 
+template <typename BaseType> void TSequence<BaseType>::validate() {
+  validate_common();
+  // Check template specialization on Geometry for more validation
+}
+
+template <> void TSequence<Geometry>::validate() {
+  validate_common();
+
+  // If the SRIDs is EXACTLY once, i.e, either on the object or on the
+  // geometries, use it both places
+  // TODO improve - we are checking only first object. This logic is not ideal
+  // when objects with a mix of different SRIDs are passed together
+  TInstant<Geometry> instant = this->startInstant();
+  if (instant.srid() * this->m_srid == 0) {
+    if (this->m_srid != 0) {
+      set<TInstant<Geometry>> _instants;
+      for (TInstant<Geometry> const &instant : this->m_instants) {
+        _instants.insert(instant.with_srid(this->m_srid));
+      };
+      this->m_instants = _instants;
+    } else {
+      this->m_srid = instant.srid();
+    }
+  }
+
+  // All SRIDs must be equal
+  for (TInstant<Geometry> const &instant : this->m_instants) {
+    if (this->m_srid != instant.getValue().srid()) {
+      throw std::invalid_argument("Conflicting SRIDs provided. Given: " + to_string(this->m_srid)
+                                  + ", while Instant contains: " + to_string(instant.srid()));
+    }
+  }
+}
+
 template <typename BaseType> TSequence<BaseType>::TSequence() {}
 
 template <typename BaseType>
@@ -108,8 +142,6 @@ TSequence<BaseType> TSequence<BaseType>::with_interp(Interpolation interpolation
   return sequence;
 }
 
-template TSequence<Geometry> TSequence<Geometry>::with_interp(Interpolation interpolation) const;
-
 template <typename BaseType> void TSequence<BaseType>::validate_common() {
   size_t sz = this->m_instants.size();
   if (sz < 1) {
@@ -136,40 +168,6 @@ template <typename BaseType> void TSequence<BaseType>::validate_common() {
       throw invalid_argument(
           "The lower and upper bounds must be inclusive for "
           "an instantaneous sequence");
-    }
-  }
-}
-
-template <typename BaseType> void TSequence<BaseType>::validate() {
-  validate_common();
-  // Check template specialization on Geometry for more validation
-}
-
-template <> void TSequence<Geometry>::validate() {
-  validate_common();
-
-  // If the SRIDs is EXACTLY once, i.e, either on the object or on the
-  // geometries, use it both places
-  // TODO improve - we are checking only first object. This logic is not ideal
-  // when objects with a mix of different SRIDs are passed together
-  TInstant<Geometry> instant = this->startInstant();
-  if (instant.srid() * this->m_srid == 0) {
-    if (this->m_srid != 0) {
-      set<TInstant<Geometry>> _instants;
-      for (TInstant<Geometry> const &instant : this->m_instants) {
-        _instants.insert(instant.with_srid(this->m_srid));
-      };
-      this->m_instants = _instants;
-    } else {
-      this->m_srid = instant.srid();
-    }
-  }
-
-  // All SRIDs must be equal
-  for (TInstant<Geometry> const &instant : this->m_instants) {
-    if (this->m_srid != instant.getValue().srid()) {
-      throw std::invalid_argument("Conflicting SRIDs provided. Given: " + to_string(this->m_srid)
-                                  + ", while Instant contains: " + to_string(instant.srid()));
     }
   }
 }
@@ -435,3 +433,9 @@ ostream &TSequence<Geometry>::write(ostream &os, bool with_interp, bool with_sri
   write_internal(os, with_interp);
   return os;
 }
+
+template class TSequence<bool>;
+template class TSequence<int>;
+template class TSequence<float>;
+template class TSequence<string>;
+template class TSequence<Geometry>;
