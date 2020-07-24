@@ -4,6 +4,7 @@
 #include <meos/io/utils.hpp>
 #include <meos/types/geom/Geometry.hpp>
 #include <meos/util/string.hpp>
+#include <sstream>
 #include <string>
 
 Geometry::Geometry() { point(0, 0); }

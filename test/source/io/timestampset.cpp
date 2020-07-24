@@ -1,11 +1,12 @@
-#include "../common/matchers.hpp"
-#include "../common/time_utils.hpp"
-#include "../common/utils.hpp"
 #include <catch2/catch.hpp>
 #include <meos/io/Deserializer.hpp>
 #include <meos/io/Serializer.hpp>
 #include <meos/types/time/TimestampSet.hpp>
 #include <string>
+
+#include "../common/matchers.hpp"
+#include "../common/time_utils.hpp"
+#include "../common/utils.hpp"
 
 using namespace std;
 
@@ -21,8 +22,7 @@ TEST_CASE("TimestampSets are serialized", "[serializer][timestampset]") {
   }
 
   SECTION("set with only one value") {
-    time_t t = GENERATE(0L, unix_time(2012, 1, 1),
-                        take(10, random(0L, 4102488000000L)));
+    time_t t = GENERATE(0L, unix_time(2012, 1, 1), take(10, random(0L, 4102488000000L)));
     time_point tp = std::chrono::system_clock::from_time_t(t / 1000L);
 
     string expected = "{" + w.writeTime(tp) + "}";
@@ -41,8 +41,7 @@ TEST_CASE("TimestampSets are serialized", "[serializer][timestampset]") {
     set<time_point> timestamps;
 
     for (size_t i = 0; i < size; i++) {
-      time_t t = GENERATE(0L, unix_time(2012, 1, 1),
-                          take(4, random(0L, 4102488000000L)));
+      time_t t = GENERATE(0L, unix_time(2012, 1, 1), take(4, random(0L, 4102488000000L)));
       time_point tp = std::chrono::system_clock::from_time_t(t / 1000L);
       expected.insert(w.writeTime(tp));
 
@@ -56,8 +55,7 @@ TEST_CASE("TimestampSets are serialized", "[serializer][timestampset]") {
     REQUIRE(serialized.size() > 2);
     REQUIRE(serialized[0] == '{');
     REQUIRE(serialized[serialized.size() - 1] == '}');
-    set<string> actual =
-        split_into_set(serialized.substr(1, serialized.size() - 2), ", ");
+    set<string> actual = split_into_set(serialized.substr(1, serialized.size() - 2), ", ");
     REQUIRE_THAT(actual, UnorderedEquals(expected));
   }
 }

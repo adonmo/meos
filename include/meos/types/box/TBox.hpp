@@ -12,14 +12,11 @@ using time_point = std::chrono::system_clock::time_point;
 class TBox {
 public:
   TBox();
-  TBox(double const xmin, time_point const tmin, double const xmax,
-       time_point const tmax);
+  TBox(double const xmin, time_point const tmin, double const xmax, time_point const tmax);
   TBox(double const xmin, double const xmax);
   TBox(time_point const tmin, time_point const tmax);
-  TBox(double const xmin, string const &tmin, double const xmax,
-       string const &tmax);
-  TBox(string const &xmin, string const &tmin, string const &xmax,
-       string const &tmax);
+  TBox(double const xmin, string const &tmin, double const xmax, string const &tmax);
+  TBox(string const &xmin, string const &tmin, string const &xmax, string const &tmax);
   TBox(string const &serialized);
 
   double xmin() const;

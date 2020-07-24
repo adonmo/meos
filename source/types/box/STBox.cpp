@@ -1,30 +1,41 @@
 #include <cmath>
-#include <sstream>
-
 #include <meos/io/utils.hpp>
 #include <meos/types/box/STBox.hpp>
 #include <meos/util/serializing.hpp>
+#include <sstream>
+#include <string>
 
 STBox::STBox() {}
 
 // XYZT
-STBox::STBox(double const xmin, double const ymin, double const zmin,
-             time_point const tmin, double const xmax, double const ymax,
-             double const zmax, time_point const tmax, int const srid,
-             bool const geodetic)
-    : SRIDMembers(srid), m_xmin(xmin), m_ymin(ymin), m_zmin(zmin), m_tmin(tmin),
-      m_xmax(xmax), m_ymax(ymax), m_zmax(zmax), m_tmax(tmax),
+STBox::STBox(double const xmin, double const ymin, double const zmin, time_point const tmin,
+             double const xmax, double const ymax, double const zmax, time_point const tmax,
+             int const srid, bool const geodetic)
+    : SRIDMembers(srid),
+      m_xmin(xmin),
+      m_ymin(ymin),
+      m_zmin(zmin),
+      m_tmin(tmin),
+      m_xmax(xmax),
+      m_ymax(ymax),
+      m_zmax(zmax),
+      m_tmax(tmax),
       m_geodetic(geodetic) {
   init();
 }
 
 // XYZT
-STBox::STBox(double const xmin, double const ymin, double const zmin,
-             string const &tmin, double const xmax, double const ymax,
-             double const zmax, string const &tmax, int const srid,
-             bool const geodetic)
-    : SRIDMembers(srid), m_xmin(xmin), m_ymin(ymin), m_zmin(zmin), m_xmax(xmax),
-      m_ymax(ymax), m_zmax(zmax), m_geodetic(geodetic) {
+STBox::STBox(double const xmin, double const ymin, double const zmin, string const &tmin,
+             double const xmax, double const ymax, double const zmax, string const &tmax,
+             int const srid, bool const geodetic)
+    : SRIDMembers(srid),
+      m_xmin(xmin),
+      m_ymin(ymin),
+      m_zmin(zmin),
+      m_xmax(xmax),
+      m_ymax(ymax),
+      m_zmax(zmax),
+      m_geodetic(geodetic) {
   stringstream tmin_ss(tmin);
   this->m_tmin = nextTime(tmin_ss);
   stringstream tmax_ss(tmax);
@@ -33,29 +44,36 @@ STBox::STBox(double const xmin, double const ymin, double const zmin,
 }
 
 // XYZ
-STBox::STBox(double const xmin, double const ymin, double const zmin,
-             double const xmax, double const ymax, double const zmax,
-             int const srid, bool const geodetic)
-    : SRIDMembers(srid), m_xmin(xmin), m_ymin(ymin), m_zmin(zmin), m_xmax(xmax),
-      m_ymax(ymax), m_zmax(zmax), m_geodetic(geodetic) {
+STBox::STBox(double const xmin, double const ymin, double const zmin, double const xmax,
+             double const ymax, double const zmax, int const srid, bool const geodetic)
+    : SRIDMembers(srid),
+      m_xmin(xmin),
+      m_ymin(ymin),
+      m_zmin(zmin),
+      m_xmax(xmax),
+      m_ymax(ymax),
+      m_zmax(zmax),
+      m_geodetic(geodetic) {
   init();
 }
 
 // XYT
-STBox::STBox(double const xmin, double const ymin, time_point const tmin,
-             double const xmax, double const ymax, time_point const tmax,
-             int const srid)
-    : SRIDMembers(srid), m_xmin(xmin), m_ymin(ymin), m_tmin(tmin), m_xmax(xmax),
-      m_ymax(ymax), m_tmax(tmax) {
+STBox::STBox(double const xmin, double const ymin, time_point const tmin, double const xmax,
+             double const ymax, time_point const tmax, int const srid)
+    : SRIDMembers(srid),
+      m_xmin(xmin),
+      m_ymin(ymin),
+      m_tmin(tmin),
+      m_xmax(xmax),
+      m_ymax(ymax),
+      m_tmax(tmax) {
   init();
 }
 
 // XYT
-STBox::STBox(double const xmin, double const ymin, string const &tmin,
-             double const xmax, double const ymax, string const &tmax,
-             int const srid)
-    : SRIDMembers(srid), m_xmin(xmin), m_ymin(ymin), m_xmax(xmax),
-      m_ymax(ymax) {
+STBox::STBox(double const xmin, double const ymin, string const &tmin, double const xmax,
+             double const ymax, string const &tmax, int const srid)
+    : SRIDMembers(srid), m_xmin(xmin), m_ymin(ymin), m_xmax(xmax), m_ymax(ymax) {
   stringstream tmin_ss(tmin);
   this->m_tmin = nextTime(tmin_ss);
   stringstream tmax_ss(tmax);
@@ -64,22 +82,19 @@ STBox::STBox(double const xmin, double const ymin, string const &tmin,
 }
 
 // XY
-STBox::STBox(double const xmin, double const ymin, double const xmax,
-             double const ymax, int const srid)
-    : SRIDMembers(srid), m_xmin(xmin), m_ymin(ymin), m_xmax(xmax),
-      m_ymax(ymax) {
+STBox::STBox(double const xmin, double const ymin, double const xmax, double const ymax,
+             int const srid)
+    : SRIDMembers(srid), m_xmin(xmin), m_ymin(ymin), m_xmax(xmax), m_ymax(ymax) {
   init();
 }
 
 // T
-STBox::STBox(time_point const tmin, time_point const tmax, int const srid,
-             bool const geodetic)
+STBox::STBox(time_point const tmin, time_point const tmax, int const srid, bool const geodetic)
     : SRIDMembers(srid), m_tmin(tmin), m_tmax(tmax), m_geodetic(geodetic) {
   init();
 }
 
-STBox::STBox(string const &tmin, string const &tmax, int const srid,
-             bool const geodetic)
+STBox::STBox(string const &tmin, string const &tmax, int const srid, bool const geodetic)
     : SRIDMembers(srid), m_geodetic(geodetic) {
   stringstream tmin_ss(tmin);
   this->m_tmin = nextTime(tmin_ss);
@@ -152,9 +167,7 @@ bool STBox::geodetic() const { return this->m_geodetic; }
 bool STBox::has_x() const { return this->m_xmin != -INFINITY; }
 bool STBox::has_y() const { return this->m_ymin != -INFINITY; }
 bool STBox::has_z() const { return this->m_zmin != -INFINITY; }
-bool STBox::has_t() const {
-  return this->m_tmin != time_point(time_point::duration::min());
-}
+bool STBox::has_t() const { return this->m_tmin != time_point(time_point::duration::min()); }
 
 int STBox::compare(STBox const &other) const {
   if (srid() < other.srid())
@@ -200,17 +213,11 @@ int STBox::compare(STBox const &other) const {
   return 0;
 }
 
-bool operator==(STBox const &lhs, STBox const &rhs) {
-  return lhs.compare(rhs) == 0;
-}
+bool operator==(STBox const &lhs, STBox const &rhs) { return lhs.compare(rhs) == 0; }
 
-bool operator!=(STBox const &lhs, STBox const &rhs) {
-  return lhs.compare(rhs) != 0;
-}
+bool operator!=(STBox const &lhs, STBox const &rhs) { return lhs.compare(rhs) != 0; }
 
-bool operator<(STBox const &lhs, STBox const &rhs) {
-  return lhs.compare(rhs) == -1;
-}
+bool operator<(STBox const &lhs, STBox const &rhs) { return lhs.compare(rhs) == -1; }
 
 bool operator>(STBox const &lhs, STBox const &rhs) { return rhs < lhs; }
 
@@ -254,17 +261,14 @@ istream &operator>>(istream &in, STBox &stbox) {
     consume(in, "GEODSTBOX");
     in >> std::ws;
     hast = in.peek() == 'T';
-    if (hast)
-      consume(in, 'T');
+    if (hast) consume(in, 'T');
   } else {
     consume(in, "STBOX");
     in >> std::ws;
     hasz = in.peek() == 'Z';
-    if (hasz)
-      consume(in, 'Z');
+    if (hasz) consume(in, 'Z');
     hast = in.peek() == 'T';
-    if (hast)
-      consume(in, 'T');
+    if (hast) consume(in, 'T');
   }
 
   consume(in, '(');
@@ -354,47 +358,44 @@ ostream &operator<<(ostream &os, STBox const &stbox) {
       if (stbox.has_x()) {
         // GEODSTBOX T((11, 12, 13, 2000-01-01),
         //             (21, 22, 23, 2000-01-02))
-        os << "GEODSTBOX T((" << stbox.xmin() << ", " << stbox.ymin() << ", "
-           << stbox.zmin() << ", " << write_ISO8601_time(stbox.tmin()) << "), ("
-           << stbox.xmax() << ", " << stbox.ymax() << ", " << stbox.zmax()
-           << ", " << write_ISO8601_time(stbox.tmax()) << "))";
+        os << "GEODSTBOX T((" << stbox.xmin() << ", " << stbox.ymin() << ", " << stbox.zmin()
+           << ", " << write_ISO8601_time(stbox.tmin()) << "), (" << stbox.xmax() << ", "
+           << stbox.ymax() << ", " << stbox.zmax() << ", " << write_ISO8601_time(stbox.tmax())
+           << "))";
         return os;
       }
       // GEODSTBOX T((, 2000-01-01), (, 2000-01-02))
-      os << "GEODSTBOX T(( , , " << write_ISO8601_time(stbox.tmin())
-         << "), ( , , " << write_ISO8601_time(stbox.tmax()) << "))";
+      os << "GEODSTBOX T(( , , " << write_ISO8601_time(stbox.tmin()) << "), ( , , "
+         << write_ISO8601_time(stbox.tmax()) << "))";
       return os;
     }
     // GEODSTBOX((11, 12, 13), (21, 22, 23))
-    os << "GEODSTBOX((" << stbox.xmin() << ", " << stbox.ymin() << ", "
-       << stbox.zmin() << "), (" << stbox.xmax() << ", " << stbox.ymax() << ", "
-       << stbox.zmax() << "))";
+    os << "GEODSTBOX((" << stbox.xmin() << ", " << stbox.ymin() << ", " << stbox.zmin() << "), ("
+       << stbox.xmax() << ", " << stbox.ymax() << ", " << stbox.zmax() << "))";
     return os;
   } else {
     if (stbox.has_x() && stbox.has_z() && stbox.has_t()) {
       // STBOX ZT((11, 12, 13, 2000-01-01),
       //          (21, 22, 23, 2000-01-02))
-      os << "STBOX ZT((" << stbox.xmin() << ", " << stbox.ymin() << ", "
-         << stbox.zmin() << ", " << write_ISO8601_time(stbox.tmin()) << "), ("
-         << stbox.xmax() << ", " << stbox.ymax() << ", " << stbox.zmax() << ", "
-         << write_ISO8601_time(stbox.tmax()) << "))";
+      os << "STBOX ZT((" << stbox.xmin() << ", " << stbox.ymin() << ", " << stbox.zmin() << ", "
+         << write_ISO8601_time(stbox.tmin()) << "), (" << stbox.xmax() << ", " << stbox.ymax()
+         << ", " << stbox.zmax() << ", " << write_ISO8601_time(stbox.tmax()) << "))";
       return os;
     } else if (stbox.has_x() && stbox.has_z() && !stbox.has_t()) {
       // STBOX Z((11, 12, 13), (21, 22, 23))
-      os << "STBOX Z((" << stbox.xmin() << ", " << stbox.ymin() << ", "
-         << stbox.zmin() << "), (" << stbox.xmax() << ", " << stbox.ymax()
-         << ", " << stbox.zmax() << "))";
+      os << "STBOX Z((" << stbox.xmin() << ", " << stbox.ymin() << ", " << stbox.zmin() << "), ("
+         << stbox.xmax() << ", " << stbox.ymax() << ", " << stbox.zmax() << "))";
       return os;
     } else if (stbox.has_x() && !stbox.has_z() && stbox.has_t()) {
       // STBOX T((11, 12, 2000-01-01), (21, 22, 2000-01-02))
       os << "STBOX T((" << stbox.xmin() << ", " << stbox.ymin() << ", "
-         << write_ISO8601_time(stbox.tmin()) << "), (" << stbox.xmax() << ", "
-         << stbox.ymax() << ", " << write_ISO8601_time(stbox.tmax()) << "))";
+         << write_ISO8601_time(stbox.tmin()) << "), (" << stbox.xmax() << ", " << stbox.ymax()
+         << ", " << write_ISO8601_time(stbox.tmax()) << "))";
       return os;
     } else if (stbox.has_x() && !stbox.has_z() && !stbox.has_t()) {
       // STBOX((11, 12), (21, 22))
-      os << "STBOX((" << stbox.xmin() << ", " << stbox.ymin() << "), ("
-         << stbox.xmax() << ", " << stbox.ymax() << "))";
+      os << "STBOX((" << stbox.xmin() << ", " << stbox.ymin() << "), (" << stbox.xmax() << ", "
+         << stbox.ymax() << "))";
       return os;
     } else if (!stbox.has_x() && !stbox.has_z() && stbox.has_t()) {
       // STBOX T((, 2000-01-01), (, 2000-01-02))

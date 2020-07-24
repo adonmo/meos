@@ -1,7 +1,5 @@
 #pragma once
 
-#include "chrono.h"
-
 #include <pybind11/operators.h>
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
@@ -9,23 +7,23 @@
 #include <meos/types/time/Period.hpp>
 #include <meos/types/time/PeriodSet.hpp>
 #include <meos/types/time/TimestampSet.hpp>
+#include <string>
 
+#include "chrono.h"
 #include "common.hpp"
 
 namespace py = pybind11;
 
 void def_time_module(py::module &m) {
-  py::module time_module =
-      m.def_submodule("time", "This module defines MobilityDB's time types: "
-                              "Period, PeriodSet and TimestampSet");
+  py::module time_module = m.def_submodule("time",
+                                           "This module defines MobilityDB's time types: "
+                                           "Period, PeriodSet and TimestampSet");
 
   py::class_<Period>(time_module, "Period")
-      .def(py::init<time_point, time_point, bool, bool>(), py::arg("lower"),
-           py::arg("upper"), py::arg("lower_inc") = true,
-           py::arg("upper_inc") = false)
-      .def(py::init<string, string, bool, bool>(), py::arg("lower"),
-           py::arg("upper"), py::arg("lower_inc") = true,
-           py::arg("upper_inc") = false)
+      .def(py::init<time_point, time_point, bool, bool>(), py::arg("lower"), py::arg("upper"),
+           py::arg("lower_inc") = true, py::arg("upper_inc") = false)
+      .def(py::init<string, string, bool, bool>(), py::arg("lower"), py::arg("upper"),
+           py::arg("lower_inc") = true, py::arg("upper_inc") = false)
       .def(py::init<string>(), py::arg("serialized"))
       .def(py::self == py::self)
       .def(py::self != py::self)
@@ -37,8 +35,7 @@ void def_time_module(py::module &m) {
       .def("__repr__", &to_ostream<Period>)
       .def("__hash__",
            [](Period const &period) {
-             return py::hash(py::make_tuple(period.lower(), period.upper(),
-                                            period.lower_inc(),
+             return py::hash(py::make_tuple(period.lower(), period.upper(), period.lower_inc(),
                                             period.upper_inc()));
            })
       .def_property_readonly("lower", &Period::lower)
@@ -48,8 +45,7 @@ void def_time_module(py::module &m) {
       .def_property_readonly("timespan", &Period::timespan)
       .def("shift", &Period::shift, py::arg("timedelta"))
       .def("overlap", &Period::overlap, py::arg("period"))
-      .def("contains_timestamp", &Period::contains_timestamp,
-           py::arg("timestamp"));
+      .def("contains_timestamp", &Period::contains_timestamp, py::arg("timestamp"));
 
   py::class_<PeriodSet>(time_module, "PeriodSet")
       .def(py::init<set<Period> &>(), py::arg("periods"))

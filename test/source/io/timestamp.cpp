@@ -1,7 +1,7 @@
 #include <catch2/catch.hpp>
-
 #include <meos/io/Deserializer.hpp>
 #include <meos/util/serializing.hpp>
+#include <string>
 
 #include "../common/time_utils.hpp"
 
@@ -21,8 +21,7 @@ TEST_CASE("timestamps are deserialized", "[deserializer][timestamp]") {
         {"2012-11-02", unix_time_point(2012, 11, 2)},
         {"2012-11-02 00:00:00", unix_time_point(2012, 11, 2)},
         {"2012-11-02 00:00:00+0000", unix_time_point(2012, 11, 2)},
-        {"2012-11-02 01:44:32.789+0000",
-         unix_time_point(2012, 11, 2, 1, 44, 32, 789)},
+        {"2012-11-02 01:44:32.789+0000", unix_time_point(2012, 11, 2, 1, 44, 32, 789)},
         {"2012-11-02 01:00:00+01", unix_time_point(2012, 11, 2)},
         {"2012-11-02 01:00:00+0100", unix_time_point(2012, 11, 2)},
         {"2012-11-02 01:30:00+0130", unix_time_point(2012, 11, 2)},
@@ -48,8 +47,7 @@ TEST_CASE("timestamps are serialized properly", "[serializer][timestamp]") {
   string expected;
   std::tie(t, expected) = GENERATE(table<time_point, string>({
       {unix_time_point(2012, 11, 2), "2012-11-02T00:00:00+0000"},
-      {unix_time_point(2012, 11, 2, 1, 44, 32, 789),
-       "2012-11-02T01:44:32.789+0000"},
+      {unix_time_point(2012, 11, 2, 1, 44, 32, 789), "2012-11-02T01:44:32.789+0000"},
   }));
   REQUIRE(write_ISO8601_time(t) == expected);
 }

@@ -1,10 +1,8 @@
-#include <sstream>
-#include <string>
-
 #include <catch2/catch.hpp>
-
 #include <meos/types/time/Period.hpp>
 #include <meos/types/time/TimestampSet.hpp>
+#include <sstream>
+#include <string>
 
 #include "../../common/matchers.hpp"
 #include "../../common/time_utils.hpp"
@@ -27,7 +25,7 @@ TEST_CASE("TimestampSets are constructed properly", "[timestampset]") {
     time_point t1 = unix_time_point(2020, 9, 8);
     time_point t2 = unix_time_point(2019, 9, 8);
     SECTION("no strings constructor") {
-      time_point t3 = unix_time_point(2019, 9, 8); // Duplicate!
+      time_point t3 = unix_time_point(2019, 9, 8);  // Duplicate!
       set<time_point> s = {t1, t2, t3};
       timestamp_set = TimestampSet(s);
     }
@@ -36,8 +34,7 @@ TEST_CASE("TimestampSets are constructed properly", "[timestampset]") {
       timestamp_set = TimestampSet(s);
     }
     SECTION("string constructor") {
-      timestamp_set =
-          TimestampSet("{2020-09-08 01:00:00+01, 2019-09-08 01:00:00+01}");
+      timestamp_set = TimestampSet("{2020-09-08 01:00:00+01, 2019-09-08 01:00:00+01}");
     }
     REQUIRE(timestamp_set.timestamps().size() == 2);
     // We gave the timestamps out-of-order!
@@ -85,8 +82,7 @@ TEST_CASE("TimestampSet period gaps are ignored", "[timestampset]") {
       unix_time_point(2012, 1, 7),
   };
   TimestampSet timestamp_set(timestamps);
-  Period expected = Period(unix_time_point(2012, 1, 1),
-                           unix_time_point(2012, 1, 7), true, true);
+  Period expected = Period(unix_time_point(2012, 1, 1), unix_time_point(2012, 1, 7), true, true);
   REQUIRE(timestamp_set.period() == expected);
 }
 
@@ -119,8 +115,7 @@ TEST_CASE("TimestampSet shift", "[timestampset]") {
 
   TimestampSet actual(actual_timestamps);
   TimestampSet expected(expected_timestamps);
-  REQUIRE_THAT(actual.shift(shift).get()->timestamps(),
-               UnorderedEquals(expected.timestamps()));
+  REQUIRE_THAT(actual.shift(shift).get()->timestamps(), UnorderedEquals(expected.timestamps()));
 }
 
 TEST_CASE("TimestampSet timestamp functions", "[timestampset]") {

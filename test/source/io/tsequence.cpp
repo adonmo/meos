@@ -1,18 +1,18 @@
-#include "../common/matchers.hpp"
-#include "../common/time_utils.hpp"
-#include "../common/utils.hpp"
 #include <catch2/catch.hpp>
 #include <meos/io/Deserializer.hpp>
 #include <meos/io/Serializer.hpp>
 #include <meos/types/temporal/TSequence.hpp>
+#include <string>
 
-TEMPLATE_TEST_CASE("TSequence are serialized", "[serializer][tsequence]", int,
-                   float) {
+#include "../common/matchers.hpp"
+#include "../common/time_utils.hpp"
+#include "../common/utils.hpp"
+
+TEMPLATE_TEST_CASE("TSequence are serialized", "[serializer][tsequence]", int, float) {
   Serializer<TestType> w;
   SECTION("only one value present") {
     auto i = GENERATE(0, 1, -1, 2012, 756772544,
-                      take(10, random(numeric_limits<int>::min(),
-                                      numeric_limits<int>::max())));
+                      take(10, random(numeric_limits<int>::min(), numeric_limits<int>::max())));
     auto lower_inc = true;
     auto upper_inc = true;
     auto instant = TInstant<TestType>(i, unix_time_point(2012, 11, 1));
@@ -21,16 +21,13 @@ TEMPLATE_TEST_CASE("TSequence are serialized", "[serializer][tsequence]", int,
     TSequence<TestType> sequence(instants, lower_inc, upper_inc);
     char left = lower_inc ? '[' : '(';
     char right = upper_inc ? ']' : ')';
-    REQUIRE(w.write(&sequence) ==
-            left + w.write(i) + "@2012-11-01T00:00:00+0000" + right);
+    REQUIRE(w.write(&sequence) == left + w.write(i) + "@2012-11-01T00:00:00+0000" + right);
   }
   SECTION("multiple values present") {
     auto i = GENERATE(0, 1, -1, 2012, 756772544,
-                      take(3, random(numeric_limits<int>::min(),
-                                     numeric_limits<int>::max())));
+                      take(3, random(numeric_limits<int>::min(), numeric_limits<int>::max())));
     auto j = GENERATE(0, 1, -1, 2012, 756772544,
-                      take(3, random(numeric_limits<int>::min(),
-                                     numeric_limits<int>::max())));
+                      take(3, random(numeric_limits<int>::min(), numeric_limits<int>::max())));
     auto lower_inc = GENERATE(true, false);
     auto upper_inc = GENERATE(true, false);
     auto instant1 = TInstant<TestType>(i, unix_time_point(2012, 11, 1));
@@ -45,8 +42,7 @@ TEMPLATE_TEST_CASE("TSequence are serialized", "[serializer][tsequence]", int,
     REQUIRE(serialized.size() > 2);
     REQUIRE(serialized[0] == left);
     REQUIRE(serialized[serialized.size() - 1] == right);
-    set<string> actual =
-        split_into_set(serialized.substr(1, serialized.size() - 2), ", ");
+    set<string> actual = split_into_set(serialized.substr(1, serialized.size() - 2), ", ");
     set<string> expected = {
         w.write(i) + "@2012-11-01T00:00:00+0000",
         w.write(j) + "@2012-11-02T00:00:00+0000",
@@ -55,16 +51,14 @@ TEMPLATE_TEST_CASE("TSequence are serialized", "[serializer][tsequence]", int,
   }
 }
 
-TEMPLATE_TEST_CASE("TSequence are deserialized", "[deserializer][tsequence]",
-                   int, float) {
+TEMPLATE_TEST_CASE("TSequence are deserialized", "[deserializer][tsequence]", int, float) {
   SECTION("only one TSequence present") {
     SECTION("only one inst present") {
       Deserializer<TestType> r("[10@2012-11-01]");
 
       unique_ptr<TSequence<TestType>> tseq = r.nextTSequence();
       set<TInstant<TestType>> actual = tseq->instants();
-      set<TInstant<TestType>> s = {
-          TInstant<TestType>(10, unix_time_point(2012, 11, 1))};
+      set<TInstant<TestType>> s = {TInstant<TestType>(10, unix_time_point(2012, 11, 1))};
       auto x = UnorderedEquals(s);
       REQUIRE_THAT(actual, x);
       REQUIRE(tseq->lower_inc() == true);
@@ -73,14 +67,12 @@ TEMPLATE_TEST_CASE("TSequence are deserialized", "[deserializer][tsequence]",
       CHECK_THROWS(r.nextTSequence());
     }
     SECTION("multiple inst present") {
-      Deserializer<TestType> r(
-          "(10@2012-01-01 00:00:00+00, 12@2012-04-01 00:00:00+00)");
+      Deserializer<TestType> r("(10@2012-01-01 00:00:00+00, 12@2012-04-01 00:00:00+00)");
 
       unique_ptr<TSequence<TestType>> tseq = r.nextTSequence();
       set<TInstant<TestType>> actual = tseq->instants();
-      set<TInstant<TestType>> s = {
-          TInstant<TestType>(10, unix_time_point(2012, 1, 1)),
-          TInstant<TestType>(12, unix_time_point(2012, 4, 1))};
+      set<TInstant<TestType>> s = {TInstant<TestType>(10, unix_time_point(2012, 1, 1)),
+                                   TInstant<TestType>(12, unix_time_point(2012, 4, 1))};
       auto x = UnorderedEquals(s);
       REQUIRE_THAT(actual, x);
       REQUIRE(tseq->lower_inc() == false);
@@ -125,8 +117,7 @@ TEMPLATE_TEST_CASE("TSequence are deserialized", "[deserializer][tsequence]",
 
     unique_ptr<TSequence<TestType>> tseq = r.nextTSequence();
     set<TInstant<TestType>> actual = tseq->instants();
-    set<TInstant<TestType>> s = {
-        TInstant<TestType>(10, unix_time_point(2012, 11, 1))};
+    set<TInstant<TestType>> s = {TInstant<TestType>(10, unix_time_point(2012, 11, 1))};
     auto x = UnorderedEquals(s);
     REQUIRE_THAT(actual, x);
     REQUIRE(tseq->lower_inc() == true);

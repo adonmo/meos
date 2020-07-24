@@ -7,28 +7,25 @@
 #include <meos/types/temporal/TInstant.hpp>
 #include <meos/types/temporal/TSequence.hpp>
 #include <meos/types/temporal/TSequenceSet.hpp>
+#include <string>
 
 #include "common.hpp"
 
 namespace py = pybind11;
 
-template <typename BaseType>
-using py_tsequenceset = py::class_<
-    TSequenceSet<BaseType>, Temporal<BaseType>,
-    TemporalComparators<TSequenceSet<BaseType>>,
-    TInstantFunctions<TSequenceSet<BaseType>, TInstant<BaseType>, BaseType>>;
+template <typename BaseType> using py_tsequenceset
+    = py::class_<TSequenceSet<BaseType>, Temporal<BaseType>,
+                 TemporalComparators<TSequenceSet<BaseType>>,
+                 TInstantFunctions<TSequenceSet<BaseType>, TInstant<BaseType>, BaseType>>;
 
 template <typename BaseType>
-py_tsequenceset<BaseType>
-_def_tsequenceset_class_basic(py::module &m, std::string const &typesuffix) {
-  def_comparator<TemporalComparators<TSequenceSet<BaseType>>>(m, "TSequenceSet",
-                                                              typesuffix);
-  def_tinstant_functions<
-      TInstantFunctions<TSequenceSet<BaseType>, TInstant<BaseType>, BaseType>>(
+py_tsequenceset<BaseType> _def_tsequenceset_class_basic(py::module &m,
+                                                        std::string const &typesuffix) {
+  def_comparator<TemporalComparators<TSequenceSet<BaseType>>>(m, "TSequenceSet", typesuffix);
+  def_tinstant_functions<TInstantFunctions<TSequenceSet<BaseType>, TInstant<BaseType>, BaseType>>(
       m, "TSequenceSet", typesuffix);
   return py_tsequenceset<BaseType>(m, ("TSequenceSet" + typesuffix).c_str())
-      .def(py::init<set<TSequence<BaseType>> &, Interpolation>(),
-           py::arg("sequences"),
+      .def(py::init<set<TSequence<BaseType>> &, Interpolation>(), py::arg("sequences"),
            py::arg("interpolation") = default_interp_v<BaseType>)
       .def(py::init<set<string> &, Interpolation>(), py::arg("sequences"),
            py::arg("interpolation") = default_interp_v<BaseType>)
@@ -43,15 +40,11 @@ _def_tsequenceset_class_basic(py::module &m, std::string const &typesuffix) {
       .def("__repr__", &to_ostream<TSequenceSet<BaseType>>)
       .def("compare", &TSequenceSet<BaseType>::compare, py::arg("other"))
       .def_property_readonly("duration", &TSequenceSet<BaseType>::duration)
-      .def_property_readonly("interpolation",
-                             &TSequenceSet<BaseType>::interpolation)
+      .def_property_readonly("interpolation", &TSequenceSet<BaseType>::interpolation)
       .def_property_readonly("sequences", &TSequenceSet<BaseType>::sequences)
-      .def_property_readonly("numSequences",
-                             &TSequenceSet<BaseType>::numSequences)
-      .def_property_readonly("startSequence",
-                             &TSequenceSet<BaseType>::startSequence)
-      .def_property_readonly("endSequence",
-                             &TSequenceSet<BaseType>::endSequence)
+      .def_property_readonly("numSequences", &TSequenceSet<BaseType>::numSequences)
+      .def_property_readonly("startSequence", &TSequenceSet<BaseType>::startSequence)
+      .def_property_readonly("endSequence", &TSequenceSet<BaseType>::endSequence)
       .def("sequenceN", &TSequenceSet<BaseType>::sequenceN, py::arg("n"))
       .def_property_readonly("instants", &TSequenceSet<BaseType>::instants)
       .def_property_readonly("timespan", &TSequenceSet<BaseType>::timespan)
@@ -60,10 +53,8 @@ _def_tsequenceset_class_basic(py::module &m, std::string const &typesuffix) {
       .def_property_readonly("getTime", &TSequenceSet<BaseType>::getTime)
       .def_property_readonly("period", &TSequenceSet<BaseType>::period)
       .def("shift", &TSequenceSet<BaseType>::shift, py::arg("timedelta"))
-      .def("intersectsTimestamp", &TSequenceSet<BaseType>::intersectsTimestamp,
-           py::arg("datetime"))
-      .def("intersectsPeriod", &TSequenceSet<BaseType>::intersectsPeriod,
-           py::arg("period"));
+      .def("intersectsTimestamp", &TSequenceSet<BaseType>::intersectsTimestamp, py::arg("datetime"))
+      .def("intersectsPeriod", &TSequenceSet<BaseType>::intersectsPeriod, py::arg("period"));
 }
 
 template <typename BaseType>
@@ -72,22 +63,17 @@ void _def_tsequenceset_class_specializations(py_tsequenceset<BaseType> &c,
   // No specializations by default
 }
 
-template <>
-void _def_tsequenceset_class_specializations(py_tsequenceset<Geometry> &c,
-                                             std::string const &typesuffix) {
-  c.def(py::init<set<TSequence<Geometry>> &, int, Interpolation>(),
-        py::arg("sequences"), py::arg("srid"),
-        py::arg("interpolation") = default_interp_v<Geometry>)
-      .def(py::init<set<string> &, int, Interpolation>(), py::arg("sequences"),
-           py::arg("srid"),
+template <> void _def_tsequenceset_class_specializations(py_tsequenceset<Geometry> &c,
+                                                         std::string const &typesuffix) {
+  c.def(py::init<set<TSequence<Geometry>> &, int, Interpolation>(), py::arg("sequences"),
+        py::arg("srid"), py::arg("interpolation") = default_interp_v<Geometry>)
+      .def(py::init<set<string> &, int, Interpolation>(), py::arg("sequences"), py::arg("srid"),
            py::arg("interpolation") = default_interp_v<Geometry>)
       .def(py::init<string, int>(), py::arg("serialized"), py::arg("srid"));
 }
 
 template <typename BaseType>
 void def_tsequenceset_class(py::module &m, std::string const &typesuffix) {
-  auto tsequenceset_class =
-      _def_tsequenceset_class_basic<BaseType>(m, typesuffix);
-  _def_tsequenceset_class_specializations<BaseType>(tsequenceset_class,
-                                                    typesuffix);
+  auto tsequenceset_class = _def_tsequenceset_class_basic<BaseType>(m, typesuffix);
+  _def_tsequenceset_class_specializations<BaseType>(tsequenceset_class, typesuffix);
 }

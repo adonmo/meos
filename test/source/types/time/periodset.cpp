@@ -1,10 +1,8 @@
-#include <sstream>
-#include <string>
-
 #include <catch2/catch.hpp>
-
 #include <meos/types/time/Period.hpp>
 #include <meos/types/time/PeriodSet.hpp>
+#include <sstream>
+#include <string>
 
 #include "../../common/matchers.hpp"
 #include "../../common/time_utils.hpp"
@@ -30,8 +28,7 @@ TEST_CASE("PeriodSets are constructed properly", "[periodset]") {
     Period period_1(unix_time_point(2020, 9, 8), unix_time_point(2020, 9, 10));
     Period period_2(unix_time_point(2019, 9, 8), unix_time_point(2019, 9, 10));
     SECTION("no strings constructor") {
-      Period period_3(unix_time_point(2019, 9, 8),
-                      unix_time_point(2019, 9, 10)); // Duplicate!
+      Period period_3(unix_time_point(2019, 9, 8), unix_time_point(2019, 9, 10));  // Duplicate!
       set<Period> s = {period_1, period_2, period_3};
       PeriodSet period_set(s);
       REQUIRE(period_set.periods().size() == 2);
@@ -40,17 +37,17 @@ TEST_CASE("PeriodSets are constructed properly", "[periodset]") {
       REQUIRE(period_set.endPeriod() == period_1);
     }
     SECTION("string constructor") {
-      PeriodSet period_set("{[2020-09-08 01:00:00+01, 2020-09-10 01:00:00+01), "
-                           "[2019-09-08 01:00:00+01, 2019-09-10 01:00:00+01)}");
+      PeriodSet period_set(
+          "{[2020-09-08 01:00:00+01, 2020-09-10 01:00:00+01), "
+          "[2019-09-08 01:00:00+01, 2019-09-10 01:00:00+01)}");
       REQUIRE(period_set.periods().size() == 2);
       // We gave the periods out-of-order!
       REQUIRE(period_set.startPeriod() == period_2);
       REQUIRE(period_set.endPeriod() == period_1);
     }
     SECTION("set of strings constructor") {
-      PeriodSet period_set(
-          set<string>{"[2020-09-08 01:00:00+01, 2020-09-10 01:00:00+01)",
-                      "[2019-09-08 01:00:00+01, 2019-09-10 01:00:00+01)"});
+      PeriodSet period_set(set<string>{"[2020-09-08 01:00:00+01, 2020-09-10 01:00:00+01)",
+                                       "[2019-09-08 01:00:00+01, 2019-09-10 01:00:00+01)"});
       REQUIRE(period_set.periods().size() == 2);
       // We gave the periods out-of-order!
       REQUIRE(period_set.startPeriod() == period_2);
@@ -71,7 +68,7 @@ TEST_CASE("PeriodSet period functions", "[periodset]") {
     auto lbound = std::chrono::system_clock::from_time_t(
         (unix_time(2012, 1, 1) + 10 * 365 * (random() % day)) / 1000L);
     auto duration = std::chrono::milliseconds(day + 6 * (random() % day));
-    auto rbound = lbound + duration; // This is to make sure lbound <= rbound
+    auto rbound = lbound + duration;  // This is to make sure lbound <= rbound
     auto period = Period(lbound, rbound, lower_inc, upper_inc);
     expected_periods.insert(period);
     periods.insert(period);
@@ -99,14 +96,12 @@ TEST_CASE("PeriodSet period gaps are ignored", "[periodset]") {
   auto lower_inc = GENERATE(true, false);
   auto upper_inc = GENERATE(true, false);
   set<Period> periods = {
-      Period(unix_time_point(2012, 1, 1), unix_time_point(2012, 1, 2),
-             lower_inc, true),
-      Period(unix_time_point(2012, 1, 6), unix_time_point(2012, 1, 7), true,
-             upper_inc),
+      Period(unix_time_point(2012, 1, 1), unix_time_point(2012, 1, 2), lower_inc, true),
+      Period(unix_time_point(2012, 1, 6), unix_time_point(2012, 1, 7), true, upper_inc),
   };
   PeriodSet period_set(periods);
-  Period expected = Period(unix_time_point(2012, 1, 1),
-                           unix_time_point(2012, 1, 7), lower_inc, upper_inc);
+  Period expected
+      = Period(unix_time_point(2012, 1, 1), unix_time_point(2012, 1, 7), lower_inc, upper_inc);
   REQUIRE(period_set.period() == expected);
 }
 
@@ -114,17 +109,11 @@ TEST_CASE("PeriodSet timespan", "[periodset]") {
   auto lower_inc = GENERATE(true, false);
   auto upper_inc = GENERATE(true, false);
   auto left = std::chrono::system_clock::from_time_t(
-      (GENERATE(
-          take(4, random(unix_time(2012, 1, 1), unix_time(2020, 1, 1))))) /
-      1000);
-  auto duration_1 =
-      std::chrono::milliseconds(GENERATE(take(4, random(minute, year))));
-  auto duration_2 =
-      std::chrono::milliseconds(GENERATE(take(4, random(minute, year))));
-  auto period_1 =
-      make_unique<Period>(left, left + duration_1, lower_inc, upper_inc);
-  auto period_2 =
-      make_unique<Period>(left, left + duration_2, lower_inc, upper_inc);
+      (GENERATE(take(4, random(unix_time(2012, 1, 1), unix_time(2020, 1, 1))))) / 1000);
+  auto duration_1 = std::chrono::milliseconds(GENERATE(take(4, random(minute, year))));
+  auto duration_2 = std::chrono::milliseconds(GENERATE(take(4, random(minute, year))));
+  auto period_1 = make_unique<Period>(left, left + duration_1, lower_inc, upper_inc);
+  auto period_2 = make_unique<Period>(left, left + duration_2, lower_inc, upper_inc);
 
   set<unique_ptr<Period>> periods;
   periods.insert(move(period_1));
@@ -138,21 +127,19 @@ TEST_CASE("PeriodSet shift", "[periodset]") {
   set<unique_ptr<Period>> expected_periods;
   set<unique_ptr<Period>> actual_periods;
   size_t size = GENERATE(take(4, random(1, 2)));
-  auto shift =
-      std::chrono::milliseconds(GENERATE(take(4, random(minute, day))));
+  auto shift = std::chrono::milliseconds(GENERATE(take(4, random(minute, day))));
 
   for (size_t i = 0; i < size; i++) {
     bool lower_inc = random() % 2;
     bool upper_inc = random() % 2;
     auto lbound = std::chrono::system_clock::from_time_t(
         (unix_time(2012, 1, 1) + 10 * 365 * (random() % day)) / 1000L);
-    auto duration =
-        std::chrono::milliseconds(day + 10 * 365 * (random() % day));
-    auto rbound = lbound + duration; // This is to make sure lbound <= rbound
+    auto duration = std::chrono::milliseconds(day + 10 * 365 * (random() % day));
+    auto rbound = lbound + duration;  // This is to make sure lbound <= rbound
     auto period = make_unique<Period>(lbound, rbound, lower_inc, upper_inc);
     actual_periods.insert(period->shift(shift));
-    auto expected_period = make_unique<Period>(lbound + shift, rbound + shift,
-                                               lower_inc, upper_inc);
+    auto expected_period
+        = make_unique<Period>(lbound + shift, rbound + shift, lower_inc, upper_inc);
     expected_periods.insert(move(expected_period));
   }
 
@@ -172,10 +159,10 @@ TEST_CASE("PeriodSet timestamp functions", "[periodset]") {
     time_point lbound = std::chrono::system_clock::from_time_t(
         (unix_time(2012, 1, 1) + 10 * 365 * (random() % day)) / 1000L);
     duration_ms duration(day + 6 * (random() % day));
-    auto rbound = lbound + duration; // This is to make sure lbound <= rbound
+    auto rbound = lbound + duration;  // This is to make sure lbound <= rbound
     auto period = Period(lbound, rbound, lower_inc, upper_inc);
-    expected_timestamps.insert(lbound); // Round off to seconds
-    expected_timestamps.insert(rbound); // Round off to seconds
+    expected_timestamps.insert(lbound);  // Round off to seconds
+    expected_timestamps.insert(rbound);  // Round off to seconds
     periods.insert(period);
   }
 

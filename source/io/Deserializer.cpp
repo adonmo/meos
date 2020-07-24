@@ -4,6 +4,7 @@
 #include <meos/io/Deserializer.hpp>
 #include <meos/io/utils.hpp>
 #include <sstream>
+#include <string>
 
 using namespace std;
 

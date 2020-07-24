@@ -48,17 +48,15 @@ template <> struct default_interp<string> {
 /**
  * Shorthand for default_interp<BaseType>::value
  */
-template <typename BaseType>
-constexpr Interpolation default_interp_v = default_interp<BaseType>::value;
+template <typename BaseType> constexpr Interpolation default_interp_v
+    = default_interp<BaseType>::value;
 
 /**
  * Helps find out if a base type is discrete or not
  *
  * Also check is_discrete_v<BaseType>, which should be more easy to use
  */
-template <typename BaseType> struct is_discrete {
-  static const bool value = false;
-};
+template <typename BaseType> struct is_discrete { static const bool value = false; };
 template <> struct is_discrete<bool> { static const bool value = true; };
 template <> struct is_discrete<int> { static const bool value = true; };
 template <> struct is_discrete<string> { static const bool value = true; };
@@ -66,7 +64,6 @@ template <> struct is_discrete<string> { static const bool value = true; };
 /**
  * Shorthand for is_discrete<BaseType>::value
  */
-template <typename BaseType>
-constexpr bool is_discrete_v = is_discrete<BaseType>::value;
+template <typename BaseType> constexpr bool is_discrete_v = is_discrete<BaseType>::value;
 
 #endif

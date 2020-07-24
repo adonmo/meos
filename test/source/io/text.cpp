@@ -1,6 +1,7 @@
 #include <catch2/catch.hpp>
 #include <meos/io/Deserializer.hpp>
 #include <meos/io/Serializer.hpp>
+#include <string>
 
 TEST_CASE("text values are serialized", "[serializer][text]") {
   Serializer<string> w;

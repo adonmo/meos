@@ -5,9 +5,9 @@
 TEST_CASE("floats are serialized", "[serializer][float]") {
   Serializer<float> w;
   SECTION("only one float present") {
-    float f = GENERATE(0.0f, 20.0f, -20.0f, 20.12f,
-                       take(100, random(numeric_limits<float>::lowest(),
-                                        numeric_limits<float>::max())));
+    float f = GENERATE(
+        0.0f, 20.0f, -20.0f, 20.12f,
+        take(100, random(numeric_limits<float>::lowest(), numeric_limits<float>::max())));
     REQUIRE(stof(w.write(f)) == f);
   }
 }
@@ -33,9 +33,9 @@ TEST_CASE("floats are deserialized", "[deserializer][float]") {
 TEST_CASE("float serdes", "[serializer][deserializer][float]") {
   Serializer<float> w;
   SECTION("only one float present") {
-    float f = GENERATE(0.0f, 20.0f, -20.0f, 20.12f,
-                       take(100, random(numeric_limits<float>::lowest(),
-                                        numeric_limits<float>::max())));
+    float f = GENERATE(
+        0.0f, 20.0f, -20.0f, 20.12f,
+        take(100, random(numeric_limits<float>::lowest(), numeric_limits<float>::max())));
     Deserializer<float> r(w.write(f));
     REQUIRE(r.nextValue() == f);
   }

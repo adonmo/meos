@@ -1,4 +1,5 @@
 #include <meos/util/string.hpp>
+#include <string>
 
 std::string ws(" \t\n\r\f\v");
 
@@ -15,6 +16,4 @@ std::string &ltrim(std::string &s, std::string const &t) {
 }
 
 // trim from both ends of string (right then left)
-std::string &trim(std::string &s, std::string const &t) {
-  return ltrim(rtrim(s, t), t);
-}
+std::string &trim(std::string &s, std::string const &t) { return ltrim(rtrim(s, t), t); }

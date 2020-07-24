@@ -97,9 +97,7 @@ struct TInstantFunctions {
 private:
   TemporalType &temporal() { return static_cast<TemporalType &>(*this); }
 
-  TemporalType const &temporal() const {
-    return static_cast<TemporalType const &>(*this);
-  }
+  TemporalType const &temporal() const { return static_cast<TemporalType const &>(*this); }
 
   // The constructor and friend is to ensure that we are doing proper CRTP
   TInstantFunctions(){};

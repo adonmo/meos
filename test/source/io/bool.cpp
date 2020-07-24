@@ -1,6 +1,7 @@
 #include <catch2/catch.hpp>
 #include <meos/io/Deserializer.hpp>
 #include <meos/io/Serializer.hpp>
+#include <string>
 
 TEST_CASE("booleans are serialized", "[serializer][bool]") {
   Serializer<bool> w;

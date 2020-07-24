@@ -1,7 +1,7 @@
 #include "time_utils.hpp"
 
-time_t unix_time(short year, short month, short day, short hour, short minute,
-                 short second, short milliseconds) {
+time_t unix_time(short year, short month, short day, short hour, short minute, short second,
+                 short milliseconds) {
   struct std::tm epoch;
   epoch.tm_isdst = 0;
   epoch.tm_sec = epoch.tm_min = epoch.tm_hour = epoch.tm_mon = 0;
@@ -19,8 +19,7 @@ time_t unix_time(short year, short month, short day, short hour, short minute,
   return mktime(&timeinfo) * 1000L - local_tz_offset + milliseconds;
 }
 
-time_point unix_time_point(short year, short month, short day, short hour,
-                           short minute, short second, short milliseconds) {
-  return time_point(duration_ms(
-      unix_time(year, month, day, hour, minute, second, milliseconds)));
+time_point unix_time_point(short year, short month, short day, short hour, short minute,
+                           short second, short milliseconds) {
+  return time_point(duration_ms(unix_time(year, month, day, hour, minute, second, milliseconds)));
 }

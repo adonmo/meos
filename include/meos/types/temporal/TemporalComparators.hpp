@@ -1,8 +1,6 @@
 #ifndef MEOS_TYPES_TEMPORAL_TEMPORALCOMPARATORS_HPP
 #define MEOS_TYPES_TEMPORAL_TEMPORALCOMPARATORS_HPP
 
-#include <string>
-
 /**
  * This template class uses CRTP pattern and assumes the presence of the
  * following function defined on the TemporalType class:
@@ -24,17 +22,11 @@ template <typename TemporalType> struct TemporalComparators {
     return lhs.compare(rhs) == -1;
   }
 
-  friend bool operator>(TemporalType const &lhs, TemporalType const &rhs) {
-    return rhs < lhs;
-  }
+  friend bool operator>(TemporalType const &lhs, TemporalType const &rhs) { return rhs < lhs; }
 
-  friend bool operator>=(TemporalType const &lhs, TemporalType const &rhs) {
-    return !(lhs < rhs);
-  }
+  friend bool operator>=(TemporalType const &lhs, TemporalType const &rhs) { return !(lhs < rhs); }
 
-  friend bool operator<=(TemporalType const &lhs, TemporalType const &rhs) {
-    return !(rhs < lhs);
-  }
+  friend bool operator<=(TemporalType const &lhs, TemporalType const &rhs) { return !(rhs < lhs); }
 
 private:
   // The constructor and friend is to ensure that we are doing proper CRTP

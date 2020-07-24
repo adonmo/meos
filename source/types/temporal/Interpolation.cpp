@@ -1,5 +1,6 @@
 #include <meos/types/temporal/Interpolation.hpp>
 #include <ostream>
+#include <string>
 
 ostream &operator<<(ostream &os, const Interpolation &i) {
   if (i == Interpolation::Stepwise) {

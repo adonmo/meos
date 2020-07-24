@@ -1,11 +1,12 @@
-#include "../common/matchers.hpp"
-#include "../common/time_utils.hpp"
-#include "../common/utils.hpp"
 #include <catch2/catch.hpp>
 #include <meos/io/Deserializer.hpp>
 #include <meos/io/Serializer.hpp>
 #include <meos/types/time/PeriodSet.hpp>
 #include <string>
+
+#include "../common/matchers.hpp"
+#include "../common/time_utils.hpp"
+#include "../common/utils.hpp"
 
 using namespace std;
 
@@ -24,11 +25,9 @@ set<string> split_period_set_into_periods(string const &period_set_str) {
     // find twice to skip alternative ", "s
     pos = period_set_str.find(delim, prev);
     pos = period_set_str.find(delim, pos + 1);
-    if (pos == string::npos)
-      pos = period_set_str.length();
+    if (pos == string::npos) pos = period_set_str.length();
     string token = period_set_str.substr(prev, pos - prev);
-    if (!token.empty())
-      tokens.insert(token);
+    if (!token.empty()) tokens.insert(token);
     prev = pos + delim.length();
   } while (pos < period_set_str.length() && prev < period_set_str.length());
   return tokens;
@@ -48,15 +47,13 @@ TEST_CASE("PeriodSets are serialized", "[serializer][periodset]") {
   SECTION("set with only one value") {
     auto lower_inc = GENERATE(true, false);
     auto upper_inc = GENERATE(true, false);
-    long lbound = GENERATE(0L, unix_time(2012, 1, 1),
-                           take(10, random(0L, 4102488000000L)));
+    long lbound = GENERATE(0L, unix_time(2012, 1, 1), take(10, random(0L, 4102488000000L)));
     long duration = GENERATE(take(10, random(0L, 10 * 365 * millis_in_day)));
-    auto rbound = lbound + duration; // This is to make sure lbound <= rbound
+    auto rbound = lbound + duration;  // This is to make sure lbound <= rbound
 
-    auto period = make_unique<Period>(
-        std::chrono::system_clock::from_time_t(lbound / 1000L),
-        std::chrono::system_clock::from_time_t(rbound / 1000L), lower_inc,
-        upper_inc);
+    auto period = make_unique<Period>(std::chrono::system_clock::from_time_t(lbound / 1000L),
+                                      std::chrono::system_clock::from_time_t(rbound / 1000L),
+                                      lower_inc, upper_inc);
     string expected = "{" + w.write(period.get()) + "}";
 
     set<unique_ptr<Period>> periods;
@@ -75,14 +72,12 @@ TEST_CASE("PeriodSets are serialized", "[serializer][periodset]") {
     set<unique_ptr<Period>> periods;
 
     for (size_t i = 0; i < size; i++) {
-      long lbound = GENERATE(0L, unix_time(2012, 1, 1),
-                             take(4, random(0L, 4102488000000L)));
+      long lbound = GENERATE(0L, unix_time(2012, 1, 1), take(4, random(0L, 4102488000000L)));
       long duration = GENERATE(take(4, random(0L, 10 * 365 * millis_in_day)));
-      auto rbound = lbound + duration; // This is to make sure lbound <= rbound
-      auto period = make_unique<Period>(
-          std::chrono::system_clock::from_time_t(lbound / 1000L),
-          std::chrono::system_clock::from_time_t(rbound / 1000L), lower_inc,
-          upper_inc);
+      auto rbound = lbound + duration;  // This is to make sure lbound <= rbound
+      auto period = make_unique<Period>(std::chrono::system_clock::from_time_t(lbound / 1000L),
+                                        std::chrono::system_clock::from_time_t(rbound / 1000L),
+                                        lower_inc, upper_inc);
       expected.insert(w.write(period.get()));
 
       periods.insert(move(period));
@@ -95,8 +90,7 @@ TEST_CASE("PeriodSets are serialized", "[serializer][periodset]") {
     REQUIRE(serialized.size() > 2);
     REQUIRE(serialized[0] == '{');
     REQUIRE(serialized[serialized.size() - 1] == '}');
-    set<string> actual = split_period_set_into_periods(
-        serialized.substr(1, serialized.size() - 2));
+    set<string> actual = split_period_set_into_periods(serialized.substr(1, serialized.size() - 2));
     REQUIRE_THAT(actual, UnorderedEquals(expected));
   }
 }
@@ -108,8 +102,8 @@ TEST_CASE("PeriodSets are deserialized", "[deserializer][periodset]") {
 
       unique_ptr<PeriodSet> period_set = r.nextPeriodSet();
       set<Period> actual = period_set->periods();
-      set<Period> expected = {Period(unix_time_point(2012, 4, 1),
-                                     unix_time_point(2012, 11, 1), true, true)};
+      set<Period> expected
+          = {Period(unix_time_point(2012, 4, 1), unix_time_point(2012, 11, 1), true, true)};
       auto x = UnorderedEquals(expected);
       REQUIRE(actual.size() == 1);
       REQUIRE_THAT(actual, x);
@@ -118,16 +112,15 @@ TEST_CASE("PeriodSets are deserialized", "[deserializer][periodset]") {
     }
 
     SECTION("multiple inst present") {
-      Deserializer<> r("{(2012-01-01 00:00:00+00, 2012-04-01 00:00:00+00), "
-                       "[2012-01-01 00:00:00+00, 2012-04-01 00:00:00+00)}");
+      Deserializer<> r(
+          "{(2012-01-01 00:00:00+00, 2012-04-01 00:00:00+00), "
+          "[2012-01-01 00:00:00+00, 2012-04-01 00:00:00+00)}");
 
       unique_ptr<PeriodSet> period_set = r.nextPeriodSet();
       set<Period> actual = period_set->periods();
       set<Period> expected = {
-          Period(unix_time_point(2012, 1, 1), unix_time_point(2012, 4, 1),
-                 false, false),
-          Period(unix_time_point(2012, 1, 1), unix_time_point(2012, 4, 1), true,
-                 false),
+          Period(unix_time_point(2012, 1, 1), unix_time_point(2012, 4, 1), false, false),
+          Period(unix_time_point(2012, 1, 1), unix_time_point(2012, 4, 1), true, false),
       };
       auto x = UnorderedEquals(expected);
       REQUIRE_THAT(actual, x);
@@ -144,8 +137,7 @@ TEST_CASE("PeriodSets are deserialized", "[deserializer][periodset]") {
     unique_ptr<PeriodSet> period_set_1 = r.nextPeriodSet();
     set<Period> actual_1 = period_set_1->periods();
     set<Period> expected_1 = {
-        Period(unix_time_point(2012, 1, 1), unix_time_point(2012, 4, 1), false,
-               false),
+        Period(unix_time_point(2012, 1, 1), unix_time_point(2012, 4, 1), false, false),
     };
     auto x_1 = UnorderedEquals(expected_1);
     REQUIRE_THAT(actual_1, x_1);
@@ -153,8 +145,7 @@ TEST_CASE("PeriodSets are deserialized", "[deserializer][periodset]") {
     unique_ptr<PeriodSet> period_set_2 = r.nextPeriodSet();
     set<Period> actual_2 = period_set_2->periods();
     set<Period> expected_2 = {
-        Period(unix_time_point(2012, 1, 1), unix_time_point(2012, 4, 1), true,
-               false),
+        Period(unix_time_point(2012, 1, 1), unix_time_point(2012, 4, 1), true, false),
     };
     auto x_2 = UnorderedEquals(expected_2);
     REQUIRE_THAT(actual_2, x_2);

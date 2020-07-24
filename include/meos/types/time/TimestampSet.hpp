@@ -6,6 +6,7 @@
 #include <meos/types/time/Period.hpp>
 #include <meos/util/serializing.hpp>
 #include <set>
+#include <string>
 
 using namespace std;
 

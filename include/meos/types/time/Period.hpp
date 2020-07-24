@@ -3,6 +3,7 @@
 
 #include <chrono>
 #include <iomanip>
+#include <string>
 
 using namespace std;
 
@@ -21,8 +22,8 @@ private:
 
 public:
   Period();
-  Period(time_point const lower, time_point const upper,
-         bool const lower_inc = true, bool const upper_inc = false);
+  Period(time_point const lower, time_point const upper, bool const lower_inc = true,
+         bool const upper_inc = false);
   Period(string const &lower, string const &upper, bool const lower_inc = true,
          bool const upper_inc = false);
   Period(string const &serialized);

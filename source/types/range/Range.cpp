@@ -1,4 +1,5 @@
 #include <meos/types/range/Range.hpp>
+#include <string>
 
 template <typename T>
 Range<T>::Range(T const &lower, T const &upper, bool const lower_inc, bool const upper_inc)

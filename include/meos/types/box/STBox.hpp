@@ -2,9 +2,8 @@
 #define MEOS_TYPES_BOX_STBOX_HPP
 
 #include <chrono>
-#include <string>
-
 #include <meos/types/geom/SRIDMembers.hpp>
+#include <string>
 
 using namespace std;
 
@@ -16,37 +15,31 @@ public:
   STBox(string const &serialized);
 
   // XYZT
-  STBox(double const xmin, double const ymin, double const zmin,
-        time_point const tmin, double const xmax, double const ymax,
-        double const zmax, time_point const tmax, int const srid = 0,
-        bool const geodetic = false);
-  STBox(double const xmin, double const ymin, double const zmin,
-        string const &tmin, double const xmax, double const ymax,
-        double const zmax, string const &tmax, int const srid = 0,
-        bool const geodetic = false);
-
-  // XYZ
-  STBox(double const xmin, double const ymin, double const zmin,
-        double const xmax, double const ymax, double const zmax,
+  STBox(double const xmin, double const ymin, double const zmin, time_point const tmin,
+        double const xmax, double const ymax, double const zmax, time_point const tmax,
+        int const srid = 0, bool const geodetic = false);
+  STBox(double const xmin, double const ymin, double const zmin, string const &tmin,
+        double const xmax, double const ymax, double const zmax, string const &tmax,
         int const srid = 0, bool const geodetic = false);
 
+  // XYZ
+  STBox(double const xmin, double const ymin, double const zmin, double const xmax,
+        double const ymax, double const zmax, int const srid = 0, bool const geodetic = false);
+
   // XYT - geodetic not allowed
-  STBox(double const xmin, double const ymin, time_point const tmin,
-        double const xmax, double const ymax, time_point const tmax,
-        int const srid = 0);
-  STBox(double const xmin, double const ymin, string const &tmin,
-        double const xmax, double const ymax, string const &tmax,
-        int const srid = 0);
+  STBox(double const xmin, double const ymin, time_point const tmin, double const xmax,
+        double const ymax, time_point const tmax, int const srid = 0);
+  STBox(double const xmin, double const ymin, string const &tmin, double const xmax,
+        double const ymax, string const &tmax, int const srid = 0);
 
   // XY - geodetic not allowed
-  STBox(double const xmin, double const ymin, double const xmax,
-        double const ymax, int const srid = 0);
+  STBox(double const xmin, double const ymin, double const xmax, double const ymax,
+        int const srid = 0);
 
   // T
   STBox(time_point const tmin, time_point const tmax, int const srid = 0,
         bool const geodetic = false);
-  STBox(string const &tmin, string const &tmax, int const srid = 0,
-        bool const geodetic = false);
+  STBox(string const &tmin, string const &tmax, int const srid = 0, bool const geodetic = false);
 
   double xmin() const;
   double ymin() const;

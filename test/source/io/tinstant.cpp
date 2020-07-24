@@ -1,16 +1,15 @@
-#include "../common/time_utils.hpp"
 #include <catch2/catch.hpp>
 #include <meos/io/Deserializer.hpp>
 #include <meos/io/Serializer.hpp>
 #include <meos/types/temporal/TInstant.hpp>
 
-TEMPLATE_TEST_CASE("TInstants are serialized", "[serializer][tinst]", int,
-                   float) {
+#include "../common/time_utils.hpp"
+
+TEMPLATE_TEST_CASE("TInstants are serialized", "[serializer][tinst]", int, float) {
   Serializer<TestType> w;
   SECTION("only one value present") {
     auto i = GENERATE(0, 1, -1, 2012, 756772544,
-                      take(100, random(numeric_limits<int>::min(),
-                                       numeric_limits<int>::max())));
+                      take(100, random(numeric_limits<int>::min(), numeric_limits<int>::max())));
     TInstant<TestType> instant(i, unix_time_point(2012, 11, 1));
     REQUIRE(w.write(&instant) == w.write(i) + "@2012-11-01T00:00:00+0000");
     Temporal<TestType> *temporal = &instant;
@@ -18,8 +17,7 @@ TEMPLATE_TEST_CASE("TInstants are serialized", "[serializer][tinst]", int,
   }
 }
 
-TEMPLATE_TEST_CASE("TInstants are deserialized", "[deserializer][tinst]", int,
-                   float) {
+TEMPLATE_TEST_CASE("TInstants are deserialized", "[deserializer][tinst]", int, float) {
   SECTION("only one TInstant present") {
     Deserializer<TestType> r("10@2012-11-01");
 
@@ -31,8 +29,7 @@ TEMPLATE_TEST_CASE("TInstants are deserialized", "[deserializer][tinst]", int,
   }
 
   SECTION("multiple TInstants present") {
-    Deserializer<TestType> r(
-        "10@2012-01-01 00:00:00+00\n12@2012-04-01 00:00:00+00");
+    Deserializer<TestType> r("10@2012-01-01 00:00:00+00\n12@2012-04-01 00:00:00+00");
 
     TInstant<TestType> tinst_1 = *r.nextTInstant().release();
     REQUIRE(tinst_1.getValue() == 10);

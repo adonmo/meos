@@ -1,15 +1,13 @@
 #include <iomanip>
-#include <sstream>
-#include <string>
-
 #include <meos/io/utils.hpp>
 #include <meos/types/time/TimestampSet.hpp>
+#include <sstream>
+#include <string>
 
 TimestampSet::TimestampSet() {}
 
 TimestampSet::TimestampSet(set<time_point> &timestamps) {
-  for (auto const &e : timestamps)
-    m_timestamps.insert(e);
+  for (auto const &e : timestamps) m_timestamps.insert(e);
 }
 
 TimestampSet::TimestampSet(set<string> &timestamps) {
@@ -23,8 +21,7 @@ TimestampSet::TimestampSet(string const &serialized) {
   stringstream ss(serialized);
   TimestampSet timestamp_set;
   ss >> timestamp_set;
-  for (auto const &e : timestamp_set.m_timestamps)
-    m_timestamps.insert(e);
+  for (auto const &e : timestamp_set.m_timestamps) m_timestamps.insert(e);
 }
 
 set<Period> TimestampSet::periods() const {
@@ -72,11 +69,9 @@ Period TimestampSet::periodN(size_t n) const {
  */
 duration_ms TimestampSet::timespan() const { return duration_ms(0); }
 
-unique_ptr<TimestampSet>
-TimestampSet::shift(duration_ms const timedelta) const {
+unique_ptr<TimestampSet> TimestampSet::shift(duration_ms const timedelta) const {
   set<time_point> pset;
-  for (auto const &e : m_timestamps)
-    pset.insert(e + timedelta);
+  for (auto const &e : m_timestamps) pset.insert(e + timedelta);
   return make_unique<TimestampSet>(pset);
 }
 
@@ -126,17 +121,11 @@ bool operator<(TimestampSet const &lhs, TimestampSet const &rhs) {
   return lhs.timestamps() < rhs.timestamps();
 }
 
-bool operator>(TimestampSet const &lhs, TimestampSet const &rhs) {
-  return rhs < lhs;
-}
+bool operator>(TimestampSet const &lhs, TimestampSet const &rhs) { return rhs < lhs; }
 
-bool operator>=(TimestampSet const &lhs, TimestampSet const &rhs) {
-  return !(lhs < rhs);
-}
+bool operator>=(TimestampSet const &lhs, TimestampSet const &rhs) { return !(lhs < rhs); }
 
-bool operator<=(TimestampSet const &lhs, TimestampSet const &rhs) {
-  return !(rhs < lhs);
-}
+bool operator<=(TimestampSet const &lhs, TimestampSet const &rhs) { return !(rhs < lhs); }
 
 istream &operator>>(istream &in, TimestampSet &timestamp_set) {
   char c;
@@ -149,8 +138,7 @@ istream &operator>>(istream &in, TimestampSet &timestamp_set) {
 
   while (true) {
     in >> c;
-    if (c != ',')
-      break;
+    if (c != ',') break;
     s.insert(nextTime(in));
   }
 

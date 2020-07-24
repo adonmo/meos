@@ -1,44 +1,36 @@
 #include <iomanip>
-#include <sstream>
-#include <string>
-
 #include <meos/io/utils.hpp>
 #include <meos/types/time/PeriodSet.hpp>
+#include <sstream>
+#include <string>
 
 PeriodSet::PeriodSet() {}
 
 PeriodSet::PeriodSet(set<unique_ptr<Period>> const &periods) {
-  for (auto const &e : periods)
-    m_periods.insert(e->clone());
+  for (auto const &e : periods) m_periods.insert(e->clone());
 }
 
 PeriodSet::PeriodSet(set<Period> const &periods) {
-  for (auto e : periods)
-    m_periods.insert(e.clone());
+  for (auto e : periods) m_periods.insert(e.clone());
 }
 
 PeriodSet::PeriodSet(PeriodSet const &t) {
-  for (auto const &e : t.m_periods)
-    m_periods.insert(e->clone());
+  for (auto const &e : t.m_periods) m_periods.insert(e->clone());
 }
 
 PeriodSet::PeriodSet(set<string> const &periods) {
   PeriodSet period_set;
-  for (auto const &e : periods)
-    m_periods.insert(make_unique<Period>(e));
+  for (auto const &e : periods) m_periods.insert(make_unique<Period>(e));
 }
 
 PeriodSet::PeriodSet(string const &serialized) {
   stringstream ss(serialized);
   PeriodSet period_set;
   ss >> period_set;
-  for (auto const &e : period_set.m_periods)
-    m_periods.insert(e->clone());
+  for (auto const &e : period_set.m_periods) m_periods.insert(e->clone());
 }
 
-unique_ptr<PeriodSet> PeriodSet::clone() {
-  return make_unique<PeriodSet>(this->m_periods);
-}
+unique_ptr<PeriodSet> PeriodSet::clone() { return make_unique<PeriodSet>(this->m_periods); }
 
 set<Period> PeriodSet::periods() const {
   set<Period> s;
@@ -82,15 +74,13 @@ Period PeriodSet::periodN(size_t n) const {
 
 duration_ms PeriodSet::timespan() const {
   duration_ms result(0);
-  for (auto const &period : m_periods)
-    result += period->timespan();
+  for (auto const &period : m_periods) result += period->timespan();
   return result;
 }
 
 unique_ptr<PeriodSet> PeriodSet::shift(duration_ms const timedelta) const {
   set<unique_ptr<Period>> pset;
-  for (auto const &e : m_periods)
-    pset.insert(e->shift(timedelta));
+  for (auto const &e : m_periods) pset.insert(e->shift(timedelta));
   return make_unique<PeriodSet>(pset);
 }
 
@@ -137,19 +127,13 @@ bool operator!=(PeriodSet const &lhs, PeriodSet const &rhs) {
   return lhs.periods() != rhs.periods();
 }
 
-bool operator<(PeriodSet const &lhs, PeriodSet const &rhs) {
-  return lhs.periods() < rhs.periods();
-}
+bool operator<(PeriodSet const &lhs, PeriodSet const &rhs) { return lhs.periods() < rhs.periods(); }
 
 bool operator>(PeriodSet const &lhs, PeriodSet const &rhs) { return rhs < lhs; }
 
-bool operator>=(PeriodSet const &lhs, PeriodSet const &rhs) {
-  return !(lhs < rhs);
-}
+bool operator>=(PeriodSet const &lhs, PeriodSet const &rhs) { return !(lhs < rhs); }
 
-bool operator<=(PeriodSet const &lhs, PeriodSet const &rhs) {
-  return !(rhs < lhs);
-}
+bool operator<=(PeriodSet const &lhs, PeriodSet const &rhs) { return !(rhs < lhs); }
 
 istream &operator>>(istream &in, PeriodSet &period_set) {
   char c;
@@ -164,8 +148,7 @@ istream &operator>>(istream &in, PeriodSet &period_set) {
 
   while (true) {
     in >> c;
-    if (c != ',')
-      break;
+    if (c != ',') break;
     in >> period;
     s.insert(period.clone());
   }
@@ -175,8 +158,7 @@ istream &operator>>(istream &in, PeriodSet &period_set) {
   }
 
   period_set.m_periods.empty();
-  for (auto const &e : s)
-    period_set.m_periods.insert(e->clone());
+  for (auto const &e : s) period_set.m_periods.insert(e->clone());
 
   return in;
 }

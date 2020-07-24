@@ -7,6 +7,7 @@
 #include <meos/types/temporal/Temporal.hpp>
 #include <meos/types/temporal/TemporalComparators.hpp>
 #include <meos/util/serializing.hpp>
+#include <string>
 #include <type_traits>
 
 using namespace std;

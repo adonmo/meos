@@ -1,24 +1,22 @@
-#include <sstream>
-#include <string>
-
 #include <meos/io/utils.hpp>
 #include <meos/types/time/Period.hpp>
 #include <meos/util/serializing.hpp>
+#include <sstream>
+#include <string>
 
 Period::Period()
     : m_lower(std::chrono::system_clock::from_time_t(0)),
-      m_upper(std::chrono::system_clock::from_time_t(1)), m_lower_inc(true),
+      m_upper(std::chrono::system_clock::from_time_t(1)),
+      m_lower_inc(true),
       m_upper_inc(false) {}
 
-Period::Period(time_point const lower, time_point const upper,
-               bool const lower_inc, bool const upper_inc)
-    : m_lower(lower), m_upper(upper), m_lower_inc(lower_inc),
-      m_upper_inc(upper_inc) {
+Period::Period(time_point const lower, time_point const upper, bool const lower_inc,
+               bool const upper_inc)
+    : m_lower(lower), m_upper(upper), m_lower_inc(lower_inc), m_upper_inc(upper_inc) {
   validate();
 }
 
-Period::Period(string const &lower, string const &upper, bool const lower_inc,
-               bool const upper_inc)
+Period::Period(string const &lower, string const &upper, bool const lower_inc, bool const upper_inc)
     : m_lower_inc(lower_inc), m_upper_inc(upper_inc) {
   stringstream lss(lower);
   this->m_lower = nextTime(lss);
@@ -39,21 +37,18 @@ Period::Period(string const &serialized) {
 }
 
 unique_ptr<Period> Period::clone() {
-  return make_unique<Period>(this->m_lower, this->m_upper, this->m_lower_inc,
-                             this->m_upper_inc);
+  return make_unique<Period>(this->m_lower, this->m_upper, this->m_lower_inc, this->m_upper_inc);
 }
 
 void Period::validate() const {
   if (this->lower() > this->upper()) {
-    throw invalid_argument(
-        "The lower bound must be less than or equal to the upper bound");
+    throw invalid_argument("The lower bound must be less than or equal to the upper bound");
   }
 
   if (this->lower() == this->upper()) {
     bool both_inclusive = this->lower_inc() && this->upper_inc();
     if (!both_inclusive) {
-      throw invalid_argument(
-          "The lower and upper bounds must be inclusive for an instant period");
+      throw invalid_argument("The lower and upper bounds must be inclusive for an instant period");
     }
   }
 }
@@ -64,32 +59,27 @@ time_point Period::upper() const { return this->m_upper; }
 bool Period::lower_inc() const { return this->m_lower_inc; }
 bool Period::upper_inc() const { return this->m_upper_inc; }
 duration_ms Period::timespan() const {
-  return chrono::duration_cast<chrono::milliseconds>(this->upper() -
-                                                     this->lower());
+  return chrono::duration_cast<chrono::milliseconds>(this->upper() - this->lower());
 }
 
 unique_ptr<Period> Period::shift(duration_ms const timedelta) const {
-  return make_unique<Period>(this->lower() + timedelta,
-                             this->upper() + timedelta, this->lower_inc(),
-                             this->upper_inc());
+  return make_unique<Period>(this->lower() + timedelta, this->upper() + timedelta,
+                             this->lower_inc(), this->upper_inc());
 }
 
 bool Period::overlap(Period const &period) const {
   duration_ms const o = chrono::duration_cast<chrono::milliseconds>(
       min(this->upper(), period.upper()) - max(this->lower(), period.lower()));
-  if (o.count() > 0)
-    return true;
-  if (o.count() < 0)
-    return false;
-  return this->lower() < period.lower()
-             ? this->upper_inc() && period.lower_inc()
-             : period.upper_inc() && this->lower_inc();
+  if (o.count() > 0) return true;
+  if (o.count() < 0) return false;
+  return this->lower() < period.lower() ? this->upper_inc() && period.lower_inc()
+                                        : period.upper_inc() && this->lower_inc();
 }
 
 bool Period::contains_timestamp(time_point const timestamp) const {
-  return ((this->lower() < timestamp && timestamp < this->upper()) ||
-          (this->lower_inc() && this->lower() == timestamp) ||
-          (this->upper_inc() && this->upper() == timestamp));
+  return ((this->lower() < timestamp && timestamp < this->upper())
+          || (this->lower_inc() && this->lower() == timestamp)
+          || (this->upper_inc() && this->upper() == timestamp));
 }
 
 int Period::compare(Period const &other) const {
@@ -112,17 +102,11 @@ int Period::compare(Period const &other) const {
   return 0;
 }
 
-bool operator==(Period const &lhs, Period const &rhs) {
-  return lhs.compare(rhs) == 0;
-}
+bool operator==(Period const &lhs, Period const &rhs) { return lhs.compare(rhs) == 0; }
 
-bool operator!=(Period const &lhs, Period const &rhs) {
-  return lhs.compare(rhs) != 0;
-}
+bool operator!=(Period const &lhs, Period const &rhs) { return lhs.compare(rhs) != 0; }
 
-bool operator<(Period const &lhs, Period const &rhs) {
-  return lhs.compare(rhs) == -1;
-}
+bool operator<(Period const &lhs, Period const &rhs) { return lhs.compare(rhs) == -1; }
 
 bool operator>(Period const &lhs, Period const &rhs) { return rhs < lhs; }
 
@@ -152,7 +136,7 @@ istream &operator>>(istream &in, Period &period) {
 ostream &operator<<(ostream &os, Period const &period) {
   auto opening = period.lower_inc() ? "[" : "(";
   auto closing = period.upper_inc() ? "]" : ")";
-  os << opening << write_ISO8601_time(period.lower()) << ", "
-     << write_ISO8601_time(period.upper()) << closing;
+  os << opening << write_ISO8601_time(period.lower()) << ", " << write_ISO8601_time(period.upper())
+     << closing;
   return os;
 }

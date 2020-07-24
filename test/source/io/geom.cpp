@@ -1,6 +1,7 @@
 #include <catch2/catch.hpp>
 #include <meos/io/Deserializer.hpp>
 #include <meos/io/Serializer.hpp>
+#include <string>
 
 TEST_CASE("geometries are serialized", "[serializer][geom]") {
   Serializer<Geometry> w;
@@ -29,8 +30,7 @@ TEST_CASE("geometries are deserialized", "[deserializer][geom]") {
   Geometry g;
 
   SECTION("Without SRID") {
-    string serialized =
-        "POINT (" + to_string(expectedX) + " " + to_string(expectedY) + ")";
+    string serialized = "POINT (" + to_string(expectedX) + " " + to_string(expectedY) + ")";
     Deserializer<Geometry> r(serialized);
 
     g = r.nextValue();
@@ -39,8 +39,8 @@ TEST_CASE("geometries are deserialized", "[deserializer][geom]") {
 
   SECTION("With SRID") {
     expected_srid = 4326;
-    string serialized = "SRID=4326;POINT (" + to_string(expectedX) + " " +
-                        to_string(expectedY) + ")";
+    string serialized
+        = "SRID=4326;POINT (" + to_string(expectedX) + " " + to_string(expectedY) + ")";
     Deserializer<Geometry> r(serialized);
 
     g = r.nextValue();
@@ -70,8 +70,8 @@ TEST_CASE("geometries are deserialized", "[deserializer][geom]") {
 
   SECTION("ending with @ should work") {
     expected_srid = 4326;
-    string serialized = "SRID=4326;POINT (" + to_string(expectedX) + " " +
-                        to_string(expectedY) + ")@";
+    string serialized
+        = "SRID=4326;POINT (" + to_string(expectedX) + " " + to_string(expectedY) + ")@";
     Deserializer<Geometry> r(serialized);
 
     g = r.nextValue();
@@ -90,8 +90,8 @@ TEST_CASE("geometry serdes", "[serializer][deserializer][geom]") {
   SECTION("only one geometry present") {
     int expectedX = GENERATE(take(10, random(-1000, 1000)));
     int expectedY = GENERATE(take(10, random(-1000, 1000)));
-    string expected_serialized =
-        "POINT (" + to_string(expectedX) + " " + to_string(expectedY) + ")";
+    string expected_serialized
+        = "POINT (" + to_string(expectedX) + " " + to_string(expectedY) + ")";
     Geometry g(expectedX, expectedY);
     string serialized = w.write(g);
     REQUIRE(serialized == expected_serialized);

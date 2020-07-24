@@ -1,28 +1,23 @@
-#include <sstream>
-
 #include <meos/io/utils.hpp>
 #include <meos/types/box/TBox.hpp>
 #include <meos/util/serializing.hpp>
+#include <sstream>
+#include <string>
 
 TBox::TBox() {}
 
-TBox::TBox(double const xmin, time_point const tmin, double const xmax,
-           time_point const tmax)
+TBox::TBox(double const xmin, time_point const tmin, double const xmax, time_point const tmax)
     : m_xmin(xmin), m_tmin(tmin), m_xmax(xmax), m_tmax(tmax) {
   validate();
 }
 
-TBox::TBox(double const xmin, double const xmax) : m_xmin(xmin), m_xmax(xmax) {
+TBox::TBox(double const xmin, double const xmax) : m_xmin(xmin), m_xmax(xmax) { validate(); }
+
+TBox::TBox(time_point const tmin, time_point const tmax) : m_tmin(tmin), m_tmax(tmax) {
   validate();
 }
 
-TBox::TBox(time_point const tmin, time_point const tmax)
-    : m_tmin(tmin), m_tmax(tmax) {
-  validate();
-}
-
-TBox::TBox(double const xmin, string const &tmin, double const xmax,
-           string const &tmax)
+TBox::TBox(double const xmin, string const &tmin, double const xmax, string const &tmax)
     : m_xmin(xmin), m_xmax(xmax) {
   stringstream lss(tmin);
   this->m_tmin = nextTime(lss);
@@ -31,8 +26,7 @@ TBox::TBox(double const xmin, string const &tmin, double const xmax,
   validate();
 }
 
-TBox::TBox(string const &xmin, string const &tmin, string const &xmax,
-           string const &tmax)
+TBox::TBox(string const &xmin, string const &tmin, string const &xmax, string const &tmax)
     : m_xmin(atof(xmin.c_str())), m_xmax(atof(xmax.c_str())) {
   stringstream lss(tmin);
   this->m_tmin = nextTime(lss);
@@ -68,9 +62,7 @@ double TBox::xmax() const { return this->m_xmax; }
 time_point TBox::tmax() const { return this->m_tmax; }
 
 bool TBox::xset() const { return this->m_xmin != -INFINITY; }
-bool TBox::tset() const {
-  return this->m_tmin != time_point(time_point::duration::min());
-}
+bool TBox::tset() const { return this->m_tmin != time_point(time_point::duration::min()); }
 
 int TBox::compare(TBox const &other) const {
   if (tmin() < other.tmin())
@@ -92,17 +84,11 @@ int TBox::compare(TBox const &other) const {
   return 0;
 }
 
-bool operator==(TBox const &lhs, TBox const &rhs) {
-  return lhs.compare(rhs) == 0;
-}
+bool operator==(TBox const &lhs, TBox const &rhs) { return lhs.compare(rhs) == 0; }
 
-bool operator!=(TBox const &lhs, TBox const &rhs) {
-  return lhs.compare(rhs) != 0;
-}
+bool operator!=(TBox const &lhs, TBox const &rhs) { return lhs.compare(rhs) != 0; }
 
-bool operator<(TBox const &lhs, TBox const &rhs) {
-  return lhs.compare(rhs) == -1;
-}
+bool operator<(TBox const &lhs, TBox const &rhs) { return lhs.compare(rhs) == -1; }
 
 bool operator>(TBox const &lhs, TBox const &rhs) { return rhs < lhs; }
 
@@ -174,22 +160,18 @@ ostream &operator<<(ostream &os, TBox const &tbox) {
   os << "TBOX(";
 
   if (tbox.xset() && tbox.tset()) {
-
     // Example: TBOX((1.0, 2000-01-01), (2.0, 2000-01-02))
-    os << "(" << tbox.xmin() << ", " << write_ISO8601_time(tbox.tmin())
-       << "), (" << tbox.xmax() << ", " << write_ISO8601_time(tbox.tmax())
-       << ")";
+    os << "(" << tbox.xmin() << ", " << write_ISO8601_time(tbox.tmin()) << "), (" << tbox.xmax()
+       << ", " << write_ISO8601_time(tbox.tmax()) << ")";
 
   } else if (tbox.xset()) {
-
     // Example: TBOX((1.0,), (2.0,))
     os << "(" << tbox.xmin() << ",), (" << tbox.xmax() << ",)";
 
   } else if (tbox.tset()) {
-
     // Example: TBOX((, 2000-01-01), (, 2000-01-02))
-    os << "(, " << write_ISO8601_time(tbox.tmin()) << "), (, "
-       << write_ISO8601_time(tbox.tmax()) << ")";
+    os << "(, " << write_ISO8601_time(tbox.tmin()) << "), (, " << write_ISO8601_time(tbox.tmax())
+       << ")";
   }
 
   os << ")";

@@ -1,6 +1,7 @@
-#include "../../common/utils.hpp"
 #include <catch2/catch.hpp>
 #include <meos/types/range/Range.hpp>
+
+#include "../../common/utils.hpp"
 
 TEMPLATE_TEST_CASE("Range shift", "[range]", int, float) {
   auto lower_inc = GENERATE(true, false);
