@@ -152,7 +152,7 @@ template <> bool Deserializer<bool>::nextValue() {
   if (end_pos == string::npos) {
     end_pos = in.end() - in.begin();
   }
-  int length = end_pos - current_pos;
+  size_t length = end_pos - current_pos;
   string input = in.substr(current_pos, length);
   transform(input.begin(), input.end(), input.begin(), ::tolower);
 
@@ -195,7 +195,7 @@ template <> string Deserializer<string>::nextValue() {
   if (end_pos == string::npos) {
     end_pos = in.end() - in.begin();
   }
-  int length = end_pos - current_pos;
+  size_t length = end_pos - current_pos;
   string input = in.substr(current_pos, length);
 
   // Skip double quotes if present
@@ -261,7 +261,7 @@ template <typename T> void Deserializer<T>::skipChars(string const &chars) {
   if (end_pos == string::npos) {
     end_pos = in.end() - in.begin();
   }
-  int length = end_pos - current_pos;
+  size_t length = end_pos - current_pos;
   iter += length;
 }
 

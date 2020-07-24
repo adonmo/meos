@@ -8,6 +8,10 @@
 
 using namespace std;
 
+#ifdef _MSC_VER
+#  define timegm _mkgmtime
+#endif
+
 template <typename T> T nextValue(istream &) {
   // Check specialized template functions below for supported types
   throw std::invalid_argument("Unsupported type");
@@ -46,7 +50,7 @@ template <> float nextValue(istream &in) {
 template <> string nextValue(istream &in) {
   in >> std::ws;
   string input = read_until_one_of(in, "@");
-  int length = input.length();
+  size_t length = input.length();
 
   // Skip double quotes if present
   if (length >= 2 && input[0] == '"' && input[input.length() - 1] == '"') {
@@ -142,7 +146,8 @@ string normalized_ISO8601(string s) {
     size_t tz_pos = s.find_first_of("+-Z", 21, 3);
     if (21 <= tz_pos && tz_pos <= 23) {
       // TZ also present
-      string zero_padded_ms = string('0', 23 - tz_pos);
+      size_t zeros = 23 - tz_pos;
+      string zero_padded_ms = string('0', zeros);
       string tz = s.substr(20);
       if (tz.length() == 2) {
         tz += "00";
@@ -155,7 +160,8 @@ string normalized_ISO8601(string s) {
       s = s.substr(0, 19) + zero_padded_ms + "+" + tz;
     } else if (tz_pos == string::npos) {
       // TZ not present
-      string zero_padded_ms = string('0', 23 - s.size());
+      size_t zeros = 23 - s.size();
+      string zero_padded_ms = string('0', zeros);
       s = s.substr(0, 19) + zero_padded_ms + "+0000";
     } else {
       // TZ also (possibly) present, but beyond three characters
@@ -203,7 +209,7 @@ time_point nextTime(istream &in) {
   in >> std::ws;
   string s = read_until_one_of(in, ",)]}\n");
   s = trim(s);
-  int length = s.length();
+  size_t length = s.length();
 
   if (length != 28) {
     // We assume normalized patterns going forward (length 24)

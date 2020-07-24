@@ -4,6 +4,11 @@
 #include <sstream>
 #include <string>
 
+// For min() and max() to work on MSVC
+#ifdef _MSC_VER
+#  include <windows.h>
+#endif
+
 Period::Period()
     : m_lower(std::chrono::system_clock::from_time_t(0)),
       m_upper(std::chrono::system_clock::from_time_t(1)),
@@ -59,7 +64,7 @@ time_point Period::upper() const { return this->m_upper; }
 bool Period::lower_inc() const { return this->m_lower_inc; }
 bool Period::upper_inc() const { return this->m_upper_inc; }
 duration_ms Period::timespan() const {
-  return chrono::duration_cast<chrono::milliseconds>(this->upper() - this->lower());
+  return chrono::duration_cast<duration_ms>(this->upper() - this->lower());
 }
 
 unique_ptr<Period> Period::shift(duration_ms const timedelta) const {
@@ -68,8 +73,8 @@ unique_ptr<Period> Period::shift(duration_ms const timedelta) const {
 }
 
 bool Period::overlap(Period const &period) const {
-  duration_ms const o = chrono::duration_cast<chrono::milliseconds>(
-      min(this->upper(), period.upper()) - max(this->lower(), period.lower()));
+  duration_ms const o = chrono::duration_cast<duration_ms>(min(this->upper(), period.upper())
+                                                           - max(this->lower(), period.lower()));
   if (o.count() > 0) return true;
   if (o.count() < 0) return false;
   return this->lower() < period.lower() ? this->upper_inc() && period.lower_inc()

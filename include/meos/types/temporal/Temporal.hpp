@@ -8,6 +8,7 @@
 #include <meos/types/time/Period.hpp>
 #include <meos/types/time/PeriodSet.hpp>
 #include <meos/types/time/TimestampSet.hpp>
+#include <tuple>
 #include <type_traits>
 
 using namespace std;

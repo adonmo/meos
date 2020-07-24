@@ -1,6 +1,11 @@
 #include <meos/types/range/Range.hpp>
 #include <string>
 
+// For min() and max() to work on MSVC
+#ifdef _MSC_VER
+#  include <windows.h>
+#endif
+
 template <typename T>
 Range<T>::Range(T const &lower, T const &upper, bool const lower_inc, bool const upper_inc)
     : m_lower(lower), m_upper(upper), m_lower_inc(lower_inc), m_upper_inc(upper_inc) {}
