@@ -12,8 +12,8 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        # TODO fix builds for macos-latest, windows-latest and include
-        os: [ubuntu-latest]
+        # TODO fix builds for windows-latest and include
+        os: [ubuntu-latest, macos-latest]
 
     steps:
     - uses: actions/checkout@v2
