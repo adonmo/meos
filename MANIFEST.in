@@ -2,4 +2,4 @@ include LICENSE
 include VERSION
 
 graft include
-graft pybind/include
+graft pymeos/include

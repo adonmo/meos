@@ -103,12 +103,12 @@ class PyBind11Include:
 
 geos_paths = get_geos_paths()
 
-sources = ['pybind/source/pybind.cpp']
+sources = ['pymeos/source/pybind.cpp']
 for root, dirnames, filenames in os.walk('./source'):
     for filename in fnmatch.filter(filenames, '*.cpp'):
         sources.append(os.path.join(root, filename))
 
-include_dirs = ['include', 'pybind/include', PyBind11Include()] + geos_paths.get("include_dirs", [])
+include_dirs = ['include', 'pymeos/include', PyBind11Include()] + geos_paths.get("include_dirs", [])
 library_dirs = geos_paths.get("library_dirs", [])
 libraries = geos_paths.get("libraries", [])
 
@@ -124,7 +124,7 @@ extra_link_args = geos_paths.get("extra_link_args", [])
 setup(
     ext_modules=[
         Extension(
-            'pymeos',
+            '_pymeos',
             sources,
             include_dirs=include_dirs,
             library_dirs=library_dirs,

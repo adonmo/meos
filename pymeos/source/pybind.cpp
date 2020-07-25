@@ -14,7 +14,7 @@
 
 namespace py = pybind11;
 
-PYBIND11_MODULE(pymeos, m) {
+PYBIND11_MODULE(_pymeos, m) {
   // TODO will we ever get a chance to do finish_geos()?
   init_geos();
 
