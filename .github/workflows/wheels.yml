@@ -36,7 +36,7 @@ jobs:
         CIBW_SKIP: pp27* cp27* *win32 *i686
         CIBW_BEFORE_BUILD_LINUX: bash scripts/prepare_for_build.sh
         CIBW_BEFORE_BUILD_MACOS: brew install geos
-        CIBW_ENVIRONMENT_WINDOWS: 'GEOS_LIBRARY_PATH="C:/Program Files (x86)/GEOS/bin/geos_c.dll" GEOS_INCLUDE_PATH="C:/Program Files (x86)/GEOS/include"'
+        CIBW_ENVIRONMENT_WINDOWS: 'PATH="C:/Program Files (x86)/GEOS/bin;$PATH" GEOS_LIBRARY_PATH="C:/Program Files (x86)/GEOS/lib" GEOS_INCLUDE_PATH="C:/Program Files (x86)/GEOS/include"'
         CIBW_BEFORE_BUILD_WINDOWS: bash scripts/prepare_for_build.sh
         CIBW_BEFORE_TEST: pip install -r test/python/requirements.txt
         CIBW_TEST_COMMAND: pytest {project}/test/python
