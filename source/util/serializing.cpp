@@ -16,6 +16,7 @@ std::string write_ISO8601_time(time_point const &t) {
     textStream << "." << std::setfill('0') << std::setw(3) << millis;
   }
 
-  textStream << std::put_time(gmtime(&tt), "%z");
+  // We only output time in UTC
+  textStream << "+0000";
   return textStream.str();
 }
