@@ -11,8 +11,8 @@
 - Functionality over performance (for now)
 
 ### Projects built using MEOS
-MEOS aims to the base on which more libraries can be built. Right now work is underway for the following to be rewritten on top of MEOS/PyMEOS:
-- [mobilitydb-sqlalchemy](mobilitydb-sqlalchemy) - The SQLAchemy bindings for MobilityDB. (WIP in [meos branch](https://github.com/adonmo/mobilitydb-sqlalchemy/tree/meos))
+MEOS aims to the base on which more libraries can be built. The following projects are built on top of (or experimenting with) MEOS/PyMEOS:
+- [mobilitydb-sqlalchemy](mobilitydb-sqlalchemy) - The SQLAchemy bindings for MobilityDB.
 - [MobilityDB-python](https://github.com/MobilityDB/MobilityDB-python/) - The official python driver for MobilityDB. (WIP [pull request](https://github.com/MobilityDB/MobilityDB-python/pull/4))
 
 # Usage
