@@ -2,7 +2,7 @@
 
 ![MEOS Logo](https://i.imgur.com/ppfYUeT.png)
 
-**MEOS (Mobility Engine, Open Source)** is a C++ library which makes it easy to work with temporal and spatio-temporal data. It is based on [MobilityDB](https://github.com/ULB-CoDE-WIT/MobilityDB)'s data types and functions. MEOS's code is heavily inspired from a similar library called [GEOS](https://github.com/libgeos/geos) - hence the name. This repository also includes **PyMEOS** - python bindings to MEOS using [pybind11](https://github.com/pybind/pybind11).
+**MEOS (Mobility Engine, Open Source)** is a C++ library which makes it easy to work with temporal and spatio-temporal data. It is based on [MobilityDB](https://github.com/MobilityDB/MobilityDB)'s data types and functions. MEOS's code is heavily inspired from a similar library called [GEOS](https://github.com/libgeos/geos) - hence the name. This repository also includes **PyMEOS** - python bindings to MEOS using [pybind11](https://github.com/pybind/pybind11).
 
 ### Design goals and tenets
 - Extensibility
@@ -12,7 +12,7 @@
 
 ### Projects built using MEOS
 MEOS aims to the base on which more libraries can be built. The following projects are built on top of (or experimenting with) MEOS/PyMEOS:
-- [mobilitydb-sqlalchemy](mobilitydb-sqlalchemy) - The SQLAchemy bindings for MobilityDB.
+- [mobilitydb-sqlalchemy](mobilitydb-sqlalchemy) - The SQLAlchemy bindings for MobilityDB.
 - [MobilityDB-python](https://github.com/MobilityDB/MobilityDB-python/) - The official python driver for MobilityDB. (WIP [pull request](https://github.com/MobilityDB/MobilityDB-python/pull/4))
 
 # Usage
