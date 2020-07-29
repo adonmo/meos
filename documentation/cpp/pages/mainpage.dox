@@ -1,0 +1,31 @@
+/** @mainpage &nbsp;
+
+  @image html https://i.imgur.com/ppfYUeT.png width=256px
+
+  <br/>
+
+  <b>MEOS (Mobility Engine, Open Source)</b> is a C++ library which makes it easy to work with temporal and spatio-temporal data. It is based on [MobilityDB](https://github.com/MobilityDB/MobilityDB)'s data types and functions. MEOS's code is heavily inspired from a similar library called [GEOS](https://github.com/libgeos/geos) - hence the name.
+
+  @section mainpage-design-goals Design goals and tenets
+  <ul>
+    <li>Extensibility</li>
+    <li>Ease of use and getting started</li>
+    <li>Interoperability</li>
+    <li>Functionality over performance (for now)</li>
+  </ul>
+
+  @section mainpage-docs-howto C++ Documentation
+
+  This website contains documentation for the C++ APIs of MEOS.
+
+  <h2>API Reference</h2>
+  <ul>
+    <li><a href="annotated.html">Classes</a></li>
+    <li><a href="files.html">Files</a></li>
+  </ul>
+  <p><small>💡 Tip: Press <b>Tab</b> anytime for quick search</small></p>
+
+  <h2>About</h2>
+  <p>Learn more <a href="about.html">about MEOS project</a></p>
+  <p>Looking for PyMEOS? Check the [python documentation](https://pymeos.netlify.app/) site instead.</p>
+*/
