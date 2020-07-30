@@ -42,7 +42,8 @@ template <> void TInstantSet<Geometry>::validate() {
 template <typename BaseType> TInstantSet<BaseType>::TInstantSet() {}
 
 template <typename BaseType>
-TInstantSet<BaseType>::TInstantSet(set<TInstant<BaseType>> const &instants) : m_instants(instants) {
+TInstantSet<BaseType>::TInstantSet(set<TInstant<BaseType>> const &instants)
+    : TemporalSet<BaseType>(instants) {
   validate();
 }
 
@@ -64,7 +65,7 @@ template <typename BaseType> TInstantSet<BaseType>::TInstantSet(string const &se
 
 template <typename BaseType> template <typename B, typename is_geometry<B>::type *>
 TInstantSet<BaseType>::TInstantSet(set<TInstant<BaseType>> const &instants, int srid)
-    : m_instants(instants) {
+    : TemporalSet<BaseType>(instants) {
   this->m_srid = srid;
   validate();
 }
@@ -161,10 +162,6 @@ template <> int TInstantSet<Geometry>::compare(Temporal<Geometry> const &other) 
   return 0;
 }
 
-template <typename BaseType> set<TInstant<BaseType>> TInstantSet<BaseType>::instants() const {
-  return this->m_instants;
-}
-
 template <typename BaseType> duration_ms TInstantSet<BaseType>::timespan() const {
   return duration_ms(0);
 }
@@ -177,17 +174,9 @@ template <typename BaseType> set<Range<BaseType>> TInstantSet<BaseType>::getValu
   return s;
 }
 
-template <typename BaseType> set<time_point> TInstantSet<BaseType>::timestamps() const {
-  set<time_point> s;
-  for (auto const &e : this->m_instants) {
-    s.insert(e.getTimestamp());
-  }
-  return s;
-}
-
 template <typename BaseType> PeriodSet TInstantSet<BaseType>::getTime() const {
   set<Period> s;
-  for (auto const &e : instants()) {
+  for (auto const &e : this->instants()) {
     s.insert(e.period());
   }
   return PeriodSet(s);

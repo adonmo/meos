@@ -1,14 +1,11 @@
 #ifndef MEOS_TYPES_TEMPORAL_TSEQUENCE_HPP
 #define MEOS_TYPES_TEMPORAL_TSEQUENCE_HPP
 
-#include <meos/io/utils.hpp>
 #include <meos/types/geom/Geometry.hpp>
 #include <meos/types/temporal/Interpolation.hpp>
 #include <meos/types/temporal/TInstant.hpp>
-#include <meos/types/temporal/TInstantFunctions.hpp>
 #include <meos/types/temporal/Temporal.hpp>
-#include <meos/types/temporal/TemporalComparators.hpp>
-#include <meos/util/serializing.hpp>
+#include <meos/types/temporal/TemporalSet.hpp>
 #include <set>
 #include <string>
 
@@ -17,10 +14,7 @@ using namespace std;
 using time_point = std::chrono::system_clock::time_point;
 using duration_ms = std::chrono::milliseconds;
 
-template <typename BaseType = float> class TSequence
-    : public Temporal<BaseType>,
-      public TemporalComparators<TSequence<BaseType>>,
-      public TInstantFunctions<TSequence<BaseType>, TInstant<BaseType>, BaseType> {
+template <typename BaseType = float> class TSequence : public TemporalSet<BaseType> {
 public:
   TSequence();
   TSequence(set<TInstant<BaseType>> &instants_, bool lower_inc = true, bool upper_inc = false,
@@ -57,14 +51,9 @@ public:
 
   TemporalDuration duration() const override { return TemporalDuration::Sequence; };
 
-  /**
-   * Set of instants.
-   */
-  set<TInstant<BaseType>> instants() const;
   Interpolation interpolation() const;
   duration_ms timespan() const override;
   set<Range<BaseType>> getValues() const override;
-  set<time_point> timestamps() const override;
   PeriodSet getTime() const override;
   Period period() const override;
   unique_ptr<TSequence<BaseType>> shift(duration_ms const timedelta) const;
@@ -85,7 +74,6 @@ public:
   void validate();
 
 private:
-  set<TInstant<BaseType>> m_instants;
   bool m_lower_inc;
   bool m_upper_inc;
   Interpolation m_interpolation;

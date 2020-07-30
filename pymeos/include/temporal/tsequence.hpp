@@ -6,22 +6,19 @@
 #include <meos/types/temporal/Interpolation.hpp>
 #include <meos/types/temporal/TInstant.hpp>
 #include <meos/types/temporal/TSequence.hpp>
+#include <meos/types/temporal/TemporalSet.hpp>
 #include <sstream>
 #include <string>
 
-#include "common.hpp"
+#include "temporalset.hpp"
 
 namespace py = pybind11;
 
 template <typename BaseType> using py_tsequence
-    = py::class_<TSequence<BaseType>, Temporal<BaseType>, TemporalComparators<TSequence<BaseType>>,
-                 TInstantFunctions<TSequence<BaseType>, TInstant<BaseType>, BaseType>>;
+    = py::class_<TSequence<BaseType>, TemporalSet<BaseType>>;
 
 template <typename BaseType>
 py_tsequence<BaseType> _def_tsequence_class_basic(py::module &m, std::string const &typesuffix) {
-  def_comparator<TemporalComparators<TSequence<BaseType>>>(m, "TSequence", typesuffix);
-  def_tinstant_functions<TInstantFunctions<TSequence<BaseType>, TInstant<BaseType>, BaseType>>(
-      m, "TSequence", typesuffix);
   return py_tsequence<BaseType>(m, ("TSequence" + typesuffix).c_str())
       .def(py::init<set<TInstant<BaseType>> &, bool, bool, Interpolation>(), py::arg("instants"),
            py::arg("lower_inc") = true, py::arg("upper_inc") = false,
@@ -49,11 +46,9 @@ py_tsequence<BaseType> _def_tsequence_class_basic(py::module &m, std::string con
       .def_property_readonly("lower_inc", &TSequence<BaseType>::lower_inc)
       .def_property_readonly("upper_inc", &TSequence<BaseType>::upper_inc)
       .def_property_readonly("duration", &TSequence<BaseType>::duration)
-      .def_property_readonly("instants", &TSequence<BaseType>::instants)
       .def_property_readonly("interpolation", &TSequence<BaseType>::interpolation)
       .def_property_readonly("timespan", &TSequence<BaseType>::timespan)
       .def_property_readonly("getValues", &TSequence<BaseType>::getValues)
-      .def_property_readonly("timestamps", &TSequence<BaseType>::timestamps)
       .def_property_readonly("getTime", &TSequence<BaseType>::getTime)
       .def_property_readonly("period", &TSequence<BaseType>::period)
       .def("shift", &TSequence<BaseType>::shift, py::arg("timedelta"))

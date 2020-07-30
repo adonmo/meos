@@ -5,23 +5,19 @@
 
 #include <meos/types/temporal/TInstant.hpp>
 #include <meos/types/temporal/TInstantSet.hpp>
+#include <meos/types/temporal/TemporalSet.hpp>
 #include <string>
 
-#include "common.hpp"
+#include "temporalset.hpp"
 
 namespace py = pybind11;
 
 template <typename BaseType> using py_tinstantset
-    = py::class_<TInstantSet<BaseType>, Temporal<BaseType>,
-                 TemporalComparators<TInstantSet<BaseType>>,
-                 TInstantFunctions<TInstantSet<BaseType>, TInstant<BaseType>, BaseType>>;
+    = py::class_<TInstantSet<BaseType>, TemporalSet<BaseType>>;
 
 template <typename BaseType>
 py_tinstantset<BaseType> _def_tinstantset_class_basic(py::module &m,
                                                       std::string const &typesuffix) {
-  def_comparator<TemporalComparators<TInstantSet<BaseType>>>(m, "TInstantSet", typesuffix);
-  def_tinstant_functions<TInstantFunctions<TInstantSet<BaseType>, TInstant<BaseType>, BaseType>>(
-      m, "TInstantSet", typesuffix);
   return py_tinstantset<BaseType>(m, ("TInstantSet" + typesuffix).c_str())
       .def(py::init<set<TInstant<BaseType>> &>(), py::arg("instants"))
       .def(py::init<set<string> &>(), py::arg("instants"))
@@ -36,10 +32,8 @@ py_tinstantset<BaseType> _def_tinstantset_class_basic(py::module &m,
       .def("__repr__", &to_ostream<TInstantSet<BaseType>>)
       .def("compare", &TInstantSet<BaseType>::compare, py::arg("other"))
       .def_property_readonly("duration", &TInstantSet<BaseType>::duration)
-      .def_property_readonly("instants", &TInstantSet<BaseType>::instants)
       .def_property_readonly("timespan", &TInstantSet<BaseType>::timespan)
       .def_property_readonly("getValues", &TInstantSet<BaseType>::getValues)
-      .def_property_readonly("timestamps", &TInstantSet<BaseType>::timestamps)
       .def_property_readonly("getTime", &TInstantSet<BaseType>::getTime)
       .def_property_readonly("period", &TInstantSet<BaseType>::period)
       .def("shift", &TInstantSet<BaseType>::shift, py::arg("timedelta"))

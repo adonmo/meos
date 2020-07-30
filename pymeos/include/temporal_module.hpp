@@ -8,6 +8,7 @@
 
 #include "common.hpp"
 #include "temporal/temporal.hpp"
+#include "temporal/temporalset.hpp"
 #include "temporal/tinstant.hpp"
 #include "temporal/tinstantset.hpp"
 #include "temporal/tsequence.hpp"
@@ -18,6 +19,7 @@ namespace py = pybind11;
 template <typename BaseType> void def_temporal_types(py::module &m, std::string const &typesuffix) {
   def_temporal_class<BaseType>(m, typesuffix);
   def_tinstant_class<BaseType>(m, typesuffix);
+  def_temporalset_class<BaseType>(m, typesuffix);
   def_tinstantset_class<BaseType>(m, typesuffix);
   def_tsequence_class<BaseType>(m, typesuffix);
   def_tsequenceset_class<BaseType>(m, typesuffix);

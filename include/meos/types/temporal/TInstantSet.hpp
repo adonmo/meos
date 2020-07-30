@@ -1,13 +1,10 @@
 #ifndef MEOS_TYPES_TEMPORAL_TINSTANTSET_HPP
 #define MEOS_TYPES_TEMPORAL_TINSTANTSET_HPP
 
-#include <meos/io/utils.hpp>
 #include <meos/types/geom/Geometry.hpp>
 #include <meos/types/temporal/TInstant.hpp>
-#include <meos/types/temporal/TInstantFunctions.hpp>
 #include <meos/types/temporal/Temporal.hpp>
-#include <meos/types/temporal/TemporalComparators.hpp>
-#include <meos/util/serializing.hpp>
+#include <meos/types/temporal/TemporalSet.hpp>
 #include <set>
 #include <string>
 
@@ -16,10 +13,7 @@ using namespace std;
 using time_point = std::chrono::system_clock::time_point;
 using duration_ms = std::chrono::milliseconds;
 
-template <typename BaseType = float> class TInstantSet
-    : public Temporal<BaseType>,
-      public TemporalComparators<TInstantSet<BaseType>>,
-      public TInstantFunctions<TInstantSet<BaseType>, TInstant<BaseType>, BaseType> {
+template <typename BaseType = float> class TInstantSet : public TemporalSet<BaseType> {
 public:
   TInstantSet();
   TInstantSet(set<TInstant<BaseType>> const &instants);
@@ -44,14 +38,8 @@ public:
 
   TemporalDuration duration() const override { return TemporalDuration::InstantSet; };
 
-  /**
-   * Set of instants.
-   */
-  set<TInstant<BaseType>> instants() const;
-
   duration_ms timespan() const override;
   set<Range<BaseType>> getValues() const override;
-  set<time_point> timestamps() const override;
   PeriodSet getTime() const override;
   Period period() const override;
   unique_ptr<TInstantSet<BaseType>> shift(duration_ms const timedelta) const;
@@ -69,8 +57,6 @@ public:
   }
 
 private:
-  set<TInstant<BaseType>> m_instants;
-
   void validate();
 
   /**

@@ -42,7 +42,7 @@ template <typename BaseType> TSequence<BaseType>::TSequence() {}
 template <typename BaseType>
 TSequence<BaseType>::TSequence(set<TInstant<BaseType>> &instants, bool lower_inc, bool upper_inc,
                                Interpolation interpolation)
-    : m_instants(instants),
+    : TemporalSet<BaseType>(instants),
       m_lower_inc(lower_inc),
       m_upper_inc(upper_inc),
       m_interpolation(interpolation) {
@@ -54,7 +54,7 @@ TSequence<BaseType>::TSequence(set<string> const &instants, bool lower_inc, bool
                                Interpolation interpolation)
     : m_lower_inc(lower_inc), m_upper_inc(upper_inc), m_interpolation(interpolation) {
   TSequence<BaseType> instant_set;
-  for (auto const &e : instants) m_instants.insert(TInstant<BaseType>(e));
+  for (auto const &e : instants) this->m_instants.insert(TInstant<BaseType>(e));
   validate();
 }
 
@@ -72,7 +72,7 @@ template <typename BaseType> TSequence<BaseType>::TSequence(string const &serial
 template <typename BaseType> template <typename B, typename is_geometry<B>::type *>
 TSequence<BaseType>::TSequence(set<TInstant<BaseType>> &instants, bool lower_inc, bool upper_inc,
                                int srid, Interpolation interpolation)
-    : m_instants(instants),
+    : TemporalSet<BaseType>(instants),
       m_lower_inc(lower_inc),
       m_upper_inc(upper_inc),
       m_interpolation(interpolation) {
@@ -85,7 +85,7 @@ TSequence<BaseType>::TSequence(set<string> const &instants, bool lower_inc, bool
                                int srid, Interpolation interpolation)
     : m_lower_inc(lower_inc), m_upper_inc(upper_inc), m_interpolation(interpolation) {
   TSequence<BaseType> instant_set;
-  for (auto const &e : instants) m_instants.insert(TInstant<BaseType>(e));
+  for (auto const &e : instants) this->m_instants.insert(TInstant<BaseType>(e));
   this->m_srid = srid;
   validate();
 }
@@ -240,10 +240,6 @@ template <typename BaseType> bool TSequence<BaseType>::upper_inc() const {
   return this->m_upper_inc;
 }
 
-template <typename BaseType> set<TInstant<BaseType>> TSequence<BaseType>::instants() const {
-  return this->m_instants;
-}
-
 template <typename BaseType> Interpolation TSequence<BaseType>::interpolation() const {
   return this->m_interpolation;
 }
@@ -265,14 +261,6 @@ template <typename BaseType> set<Range<BaseType>> TSequence<BaseType>::getValues
     }
   }
   return {Range<BaseType>(min, max, this->m_lower_inc, this->m_upper_inc)};
-}
-
-template <typename BaseType> set<time_point> TSequence<BaseType>::timestamps() const {
-  set<time_point> s;
-  for (auto const &e : this->m_instants) {
-    s.insert(e.getTimestamp());
-  }
-  return s;
 }
 
 template <typename BaseType> PeriodSet TSequence<BaseType>::getTime() const {
