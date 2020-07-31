@@ -55,6 +55,12 @@ configure_file(
   ${CMAKE_CURRENT_BINARY_DIR}/cpp/conf.py
 )
 
+configure_file(
+  ${CMAKE_CURRENT_LIST_DIR}/cpp/favicon-dark.png
+  ${CMAKE_CURRENT_BINARY_DIR}/cpp/favicon-dark.png
+  COPYONLY
+)
+
 add_custom_target(
   cppdocs
   ${CMAKE_COMMAND} -E make_directory "${DOXYGEN_OUTPUT_DIRECTORY}"
