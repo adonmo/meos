@@ -15,11 +15,11 @@ template <typename BaseType> using py_tinstant
                  TInstantFunctions<TInstant<BaseType>, TInstant<BaseType>, BaseType>>;
 
 template <typename BaseType>
-py_tinstant<BaseType> _def_tinstant_class_basic(py::module &m, std::string const &typesuffix) {
-  def_comparator<TemporalComparators<TInstant<BaseType>>>(m, "TInstant", typesuffix);
+py_tinstant<BaseType> _def_tinstant_class_basic(py::module &m, std::string const &base_type_name) {
+  def_comparator<TemporalComparators<TInstant<BaseType>>>(m, "Inst", base_type_name);
   def_tinstant_functions<TInstantFunctions<TInstant<BaseType>, TInstant<BaseType>, BaseType>>(
-      m, "TInstant", typesuffix);
-  return py_tinstant<BaseType>(m, ("TInstant" + typesuffix).c_str())
+      m, "Inst", base_type_name);
+  return py_tinstant<BaseType>(m, ("T" + base_type_name + "Inst").c_str())
       .def(py::init<BaseType &, time_point>(), py::arg("value"), py::arg("timestamp"))
       .def(py::init<pair<BaseType, time_point>>(), py::arg("instant"))
       .def(py::init<string &, string &>(), py::arg("value"), py::arg("timestamp"))
@@ -53,12 +53,13 @@ py_tinstant<BaseType> _def_tinstant_class_basic(py::module &m, std::string const
 }
 
 template <typename BaseType>
-void _def_tinstant_class_specializations(py_tinstant<BaseType> &c, std::string const &typesuffix) {
+void _def_tinstant_class_specializations(py_tinstant<BaseType> &c,
+                                         std::string const &base_type_name) {
   // No specializations by default
 }
 
-template <>
-void _def_tinstant_class_specializations(py_tinstant<GeomPoint> &c, std::string const &typesuffix) {
+template <> void _def_tinstant_class_specializations(py_tinstant<GeomPoint> &c,
+                                                     std::string const &base_type_name) {
   c.def(py::init<GeomPoint, time_point, int>(), py::arg("value"), py::arg("timestamp"),
         py::arg("srid"))
       .def(py::init<pair<GeomPoint, time_point>, int>(), py::arg("instant"), py::arg("srid"))
@@ -67,7 +68,8 @@ void _def_tinstant_class_specializations(py_tinstant<GeomPoint> &c, std::string 
       .def(py::init<string, int>(), py::arg("serialized"), py::arg("srid"));
 }
 
-template <typename BaseType> void def_tinstant_class(py::module &m, std::string const &typesuffix) {
-  auto tinstant_class = _def_tinstant_class_basic<BaseType>(m, typesuffix);
-  _def_tinstant_class_specializations<BaseType>(tinstant_class, typesuffix);
+template <typename BaseType>
+void def_tinstant_class(py::module &m, std::string const &base_type_name) {
+  auto tinstant_class = _def_tinstant_class_basic<BaseType>(m, base_type_name);
+  _def_tinstant_class_specializations<BaseType>(tinstant_class, base_type_name);
 }

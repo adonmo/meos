@@ -13,7 +13,7 @@ template <typename BaseType> using py_temporal
                  conditional_t<is_same<BaseType, GeomPoint>::value, SRIDMembers, Empty>>;
 
 template <typename BaseType> void def_temporal_class(py::module &m, std::string const &typesuffix) {
-  py_temporal<BaseType>(m, ("Temporal" + typesuffix).c_str())
+  py_temporal<BaseType>(m, ("T" + typesuffix).c_str())
       .def_property_readonly("minValue", &Temporal<BaseType>::minValue)
       .def_property_readonly("maxValue", &Temporal<BaseType>::maxValue)
       .def_property_readonly("numTimestamps", &Temporal<BaseType>::numTimestamps)

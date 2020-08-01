@@ -1,20 +1,20 @@
 from pymeos.io import (DeserializerFloat, DeserializerGeom, DeserializerInt,
                        SerializerFloat, SerializerInt)
-from pymeos.temporal import (TInstantFloat, TInstantInt, TInstantSetInt, TSequenceFloat, TSequenceSetFloat)
+from pymeos.temporal import (TFloatInst, TIntInst, TIntInstSet, TFloatSeq, TFloatSeqSet)
 
 from ..utils import unix_dt
 
 
 def test_serialization():
     # Let's get some temporal objects ready, which we can use to show serialization examples
-    ti1 = TInstantInt(10, unix_dt(2011, 1, 1))
-    ti2 = TInstantInt(20, unix_dt(2019, 1, 1))
-    tseti = TInstantSetInt({ti1, ti2})
+    ti1 = TIntInst(10, unix_dt(2011, 1, 1))
+    ti2 = TIntInst(20, unix_dt(2019, 1, 1))
+    tseti = TIntInstSet({ti1, ti2})
 
-    tf1 = TInstantFloat(1.0, unix_dt(2011, 1, 1))
-    tf2 = TInstantFloat(2.5, unix_dt(2011, 1, 2))
-    tseqf = TSequenceFloat({tf1, tf2})
-    tseqsetf = TSequenceSetFloat({tseqf})
+    tf1 = TFloatInst(1.0, unix_dt(2011, 1, 1))
+    tf2 = TFloatInst(2.5, unix_dt(2011, 1, 2))
+    tseqf = TFloatSeq({tf1, tf2})
+    tseqsetf = TFloatSeqSet({tseqf})
 
     # Example serialization of these objects
     si = SerializerInt()
@@ -53,7 +53,7 @@ def test_deserialization():
 
     df = DeserializerFloat("{[1.0@2011-01-01, 2.5@2011-01-02)}")
     tseqset = df.nextTSequenceSet()
-    tf1 = TInstantFloat(1.0, unix_dt(2011, 1, 1))
-    tf2 = TInstantFloat(2.5, unix_dt(2011, 1, 2))
-    expected = TSequenceSetFloat({TSequenceFloat({tf1, tf2})})
+    tf1 = TFloatInst(1.0, unix_dt(2011, 1, 1))
+    tf2 = TFloatInst(2.5, unix_dt(2011, 1, 2))
+    expected = TFloatSeqSet({TFloatSeq({tf1, tf2})})
     assert tseqset == expected

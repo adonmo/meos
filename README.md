@@ -31,8 +31,8 @@ Note: libgeos-dev might need to be installed on your system.
 
 ```python
 import datetime
-from pymeos import Geometry
-from pymeos.temporal import TInstantGeom, TSequenceGeom
+from pymeos import GeomPoint
+from pymeos.temporal import TGeomPointInst, TGeomPointSeq
 
 
 def datetime_utc(year, month, day, hour=0, minute=0, second=0):
@@ -40,10 +40,10 @@ def datetime_utc(year, month, day, hour=0, minute=0, second=0):
 
 
 # Example creation of trajectory (temporal sequence of geometries)
-trajectory = TSequenceGeom({
-    TInstantGeom(Geometry(0, 0), datetime_utc(2012, 1, 1, 8, 0)),
-    TInstantGeom(Geometry(2, 0), datetime_utc(2012, 1, 1, 8, 10)),
-    TInstantGeom(Geometry(2, 1), datetime_utc(2012, 1, 1, 8, 15)),
+trajectory = TGeomPointSeq({
+    TGeomPointInst(GeomPoint(0, 0), datetime_utc(2012, 1, 1, 8, 0)),
+    TGeomPointInst(GeomPoint(2, 0), datetime_utc(2012, 1, 1, 8, 10)),
+    TGeomPointInst(GeomPoint(2, 1), datetime_utc(2012, 1, 1, 8, 15)),
 })
 
 print(trajectory)
@@ -99,7 +99,7 @@ int main() {
 ```
 
 ```python
-[POINT (0 0)@2012-01-01T08:00:00+0000, POINT (2 0)@2012-01-01T08:10:00+0000, POINT (2 1)@2012-01-01T08:15:00+0000)
+[2@2012-01-01T00:00:00+0000, 1@2012-01-02T00:00:00+0000, 4@2012-01-03T00:00:00+0000, 3@2012-01-04T00:00:00+0000)
 ```
 
 ### Example

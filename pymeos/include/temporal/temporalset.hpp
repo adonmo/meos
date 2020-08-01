@@ -17,11 +17,11 @@ template <typename BaseType> using py_temporalset
                  TInstantFunctions<TemporalSet<BaseType>, TInstant<BaseType>, BaseType>>;
 
 template <typename BaseType>
-void def_temporalset_class(py::module &m, std::string const &typesuffix) {
-  def_comparator<TemporalComparators<TemporalSet<BaseType>>>(m, "TemporalSet", typesuffix);
+void def_temporalset_class(py::module &m, std::string const &base_type_name) {
+  def_comparator<TemporalComparators<TemporalSet<BaseType>>>(m, "Set", base_type_name);
   def_tinstant_functions<TInstantFunctions<TemporalSet<BaseType>, TInstant<BaseType>, BaseType>>(
-      m, "TemporalSet", typesuffix);
-  py_temporalset<BaseType>(m, ("TemporalSet" + typesuffix).c_str())
+      m, "Set", base_type_name);
+  py_temporalset<BaseType>(m, ("T" + base_type_name + "Set").c_str())
       .def_property_readonly("instants", &TemporalSet<BaseType>::instants)
       .def_property_readonly("timestamps", &TemporalSet<BaseType>::timestamps);
 }

@@ -16,13 +16,14 @@
 
 namespace py = pybind11;
 
-template <typename BaseType> void def_temporal_types(py::module &m, std::string const &typesuffix) {
-  def_temporal_class<BaseType>(m, typesuffix);
-  def_tinstant_class<BaseType>(m, typesuffix);
-  def_temporalset_class<BaseType>(m, typesuffix);
-  def_tinstantset_class<BaseType>(m, typesuffix);
-  def_tsequence_class<BaseType>(m, typesuffix);
-  def_tsequenceset_class<BaseType>(m, typesuffix);
+template <typename BaseType>
+void def_temporal_types(py::module &m, std::string const &base_type_name) {
+  def_temporal_class<BaseType>(m, base_type_name);
+  def_tinstant_class<BaseType>(m, base_type_name);
+  def_temporalset_class<BaseType>(m, base_type_name);
+  def_tinstantset_class<BaseType>(m, base_type_name);
+  def_tsequence_class<BaseType>(m, base_type_name);
+  def_tsequenceset_class<BaseType>(m, base_type_name);
 }
 
 void def_temporal_module(py::module &m) {
@@ -50,5 +51,5 @@ void def_temporal_module(py::module &m) {
   def_temporal_types<int>(temporal_module, "Int");
   def_temporal_types<float>(temporal_module, "Float");
   def_temporal_types<string>(temporal_module, "Text");
-  def_temporal_types<GeomPoint>(temporal_module, "Geom");
+  def_temporal_types<GeomPoint>(temporal_module, "GeomPoint");
 }

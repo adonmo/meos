@@ -6,12 +6,12 @@ For all below examples, the following imports and helpers are assumed, in the in
 .. code-block:: python
 
     import datetime
-    from pymeos import Geometry
+    from pymeos import GeomPoint
     from pymeos.io import (DeserializerFloat, DeserializerGeom, DeserializerInt,
                         SerializerFloat, SerializerInt)
-    from pymeos.temporal import (TInstantBool, TInstantFloat, TInstantGeom,
-                                TInstantInt, TInstantSetBool, TInstantSetInt,
-                                TInstantText, TSequenceFloat)
+    from pymeos.temporal import (TBoolInst, TFloatInst, TGeomPointInst,
+                                TIntInst, TBoolInstSet, TIntInstSet,
+                                TTextInst, TFloatSeq)
     from pymeos.time import Period, PeriodSet
 
 
@@ -89,17 +89,17 @@ Temporal Types
     :caption: Example usage of time types (TInstant, TInstantSet, TSequence and TSequenceSet)
 
     # Example creation of temporal instant objects
-    tb = TInstantBool(True, unix_dt(2011, 1, 1))
-    ti = TInstantInt(10, unix_dt(2011, 1, 1))
-    tf = TInstantFloat(1.25, unix_dt(2011, 1, 1))
-    tt = TInstantText("testing", unix_dt(2011, 1, 1))
-    tg = TInstantGeom(Geometry(10.0, 15.0), unix_dt(2011, 1, 1))  # Spatiotemporal!
+    tb = TBoolInst(True, unix_dt(2011, 1, 1))
+    ti = TIntInst(10, unix_dt(2011, 1, 1))
+    tf = TFloatInst(1.25, unix_dt(2011, 1, 1))
+    tt = TTextInst("testing", unix_dt(2011, 1, 1))
+    tg = TGeomPointInst(GeomPoint(10.0, 15.0), unix_dt(2011, 1, 1))  # Spatiotemporal!
 
     # Example creation of temporal instant set
-    tsetb = TInstantSetBool({tb})
+    tsetb = TBoolInstSet({tb})
 
     # Example creation of temporal sequence
-    tseqf = TSequenceFloat({tf}, False, True)
+    tseqf = TFloatSeq({tf}, True, True)
 
 
     # Let's verify what we've done
@@ -112,7 +112,7 @@ Temporal Types
     assert {tb} == tsetb.instants
 
     assert {tf} == tseqf.instants
-    assert (tseqf.lower_inc, tseqf.upper_inc) == (False, True)
+    assert (tseqf.lower_inc, tseqf.upper_inc) == (True, True)
 
 
 Serialization
@@ -121,13 +121,13 @@ Serialization
 .. code-block:: python
 
     # Let's get some temporal objects ready, which we can use to show serialization examples
-    ti1 = TInstantInt(10, unix_dt(2011, 1, 1))
-    ti2 = TInstantInt(20, unix_dt(2019, 1, 1))
-    tseti = TInstantSetInt({ti1, ti2})
+    ti1 = TIntInst(10, unix_dt(2011, 1, 1))
+    ti2 = TIntInst(20, unix_dt(2019, 1, 1))
+    tseti = TIntInstSet({ti1, ti2})
 
-    tf1 = TInstantFloat(1.0, unix_dt(2011, 1, 1))
-    tf2 = TInstantFloat(2.5, unix_dt(2011, 1, 2))
-    tseqf = TSequenceFloat({tf1, tf2}, True, False)
+    tf1 = TFloatInst(1.0, unix_dt(2011, 1, 1))
+    tf2 = TFloatInst(2.5, unix_dt(2011, 1, 2))
+    tseqf = TFloatSeq({tf1, tf2}, True, False)
 
     # Example serialization of these objects
     si = SerializerInt()

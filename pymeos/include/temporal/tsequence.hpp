@@ -18,8 +18,9 @@ template <typename BaseType> using py_tsequence
     = py::class_<TSequence<BaseType>, TemporalSet<BaseType>>;
 
 template <typename BaseType>
-py_tsequence<BaseType> _def_tsequence_class_basic(py::module &m, std::string const &typesuffix) {
-  return py_tsequence<BaseType>(m, ("TSequence" + typesuffix).c_str())
+py_tsequence<BaseType> _def_tsequence_class_basic(py::module &m,
+                                                  std::string const &base_type_name) {
+  return py_tsequence<BaseType>(m, ("T" + base_type_name + "Seq").c_str())
       .def(py::init<set<TInstant<BaseType>> &, bool, bool, Interpolation>(), py::arg("instants"),
            py::arg("lower_inc") = true, py::arg("upper_inc") = false,
            py::arg("interpolation") = default_interp_v<BaseType>)
@@ -58,12 +59,12 @@ py_tsequence<BaseType> _def_tsequence_class_basic(py::module &m, std::string con
 
 template <typename BaseType>
 void _def_tsequence_class_specializations(py_tsequence<BaseType> &c,
-                                          std::string const &typesuffix) {
+                                          std::string const &base_type_name) {
   // No specializations by default
 }
 
 template <> void _def_tsequence_class_specializations(py_tsequence<GeomPoint> &c,
-                                                      std::string const &typesuffix) {
+                                                      std::string const &base_type_name) {
   c.def(py::init<set<TInstant<GeomPoint>> &, bool, bool, int, Interpolation>(), py::arg("instants"),
         py::arg("lower_inc") = true, py::arg("upper_inc") = false, py::arg("srid") = 0,
         py::arg("interpolation") = default_interp_v<GeomPoint>)
@@ -74,7 +75,7 @@ template <> void _def_tsequence_class_specializations(py_tsequence<GeomPoint> &c
 }
 
 template <typename BaseType>
-void def_tsequence_class(py::module &m, std::string const &typesuffix) {
-  auto tsequence_class = _def_tsequence_class_basic<BaseType>(m, typesuffix);
-  _def_tsequence_class_specializations<BaseType>(tsequence_class, typesuffix);
+void def_tsequence_class(py::module &m, std::string const &base_type_name) {
+  auto tsequence_class = _def_tsequence_class_basic<BaseType>(m, base_type_name);
+  _def_tsequence_class_specializations<BaseType>(tsequence_class, base_type_name);
 }

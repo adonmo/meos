@@ -18,7 +18,7 @@ PYBIND11_MODULE(_pymeos, m) {
   // TODO will we ever get a chance to do finish_geos()?
   init_geos();
 
-  py::class_<GeomPoint>(m, "Geometry")
+  py::class_<GeomPoint>(m, "GeomPoint")
       .def(py::init<std::string>())
       .def(py::init<double, double>())
       .def(py::init<std::string, int>())

@@ -20,11 +20,11 @@ template <typename BaseType> using py_tsequenceset
 
 template <typename BaseType>
 py_tsequenceset<BaseType> _def_tsequenceset_class_basic(py::module &m,
-                                                        std::string const &typesuffix) {
-  def_comparator<TemporalComparators<TSequenceSet<BaseType>>>(m, "TSequenceSet", typesuffix);
+                                                        std::string const &base_type_name) {
+  def_comparator<TemporalComparators<TSequenceSet<BaseType>>>(m, "SeqSet", base_type_name);
   def_tinstant_functions<TInstantFunctions<TSequenceSet<BaseType>, TInstant<BaseType>, BaseType>>(
-      m, "TSequenceSet", typesuffix);
-  return py_tsequenceset<BaseType>(m, ("TSequenceSet" + typesuffix).c_str())
+      m, "SeqSet", base_type_name);
+  return py_tsequenceset<BaseType>(m, ("T" + base_type_name + "SeqSet").c_str())
       .def(py::init<set<TSequence<BaseType>> &, Interpolation>(), py::arg("sequences"),
            py::arg("interpolation") = default_interp_v<BaseType>)
       .def(py::init<set<string> &, Interpolation>(), py::arg("sequences"),
@@ -59,12 +59,12 @@ py_tsequenceset<BaseType> _def_tsequenceset_class_basic(py::module &m,
 
 template <typename BaseType>
 void _def_tsequenceset_class_specializations(py_tsequenceset<BaseType> &c,
-                                             std::string const &typesuffix) {
+                                             std::string const &base_type_name) {
   // No specializations by default
 }
 
 template <> void _def_tsequenceset_class_specializations(py_tsequenceset<GeomPoint> &c,
-                                                         std::string const &typesuffix) {
+                                                         std::string const &base_type_name) {
   c.def(py::init<set<TSequence<GeomPoint>> &, int, Interpolation>(), py::arg("sequences"),
         py::arg("srid"), py::arg("interpolation") = default_interp_v<GeomPoint>)
       .def(py::init<set<string> &, int, Interpolation>(), py::arg("sequences"), py::arg("srid"),
@@ -73,7 +73,7 @@ template <> void _def_tsequenceset_class_specializations(py_tsequenceset<GeomPoi
 }
 
 template <typename BaseType>
-void def_tsequenceset_class(py::module &m, std::string const &typesuffix) {
-  auto tsequenceset_class = _def_tsequenceset_class_basic<BaseType>(m, typesuffix);
-  _def_tsequenceset_class_specializations<BaseType>(tsequenceset_class, typesuffix);
+void def_tsequenceset_class(py::module &m, std::string const &base_type_name) {
+  auto tsequenceset_class = _def_tsequenceset_class_basic<BaseType>(m, base_type_name);
+  _def_tsequenceset_class_specializations<BaseType>(tsequenceset_class, base_type_name);
 }

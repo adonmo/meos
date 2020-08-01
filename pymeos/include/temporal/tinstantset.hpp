@@ -17,8 +17,8 @@ template <typename BaseType> using py_tinstantset
 
 template <typename BaseType>
 py_tinstantset<BaseType> _def_tinstantset_class_basic(py::module &m,
-                                                      std::string const &typesuffix) {
-  return py_tinstantset<BaseType>(m, ("TInstantSet" + typesuffix).c_str())
+                                                      std::string const &base_type_name) {
+  return py_tinstantset<BaseType>(m, ("T" + base_type_name + "InstSet").c_str())
       .def(py::init<set<TInstant<BaseType>> &>(), py::arg("instants"))
       .def(py::init<set<string> &>(), py::arg("instants"))
       .def(py::init<string &>(), py::arg("serialized"))
@@ -43,19 +43,19 @@ py_tinstantset<BaseType> _def_tinstantset_class_basic(py::module &m,
 
 template <typename BaseType>
 void _def_tinstantset_class_specializations(py_tinstantset<BaseType> &c,
-                                            std::string const &typesuffix) {
+                                            std::string const &base_type_name) {
   // No specializations by default
 }
 
 template <> void _def_tinstantset_class_specializations(py_tinstantset<GeomPoint> &c,
-                                                        std::string const &typesuffix) {
+                                                        std::string const &base_type_name) {
   c.def(py::init<set<TInstant<GeomPoint>> &, int>(), py::arg("instants"), py::arg("srid"))
       .def(py::init<set<string> &, int>(), py::arg("instants"), py::arg("srid"))
       .def(py::init<string, int>(), py::arg("serialized"), py::arg("srid"));
 }
 
 template <typename BaseType>
-void def_tinstantset_class(py::module &m, std::string const &typesuffix) {
-  auto tinstantset_class = _def_tinstantset_class_basic<BaseType>(m, typesuffix);
-  _def_tinstantset_class_specializations<BaseType>(tinstantset_class, typesuffix);
+void def_tinstantset_class(py::module &m, std::string const &base_type_name) {
+  auto tinstantset_class = _def_tinstantset_class_basic<BaseType>(m, base_type_name);
+  _def_tinstantset_class_specializations<BaseType>(tinstantset_class, base_type_name);
 }
