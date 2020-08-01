@@ -139,4 +139,10 @@ private:
   TSequenceSet<BaseType> *clone_impl() const override { return new TSequenceSet<BaseType>(*this); };
 };
 
+typedef TSequenceSet<bool> TBoolSeqSet;
+typedef TSequenceSet<int> TIntSeqSet;
+typedef TSequenceSet<float> TFloatSeqSet;
+typedef TSequenceSet<string> TTextSeqSet;
+typedef TSequenceSet<GeomPoint> TGeomPointSeqSet;
+
 #endif

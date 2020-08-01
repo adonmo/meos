@@ -146,4 +146,10 @@ private:
   virtual Temporal<BaseType> *shift_impl(duration_ms const timedelta) const = 0;
 };
 
+typedef Temporal<bool> TBool;
+typedef Temporal<int> TInt;
+typedef Temporal<float> TFloat;
+typedef Temporal<string> TText;
+typedef Temporal<GeomPoint> TGeomPoint;
+
 #endif

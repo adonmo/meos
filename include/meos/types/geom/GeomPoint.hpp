@@ -10,9 +10,6 @@
  *
  * Main reason we have this is that pybind11 can't work with GEOSGeometry*
  * directly, as it is exposed as an opaque type from the GEOS C API.
- *
- * We only use this class to represent Points for now
- * Probably we should either generalize for any geometry or rename this to Point
  */
 class GeomPoint {
 public:

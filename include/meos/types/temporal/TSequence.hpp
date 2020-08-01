@@ -110,4 +110,10 @@ private:
   TSequence<BaseType> *clone_impl() const override { return new TSequence<BaseType>(*this); };
 };
 
+typedef TSequence<bool> TBoolSeq;
+typedef TSequence<int> TIntSeq;
+typedef TSequence<float> TFloatSeq;
+typedef TSequence<string> TTextSeq;
+typedef TSequence<GeomPoint> TGeomPointSeq;
+
 #endif

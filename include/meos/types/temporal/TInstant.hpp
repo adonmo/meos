@@ -102,4 +102,10 @@ private:
   TInstant *shift_impl(duration_ms const timedelta) const override;
 };
 
+typedef TInstant<bool> TBoolInst;
+typedef TInstant<int> TIntInst;
+typedef TInstant<float> TFloatInst;
+typedef TInstant<string> TTextInst;
+typedef TInstant<GeomPoint> TGeomPointInst;
+
 #endif

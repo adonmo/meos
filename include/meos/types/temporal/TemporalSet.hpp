@@ -36,4 +36,10 @@ protected:
   set<TInstant<BaseType>> m_instants;
 };
 
+typedef TemporalSet<bool> TBoolSet;
+typedef TemporalSet<int> TIntSet;
+typedef TemporalSet<float> TFloatSet;
+typedef TemporalSet<string> TTextSet;
+typedef TemporalSet<GeomPoint> TGeomPointSet;
+
 #endif

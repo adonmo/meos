@@ -89,4 +89,10 @@ private:
   TInstantSet<BaseType> *clone_impl() const override { return new TInstantSet<BaseType>(*this); };
 };
 
+typedef TInstantSet<bool> TBoolInstSet;
+typedef TInstantSet<int> TIntInstSet;
+typedef TInstantSet<float> TFloatInstSet;
+typedef TInstantSet<string> TTextInstSet;
+typedef TInstantSet<GeomPoint> TGeomPointInstSet;
+
 #endif

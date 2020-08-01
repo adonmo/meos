@@ -139,7 +139,7 @@ auto getSampleSequenceGeom2(int srid = 0) {
 }
 
 TEST_CASE("TSequenceSet<GeomPoint> constructors", "[tsequenceset]") {
-  TSequenceSet<GeomPoint> seqset;
+  TGeomPointSeqSet seqset;
   int expected_srid = 4326;
   TSequence<GeomPoint> expected_seq_1 = getSampleSequenceGeom1(expected_srid);
   TSequence<GeomPoint> expected_seq_2 = getSampleSequenceGeom2(expected_srid);
