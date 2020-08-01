@@ -1,5 +1,6 @@
-#ifndef MEOS_TYPES_TEMPORAL_TEMPORALDURATION_HPP
-#define MEOS_TYPES_TEMPORAL_TEMPORALDURATION_HPP
+#pragma once
+
+namespace meos {
 
 enum class TemporalDuration {
   Temporal,
@@ -9,4 +10,4 @@ enum class TemporalDuration {
   SequenceSet,
 };
 
-#endif
+}

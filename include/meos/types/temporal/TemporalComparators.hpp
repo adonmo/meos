@@ -1,5 +1,6 @@
-#ifndef MEOS_TYPES_TEMPORAL_TEMPORALCOMPARATORS_HPP
-#define MEOS_TYPES_TEMPORAL_TEMPORALCOMPARATORS_HPP
+#pragma once
+
+namespace meos {
 
 /**
  * This template class uses CRTP pattern and assumes the presence of the
@@ -34,4 +35,4 @@ private:
   friend TemporalType;
 };
 
-#endif
+}  // namespace meos

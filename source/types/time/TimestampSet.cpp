@@ -4,6 +4,9 @@
 #include <sstream>
 #include <string>
 
+namespace meos {
+using namespace std;
+
 TimestampSet::TimestampSet() {}
 
 TimestampSet::TimestampSet(set<time_point> &timestamps) {
@@ -164,3 +167,5 @@ ostream &operator<<(ostream &os, TimestampSet const &timestamp_set) {
   os << "}";
   return os;
 }
+
+}  // namespace meos

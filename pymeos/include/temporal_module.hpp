@@ -14,6 +14,7 @@
 #include "temporal/tsequence.hpp"
 #include "temporal/tsequenceset.hpp"
 
+using namespace meos;
 namespace py = pybind11;
 
 template <typename BaseType>
@@ -50,6 +51,6 @@ void def_temporal_module(py::module &m) {
   def_temporal_types<bool>(temporal_module, "Bool");
   def_temporal_types<int>(temporal_module, "Int");
   def_temporal_types<float>(temporal_module, "Float");
-  def_temporal_types<string>(temporal_module, "Text");
+  def_temporal_types<std::string>(temporal_module, "Text");
   def_temporal_types<GeomPoint>(temporal_module, "GeomPoint");
 }

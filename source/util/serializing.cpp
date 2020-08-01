@@ -4,6 +4,8 @@
 #include <sstream>
 #include <string>
 
+namespace meos {
+
 std::string write_ISO8601_time(time_point const &t) {
   std::stringstream textStream;
   time_t tt = std::chrono::time_point_cast<std::chrono::milliseconds>(t).time_since_epoch().count();
@@ -20,3 +22,5 @@ std::string write_ISO8601_time(time_point const &t) {
   textStream << "+0000";
   return textStream.str();
 }
+
+}  // namespace meos

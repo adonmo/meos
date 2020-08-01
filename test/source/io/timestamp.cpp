@@ -5,6 +5,9 @@
 
 #include "../common/time_utils.hpp"
 
+using namespace meos;
+using namespace std;
+
 TEST_CASE("timestamps are deserialized", "[deserializer][timestamp]") {
   SECTION("only one timestamp present") {
     Deserializer<int> r("2012-11-01");

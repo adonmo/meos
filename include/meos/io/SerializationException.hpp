@@ -1,19 +1,18 @@
-#ifndef MEOS_IO_SERIALIZATIONEXCEPTION_HPP
-#define MEOS_IO_SERIALIZATIONEXCEPTION_HPP
+#pragma once
 
 #include <stdexcept>
 #include <string>
 
-using namespace std;
+namespace meos {
 
-class SerializationException : public runtime_error {
+class SerializationException : public std::runtime_error {
 public:
-  SerializationException() : runtime_error("Unknown error") {}
+  SerializationException() : std::runtime_error("Unknown error") {}
 
-  SerializationException(string const &msg) : runtime_error(msg) {}
+  SerializationException(std::string const &msg) : std::runtime_error(msg) {}
 
-  SerializationException(string const &name, string const &msg)
-      : runtime_error(name + ": " + msg) {}
+  SerializationException(std::string const &name, std::string const &msg)
+      : std::runtime_error(name + ": " + msg) {}
 };
 
-#endif
+}  // namespace meos

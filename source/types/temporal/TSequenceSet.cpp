@@ -4,6 +4,9 @@
 #include <sstream>
 #include <string>
 
+namespace meos {
+using namespace std;
+
 template <typename BaseType> void TSequenceSet<BaseType>::validate() {
   validate_common();
   // Check template specialization on Geometry for more validation
@@ -454,3 +457,5 @@ template class TSequenceSet<int>;
 template class TSequenceSet<float>;
 template class TSequenceSet<string>;
 template class TSequenceSet<GeomPoint>;
+
+}  // namespace meos

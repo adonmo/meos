@@ -12,6 +12,7 @@
 
 #include "temporalset.hpp"
 
+using namespace meos;
 namespace py = pybind11;
 
 template <typename BaseType> using py_tsequence
@@ -21,13 +22,13 @@ template <typename BaseType>
 py_tsequence<BaseType> _def_tsequence_class_basic(py::module &m,
                                                   std::string const &base_type_name) {
   return py_tsequence<BaseType>(m, ("T" + base_type_name + "Seq").c_str())
-      .def(py::init<set<TInstant<BaseType>> &, bool, bool, Interpolation>(), py::arg("instants"),
+      .def(py::init<std::set<TInstant<BaseType>> &, bool, bool, Interpolation>(),
+           py::arg("instants"), py::arg("lower_inc") = true, py::arg("upper_inc") = false,
+           py::arg("interpolation") = default_interp_v<BaseType>)
+      .def(py::init<std::set<std::string> &, bool, bool, Interpolation>(), py::arg("instants"),
            py::arg("lower_inc") = true, py::arg("upper_inc") = false,
            py::arg("interpolation") = default_interp_v<BaseType>)
-      .def(py::init<set<string> &, bool, bool, Interpolation>(), py::arg("instants"),
-           py::arg("lower_inc") = true, py::arg("upper_inc") = false,
-           py::arg("interpolation") = default_interp_v<BaseType>)
-      .def(py::init<string>(), py::arg("serialized"))
+      .def(py::init<std::string>(), py::arg("serialized"))
       .def(py::self == py::self, py::arg("other"))
       .def(py::self != py::self, py::arg("other"))
       .def(py::self < py::self, py::arg("other"))
@@ -65,13 +66,13 @@ void _def_tsequence_class_specializations(py_tsequence<BaseType> &c,
 
 template <> void _def_tsequence_class_specializations(py_tsequence<GeomPoint> &c,
                                                       std::string const &base_type_name) {
-  c.def(py::init<set<TInstant<GeomPoint>> &, bool, bool, int, Interpolation>(), py::arg("instants"),
-        py::arg("lower_inc") = true, py::arg("upper_inc") = false, py::arg("srid") = 0,
-        py::arg("interpolation") = default_interp_v<GeomPoint>)
-      .def(py::init<set<string> &, bool, bool, int, Interpolation>(), py::arg("instants"),
+  c.def(py::init<std::set<TInstant<GeomPoint>> &, bool, bool, int, Interpolation>(),
+        py::arg("instants"), py::arg("lower_inc") = true, py::arg("upper_inc") = false,
+        py::arg("srid") = 0, py::arg("interpolation") = default_interp_v<GeomPoint>)
+      .def(py::init<std::set<std::string> &, bool, bool, int, Interpolation>(), py::arg("instants"),
            py::arg("lower_inc") = true, py::arg("upper_inc") = false, py::arg("srid") = 0,
            py::arg("interpolation") = default_interp_v<GeomPoint>)
-      .def(py::init<string, int>(), py::arg("serialized"), py::arg("srid"));
+      .def(py::init<std::string, int>(), py::arg("serialized"), py::arg("srid"));
 }
 
 template <typename BaseType>

@@ -1,6 +1,9 @@
 #include <iomanip>
 #include <meos/types/temporal/Temporal.hpp>
 
+namespace meos {
+using namespace std;
+
 template <typename BaseType> Temporal<BaseType>::Temporal() {}
 
 template <typename BaseType> Temporal<BaseType>::~Temporal() {}
@@ -79,3 +82,5 @@ template class Temporal<int>;
 template class Temporal<float>;
 template class Temporal<string>;
 template class Temporal<GeomPoint>;
+
+}  // namespace meos

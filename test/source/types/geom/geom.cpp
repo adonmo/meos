@@ -3,6 +3,8 @@
 #include <sstream>
 #include <string>
 
+using namespace meos;
+
 TEST_CASE("Geometries are constructed and serialized properly", "[geometry]") {
   GeomPoint geometry;
   std::stringstream output;

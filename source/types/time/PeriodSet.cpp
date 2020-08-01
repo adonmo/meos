@@ -4,6 +4,9 @@
 #include <sstream>
 #include <string>
 
+namespace meos {
+using namespace std;
+
 PeriodSet::PeriodSet() {}
 
 PeriodSet::PeriodSet(set<unique_ptr<Period>> const &periods) {
@@ -176,3 +179,5 @@ ostream &operator<<(ostream &os, PeriodSet const &period_set) {
   os << "}";
   return os;
 }
+
+}  // namespace meos

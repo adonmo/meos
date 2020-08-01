@@ -9,6 +9,9 @@
 #include "../common/time_utils.hpp"
 #include "../common/utils.hpp"
 
+using namespace meos;
+using namespace std;
+
 TEMPLATE_TEST_CASE("Temporal are deserialized", "[deserializer][temporal]", int, float) {
   SECTION("only one Temporal present") {
     SECTION("only one inst present") {

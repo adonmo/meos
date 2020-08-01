@@ -7,6 +7,9 @@
 #include "../../common/matchers.hpp"
 #include "../../common/time_utils.hpp"
 
+using namespace meos;
+using namespace std;
+
 time_t const minute = 60 * 1000L;
 time_t const day = 24 * 60 * 60 * 1000L;
 

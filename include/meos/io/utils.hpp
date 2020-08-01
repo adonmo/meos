@@ -1,8 +1,9 @@
-#ifndef MEOS_IO_UTILS_HPP
-#define MEOS_IO_UTILS_HPP
+#pragma once
 
 #include <chrono>
 #include <string>
+
+namespace meos {
 
 using time_point = std::chrono::system_clock::time_point;
 using duration_ms = std::chrono::milliseconds;
@@ -36,4 +37,4 @@ char consume_one_of(std::istream &in, std::string charSet, bool skip_ws = true);
 
 std::string read_until_one_of(std::istream &in, std::string end);
 
-#endif
+}  // namespace meos

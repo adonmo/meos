@@ -7,6 +7,8 @@
 #include <sstream>
 #include <string>
 
+namespace meos {
+
 GeomPoint::GeomPoint() { point(0, 0); }
 
 GeomPoint::GeomPoint(std::string serialized) {
@@ -292,3 +294,5 @@ std::ostream &operator<<(std::ostream &os, GeomPoint const &g) {
   os << g.toWKT();
   return os;
 }
+
+}  // namespace meos

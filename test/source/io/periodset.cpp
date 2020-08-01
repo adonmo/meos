@@ -8,6 +8,7 @@
 #include "../common/time_utils.hpp"
 #include "../common/utils.hpp"
 
+using namespace meos;
 using namespace std;
 
 long const millis_in_day = 86400000L;

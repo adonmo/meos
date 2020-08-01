@@ -6,6 +6,7 @@
 #include <sstream>
 #include <string>
 
+namespace meos {
 using namespace std;
 
 template <typename T> Deserializer<T>::Deserializer(string const &in_) : in(in_) {
@@ -134,7 +135,7 @@ template <typename T> time_point Deserializer<T>::nextTime() {
   string::size_type current_pos = iter - in.begin();
   string s = in.substr(current_pos, 256);
   stringstream ss(s);
-  auto t = ::nextTime(ss);
+  auto t = meos::nextTime(ss);
   iter += ss.tellg();
   return t;
 }
@@ -272,3 +273,5 @@ template class Deserializer<int>;
 template class Deserializer<float>;
 template class Deserializer<string>;
 template class Deserializer<GeomPoint>;
+
+}  // namespace meos

@@ -8,6 +8,7 @@
 
 #include "common.hpp"
 
+using namespace meos;
 namespace py = pybind11;
 
 template <typename BaseType> using py_tinstant
@@ -21,10 +22,10 @@ py_tinstant<BaseType> _def_tinstant_class_basic(py::module &m, std::string const
       m, "Inst", base_type_name);
   return py_tinstant<BaseType>(m, ("T" + base_type_name + "Inst").c_str())
       .def(py::init<BaseType &, time_point>(), py::arg("value"), py::arg("timestamp"))
-      .def(py::init<pair<BaseType, time_point>>(), py::arg("instant"))
-      .def(py::init<string &, string &>(), py::arg("value"), py::arg("timestamp"))
-      .def(py::init<pair<string, string>>(), py::arg("instant"))
-      .def(py::init<string &>(), py::arg("serialized"))
+      .def(py::init<std::pair<BaseType, time_point>>(), py::arg("instant"))
+      .def(py::init<std::string &, std::string &>(), py::arg("value"), py::arg("timestamp"))
+      .def(py::init<std::pair<std::string, std::string>>(), py::arg("instant"))
+      .def(py::init<std::string &>(), py::arg("serialized"))
       .def(py::self == py::self, py::arg("other"))
       .def(py::self != py::self, py::arg("other"))
       .def(py::self < py::self, py::arg("other"))
@@ -62,10 +63,12 @@ template <> void _def_tinstant_class_specializations(py_tinstant<GeomPoint> &c,
                                                      std::string const &base_type_name) {
   c.def(py::init<GeomPoint, time_point, int>(), py::arg("value"), py::arg("timestamp"),
         py::arg("srid"))
-      .def(py::init<pair<GeomPoint, time_point>, int>(), py::arg("instant"), py::arg("srid"))
-      .def(py::init<string, string, int>(), py::arg("value"), py::arg("timestamp"), py::arg("srid"))
-      .def(py::init<pair<string, string>, int>(), py::arg("instant"), py::arg("srid"))
-      .def(py::init<string, int>(), py::arg("serialized"), py::arg("srid"));
+      .def(py::init<std::pair<GeomPoint, time_point>, int>(), py::arg("instant"), py::arg("srid"))
+      .def(py::init<std::string, std::string, int>(), py::arg("value"), py::arg("timestamp"),
+           py::arg("srid"))
+      .def(py::init<std::pair<std::string, std::string>, int>(), py::arg("instant"),
+           py::arg("srid"))
+      .def(py::init<std::string, int>(), py::arg("serialized"), py::arg("srid"));
 }
 
 template <typename BaseType>

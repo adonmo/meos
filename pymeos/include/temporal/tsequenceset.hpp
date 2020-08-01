@@ -11,6 +11,7 @@
 
 #include "common.hpp"
 
+using namespace meos;
 namespace py = pybind11;
 
 template <typename BaseType> using py_tsequenceset
@@ -25,11 +26,11 @@ py_tsequenceset<BaseType> _def_tsequenceset_class_basic(py::module &m,
   def_tinstant_functions<TInstantFunctions<TSequenceSet<BaseType>, TInstant<BaseType>, BaseType>>(
       m, "SeqSet", base_type_name);
   return py_tsequenceset<BaseType>(m, ("T" + base_type_name + "SeqSet").c_str())
-      .def(py::init<set<TSequence<BaseType>> &, Interpolation>(), py::arg("sequences"),
+      .def(py::init<std::set<TSequence<BaseType>> &, Interpolation>(), py::arg("sequences"),
            py::arg("interpolation") = default_interp_v<BaseType>)
-      .def(py::init<set<string> &, Interpolation>(), py::arg("sequences"),
+      .def(py::init<std::set<std::string> &, Interpolation>(), py::arg("sequences"),
            py::arg("interpolation") = default_interp_v<BaseType>)
-      .def(py::init<string>(), py::arg("serialized"))
+      .def(py::init<std::string>(), py::arg("serialized"))
       .def(py::self == py::self, py::arg("other"))
       .def(py::self != py::self, py::arg("other"))
       .def(py::self < py::self, py::arg("other"))
@@ -65,11 +66,11 @@ void _def_tsequenceset_class_specializations(py_tsequenceset<BaseType> &c,
 
 template <> void _def_tsequenceset_class_specializations(py_tsequenceset<GeomPoint> &c,
                                                          std::string const &base_type_name) {
-  c.def(py::init<set<TSequence<GeomPoint>> &, int, Interpolation>(), py::arg("sequences"),
+  c.def(py::init<std::set<TSequence<GeomPoint>> &, int, Interpolation>(), py::arg("sequences"),
         py::arg("srid"), py::arg("interpolation") = default_interp_v<GeomPoint>)
-      .def(py::init<set<string> &, int, Interpolation>(), py::arg("sequences"), py::arg("srid"),
-           py::arg("interpolation") = default_interp_v<GeomPoint>)
-      .def(py::init<string, int>(), py::arg("serialized"), py::arg("srid"));
+      .def(py::init<std::set<std::string> &, int, Interpolation>(), py::arg("sequences"),
+           py::arg("srid"), py::arg("interpolation") = default_interp_v<GeomPoint>)
+      .def(py::init<std::string, int>(), py::arg("serialized"), py::arg("srid"));
 }
 
 template <typename BaseType>

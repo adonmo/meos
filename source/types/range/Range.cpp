@@ -6,6 +6,9 @@
 #  include <windows.h>
 #endif
 
+namespace meos {
+using namespace std;
+
 template <typename T>
 Range<T>::Range(T const &lower, T const &upper, bool const lower_inc, bool const upper_inc)
     : m_lower(lower), m_upper(upper), m_lower_inc(lower_inc), m_upper_inc(upper_inc) {}
@@ -67,3 +70,5 @@ template class Range<int>;
 template class Range<float>;
 template class Range<string>;
 template class Range<GeomPoint>;
+
+}  // namespace meos

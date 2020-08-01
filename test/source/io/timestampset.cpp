@@ -8,6 +8,7 @@
 #include "../common/time_utils.hpp"
 #include "../common/utils.hpp"
 
+using namespace meos;
 using namespace std;
 
 TEST_CASE("TimestampSets are serialized", "[serializer][timestampset]") {

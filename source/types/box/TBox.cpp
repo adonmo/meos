@@ -4,6 +4,9 @@
 #include <sstream>
 #include <string>
 
+namespace meos {
+using namespace std;
+
 TBox::TBox() {}
 
 TBox::TBox(double const xmin, time_point const tmin, double const xmax, time_point const tmax)
@@ -177,3 +180,5 @@ ostream &operator<<(ostream &os, TBox const &tbox) {
   os << ")";
   return os;
 }
+
+}  // namespace meos

@@ -8,6 +8,9 @@
 #include "../common/time_utils.hpp"
 #include "../common/utils.hpp"
 
+using namespace meos;
+using namespace std;
+
 TEMPLATE_TEST_CASE("TSequence are serialized", "[serializer][tsequence]", int, float) {
   Serializer<TestType> w;
   SECTION("only one value present") {

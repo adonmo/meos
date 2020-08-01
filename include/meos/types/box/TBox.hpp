@@ -1,12 +1,10 @@
-#ifndef MEOS_TYPES_BOX_TBOX_HPP
-#define MEOS_TYPES_BOX_TBOX_HPP
+#pragma once
 
 #include <chrono>
 #include <cmath>
 #include <string>
 
-using namespace std;
-
+namespace meos {
 using time_point = std::chrono::system_clock::time_point;
 
 class TBox {
@@ -15,9 +13,10 @@ public:
   TBox(double const xmin, time_point const tmin, double const xmax, time_point const tmax);
   TBox(double const xmin, double const xmax);
   TBox(time_point const tmin, time_point const tmax);
-  TBox(double const xmin, string const &tmin, double const xmax, string const &tmax);
-  TBox(string const &xmin, string const &tmin, string const &xmax, string const &tmax);
-  TBox(string const &serialized);
+  TBox(double const xmin, std::string const &tmin, double const xmax, std::string const &tmax);
+  TBox(std::string const &xmin, std::string const &tmin, std::string const &xmax,
+       std::string const &tmax);
+  TBox(std::string const &serialized);
 
   double xmin() const;
   time_point tmin() const;
@@ -31,8 +30,8 @@ public:
   friend bool operator>=(TBox const &lhs, TBox const &rhs);
   friend bool operator<=(TBox const &lhs, TBox const &rhs);
 
-  friend istream &operator>>(istream &in, TBox &period);
-  friend ostream &operator<<(ostream &os, TBox const &period);
+  friend std::istream &operator>>(std::istream &in, TBox &period);
+  friend std::ostream &operator<<(std::ostream &os, TBox const &period);
 
 private:
   double m_xmin = -INFINITY;
@@ -54,4 +53,4 @@ private:
   int compare(TBox const &other) const;
 };
 
-#endif
+}  // namespace meos

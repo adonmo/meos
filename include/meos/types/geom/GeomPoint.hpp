@@ -1,8 +1,9 @@
-#ifndef MEOS_TYPES_GEOM_GEOMPOINT_HPP
-#define MEOS_TYPES_GEOM_GEOMPOINT_HPP
+#pragma once
 
 #include <meos/geos.hpp>
 #include <string>
+
+namespace meos {
 
 /**
  * Mostly a wrapper on top of GEOSGeometry*
@@ -73,4 +74,4 @@ template <> struct is_geometry<GeomPoint> {
  */
 template <typename BaseType> constexpr bool is_geometry_v = is_geometry<BaseType>::value;
 
-#endif
+}  // namespace meos

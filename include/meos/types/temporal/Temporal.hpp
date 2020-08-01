@@ -1,5 +1,4 @@
-#ifndef MEOS_TYPES_TEMPORAL_TEMPORAL_HPP
-#define MEOS_TYPES_TEMPORAL_TEMPORAL_HPP
+#pragma once
 
 #include <meos/types/geom/GeomPoint.hpp>
 #include <meos/types/geom/SRIDMembers.hpp>
@@ -11,7 +10,7 @@
 #include <tuple>
 #include <type_traits>
 
-using namespace std;
+namespace meos {
 
 using time_point = std::chrono::system_clock::time_point;
 using duration_ms = std::chrono::milliseconds;
@@ -19,7 +18,7 @@ using duration_ms = std::chrono::milliseconds;
 /**
  * Declares an empty type
  */
-typedef tuple<> Empty;
+typedef std::tuple<> Empty;
 
 /**
  * Temporal is the base class for all the temporal types which are
@@ -32,13 +31,13 @@ typedef tuple<> Empty;
  * We do this by conditionally inheriting from SRIDMembers.
  */
 template <typename BaseType = float> class Temporal
-    : public conditional_t<is_same<BaseType, GeomPoint>::value, SRIDMembers, Empty> {
+    : public std::conditional_t<std::is_same<BaseType, GeomPoint>::value, SRIDMembers, Empty> {
 public:
   Temporal();
   virtual ~Temporal();
 
-  unique_ptr<Temporal<BaseType>> clone() const {
-    return unique_ptr<Temporal<BaseType>>(this->clone_impl());
+  std::unique_ptr<Temporal<BaseType>> clone() const {
+    return std::unique_ptr<Temporal<BaseType>>(this->clone_impl());
   };
 
   virtual int compare(Temporal const &other) const = 0;
@@ -52,7 +51,7 @@ public:
   /**
    * Set of values taken by the temporal value.
    */
-  virtual set<Range<BaseType>> getValues() const = 0;
+  virtual std::set<Range<BaseType>> getValues() const = 0;
 
   /**
    * Minimum value.
@@ -88,7 +87,7 @@ public:
   /**
    * Set of instants.
    */
-  set<Temporal> instants() const;
+  std::set<Temporal> instants() const;
 
   /**
    * Number of distinct timestamps.
@@ -113,12 +112,12 @@ public:
   /**
    * Set of timestamps.
    */
-  virtual set<time_point> timestamps() const = 0;
+  virtual std::set<time_point> timestamps() const = 0;
 
   /**
    * Shift the temporal value by a time interval
    */
-  unique_ptr<Temporal<BaseType>> shift(duration_ms const timedelta) const;
+  std::unique_ptr<Temporal<BaseType>> shift(duration_ms const timedelta) const;
 
   /**
    * Does the temporal value intersect the timestamp?
@@ -149,7 +148,7 @@ private:
 typedef Temporal<bool> TBool;
 typedef Temporal<int> TInt;
 typedef Temporal<float> TFloat;
-typedef Temporal<string> TText;
+typedef Temporal<std::string> TText;
 typedef Temporal<GeomPoint> TGeomPoint;
 
-#endif
+}  // namespace meos

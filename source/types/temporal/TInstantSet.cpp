@@ -4,6 +4,9 @@
 #include <sstream>
 #include <string>
 
+namespace meos {
+using namespace std;
+
 template <typename BaseType> void TInstantSet<BaseType>::validate() {
   validate_common();
   // Check template specialization on Geometry for more validation
@@ -307,3 +310,5 @@ template class TInstantSet<int>;
 template class TInstantSet<float>;
 template class TInstantSet<string>;
 template class TInstantSet<GeomPoint>;
+
+}  // namespace meos

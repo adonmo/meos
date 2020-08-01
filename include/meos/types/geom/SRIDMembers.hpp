@@ -1,5 +1,6 @@
-#ifndef MEOS_TYPES_GEOM_SRIDMEMBERS_HPP
-#define MEOS_TYPES_GEOM_SRIDMEMBERS_HPP
+#pragma once
+
+namespace meos {
 
 extern int const SRID_DEFAULT;
 
@@ -28,4 +29,4 @@ struct SRIDMembers {
   int srid() const;
 };
 
-#endif
+}  // namespace meos

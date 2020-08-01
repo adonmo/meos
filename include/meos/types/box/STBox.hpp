@@ -1,25 +1,23 @@
-#ifndef MEOS_TYPES_BOX_STBOX_HPP
-#define MEOS_TYPES_BOX_STBOX_HPP
+#pragma once
 
 #include <chrono>
 #include <meos/types/geom/SRIDMembers.hpp>
 #include <string>
 
-using namespace std;
-
+namespace meos {
 using time_point = std::chrono::system_clock::time_point;
 
 class STBox : public SRIDMembers {
 public:
   STBox();
-  STBox(string const &serialized);
+  STBox(std::string const &serialized);
 
   // XYZT
   STBox(double const xmin, double const ymin, double const zmin, time_point const tmin,
         double const xmax, double const ymax, double const zmax, time_point const tmax,
         int const srid = 0, bool const geodetic = false);
-  STBox(double const xmin, double const ymin, double const zmin, string const &tmin,
-        double const xmax, double const ymax, double const zmax, string const &tmax,
+  STBox(double const xmin, double const ymin, double const zmin, std::string const &tmin,
+        double const xmax, double const ymax, double const zmax, std::string const &tmax,
         int const srid = 0, bool const geodetic = false);
 
   // XYZ
@@ -29,8 +27,8 @@ public:
   // XYT - geodetic not allowed
   STBox(double const xmin, double const ymin, time_point const tmin, double const xmax,
         double const ymax, time_point const tmax, int const srid = 0);
-  STBox(double const xmin, double const ymin, string const &tmin, double const xmax,
-        double const ymax, string const &tmax, int const srid = 0);
+  STBox(double const xmin, double const ymin, std::string const &tmin, double const xmax,
+        double const ymax, std::string const &tmax, int const srid = 0);
 
   // XY - geodetic not allowed
   STBox(double const xmin, double const ymin, double const xmax, double const ymax,
@@ -39,7 +37,8 @@ public:
   // T
   STBox(time_point const tmin, time_point const tmax, int const srid = 0,
         bool const geodetic = false);
-  STBox(string const &tmin, string const &tmax, int const srid = 0, bool const geodetic = false);
+  STBox(std::string const &tmin, std::string const &tmax, int const srid = 0,
+        bool const geodetic = false);
 
   double xmin() const;
   double ymin() const;
@@ -59,8 +58,8 @@ public:
   friend bool operator>=(STBox const &lhs, STBox const &rhs);
   friend bool operator<=(STBox const &lhs, STBox const &rhs);
 
-  friend istream &operator>>(istream &in, STBox &period);
-  friend ostream &operator<<(ostream &os, STBox const &period);
+  friend std::istream &operator>>(std::istream &in, STBox &period);
+  friend std::ostream &operator<<(std::ostream &os, STBox const &period);
 
 private:
   double m_xmin = -INFINITY;
@@ -100,4 +99,4 @@ private:
   int compare(STBox const &other) const;
 };
 
-#endif
+}  // namespace meos

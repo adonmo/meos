@@ -10,6 +10,7 @@
 
 #include "temporalset.hpp"
 
+using namespace meos;
 namespace py = pybind11;
 
 template <typename BaseType> using py_tinstantset
@@ -19,9 +20,9 @@ template <typename BaseType>
 py_tinstantset<BaseType> _def_tinstantset_class_basic(py::module &m,
                                                       std::string const &base_type_name) {
   return py_tinstantset<BaseType>(m, ("T" + base_type_name + "InstSet").c_str())
-      .def(py::init<set<TInstant<BaseType>> &>(), py::arg("instants"))
-      .def(py::init<set<string> &>(), py::arg("instants"))
-      .def(py::init<string &>(), py::arg("serialized"))
+      .def(py::init<std::set<TInstant<BaseType>> &>(), py::arg("instants"))
+      .def(py::init<std::set<std::string> &>(), py::arg("instants"))
+      .def(py::init<std::string &>(), py::arg("serialized"))
       .def(py::self == py::self, py::arg("other"))
       .def(py::self != py::self, py::arg("other"))
       .def(py::self < py::self, py::arg("other"))
@@ -49,9 +50,9 @@ void _def_tinstantset_class_specializations(py_tinstantset<BaseType> &c,
 
 template <> void _def_tinstantset_class_specializations(py_tinstantset<GeomPoint> &c,
                                                         std::string const &base_type_name) {
-  c.def(py::init<set<TInstant<GeomPoint>> &, int>(), py::arg("instants"), py::arg("srid"))
-      .def(py::init<set<string> &, int>(), py::arg("instants"), py::arg("srid"))
-      .def(py::init<string, int>(), py::arg("serialized"), py::arg("srid"));
+  c.def(py::init<std::set<TInstant<GeomPoint>> &, int>(), py::arg("instants"), py::arg("srid"))
+      .def(py::init<std::set<std::string> &, int>(), py::arg("instants"), py::arg("srid"))
+      .def(py::init<std::string, int>(), py::arg("serialized"), py::arg("srid"));
 }
 
 template <typename BaseType>

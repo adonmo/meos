@@ -4,6 +4,7 @@
 #include <sstream>
 #include <string>
 
+namespace meos {
 using namespace std;
 
 template <typename T> string Serializer<T>::write(Temporal<T> const *temporal) {
@@ -96,3 +97,5 @@ template class Serializer<int>;
 template class Serializer<float>;
 template class Serializer<string>;
 template class Serializer<GeomPoint>;
+
+}  // namespace meos

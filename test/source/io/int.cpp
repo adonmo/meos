@@ -2,6 +2,9 @@
 #include <meos/io/Deserializer.hpp>
 #include <meos/io/Serializer.hpp>
 
+using namespace meos;
+using namespace std;
+
 TEST_CASE("integers are serialized", "[serializer][int]") {
   Serializer<int> w;
   SECTION("only one integer present") {

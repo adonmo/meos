@@ -13,6 +13,7 @@
 #include "chrono.h"
 #include "common.hpp"
 
+using namespace meos;
 namespace py = pybind11;
 
 template <typename T> void def_range_type(py::module &m, std::string const &typesuffix) {
@@ -50,6 +51,6 @@ void def_range_module(py::module &m) {
   def_range_type<bool>(range_module, "Bool");
   def_range_type<int>(range_module, "Int");
   def_range_type<float>(range_module, "Float");
-  def_range_type<string>(range_module, "Text");
+  def_range_type<std::string>(range_module, "Text");
   def_range_type<GeomPoint>(range_module, "Geom");
 }

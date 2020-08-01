@@ -3,6 +3,9 @@
 #include <meos/io/Serializer.hpp>
 #include <string>
 
+using namespace meos;
+using namespace std;
+
 TEST_CASE("text values are serialized", "[serializer][text]") {
   Serializer<string> w;
   SECTION("only one integer present") {

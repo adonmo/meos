@@ -5,6 +5,9 @@
 
 #include "../common/time_utils.hpp"
 
+using namespace meos;
+using namespace std;
+
 TEMPLATE_TEST_CASE("TInstants are serialized", "[serializer][tinst]", int, float) {
   Serializer<TestType> w;
   SECTION("only one value present") {

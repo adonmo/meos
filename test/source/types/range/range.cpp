@@ -3,6 +3,8 @@
 
 #include "../../common/utils.hpp"
 
+using namespace meos;
+
 TEMPLATE_TEST_CASE("Range shift", "[range]", int, float) {
   auto lower_inc = GENERATE(true, false);
   auto upper_inc = GENERATE(true, false);

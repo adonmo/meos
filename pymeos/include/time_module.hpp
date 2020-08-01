@@ -12,6 +12,7 @@
 #include "chrono.h"
 #include "common.hpp"
 
+using namespace meos;
 namespace py = pybind11;
 
 void def_time_module(py::module &m) {
@@ -22,9 +23,9 @@ void def_time_module(py::module &m) {
   py::class_<Period>(time_module, "Period")
       .def(py::init<time_point, time_point, bool, bool>(), py::arg("lower"), py::arg("upper"),
            py::arg("lower_inc") = true, py::arg("upper_inc") = false)
-      .def(py::init<string, string, bool, bool>(), py::arg("lower"), py::arg("upper"),
+      .def(py::init<std::string, std::string, bool, bool>(), py::arg("lower"), py::arg("upper"),
            py::arg("lower_inc") = true, py::arg("upper_inc") = false)
-      .def(py::init<string>(), py::arg("serialized"))
+      .def(py::init<std::string>(), py::arg("serialized"))
       .def(py::self == py::self)
       .def(py::self != py::self)
       .def(py::self < py::self)
@@ -48,9 +49,9 @@ void def_time_module(py::module &m) {
       .def("contains_timestamp", &Period::contains_timestamp, py::arg("timestamp"));
 
   py::class_<PeriodSet>(time_module, "PeriodSet")
-      .def(py::init<set<Period> &>(), py::arg("periods"))
-      .def(py::init<set<string> &>(), py::arg("periods"))
-      .def(py::init<string>(), py::arg("serialized"))
+      .def(py::init<std::set<Period> &>(), py::arg("periods"))
+      .def(py::init<std::set<std::string> &>(), py::arg("periods"))
+      .def(py::init<std::string>(), py::arg("serialized"))
       .def(py::self == py::self)
       .def(py::self != py::self)
       .def(py::self < py::self)
@@ -74,9 +75,9 @@ void def_time_module(py::module &m) {
       .def("timestampN", &PeriodSet::timestampN, py::arg("n"));
 
   py::class_<TimestampSet>(time_module, "TimestampSet")
-      .def(py::init<set<time_point> &>(), py::arg("timestamps"))
-      .def(py::init<set<string> &>(), py::arg("timestamps"))
-      .def(py::init<string>(), py::arg("serialized"))
+      .def(py::init<std::set<time_point> &>(), py::arg("timestamps"))
+      .def(py::init<std::set<std::string> &>(), py::arg("timestamps"))
+      .def(py::init<std::string>(), py::arg("serialized"))
       .def(py::self == py::self)
       .def(py::self != py::self)
       .def(py::self < py::self)

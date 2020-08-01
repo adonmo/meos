@@ -1,19 +1,18 @@
-#ifndef MEOS_IO_DESERIALIZATIONEXCEPTION_HPP
-#define MEOS_IO_DESERIALIZATIONEXCEPTION_HPP
+#pragma once
 
 #include <stdexcept>
 #include <string>
 
-using namespace std;
+namespace meos {
 
-class DeserializationException : public runtime_error {
+class DeserializationException : public std::runtime_error {
 public:
-  DeserializationException() : runtime_error("Unknown error") {}
+  DeserializationException() : std::runtime_error("Unknown error") {}
 
-  DeserializationException(string const &msg) : runtime_error(msg) {}
+  DeserializationException(std::string const &msg) : std::runtime_error(msg) {}
 
-  DeserializationException(string const &name, string const &msg)
-      : runtime_error(name + ": " + msg) {}
+  DeserializationException(std::string const &name, std::string const &msg)
+      : std::runtime_error(name + ": " + msg) {}
 };
 
-#endif
+}  // namespace meos

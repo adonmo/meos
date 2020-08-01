@@ -9,6 +9,9 @@
 #  include <windows.h>
 #endif
 
+namespace meos {
+using namespace std;
+
 Period::Period()
     : m_lower(std::chrono::system_clock::from_time_t(0)),
       m_upper(std::chrono::system_clock::from_time_t(1)),
@@ -145,3 +148,5 @@ ostream &operator<<(ostream &os, Period const &period) {
      << closing;
   return os;
 }
+
+}  // namespace meos

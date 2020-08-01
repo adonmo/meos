@@ -1,7 +1,8 @@
-#ifndef MEOS_UTIL_STRING_HPP
-#define MEOS_UTIL_STRING_HPP
+#pragma once
 
 #include <string>
+
+namespace meos {
 
 extern std::string ws;
 
@@ -14,4 +15,4 @@ std::string &ltrim(std::string &s, std::string const &t = ws);
 // trim from both ends of string (right then left)
 std::string &trim(std::string &s, std::string const &t = ws);
 
-#endif
+}  // namespace meos

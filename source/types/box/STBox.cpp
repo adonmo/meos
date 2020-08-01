@@ -5,6 +5,9 @@
 #include <sstream>
 #include <string>
 
+namespace meos {
+using namespace std;
+
 STBox::STBox() {}
 
 // XYZT
@@ -411,3 +414,5 @@ ostream &operator<<(ostream &os, STBox const &stbox) {
   }
   throw invalid_argument("ERROR: Wrong values");
 }
+
+}  // namespace meos

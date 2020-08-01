@@ -12,6 +12,7 @@
 #include "temporal_module.hpp"
 #include "time_module.hpp"
 
+using namespace meos;
 namespace py = pybind11;
 
 PYBIND11_MODULE(_pymeos, m) {

@@ -1,5 +1,4 @@
-#ifndef MEOS_TYPES_TEMPORAL_TINSTANTSET_HPP
-#define MEOS_TYPES_TEMPORAL_TINSTANTSET_HPP
+#pragma once
 
 #include <meos/types/geom/GeomPoint.hpp>
 #include <meos/types/temporal/TInstant.hpp>
@@ -8,7 +7,7 @@
 #include <set>
 #include <string>
 
-using namespace std;
+namespace meos {
 
 using time_point = std::chrono::system_clock::time_point;
 using duration_ms = std::chrono::milliseconds;
@@ -16,43 +15,45 @@ using duration_ms = std::chrono::milliseconds;
 template <typename BaseType = float> class TInstantSet : public TemporalSet<BaseType> {
 public:
   TInstantSet();
-  TInstantSet(set<TInstant<BaseType>> const &instants);
-  TInstantSet(set<string> const &instants);
-  TInstantSet(string const &serialized);
+  TInstantSet(std::set<TInstant<BaseType>> const &instants);
+  TInstantSet(std::set<std::string> const &instants);
+  TInstantSet(std::string const &serialized);
 
   // Additional constructors for GeomPoint base type to specify SRID
   template <typename B = BaseType, typename is_geometry<B>::type * = nullptr>
-  TInstantSet(set<TInstant<BaseType>> const &instants, int srid);
+  TInstantSet(std::set<TInstant<BaseType>> const &instants, int srid);
 
   template <typename B = BaseType, typename is_geometry<B>::type * = nullptr>
-  TInstantSet(set<string> const &instants, int srid);
+  TInstantSet(std::set<std::string> const &instants, int srid);
 
   template <typename B = BaseType, typename is_geometry<B>::type * = nullptr>
-  TInstantSet(string const &serialized, int srid);
+  TInstantSet(std::string const &serialized, int srid);
 
   int compare(Temporal<BaseType> const &other) const override;
 
-  unique_ptr<TInstantSet<BaseType>> clone() const {
+  std::unique_ptr<TInstantSet<BaseType>> clone() const {
     return std::unique_ptr<TInstantSet<BaseType>>(this->clone_impl());
   }
 
   TemporalDuration duration() const override { return TemporalDuration::InstantSet; };
 
   duration_ms timespan() const override;
-  set<Range<BaseType>> getValues() const override;
+  std::set<Range<BaseType>> getValues() const override;
   PeriodSet getTime() const override;
   Period period() const override;
-  unique_ptr<TInstantSet<BaseType>> shift(duration_ms const timedelta) const;
+  std::unique_ptr<TInstantSet<BaseType>> shift(duration_ms const timedelta) const;
   TInstantSet<BaseType> *shift_impl(duration_ms const timedelta) const override;
   bool intersectsTimestamp(time_point const datetime) const override;
   bool intersectsPeriod(Period const period) const override;
 
-  istream &read(istream &in);
-  ostream &write(ostream &os) const;
+  std::istream &read(std::istream &in);
+  std::ostream &write(std::ostream &os) const;
 
-  friend istream &operator>>(istream &in, TInstantSet &instant_set) { return instant_set.read(in); }
+  friend std::istream &operator>>(std::istream &in, TInstantSet &instant_set) {
+    return instant_set.read(in);
+  }
 
-  friend ostream &operator<<(ostream &os, TInstantSet<BaseType> const &instant_set) {
+  friend std::ostream &operator<<(std::ostream &os, TInstantSet<BaseType> const &instant_set) {
     return instant_set.write(os);
   }
 
@@ -75,16 +76,16 @@ private:
   /**
    * Contains common logic accross all base types.
    * Does not take SRID into account.
-   * Use read(istream &in) for reading in general. It internally uses this.
+   * Use read(std::istream &in) for reading in general. It internally uses this.
    */
-  istream &read_internal(istream &in);
+  std::istream &read_internal(std::istream &in);
 
   /**
    * Contains common logic accross all base types.
    * Does not take SRID into account.
-   * Use write(ostream &os) for writing in general. It internally uses this.
+   * Use write(std::ostream &os) for writing in general. It internally uses this.
    */
-  ostream &write_internal(ostream &os) const;
+  std::ostream &write_internal(std::ostream &os) const;
 
   TInstantSet<BaseType> *clone_impl() const override { return new TInstantSet<BaseType>(*this); };
 };
@@ -92,7 +93,7 @@ private:
 typedef TInstantSet<bool> TBoolInstSet;
 typedef TInstantSet<int> TIntInstSet;
 typedef TInstantSet<float> TFloatInstSet;
-typedef TInstantSet<string> TTextInstSet;
+typedef TInstantSet<std::string> TTextInstSet;
 typedef TInstantSet<GeomPoint> TGeomPointInstSet;
 
-#endif
+}  // namespace meos

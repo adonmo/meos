@@ -1,5 +1,4 @@
-#ifndef MEOS_TYPES_TEMPORAL_TEMPORALSET_HPP
-#define MEOS_TYPES_TEMPORAL_TEMPORALSET_HPP
+#pragma once
 
 #include <meos/types/temporal/TInstant.hpp>
 #include <meos/types/temporal/TInstantFunctions.hpp>
@@ -9,7 +8,7 @@
 #include <set>
 #include <string>
 
-using namespace std;
+namespace meos {
 
 using time_point = std::chrono::system_clock::time_point;
 using duration_ms = std::chrono::milliseconds;
@@ -20,26 +19,26 @@ template <typename BaseType = float> class TemporalSet
       public TInstantFunctions<TemporalSet<BaseType>, TInstant<BaseType>, BaseType> {
 public:
   TemporalSet();
-  TemporalSet(set<TInstant<BaseType>> const &instants);
+  TemporalSet(std::set<TInstant<BaseType>> const &instants);
 
   /**
    * @brief Set of instants.
    */
-  set<TInstant<BaseType>> instants() const;
+  std::set<TInstant<BaseType>> instants() const;
 
   /**
    * @brief Set of timestamps.
    */
-  set<time_point> timestamps() const override;
+  std::set<time_point> timestamps() const override;
 
 protected:
-  set<TInstant<BaseType>> m_instants;
+  std::set<TInstant<BaseType>> m_instants;
 };
 
 typedef TemporalSet<bool> TBoolSet;
 typedef TemporalSet<int> TIntSet;
 typedef TemporalSet<float> TFloatSet;
-typedef TemporalSet<string> TTextSet;
+typedef TemporalSet<std::string> TTextSet;
 typedef TemporalSet<GeomPoint> TGeomPointSet;
 
-#endif
+}  // namespace meos

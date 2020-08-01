@@ -2,6 +2,9 @@
 #include <ostream>
 #include <string>
 
+namespace meos {
+using namespace std;
+
 ostream &operator<<(ostream &os, const Interpolation &i) {
   if (i == Interpolation::Stepwise) {
     os << "Stepwise";
@@ -13,3 +16,5 @@ ostream &operator<<(ostream &os, const Interpolation &i) {
   }
   return os;
 }
+
+}  // namespace meos

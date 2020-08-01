@@ -2,6 +2,9 @@
 #include <meos/io/Deserializer.hpp>
 #include <meos/io/Serializer.hpp>
 
+using namespace meos;
+using namespace std;
+
 TEST_CASE("floats are serialized", "[serializer][float]") {
   Serializer<float> w;
   SECTION("only one float present") {

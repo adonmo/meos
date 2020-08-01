@@ -1,5 +1,4 @@
-#ifndef MEOS_IO_DESERIALIZER_HPP
-#define MEOS_IO_DESERIALIZER_HPP
+#pragma once
 
 #include <iomanip>
 #include <meos/types/geom/GeomPoint.hpp>
@@ -13,20 +12,20 @@
 #include <meos/types/time/TimestampSet.hpp>
 #include <string>
 
-using namespace std;
+namespace meos {
 
 template <typename T = float> class Deserializer {
 public:
-  Deserializer(string const &in);
-  unique_ptr<Temporal<T>> nextTemporal();
-  unique_ptr<TSequenceSet<T>> nextTSequenceSet();
-  unique_ptr<TSequence<T>> nextTSequence();
-  unique_ptr<TInstantSet<T>> nextTInstantSet();
-  unique_ptr<TInstant<T>> nextTInstant();
+  Deserializer(std::string const &in);
+  std::unique_ptr<Temporal<T>> nextTemporal();
+  std::unique_ptr<TSequenceSet<T>> nextTSequenceSet();
+  std::unique_ptr<TSequence<T>> nextTSequence();
+  std::unique_ptr<TInstantSet<T>> nextTInstantSet();
+  std::unique_ptr<TInstant<T>> nextTInstant();
 
-  unique_ptr<Period> nextPeriod();
-  unique_ptr<PeriodSet> nextPeriodSet();
-  unique_ptr<TimestampSet> nextTimestampSet();
+  std::unique_ptr<Period> nextPeriod();
+  std::unique_ptr<PeriodSet> nextPeriodSet();
+  std::unique_ptr<TimestampSet> nextTimestampSet();
 
   /**
    * Deserialize time in ISO8601 format
@@ -35,14 +34,14 @@ public:
   T nextValue();
 
 private:
-  string const in;
-  string::const_iterator iter;
+  std::string const in;
+  std::string::const_iterator iter;
   int nextInt();
   char peek(int lookahead);
   void skipWhitespaces();
   void consumeChar(char const c);
-  void skipChars(string const &chars);
+  void skipChars(std::string const &chars);
   bool hasNext();
 };
 
-#endif
+}  // namespace meos

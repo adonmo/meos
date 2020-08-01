@@ -5,6 +5,8 @@
 
 #include "../../common/time_utils.hpp"
 
+using namespace meos;
+
 TEST_CASE("TBoxes are constructed and serialized properly", "[tbox]") {
   std::stringstream output;
 

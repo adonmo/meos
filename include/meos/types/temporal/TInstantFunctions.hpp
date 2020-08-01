@@ -1,7 +1,6 @@
-#ifndef MEOS_TYPES_TEMPORAL_TINSTANTFUNCTIONS_HPP
-#define MEOS_TYPES_TEMPORAL_TINSTANTFUNCTIONS_HPP
+#pragma once
 
-#include <string>
+namespace meos {
 
 /**
  * This template class uses CRTP pattern and assumes the presence of the
@@ -104,4 +103,4 @@ private:
   friend TemporalType;
 };
 
-#endif
+}  // namespace meos

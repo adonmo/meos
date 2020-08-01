@@ -7,6 +7,9 @@
 #include "../common/time_utils.hpp"
 #include "../common/utils.hpp"
 
+using namespace meos;
+using namespace std;
+
 TEST_CASE("Periods are serialized", "[serializer][period]") {
   Serializer<> w;
   auto lower_inc = GENERATE(true, false);

@@ -6,11 +6,12 @@
 #include <stdexcept>
 #include <string>
 
-using namespace std;
-
 #ifdef _MSC_VER
 #  define timegm _mkgmtime
 #endif
+
+namespace meos {
+using namespace std;
 
 template <typename T> T nextValue(istream &) {
   // Check specialized template functions below for supported types
@@ -288,3 +289,5 @@ string read_until_one_of(istream &in, string stop_set) {
   }
   return s;
 }
+
+}  // namespace meos

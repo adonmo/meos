@@ -3,6 +3,9 @@
 #include <meos/io/Serializer.hpp>
 #include <string>
 
+using namespace meos;
+using namespace std;
+
 TEST_CASE("booleans are serialized", "[serializer][bool]") {
   Serializer<bool> w;
   SECTION("only one integer present") {

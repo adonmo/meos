@@ -6,6 +6,9 @@
 #include "../../common/time_utils.hpp"
 #include "../../common/utils.hpp"
 
+using namespace meos;
+using namespace std;
+
 TEST_CASE("periods are validated and constructed properly", "[period]") {
   SECTION("reads from istream") {
     Period period;

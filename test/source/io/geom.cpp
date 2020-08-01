@@ -3,6 +3,9 @@
 #include <meos/io/Serializer.hpp>
 #include <string>
 
+using namespace meos;
+using namespace std;
+
 TEST_CASE("geometries are serialized", "[serializer][geom]") {
   Serializer<GeomPoint> w;
   int x = GENERATE(take(10, random(-1000, 1000)));

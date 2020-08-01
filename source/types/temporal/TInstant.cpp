@@ -3,6 +3,9 @@
 #include <sstream>
 #include <string>
 
+namespace meos {
+using namespace std;
+
 template <typename BaseType> void TInstant<BaseType>::validate() {
   // None yet, check template specialization for Geometry for more validation
 }
@@ -259,3 +262,5 @@ template class TInstant<int>;
 template class TInstant<float>;
 template class TInstant<string>;
 template class TInstant<GeomPoint>;
+
+}  // namespace meos

@@ -12,6 +12,7 @@
 #include "chrono.h"
 #include "common.hpp"
 
+using namespace meos;
 namespace py = pybind11;
 
 void def_box_module(py::module &m) {
@@ -25,11 +26,12 @@ void def_box_module(py::module &m) {
            py::arg("xmax"), py::arg("tmax"))
       .def(py::init<double, double>(), py::arg("xmin"), py::arg("xmax"))
       .def(py::init<time_point, time_point>(), py::arg("tmin"), py::arg("tmax"))
-      .def(py::init<double, string const &, double, string const &>(), py::arg("xmin"),
+      .def(py::init<double, std::string const &, double, std::string const &>(), py::arg("xmin"),
            py::arg("tmin"), py::arg("xmax"), py::arg("tmax"))
-      .def(py::init<string const &, string const &, string const &, string const &>(),
+      .def(py::init<std::string const &, std::string const &, std::string const &,
+                    std::string const &>(),
            py::arg("xmin"), py::arg("tmin"), py::arg("xmax"), py::arg("tmax"))
-      .def(py::init<string const &>(), py::arg("serialized"))
+      .def(py::init<std::string const &>(), py::arg("serialized"))
       .def(py::self == py::self)
       .def(py::self != py::self)
       .def(py::self < py::self)
@@ -50,27 +52,27 @@ void def_box_module(py::module &m) {
            py::arg("xmin"), py::arg("ymin"), py::arg("zmin"), py::arg("tmin"), py::arg("xmax"),
            py::arg("ymax"), py::arg("zmax"), py::arg("tmax"), py::arg("srid") = 0,
            py::arg("geodetic") = false)
-      .def(
-          py::init<double, double, double, string &, double, double, double, string &, int, bool>(),
-          py::arg("xmin"), py::arg("ymin"), py::arg("zmin"), py::arg("tmin"), py::arg("xmax"),
-          py::arg("ymax"), py::arg("zmax"), py::arg("tmax"), py::arg("srid") = 0,
-          py::arg("geodetic") = false)
+      .def(py::init<double, double, double, std::string &, double, double, double, std::string &,
+                    int, bool>(),
+           py::arg("xmin"), py::arg("ymin"), py::arg("zmin"), py::arg("tmin"), py::arg("xmax"),
+           py::arg("ymax"), py::arg("zmax"), py::arg("tmax"), py::arg("srid") = 0,
+           py::arg("geodetic") = false)
       .def(py::init<double, double, double, double, double, double, int, bool>(), py::arg("xmin"),
            py::arg("ymin"), py::arg("zmin"), py::arg("xmax"), py::arg("ymax"), py::arg("zmax"),
            py::arg("srid") = 0, py::arg("geodetic") = false)
       .def(py::init<double, double, time_point, double, double, time_point, int>(), py::arg("xmin"),
            py::arg("ymin"), py::arg("tmin"), py::arg("xmax"), py::arg("ymax"), py::arg("tmax"),
            py::arg("srid") = 0)
-      .def(py::init<double, double, string &, double, double, string &, int>(), py::arg("xmin"),
-           py::arg("ymin"), py::arg("tmin"), py::arg("xmax"), py::arg("ymax"), py::arg("tmax"),
-           py::arg("srid") = 0)
+      .def(py::init<double, double, std::string &, double, double, std::string &, int>(),
+           py::arg("xmin"), py::arg("ymin"), py::arg("tmin"), py::arg("xmax"), py::arg("ymax"),
+           py::arg("tmax"), py::arg("srid") = 0)
       .def(py::init<double, double, double, double, int>(), py::arg("xmin"), py::arg("ymin"),
            py::arg("xmax"), py::arg("ymax"), py::arg("srid") = 0)
       .def(py::init<time_point, time_point, int, bool>(), py::arg("tmin"), py::arg("tmax"),
            py::arg("srid") = 0, py::arg("geodetic") = false)
-      .def(py::init<string &, string &, int, bool>(), py::arg("tmin"), py::arg("tmax"),
+      .def(py::init<std::string &, std::string &, int, bool>(), py::arg("tmin"), py::arg("tmax"),
            py::arg("srid") = 0, py::arg("geodetic") = false)
-      .def(py::init<string &>(), py::arg("serialized"))
+      .def(py::init<std::string &>(), py::arg("serialized"))
       .def(py::self == py::self)
       .def(py::self != py::self)
       .def(py::self < py::self)

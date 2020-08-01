@@ -8,6 +8,7 @@
 #include "../common/time_utils.hpp"
 #include "../common/utils.hpp"
 
+using namespace meos;
 using namespace std;
 
 TEMPLATE_TEST_CASE("TInstantSet are serialized", "[serializer][tinstantset]", int, float) {

@@ -4,6 +4,9 @@
 #include <sstream>
 #include <string>
 
+namespace meos {
+using namespace std;
+
 template <typename BaseType> TemporalSet<BaseType>::TemporalSet() {}
 
 template <typename BaseType>
@@ -27,3 +30,5 @@ template class TemporalSet<int>;
 template class TemporalSet<float>;
 template class TemporalSet<string>;
 template class TemporalSet<GeomPoint>;
+
+}  // namespace meos

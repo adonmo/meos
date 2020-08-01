@@ -9,6 +9,7 @@
 
 #include "common.hpp"
 
+using namespace meos;
 namespace py = pybind11;
 
 template <typename BaseType> using py_temporalset

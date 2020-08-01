@@ -1,10 +1,9 @@
-#ifndef MEOS_TYPES_TEMPORAL_INTERPOLATION_HPP
-#define MEOS_TYPES_TEMPORAL_INTERPOLATION_HPP
+#pragma once
 
 #include <iosfwd>
 #include <string>
 
-using namespace std;
+namespace meos {
 
 /**
  * Temporal sequences and sequence sets can specify interpolation.
@@ -25,7 +24,7 @@ enum class Interpolation {
 /**
  * Outputs a string representation of the Interpolation to the stream
  */
-ostream &operator<<(ostream &os, const Interpolation &i);
+std::ostream &operator<<(std::ostream &os, const Interpolation &i);
 
 /**
  * Helps decide the appropriate interpolation for specified base type
@@ -41,7 +40,7 @@ template <> struct default_interp<bool> {
 template <> struct default_interp<int> {
   static const Interpolation value = Interpolation::Stepwise;
 };
-template <> struct default_interp<string> {
+template <> struct default_interp<std::string> {
   static const Interpolation value = Interpolation::Stepwise;
 };
 
@@ -59,11 +58,11 @@ template <typename BaseType> constexpr Interpolation default_interp_v
 template <typename BaseType> struct is_discrete { static const bool value = false; };
 template <> struct is_discrete<bool> { static const bool value = true; };
 template <> struct is_discrete<int> { static const bool value = true; };
-template <> struct is_discrete<string> { static const bool value = true; };
+template <> struct is_discrete<std::string> { static const bool value = true; };
 
 /**
  * Shorthand for is_discrete<BaseType>::value
  */
 template <typename BaseType> constexpr bool is_discrete_v = is_discrete<BaseType>::value;
 
-#endif
+}  // namespace meos
