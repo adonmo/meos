@@ -2,7 +2,7 @@
 #define MEOS_TYPES_RANGE_RANGE_HPP
 
 #include <iomanip>
-#include <meos/types/geom/Geometry.hpp>
+#include <meos/types/geom/GeomPoint.hpp>
 
 using namespace std;
 

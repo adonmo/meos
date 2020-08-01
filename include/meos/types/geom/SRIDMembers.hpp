@@ -7,7 +7,7 @@ extern int const SRID_DEFAULT;
  * SRIDMembers is to be used by the classes Temporal and STBox
  *
  * In case of Temporal<BaseType> class, we inherit from this conditionally,
- * specifically when BaseType=Geometry. i.e, Temporal<Geometry> class
+ * specifically when BaseType=GeomPoint. i.e, Temporal<GeomPoint> class
  */
 struct SRIDMembers {
   int m_srid = SRID_DEFAULT;
@@ -23,7 +23,7 @@ struct SRIDMembers {
   /**
    * Get SRID of the coordinates
    *
-   * Only present when base type is Geometry
+   * Only present when base type is GeomPoint
    */
   int srid() const;
 };

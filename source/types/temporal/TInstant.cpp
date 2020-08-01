@@ -7,12 +7,12 @@ template <typename BaseType> void TInstant<BaseType>::validate() {
   // None yet, check template specialization for Geometry for more validation
 }
 
-template <> void TInstant<Geometry>::validate() {
+template <> void TInstant<GeomPoint>::validate() {
   // If the SRIDs is EXACTLY once, i.e, either on the object or on the
   // geometries, use it both places
   if (this->value.srid() * this->m_srid == 0) {
     if (this->m_srid != 0) {
-      this->value = Geometry(this->value.x(), this->value.y(), this->m_srid);
+      this->value = GeomPoint(this->value.x(), this->value.y(), this->m_srid);
     } else {
       this->m_srid = this->value.srid();
     }
@@ -61,7 +61,7 @@ template <typename BaseType> TInstant<BaseType>::TInstant(string const &serializ
   validate();
 }
 
-// Extra constructors for Geometry base type
+// Extra constructors for GeomPoint base type
 // Note: Don't forget to instantiate the templates!
 
 template <typename BaseType> template <typename B, typename is_geometry<B>::type *>
@@ -106,22 +106,22 @@ TInstant<BaseType>::TInstant(string const &serialized, int srid) {
   validate();
 }
 
-template TInstant<Geometry>::TInstant(Geometry, time_point, int);
-template TInstant<Geometry>::TInstant(pair<Geometry, time_point> p, int srid);
-template TInstant<Geometry>::TInstant(string const &value, string const &t, int srid);
-template TInstant<Geometry>::TInstant(pair<string const, string const> p, int srid);
-template TInstant<Geometry>::TInstant(string const &serialized, int srid);
+template TInstant<GeomPoint>::TInstant(GeomPoint, time_point, int);
+template TInstant<GeomPoint>::TInstant(pair<GeomPoint, time_point> p, int srid);
+template TInstant<GeomPoint>::TInstant(string const &value, string const &t, int srid);
+template TInstant<GeomPoint>::TInstant(pair<string const, string const> p, int srid);
+template TInstant<GeomPoint>::TInstant(string const &serialized, int srid);
 
 template <typename BaseType> template <typename B, typename is_geometry<B>::type *>
 TInstant<BaseType> TInstant<BaseType>::with_srid(int srid) const {
   if (this->m_srid == srid) return *this;
   TInstant<BaseType> instant = *this;
-  instant.value = Geometry(this->value.x(), this->value.y(), srid);
+  instant.value = GeomPoint(this->value.x(), this->value.y(), srid);
   instant.m_srid = srid;
   return instant;
 }
 
-template TInstant<Geometry> TInstant<Geometry>::with_srid(int srid) const;
+template TInstant<GeomPoint> TInstant<GeomPoint>::with_srid(int srid) const;
 
 template <typename BaseType>
 int TInstant<BaseType>::compare_internal(Temporal<BaseType> const &other) const {
@@ -148,14 +148,14 @@ int TInstant<BaseType>::compare(Temporal<BaseType> const &other) const {
   return compare_internal(other);
 }
 
-template <> int TInstant<Geometry>::compare(Temporal<Geometry> const &other) const {
+template <> int TInstant<GeomPoint>::compare(Temporal<GeomPoint> const &other) const {
   // Compares timestamp and value
   int cmp = compare_internal(other);
   if (cmp != 0) {
     return cmp;
   }
 
-  TInstant<Geometry> const *that = dynamic_cast<TInstant<Geometry> const *>(&other);
+  TInstant<GeomPoint> const *that = dynamic_cast<TInstant<GeomPoint> const *>(&other);
 
   // Compare SRID
   if (this->srid() < that->srid()) return -1;
@@ -224,8 +224,8 @@ template <typename BaseType> istream &TInstant<BaseType>::read(istream &in) {
   return in;
 }
 
-template <> istream &TInstant<Geometry>::read(istream &in) {
-  this->value = nextValue<Geometry>(in);
+template <> istream &TInstant<GeomPoint>::read(istream &in) {
+  this->value = nextValue<GeomPoint>(in);
   consume(in, '@');
   this->t = nextTime(in);
   this->m_srid = this->value.srid();
@@ -245,7 +245,7 @@ template <> ostream &TInstant<bool>::write(ostream &os, bool) const {
   return os;
 }
 
-template <> ostream &TInstant<Geometry>::write(ostream &os, bool with_srid) const {
+template <> ostream &TInstant<GeomPoint>::write(ostream &os, bool with_srid) const {
   if (with_srid) {
     os << this->getValue() << "@" << write_ISO8601_time(this->getTimestamp());
   } else {
@@ -258,4 +258,4 @@ template class TInstant<bool>;
 template class TInstant<int>;
 template class TInstant<float>;
 template class TInstant<string>;
-template class TInstant<Geometry>;
+template class TInstant<GeomPoint>;

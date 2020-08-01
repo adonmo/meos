@@ -10,7 +10,7 @@ namespace py = pybind11;
 
 template <typename BaseType> using py_temporal
     = py::class_<Temporal<BaseType>,
-                 conditional_t<is_same<BaseType, Geometry>::value, SRIDMembers, Empty>>;
+                 conditional_t<is_same<BaseType, GeomPoint>::value, SRIDMembers, Empty>>;
 
 template <typename BaseType> void def_temporal_class(py::module &m, std::string const &typesuffix) {
   py_temporal<BaseType>(m, ("Temporal" + typesuffix).c_str())

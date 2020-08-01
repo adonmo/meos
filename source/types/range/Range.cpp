@@ -43,7 +43,7 @@ template <typename T> unique_ptr<Range<T>> Range<T>::shift(T const &offset) cons
                             this->upper_inc());
 }
 
-template <> unique_ptr<Range<Geometry>> Range<Geometry>::shift(Geometry const &offset) const {
+template <> unique_ptr<Range<GeomPoint>> Range<GeomPoint>::shift(GeomPoint const &offset) const {
   return make_unique<Range>(this->lower() + offset, this->upper() + offset, this->lower_inc(),
                             this->upper_inc());
 }
@@ -66,4 +66,4 @@ template class Range<bool>;
 template class Range<int>;
 template class Range<float>;
 template class Range<string>;
-template class Range<Geometry>;
+template class Range<GeomPoint>;

@@ -26,4 +26,4 @@ template class TemporalSet<bool>;
 template class TemporalSet<int>;
 template class TemporalSet<float>;
 template class TemporalSet<string>;
-template class TemporalSet<Geometry>;
+template class TemporalSet<GeomPoint>;

@@ -211,11 +211,11 @@ template <> string Deserializer<string>::nextValue() {
   return input;
 }
 
-template <> Geometry Deserializer<Geometry>::nextValue() {
+template <> GeomPoint Deserializer<GeomPoint>::nextValue() {
   string::size_type current_pos = iter - in.begin();
   string s = in.substr(current_pos, 2048);
   stringstream ss(s);
-  Geometry value;
+  GeomPoint value;
   ss >> value;
   iter += ss.tellg();
   return value;
@@ -271,4 +271,4 @@ template class Deserializer<bool>;
 template class Deserializer<int>;
 template class Deserializer<float>;
 template class Deserializer<string>;
-template class Deserializer<Geometry>;
+template class Deserializer<GeomPoint>;

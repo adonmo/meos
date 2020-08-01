@@ -1,47 +1,47 @@
 #include <catch2/catch.hpp>
-#include <meos/types/geom/Geometry.hpp>
+#include <meos/types/geom/GeomPoint.hpp>
 #include <sstream>
 #include <string>
 
 TEST_CASE("Geometries are constructed and serialized properly", "[geometry]") {
-  Geometry geometry;
+  GeomPoint geometry;
   std::stringstream output;
   std::string expected = "POINT (2 3)";
 
   SECTION("<> constructor") { expected = "POINT (0 0)"; }
 
-  SECTION("<double, double> constructor") { geometry = Geometry(2, 3); }
+  SECTION("<double, double> constructor") { geometry = GeomPoint(2, 3); }
 
   SECTION("<string> constructor") {
-    SECTION("WKT") { geometry = Geometry("POINT (2 3)"); }
+    SECTION("WKT") { geometry = GeomPoint("POINT (2 3)"); }
 
-    SECTION("WKB (Hex)") { geometry = Geometry("010100000000000000000000400000000000000840"); }
+    SECTION("WKB (Hex)") { geometry = GeomPoint("010100000000000000000000400000000000000840"); }
   }
 
   SECTION("<Geomety> constructor") {
-    Geometry g(2, 3, 4326);
-    geometry = Geometry(g);
+    GeomPoint g(2, 3, 4326);
+    geometry = GeomPoint(g);
     expected = "SRID=4326;POINT (2 3)";
   }
 
   SECTION("<double, double, int> constructor") {
-    geometry = Geometry(2, 3, 4326);
+    geometry = GeomPoint(2, 3, 4326);
     expected = "SRID=4326;POINT (2 3)";
   }
 
   SECTION("<string, int> constructor") {
     SECTION("SRID provided via geometry") {
-      geometry = Geometry("SRID=4326;POINT (2 3)", 0);
+      geometry = GeomPoint("SRID=4326;POINT (2 3)", 0);
       expected = "SRID=4326;POINT (2 3)";
     }
 
     SECTION("SRID provided in addition to geometry") {
-      geometry = Geometry("POINT (2 3)", 4326);
+      geometry = GeomPoint("POINT (2 3)", 4326);
       expected = "SRID=4326;POINT (2 3)";
     }
 
     SECTION("conflicting SRIDs provided") {
-      REQUIRE_THROWS_AS((Geometry{"SRID=5676;POINT (2 3)", 4326}), std::invalid_argument);
+      REQUIRE_THROWS_AS((GeomPoint{"SRID=5676;POINT (2 3)", 4326}), std::invalid_argument);
       return;
     }
   }
@@ -51,7 +51,7 @@ TEST_CASE("Geometries are constructed and serialized properly", "[geometry]") {
 }
 
 TEST_CASE("test read and write to WKB", "[geometry]") {
-  Geometry g(2, 3, 4326);
+  GeomPoint g(2, 3, 4326);
   std::stringstream output;
   REQUIRE(g.srid() == 4326);
   g.toWKB(output);  // SRID would be lost in this process
@@ -64,7 +64,7 @@ TEST_CASE("test read and write to WKB", "[geometry]") {
 }
 
 TEST_CASE("test read and write to WKT", "[geometry]") {
-  Geometry g(2, 3, 4326);
+  GeomPoint g(2, 3, 4326);
   REQUIRE(g.srid() == 4326);
   std::string output = g.toWKT();  // SRID would be lost in this process
 
@@ -75,7 +75,7 @@ TEST_CASE("test read and write to WKT", "[geometry]") {
 }
 
 TEST_CASE("test read and write to HEX", "[geometry]") {
-  Geometry g(2, 3, 4326);
+  GeomPoint g(2, 3, 4326);
   std::stringstream output;
   REQUIRE(g.srid() == 4326);
   g.toHEX(output);  // SRID would be lost in this process
@@ -88,7 +88,7 @@ TEST_CASE("test read and write to HEX", "[geometry]") {
 }
 
 TEST_CASE("fromHex", "[geometry]") {
-  Geometry g;
+  GeomPoint g;
   std::stringstream is("010100000000000000000000400000000000000840");
   g.fromHEX(is);
   REQUIRE(g.x() == 2);
@@ -97,7 +97,7 @@ TEST_CASE("fromHex", "[geometry]") {
 }
 
 TEST_CASE("toHex", "[geometry]") {
-  Geometry g(2, 3, 4326);
+  GeomPoint g(2, 3, 4326);
   std::stringstream output;
   g.toHEX(output);  // SRID would be lost in this process
   REQUIRE(output.str() == "010100000000000000000000400000000000000840");

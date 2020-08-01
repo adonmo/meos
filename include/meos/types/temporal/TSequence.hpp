@@ -1,7 +1,7 @@
 #ifndef MEOS_TYPES_TEMPORAL_TSEQUENCE_HPP
 #define MEOS_TYPES_TEMPORAL_TSEQUENCE_HPP
 
-#include <meos/types/geom/Geometry.hpp>
+#include <meos/types/geom/GeomPoint.hpp>
 #include <meos/types/temporal/Interpolation.hpp>
 #include <meos/types/temporal/TInstant.hpp>
 #include <meos/types/temporal/Temporal.hpp>
@@ -23,7 +23,7 @@ public:
             Interpolation interpolation = default_interp_v<BaseType>);
   TSequence(string const &serialized);
 
-  // Additional constructors for Geometry base type to specify SRID
+  // Additional constructors for GeomPoint base type to specify SRID
   template <typename B = BaseType, typename is_geometry<B>::type * = nullptr>
   TSequence(set<TInstant<BaseType>> &instants_, bool lower_inc = true, bool upper_inc = false,
             int srid = SRID_DEFAULT, Interpolation interpolation = default_interp_v<BaseType>);

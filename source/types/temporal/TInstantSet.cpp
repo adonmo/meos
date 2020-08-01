@@ -9,20 +9,20 @@ template <typename BaseType> void TInstantSet<BaseType>::validate() {
   // Check template specialization on Geometry for more validation
 }
 
-template <> void TInstantSet<Geometry>::validate() {
+template <> void TInstantSet<GeomPoint>::validate() {
   validate_common();
 
   // If the SRIDs is EXACTLY once, i.e, either on the object or on the
   // geometries, use it both places
   // TODO improve - we are checking only first object. This logic is not ideal
   // when objects with a mix of different SRIDs are passed together
-  Geometry g = this->startValue();
+  GeomPoint g = this->startValue();
   if (g.srid() * this->m_srid == 0) {
     if (this->m_srid != 0) {
-      set<TInstant<Geometry>> _instants;
-      for (TInstant<Geometry> const &instant : this->m_instants) {
+      set<TInstant<GeomPoint>> _instants;
+      for (TInstant<GeomPoint> const &instant : this->m_instants) {
         _instants.insert(
-            TInstant<Geometry>(instant.getValue(), instant.getTimestamp(), this->m_srid));
+            TInstant<GeomPoint>(instant.getValue(), instant.getTimestamp(), this->m_srid));
       };
       this->m_instants = _instants;
     } else {
@@ -31,7 +31,7 @@ template <> void TInstantSet<Geometry>::validate() {
   }
 
   // All SRIDs must be equal
-  for (TInstant<Geometry> const &instant : this->m_instants) {
+  for (TInstant<GeomPoint> const &instant : this->m_instants) {
     if (this->m_srid != instant.getValue().srid()) {
       throw std::invalid_argument("Conflicting SRIDs provided. Given: " + to_string(this->m_srid)
                                   + ", while Geometry contains: " + to_string(g.srid()));
@@ -102,9 +102,9 @@ TInstantSet<BaseType>::TInstantSet(string const &serialized, int srid) {
   validate();
 }
 
-template TInstantSet<Geometry>::TInstantSet(set<TInstant<Geometry>> const &instants, int srid);
-template TInstantSet<Geometry>::TInstantSet(set<string> const &instants, int srid);
-template TInstantSet<Geometry>::TInstantSet(string const &serialized, int srid);
+template TInstantSet<GeomPoint>::TInstantSet(set<TInstant<GeomPoint>> const &instants, int srid);
+template TInstantSet<GeomPoint>::TInstantSet(set<string> const &instants, int srid);
+template TInstantSet<GeomPoint>::TInstantSet(string const &serialized, int srid);
 
 template <typename BaseType> void TInstantSet<BaseType>::validate_common() {
   size_t sz = this->m_instants.size();
@@ -145,14 +145,14 @@ int TInstantSet<BaseType>::compare(Temporal<BaseType> const &other) const {
   return compare_internal(other);
 }
 
-template <> int TInstantSet<Geometry>::compare(Temporal<Geometry> const &other) const {
+template <> int TInstantSet<GeomPoint>::compare(Temporal<GeomPoint> const &other) const {
   // Compare instants
   int cmp = compare_internal(other);
   if (cmp != 0) {
     return cmp;
   }
 
-  TInstantSet<Geometry> const *that = dynamic_cast<TInstantSet<Geometry> const *>(&other);
+  TInstantSet<GeomPoint> const *that = dynamic_cast<TInstantSet<GeomPoint> const *>(&other);
 
   // Compare SRID
   if (this->srid() < that->srid()) return -1;
@@ -252,7 +252,7 @@ template <typename BaseType> istream &TInstantSet<BaseType>::read(istream &in) {
   return in;
 }
 
-template <> istream &TInstantSet<Geometry>::read(istream &in) {
+template <> istream &TInstantSet<GeomPoint>::read(istream &in) {
   // First we check if SRID prefix is present, and if so, read it first
   int srid = 0;
   in >> std::ws;
@@ -293,7 +293,7 @@ template <typename BaseType> ostream &TInstantSet<BaseType>::write(ostream &os) 
   return os;
 }
 
-template <> ostream &TInstantSet<Geometry>::write(ostream &os) const {
+template <> ostream &TInstantSet<GeomPoint>::write(ostream &os) const {
   if (this->srid() != 0) {
     os << "SRID=" << this->srid() << ";";
   }
@@ -306,4 +306,4 @@ template class TInstantSet<bool>;
 template class TInstantSet<int>;
 template class TInstantSet<float>;
 template class TInstantSet<string>;
-template class TInstantSet<Geometry>;
+template class TInstantSet<GeomPoint>;

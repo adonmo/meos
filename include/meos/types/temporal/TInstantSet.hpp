@@ -1,7 +1,7 @@
 #ifndef MEOS_TYPES_TEMPORAL_TINSTANTSET_HPP
 #define MEOS_TYPES_TEMPORAL_TINSTANTSET_HPP
 
-#include <meos/types/geom/Geometry.hpp>
+#include <meos/types/geom/GeomPoint.hpp>
 #include <meos/types/temporal/TInstant.hpp>
 #include <meos/types/temporal/Temporal.hpp>
 #include <meos/types/temporal/TemporalSet.hpp>
@@ -20,7 +20,7 @@ public:
   TInstantSet(set<string> const &instants);
   TInstantSet(string const &serialized);
 
-  // Additional constructors for Geometry base type to specify SRID
+  // Additional constructors for GeomPoint base type to specify SRID
   template <typename B = BaseType, typename is_geometry<B>::type * = nullptr>
   TInstantSet(set<TInstant<BaseType>> const &instants, int srid);
 

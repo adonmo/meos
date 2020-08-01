@@ -78,4 +78,4 @@ template class Temporal<bool>;
 template class Temporal<int>;
 template class Temporal<float>;
 template class Temporal<string>;
-template class Temporal<Geometry>;
+template class Temporal<GeomPoint>;

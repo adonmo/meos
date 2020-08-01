@@ -39,7 +39,7 @@ template <> string Serializer<float>::write(float const &value) {
 
 template <> string Serializer<string>::write(string const &value) { return '"' + value + '"'; }
 
-template <> string Serializer<Geometry>::write(Geometry const &value) {
+template <> string Serializer<GeomPoint>::write(GeomPoint const &value) {
   stringstream ss;
   ss << value;
   return ss.str();
@@ -95,4 +95,4 @@ template class Serializer<bool>;
 template class Serializer<int>;
 template class Serializer<float>;
 template class Serializer<string>;
-template class Serializer<Geometry>;
+template class Serializer<GeomPoint>;

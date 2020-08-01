@@ -47,9 +47,9 @@ void _def_tinstantset_class_specializations(py_tinstantset<BaseType> &c,
   // No specializations by default
 }
 
-template <> void _def_tinstantset_class_specializations(py_tinstantset<Geometry> &c,
+template <> void _def_tinstantset_class_specializations(py_tinstantset<GeomPoint> &c,
                                                         std::string const &typesuffix) {
-  c.def(py::init<set<TInstant<Geometry>> &, int>(), py::arg("instants"), py::arg("srid"))
+  c.def(py::init<set<TInstant<GeomPoint>> &, int>(), py::arg("instants"), py::arg("srid"))
       .def(py::init<set<string> &, int>(), py::arg("instants"), py::arg("srid"))
       .def(py::init<string, int>(), py::arg("serialized"), py::arg("srid"));
 }

@@ -8,18 +8,18 @@ template <typename BaseType> void TSequence<BaseType>::validate() {
   // Check template specialization on Geometry for more validation
 }
 
-template <> void TSequence<Geometry>::validate() {
+template <> void TSequence<GeomPoint>::validate() {
   validate_common();
 
   // If the SRIDs is EXACTLY once, i.e, either on the object or on the
   // geometries, use it both places
   // TODO improve - we are checking only first object. This logic is not ideal
   // when objects with a mix of different SRIDs are passed together
-  TInstant<Geometry> instant = this->startInstant();
+  TInstant<GeomPoint> instant = this->startInstant();
   if (instant.srid() * this->m_srid == 0) {
     if (this->m_srid != 0) {
-      set<TInstant<Geometry>> _instants;
-      for (TInstant<Geometry> const &instant : this->m_instants) {
+      set<TInstant<GeomPoint>> _instants;
+      for (TInstant<GeomPoint> const &instant : this->m_instants) {
         _instants.insert(instant.with_srid(this->m_srid));
       };
       this->m_instants = _instants;
@@ -29,7 +29,7 @@ template <> void TSequence<Geometry>::validate() {
   }
 
   // All SRIDs must be equal
-  for (TInstant<Geometry> const &instant : this->m_instants) {
+  for (TInstant<GeomPoint> const &instant : this->m_instants) {
     if (this->m_srid != instant.getValue().srid()) {
       throw std::invalid_argument("Conflicting SRIDs provided. Given: " + to_string(this->m_srid)
                                   + ", while Instant contains: " + to_string(instant.srid()));
@@ -115,11 +115,11 @@ TSequence<BaseType>::TSequence(string const &serialized, int srid) {
   validate();
 }
 
-template TSequence<Geometry>::TSequence(set<TInstant<Geometry>> &instants, bool lower_inc,
-                                        bool upper_inc, int srid, Interpolation interpolation);
-template TSequence<Geometry>::TSequence(set<string> const &instants, bool lower_inc, bool upper_inc,
-                                        int srid, Interpolation interpolation);
-template TSequence<Geometry>::TSequence(string const &serialized, int srid);
+template TSequence<GeomPoint>::TSequence(set<TInstant<GeomPoint>> &instants, bool lower_inc,
+                                         bool upper_inc, int srid, Interpolation interpolation);
+template TSequence<GeomPoint>::TSequence(set<string> const &instants, bool lower_inc,
+                                         bool upper_inc, int srid, Interpolation interpolation);
+template TSequence<GeomPoint>::TSequence(string const &serialized, int srid);
 
 template <typename BaseType> template <typename B, typename is_geometry<B>::type *>
 TSequence<BaseType> TSequence<BaseType>::with_srid(int srid) const {
@@ -132,7 +132,7 @@ TSequence<BaseType> TSequence<BaseType>::with_srid(int srid) const {
   return sequence;
 }
 
-template TSequence<Geometry> TSequence<Geometry>::with_srid(int srid) const;
+template TSequence<GeomPoint> TSequence<GeomPoint>::with_srid(int srid) const;
 
 template <typename BaseType>
 TSequence<BaseType> TSequence<BaseType>::with_interp(Interpolation interpolation) const {
@@ -216,14 +216,14 @@ int TSequence<BaseType>::compare(Temporal<BaseType> const &other) const {
   return compare_internal(other);
 }
 
-template <> int TSequence<Geometry>::compare(Temporal<Geometry> const &other) const {
+template <> int TSequence<GeomPoint>::compare(Temporal<GeomPoint> const &other) const {
   // Compare instants and bounds
   int cmp = compare_internal(other);
   if (cmp != 0) {
     return cmp;
   }
 
-  TSequence<Geometry> const *that = dynamic_cast<TSequence<Geometry> const *>(&other);
+  TSequence<GeomPoint> const *that = dynamic_cast<TSequence<GeomPoint> const *>(&other);
 
   // Compare SRID
   if (this->srid() < that->srid()) return -1;
@@ -363,7 +363,7 @@ istream &TSequence<BaseType>::read(istream &in, bool with_interp, bool) {
   return in;
 }
 
-template <> istream &TSequence<Geometry>::read(istream &in, bool with_interp, bool with_srid) {
+template <> istream &TSequence<GeomPoint>::read(istream &in, bool with_interp, bool with_srid) {
   // First we check if SRID prefix is present, and if so, read it first
   int srid = 0;
   if (with_srid) {
@@ -413,7 +413,7 @@ ostream &TSequence<BaseType>::write(ostream &os, bool with_interp, bool) const {
 }
 
 template <>
-ostream &TSequence<Geometry>::write(ostream &os, bool with_interp, bool with_srid) const {
+ostream &TSequence<GeomPoint>::write(ostream &os, bool with_interp, bool with_srid) const {
   if (with_srid && this->srid() != 0) {
     os << "SRID=" << this->srid() << ";";
   }
@@ -426,4 +426,4 @@ template class TSequence<bool>;
 template class TSequence<int>;
 template class TSequence<float>;
 template class TSequence<string>;
-template class TSequence<Geometry>;
+template class TSequence<GeomPoint>;

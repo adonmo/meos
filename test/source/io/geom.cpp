@@ -4,19 +4,19 @@
 #include <string>
 
 TEST_CASE("geometries are serialized", "[serializer][geom]") {
-  Serializer<Geometry> w;
+  Serializer<GeomPoint> w;
   int x = GENERATE(take(10, random(-1000, 1000)));
   int y = GENERATE(take(10, random(-1000, 1000)));
   string wkt = "POINT (" + to_string(x) + " " + to_string(y) + ")";
 
   SECTION("Without SRID") {
-    Geometry g(x, y);
+    GeomPoint g(x, y);
     REQUIRE(g.geom != nullptr);
     REQUIRE(w.write(g) == wkt);
   }
 
   SECTION("With SRID") {
-    Geometry g(x, y, 4326);
+    GeomPoint g(x, y, 4326);
     REQUIRE(g.geom != nullptr);
     REQUIRE(w.write(g) == "SRID=4326;" + wkt);
   }
@@ -27,11 +27,11 @@ TEST_CASE("geometries are deserialized", "[deserializer][geom]") {
   double expectedY = GENERATE(take(10, random(-100000, 100000))) / 1000.0;
   double x, y;
   int expected_srid = 0;
-  Geometry g;
+  GeomPoint g;
 
   SECTION("Without SRID") {
     string serialized = "POINT (" + to_string(expectedX) + " " + to_string(expectedY) + ")";
-    Deserializer<Geometry> r(serialized);
+    Deserializer<GeomPoint> r(serialized);
 
     g = r.nextValue();
     CHECK_THROWS(r.nextValue());
@@ -41,7 +41,7 @@ TEST_CASE("geometries are deserialized", "[deserializer][geom]") {
     expected_srid = 4326;
     string serialized
         = "SRID=4326;POINT (" + to_string(expectedX) + " " + to_string(expectedY) + ")";
-    Deserializer<Geometry> r(serialized);
+    Deserializer<GeomPoint> r(serialized);
 
     g = r.nextValue();
     CHECK_THROWS(r.nextValue());
@@ -62,7 +62,7 @@ TEST_CASE("geometries are deserialized", "[deserializer][geom]") {
 
     sprintf(buffer, fmt, expectedX, expectedY);
     string serialized = buffer;
-    Deserializer<Geometry> r(serialized);
+    Deserializer<GeomPoint> r(serialized);
 
     g = r.nextValue();
     CHECK_THROWS(r.nextValue());
@@ -72,7 +72,7 @@ TEST_CASE("geometries are deserialized", "[deserializer][geom]") {
     expected_srid = 4326;
     string serialized
         = "SRID=4326;POINT (" + to_string(expectedX) + " " + to_string(expectedY) + ")@";
-    Deserializer<Geometry> r(serialized);
+    Deserializer<GeomPoint> r(serialized);
 
     g = r.nextValue();
     CHECK_THROWS(r.nextValue());
@@ -86,16 +86,16 @@ TEST_CASE("geometries are deserialized", "[deserializer][geom]") {
 }
 
 TEST_CASE("geometry serdes", "[serializer][deserializer][geom]") {
-  Serializer<Geometry> w;
+  Serializer<GeomPoint> w;
   SECTION("only one geometry present") {
     int expectedX = GENERATE(take(10, random(-1000, 1000)));
     int expectedY = GENERATE(take(10, random(-1000, 1000)));
     string expected_serialized
         = "POINT (" + to_string(expectedX) + " " + to_string(expectedY) + ")";
-    Geometry g(expectedX, expectedY);
+    GeomPoint g(expectedX, expectedY);
     string serialized = w.write(g);
     REQUIRE(serialized == expected_serialized);
-    Deserializer<Geometry> r(serialized);
+    Deserializer<GeomPoint> r(serialized);
 
     g = r.nextValue();
     REQUIRE(g.geom != nullptr);

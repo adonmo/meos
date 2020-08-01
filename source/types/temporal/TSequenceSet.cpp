@@ -9,18 +9,18 @@ template <typename BaseType> void TSequenceSet<BaseType>::validate() {
   // Check template specialization on Geometry for more validation
 }
 
-template <> void TSequenceSet<Geometry>::validate() {
+template <> void TSequenceSet<GeomPoint>::validate() {
   validate_common();
 
   // If the SRIDs is AT MOST once, i.e, either on the object or on the
   // sequences, use it both places
   // TODO improve - we are checking only first object. This logic is not ideal
   // when objects with a mix of different SRIDs are passed together
-  TSequence<Geometry> sequence = this->startSequence();
+  TSequence<GeomPoint> sequence = this->startSequence();
   if (sequence.srid() * this->m_srid == 0) {
     if (this->m_srid != 0) {
-      set<TSequence<Geometry>> _sequences;
-      for (TSequence<Geometry> const &sequence : this->m_sequences) {
+      set<TSequence<GeomPoint>> _sequences;
+      for (TSequence<GeomPoint> const &sequence : this->m_sequences) {
         _sequences.insert(sequence.with_srid(this->m_srid));
       };
       this->m_sequences = _sequences;
@@ -30,7 +30,7 @@ template <> void TSequenceSet<Geometry>::validate() {
   }
 
   // All SRIDs must be equal
-  for (TSequence<Geometry> const &sequence : this->m_sequences) {
+  for (TSequence<GeomPoint> const &sequence : this->m_sequences) {
     if (this->m_srid != sequence.srid()) {
       throw std::invalid_argument("Conflicting SRIDs provided. Given: " + to_string(this->m_srid)
                                   + ", while Sequence contains: " + to_string(sequence.srid()));
@@ -107,9 +107,9 @@ TSequenceSet<BaseType>::TSequenceSet(string const &serialized, int srid) {
 }
 
 // clang-format off
-template TSequenceSet<Geometry>::TSequenceSet(set<TSequence<Geometry>> const &sequences, int srid, Interpolation interpolation);
-template TSequenceSet<Geometry>::TSequenceSet(set<string> const &sequences, int srid, Interpolation interpolation);
-template TSequenceSet<Geometry>::TSequenceSet(string const &serialized, int srid);
+template TSequenceSet<GeomPoint>::TSequenceSet(set<TSequence<GeomPoint>> const &sequences, int srid, Interpolation interpolation);
+template TSequenceSet<GeomPoint>::TSequenceSet(set<string> const &sequences, int srid, Interpolation interpolation);
+template TSequenceSet<GeomPoint>::TSequenceSet(string const &serialized, int srid);
 // clang-format on
 
 template <typename BaseType> void TSequenceSet<BaseType>::validate_common() {
@@ -187,14 +187,14 @@ int TSequenceSet<BaseType>::compare(Temporal<BaseType> const &other) const {
   return compare_internal(other);
 }
 
-template <> int TSequenceSet<Geometry>::compare(Temporal<Geometry> const &other) const {
+template <> int TSequenceSet<GeomPoint>::compare(Temporal<GeomPoint> const &other) const {
   // Compare sequences and interpolation
   int cmp = compare_internal(other);
   if (cmp != 0) {
     return cmp;
   }
 
-  TSequenceSet<Geometry> const *that = dynamic_cast<TSequenceSet<Geometry> const *>(&other);
+  TSequenceSet<GeomPoint> const *that = dynamic_cast<TSequenceSet<GeomPoint> const *>(&other);
 
   // Compare SRID
   if (this->srid() < that->srid()) return -1;
@@ -395,7 +395,7 @@ template <typename BaseType> istream &TSequenceSet<BaseType>::read(istream &in) 
   return in;
 }
 
-template <> istream &TSequenceSet<Geometry>::read(istream &in) {
+template <> istream &TSequenceSet<GeomPoint>::read(istream &in) {
   // First we check if SRID prefix is present, and if so, read it first
   int srid = 0;
   in >> std::ws;
@@ -440,7 +440,7 @@ template <typename BaseType> ostream &TSequenceSet<BaseType>::write(ostream &os)
   return os;
 }
 
-template <> ostream &TSequenceSet<Geometry>::write(ostream &os) const {
+template <> ostream &TSequenceSet<GeomPoint>::write(ostream &os) const {
   if (this->srid() != 0) {
     os << "SRID=" << this->srid() << ";";
   }
@@ -453,4 +453,4 @@ template class TSequenceSet<bool>;
 template class TSequenceSet<int>;
 template class TSequenceSet<float>;
 template class TSequenceSet<string>;
-template class TSequenceSet<Geometry>;
+template class TSequenceSet<GeomPoint>;

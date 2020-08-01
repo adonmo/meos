@@ -62,14 +62,14 @@ void _def_tsequence_class_specializations(py_tsequence<BaseType> &c,
   // No specializations by default
 }
 
-template <> void _def_tsequence_class_specializations(py_tsequence<Geometry> &c,
+template <> void _def_tsequence_class_specializations(py_tsequence<GeomPoint> &c,
                                                       std::string const &typesuffix) {
-  c.def(py::init<set<TInstant<Geometry>> &, bool, bool, int, Interpolation>(), py::arg("instants"),
+  c.def(py::init<set<TInstant<GeomPoint>> &, bool, bool, int, Interpolation>(), py::arg("instants"),
         py::arg("lower_inc") = true, py::arg("upper_inc") = false, py::arg("srid") = 0,
-        py::arg("interpolation") = default_interp_v<Geometry>)
+        py::arg("interpolation") = default_interp_v<GeomPoint>)
       .def(py::init<set<string> &, bool, bool, int, Interpolation>(), py::arg("instants"),
            py::arg("lower_inc") = true, py::arg("upper_inc") = false, py::arg("srid") = 0,
-           py::arg("interpolation") = default_interp_v<Geometry>)
+           py::arg("interpolation") = default_interp_v<GeomPoint>)
       .def(py::init<string, int>(), py::arg("serialized"), py::arg("srid"));
 }
 

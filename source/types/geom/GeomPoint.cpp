@@ -2,25 +2,25 @@
 #include <cstdlib>
 #include <iomanip>
 #include <meos/io/utils.hpp>
-#include <meos/types/geom/Geometry.hpp>
+#include <meos/types/geom/GeomPoint.hpp>
 #include <meos/util/string.hpp>
 #include <sstream>
 #include <string>
 
-Geometry::Geometry() { point(0, 0); }
+GeomPoint::GeomPoint() { point(0, 0); }
 
-Geometry::Geometry(std::string serialized) {
+GeomPoint::GeomPoint(std::string serialized) {
   std::stringstream ss(serialized);
-  Geometry g;
+  GeomPoint g;
   ss >> g;
   this->geom = GEOSGeom_clone_r(geos_context, g.geom);
 }
 
-Geometry::Geometry(double x, double y) { point(x, y); }
+GeomPoint::GeomPoint(double x, double y) { point(x, y); }
 
-Geometry::Geometry(std::string serialized, int srid) {
+GeomPoint::GeomPoint(std::string serialized, int srid) {
   std::stringstream ss(serialized);
-  Geometry g;
+  GeomPoint g;
   ss >> g;
 
   // If two different, non-zero SRIDs are provided, we throw an error
@@ -36,24 +36,24 @@ Geometry::Geometry(std::string serialized, int srid) {
   this->geom = GEOSGeom_clone_r(geos_context, g.geom);
 }
 
-Geometry::Geometry(double x, double y, int srid) {
+GeomPoint::GeomPoint(double x, double y, int srid) {
   point(x, y);
   GEOSSetSRID_r(geos_context, this->geom, srid);
 }
 
-Geometry::Geometry(Geometry const &g) {
+GeomPoint::GeomPoint(GeomPoint const &g) {
   free();
   this->geom = GEOSGeom_clone_r(geos_context, g.geom);
 }
 
-void Geometry::operator=(Geometry const &g) {
+void GeomPoint::operator=(GeomPoint const &g) {
   free();
   this->geom = GEOSGeom_clone_r(geos_context, g.geom);
 }
 
-Geometry::~Geometry() { free(); }
+GeomPoint::~GeomPoint() { free(); }
 
-void Geometry::point(double x, double y) {
+void GeomPoint::point(double x, double y) {
   free();
   auto seq = GEOSCoordSeq_create_r(geos_context, 1, 2);
   GEOSCoordSeq_setX_r(geos_context, seq, 0, x);
@@ -61,7 +61,7 @@ void Geometry::point(double x, double y) {
   geom = GEOSGeom_createPoint_r(geos_context, seq);
 }
 
-void Geometry::fromWKB(std::istream &is) {
+void GeomPoint::fromWKB(std::istream &is) {
   free();
   const size_t BUFFER_SIZE = 2048;
   unsigned char *buf = new unsigned char[BUFFER_SIZE];
@@ -77,7 +77,7 @@ void Geometry::fromWKB(std::istream &is) {
   }
 }
 
-void Geometry::toWKB(std::ostream &os) const {
+void GeomPoint::toWKB(std::ostream &os) const {
   if (geom != nullptr) {
     GEOSWKBWriter *wkbw_ = GEOSWKBWriter_create_r(geos_context);
     size_t size;
@@ -90,7 +90,7 @@ void Geometry::toWKB(std::ostream &os) const {
   }
 }
 
-void Geometry::fromWKT(std::string wkt) {
+void GeomPoint::fromWKT(std::string wkt) {
   free();
   geom = GEOSGeomFromWKT_r(geos_context, wkt.c_str());
   if (geom == nullptr) {
@@ -98,7 +98,7 @@ void Geometry::fromWKT(std::string wkt) {
   }
 }
 
-std::string Geometry::toWKT() const {
+std::string GeomPoint::toWKT() const {
   if (geom != nullptr) {
     GEOSWKTWriter *wktw_ = GEOSWKTWriter_create_r(geos_context);
     GEOSWKTWriter_setTrim_r(geos_context, wktw_, 1);
@@ -111,8 +111,8 @@ std::string Geometry::toWKT() const {
   }
   throw "Geometry not initiated.";
 }
-#include <iostream>
-void Geometry::fromHEX(std::istream &is) {
+
+void GeomPoint::fromHEX(std::istream &is) {
   free();
   const size_t BUFFER_SIZE = 2048;
   unsigned char *buf = new unsigned char[BUFFER_SIZE];
@@ -128,7 +128,7 @@ void Geometry::fromHEX(std::istream &is) {
   }
 }
 
-void Geometry::toHEX(std::ostream &os) const {
+void GeomPoint::toHEX(std::ostream &os) const {
   if (geom != nullptr) {
     GEOSWKBWriter *wkbw_ = GEOSWKBWriter_create_r(geos_context);
     size_t size;
@@ -141,28 +141,28 @@ void Geometry::toHEX(std::ostream &os) const {
   }
 }
 
-void Geometry::free() {
+void GeomPoint::free() {
   if (geom != nullptr) {
     GEOSGeom_destroy_r(geos_context, geom);
     geom = nullptr;
   }
 }
 
-double Geometry::x() const {
+double GeomPoint::x() const {
   double x;
   GEOSGeomGetX_r(geos_context, this->geom, &x);
   return x;
 }
 
-double Geometry::y() const {
+double GeomPoint::y() const {
   double y;
   GEOSGeomGetY_r(geos_context, this->geom, &y);
   return y;
 }
 
-int Geometry::srid() const { return GEOSGetSRID_r(geos_context, this->geom); }
+int GeomPoint::srid() const { return GEOSGetSRID_r(geos_context, this->geom); }
 
-Geometry Geometry::operator+(Geometry const &other) const {
+GeomPoint GeomPoint::operator+(GeomPoint const &other) const {
   double x, y;
   GEOSGeomGetX_r(geos_context, this->geom, &x);
   GEOSGeomGetY_r(geos_context, this->geom, &y);
@@ -171,10 +171,10 @@ Geometry Geometry::operator+(Geometry const &other) const {
   GEOSGeomGetX_r(geos_context, other.geom, &ox);
   GEOSGeomGetY_r(geos_context, other.geom, &oy);
 
-  return Geometry(x + ox, y + oy);
+  return GeomPoint(x + ox, y + oy);
 }
 
-Geometry Geometry::operator-(Geometry const &other) const {
+GeomPoint GeomPoint::operator-(GeomPoint const &other) const {
   double x, y;
   GEOSGeomGetX_r(geos_context, this->geom, &x);
   GEOSGeomGetY_r(geos_context, this->geom, &y);
@@ -183,10 +183,10 @@ Geometry Geometry::operator-(Geometry const &other) const {
   GEOSGeomGetX_r(geos_context, other.geom, &ox);
   GEOSGeomGetY_r(geos_context, other.geom, &oy);
 
-  return Geometry(x - ox, y - oy);
+  return GeomPoint(x - ox, y - oy);
 }
 
-int Geometry::compare(Geometry const &other) const {
+int GeomPoint::compare(GeomPoint const &other) const {
   double x, y;
   GEOSGeomGetX_r(geos_context, this->geom, &x);
   GEOSGeomGetY_r(geos_context, this->geom, &y);
@@ -211,19 +211,19 @@ int Geometry::compare(Geometry const &other) const {
   return 0;
 }
 
-bool operator==(Geometry const &lhs, Geometry const &rhs) { return lhs.compare(rhs) == 0; }
+bool operator==(GeomPoint const &lhs, GeomPoint const &rhs) { return lhs.compare(rhs) == 0; }
 
-bool operator!=(Geometry const &lhs, Geometry const &rhs) { return lhs.compare(rhs) != 0; }
+bool operator!=(GeomPoint const &lhs, GeomPoint const &rhs) { return lhs.compare(rhs) != 0; }
 
-bool operator<(Geometry const &lhs, Geometry const &rhs) { return lhs.compare(rhs) == -1; }
+bool operator<(GeomPoint const &lhs, GeomPoint const &rhs) { return lhs.compare(rhs) == -1; }
 
-bool operator>(Geometry const &lhs, Geometry const &rhs) { return rhs < lhs; }
+bool operator>(GeomPoint const &lhs, GeomPoint const &rhs) { return rhs < lhs; }
 
-bool operator>=(Geometry const &lhs, Geometry const &rhs) { return !(lhs < rhs); }
+bool operator>=(GeomPoint const &lhs, GeomPoint const &rhs) { return !(lhs < rhs); }
 
-bool operator<=(Geometry const &lhs, Geometry const &rhs) { return !(rhs < lhs); }
+bool operator<=(GeomPoint const &lhs, GeomPoint const &rhs) { return !(rhs < lhs); }
 
-std::istream &operator>>(std::istream &in, Geometry &g) {
+std::istream &operator>>(std::istream &in, GeomPoint &g) {
   int srid = 0;
 
   // We first check if a SRID prefix is present
@@ -284,7 +284,7 @@ std::istream &operator>>(std::istream &in, Geometry &g) {
   return in;
 }
 
-std::ostream &operator<<(std::ostream &os, Geometry const &g) {
+std::ostream &operator<<(std::ostream &os, GeomPoint const &g) {
   if (g.srid() != 0) {
     os << "SRID=" << g.srid() << ";";
   }

@@ -1,5 +1,5 @@
-#ifndef MEOS_TYPES_GEOM_GEOMETRY_HPP
-#define MEOS_TYPES_GEOM_GEOMETRY_HPP
+#ifndef MEOS_TYPES_GEOM_GEOMPOINT_HPP
+#define MEOS_TYPES_GEOM_GEOMPOINT_HPP
 
 #include <meos/geos.hpp>
 #include <string>
@@ -14,18 +14,18 @@
  * We only use this class to represent Points for now
  * Probably we should either generalize for any geometry or rename this to Point
  */
-class Geometry {
+class GeomPoint {
 public:
   GEOSGeometry *geom = nullptr;
 
-  Geometry();
-  Geometry(std::string serialized);
-  Geometry(double x, double y);
-  Geometry(std::string serialized, int srid);
-  Geometry(double x, double y, int srid);
-  Geometry(Geometry const &g);
-  void operator=(Geometry const &g);
-  ~Geometry();
+  GeomPoint();
+  GeomPoint(std::string serialized);
+  GeomPoint(double x, double y);
+  GeomPoint(std::string serialized, int srid);
+  GeomPoint(double x, double y, int srid);
+  GeomPoint(GeomPoint const &g);
+  void operator=(GeomPoint const &g);
+  ~GeomPoint();
 
   void fromWKB(std::istream &is);
   void toWKB(std::ostream &os) const;
@@ -40,20 +40,20 @@ public:
   double y() const;
   int srid() const;
 
-  Geometry operator+(Geometry const &g) const;
-  Geometry operator-(Geometry const &g) const;
+  GeomPoint operator+(GeomPoint const &g) const;
+  GeomPoint operator-(GeomPoint const &g) const;
 
-  int compare(Geometry const &other) const;
+  int compare(GeomPoint const &other) const;
 
-  friend bool operator==(Geometry const &lhs, Geometry const &rhs);
-  friend bool operator!=(Geometry const &lhs, Geometry const &rhs);
-  friend bool operator<(Geometry const &lhs, Geometry const &rhs);
-  friend bool operator<=(Geometry const &lhs, Geometry const &rhs);
-  friend bool operator>(Geometry const &lhs, Geometry const &rhs);
-  friend bool operator>=(Geometry const &lhs, Geometry const &rhs);
+  friend bool operator==(GeomPoint const &lhs, GeomPoint const &rhs);
+  friend bool operator!=(GeomPoint const &lhs, GeomPoint const &rhs);
+  friend bool operator<(GeomPoint const &lhs, GeomPoint const &rhs);
+  friend bool operator<=(GeomPoint const &lhs, GeomPoint const &rhs);
+  friend bool operator>(GeomPoint const &lhs, GeomPoint const &rhs);
+  friend bool operator>=(GeomPoint const &lhs, GeomPoint const &rhs);
 
-  friend std::istream &operator>>(std::istream &in, Geometry &g);
-  friend std::ostream &operator<<(std::ostream &os, Geometry const &g);
+  friend std::istream &operator>>(std::istream &in, GeomPoint &g);
+  friend std::ostream &operator<<(std::ostream &os, GeomPoint const &g);
 
 private:
   void point(double x, double y);
@@ -66,9 +66,9 @@ private:
  * Also check is_geometry_v<BaseType>, which should be more easy to use
  */
 template <typename BaseType> struct is_geometry { static const bool value = false; };
-template <> struct is_geometry<Geometry> {
+template <> struct is_geometry<GeomPoint> {
   static const bool value = true;
-  typedef Geometry type;
+  typedef GeomPoint type;
 };
 
 /**

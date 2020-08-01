@@ -38,5 +38,5 @@ void def_io_module(py::module &m) {
   declare_serdes<int>(io_module, "Int");
   declare_serdes<float>(io_module, "Float");
   declare_serdes<string>(io_module, "Text");
-  declare_serdes<Geometry>(io_module, "Geom");
+  declare_serdes<GeomPoint>(io_module, "Geom");
 }

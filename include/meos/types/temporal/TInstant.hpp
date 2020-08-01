@@ -2,7 +2,7 @@
 #define MEOS_TYPES_TEMPORAL_TINSTANT_HPP
 
 #include <meos/io/utils.hpp>
-#include <meos/types/geom/Geometry.hpp>
+#include <meos/types/geom/GeomPoint.hpp>
 #include <meos/types/temporal/TInstantFunctions.hpp>
 #include <meos/types/temporal/Temporal.hpp>
 #include <meos/types/temporal/TemporalComparators.hpp>
@@ -33,7 +33,7 @@ public:
   TInstant(pair<string const, string const> p);
   TInstant(string const &serialized);
 
-  // Additional constructors for Geometry base type to specify SRID
+  // Additional constructors for GeomPoint base type to specify SRID
   template <typename B = BaseType, typename is_geometry<B>::type * = nullptr>
   TInstant(BaseType value_, time_point t_, int srid);
 

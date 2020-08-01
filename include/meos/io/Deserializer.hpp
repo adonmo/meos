@@ -2,7 +2,7 @@
 #define MEOS_IO_DESERIALIZER_HPP
 
 #include <iomanip>
-#include <meos/types/geom/Geometry.hpp>
+#include <meos/types/geom/GeomPoint.hpp>
 #include <meos/types/temporal/TInstant.hpp>
 #include <meos/types/temporal/TInstantSet.hpp>
 #include <meos/types/temporal/TSequence.hpp>

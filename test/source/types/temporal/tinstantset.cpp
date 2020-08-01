@@ -51,9 +51,9 @@ TEMPLATE_TEST_CASE("TInstantSets are constructed properly", "[tinstset]", int, f
   }
 }
 
-TEST_CASE("TInstantSet<Geometry> constructors", "[tinstset]") {
+TEST_CASE("TInstantSet<GeomPoint> constructors", "[tinstset]") {
   SECTION("without SRID") {
-    TInstant<Geometry> instant(Geometry(20, 30), unix_time_point(2012, 11, 1));
+    TInstant<GeomPoint> instant(GeomPoint(20, 30), unix_time_point(2012, 11, 1));
     REQUIRE(instant.srid() == 0);
 
     std::stringstream output;
@@ -63,19 +63,19 @@ TEST_CASE("TInstantSet<Geometry> constructors", "[tinstset]") {
   }
 
   SECTION("with SRID") {
-    TInstantSet<Geometry> instant_set;
+    TInstantSet<GeomPoint> instant_set;
     int expected_srid = 4326;
-    TInstant<Geometry> expected_inst_1(Geometry(20, 30, expected_srid),
-                                       unix_time_point(2012, 9, 20));
-    TInstant<Geometry> expected_inst_2(Geometry(24, 32, expected_srid),
-                                       unix_time_point(2012, 9, 21));
+    TInstant<GeomPoint> expected_inst_1(GeomPoint(20, 30, expected_srid),
+                                        unix_time_point(2012, 9, 20));
+    TInstant<GeomPoint> expected_inst_2(GeomPoint(24, 32, expected_srid),
+                                        unix_time_point(2012, 9, 21));
     string expected_inst_s_1 = "POINT (20 30)@2012-09-20T00:00:00+0000";
     string expected_inst_s_2 = "POINT (24 32)@2012-09-21T00:00:00+0000";
     string expected_inst_s_1_s = "SRID=4326;POINT (20 30)@2012-09-20T00:00:00+0000";
     string expected_inst_s_2_s = "SRID=4326;POINT (24 32)@2012-09-21T00:00:00+0000";
     string expected_inst_s_1_ds = "SRID=5676;POINT (20 30)@2012-09-20T00:00:00+0000";
     string expected_inst_s_2_ds = "SRID=5676;POINT (24 32)@2012-09-21T00:00:00+0000";
-    set<TInstant<Geometry>> inst_set = {expected_inst_1, expected_inst_2};
+    set<TInstant<GeomPoint>> inst_set = {expected_inst_1, expected_inst_2};
     set<string> inst_s_set = {expected_inst_s_1, expected_inst_s_2};
     set<string> inst_s_set_s = {expected_inst_s_1_s, expected_inst_s_2_s};
     set<string> inst_s_set_ds = {expected_inst_s_1_ds, expected_inst_s_2_ds};
@@ -86,20 +86,20 @@ TEST_CASE("TInstantSet<Geometry> constructors", "[tinstset]") {
     string expected_str_diff_srid = "SRID=5676;" + expected_str_without_srid;
 
     SECTION("no strings constructor") {
-      instant_set = TInstantSet<Geometry>(inst_set, expected_srid);
+      instant_set = TInstantSet<GeomPoint>(inst_set, expected_srid);
     }
 
     SECTION("set of strings constructor") {
-      SECTION("with SRID int") { instant_set = TInstantSet<Geometry>(inst_s_set, expected_srid); }
+      SECTION("with SRID int") { instant_set = TInstantSet<GeomPoint>(inst_s_set, expected_srid); }
 
-      SECTION("with SRID in geom only") { instant_set = TInstantSet<Geometry>(inst_s_set_s, 0); }
+      SECTION("with SRID in geom only") { instant_set = TInstantSet<GeomPoint>(inst_s_set_s, 0); }
 
       SECTION("with SRID int and SRID in geom both") {
-        instant_set = TInstantSet<Geometry>(inst_s_set_s, expected_srid);
+        instant_set = TInstantSet<GeomPoint>(inst_s_set_s, expected_srid);
       }
 
       SECTION("conflicting SRIDs") {
-        REQUIRE_THROWS_AS((TInstantSet<Geometry>{inst_s_set_ds, expected_srid}),
+        REQUIRE_THROWS_AS((TInstantSet<GeomPoint>{inst_s_set_ds, expected_srid}),
                           std::invalid_argument);
         return;
       }
@@ -107,23 +107,23 @@ TEST_CASE("TInstantSet<Geometry> constructors", "[tinstset]") {
 
     SECTION("one string constructor") {
       SECTION("with SRID int") {
-        instant_set = TInstantSet<Geometry>(expected_str_without_srid, expected_srid);
+        instant_set = TInstantSet<GeomPoint>(expected_str_without_srid, expected_srid);
       }
 
-      SECTION("with SRID in geom only") { instant_set = TInstantSet<Geometry>(expected_str, 0); }
+      SECTION("with SRID in geom only") { instant_set = TInstantSet<GeomPoint>(expected_str, 0); }
 
       SECTION("with SRID int and SRID in geom both") {
-        instant_set = TInstantSet<Geometry>(expected_str, expected_srid);
+        instant_set = TInstantSet<GeomPoint>(expected_str, expected_srid);
       }
 
       SECTION("conflicting SRIDs") {
-        REQUIRE_THROWS_AS((TInstantSet<Geometry>{expected_str_diff_srid, expected_srid}),
+        REQUIRE_THROWS_AS((TInstantSet<GeomPoint>{expected_str_diff_srid, expected_srid}),
                           std::invalid_argument);
         return;
       }
     }
 
-    REQUIRE(Geometry(20, 30, expected_srid) < Geometry(24, 32, expected_srid));
+    REQUIRE(GeomPoint(20, 30, expected_srid) < GeomPoint(24, 32, expected_srid));
     REQUIRE(expected_inst_1 < expected_inst_2);
     REQUIRE(instant_set.numInstants() == 2);
     REQUIRE(instant_set.startInstant() == expected_inst_1);
@@ -229,7 +229,7 @@ TEMPLATE_TEST_CASE("TInstantSet comparision operators", "[tinstset]", int, float
 }
 
 TEMPLATE_TEST_CASE("TInstantSet duration function returns InstantSet", "[tinstantset]", int, float,
-                   bool, string, Geometry) {
+                   bool, string, GeomPoint) {
   TInstantSet<TestType> instant_set;
   REQUIRE(instant_set.duration() == TemporalDuration::InstantSet);
 }

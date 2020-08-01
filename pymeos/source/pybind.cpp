@@ -18,12 +18,12 @@ PYBIND11_MODULE(_pymeos, m) {
   // TODO will we ever get a chance to do finish_geos()?
   init_geos();
 
-  py::class_<Geometry>(m, "Geometry")
+  py::class_<GeomPoint>(m, "Geometry")
       .def(py::init<std::string>())
       .def(py::init<double, double>())
       .def(py::init<std::string, int>())
       .def(py::init<double, double, int>())
-      .def(py::init<Geometry>())
+      .def(py::init<GeomPoint>())
       .def(py::self + py::self, py::arg("other"))
       .def(py::self - py::self, py::arg("other"))
       .def(py::self == py::self, py::arg("other"))
@@ -32,18 +32,18 @@ PYBIND11_MODULE(_pymeos, m) {
       .def(py::self <= py::self, py::arg("other"))
       .def(py::self > py::self, py::arg("other"))
       .def(py::self >= py::self, py::arg("other"))
-      .def("__str__", &to_ostream<Geometry>)
-      .def("__repr__", &to_ostream<Geometry>)
-      .def("compare", &Geometry::compare, py::arg("other"))
-      .def_property_readonly("x", &Geometry::x)
-      .def_property_readonly("y", &Geometry::y)
-      .def_property_readonly("srid", &Geometry::srid)
-      .def("fromWKB", &Geometry::fromWKB)
-      .def("toWKB", &Geometry::toWKB)
-      .def("fromWKT", &Geometry::fromWKT)
-      .def("toWKT", &Geometry::toWKT)
-      .def("fromHEX", &Geometry::fromHEX)
-      .def("toHEX", &Geometry::toHEX);
+      .def("__str__", &to_ostream<GeomPoint>)
+      .def("__repr__", &to_ostream<GeomPoint>)
+      .def("compare", &GeomPoint::compare, py::arg("other"))
+      .def_property_readonly("x", &GeomPoint::x)
+      .def_property_readonly("y", &GeomPoint::y)
+      .def_property_readonly("srid", &GeomPoint::srid)
+      .def("fromWKB", &GeomPoint::fromWKB)
+      .def("toWKB", &GeomPoint::toWKB)
+      .def("fromWKT", &GeomPoint::fromWKT)
+      .def("toWKT", &GeomPoint::toWKT)
+      .def("fromHEX", &GeomPoint::fromHEX)
+      .def("toHEX", &GeomPoint::toHEX);
 
   def_box_module(m);
   def_io_module(m);

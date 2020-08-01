@@ -123,26 +123,26 @@ TEMPLATE_TEST_CASE("TSequenceSets are constructed properly", "[tinstset]", int, 
 }
 
 auto getSampleSequenceGeom1(int srid = 0) {
-  set<TInstant<Geometry>> instants{
-      TInstant<Geometry>(Geometry(10, 12), unix_time_point(2012, 1, 1)),
-      TInstant<Geometry>(Geometry(20, 22), unix_time_point(2012, 1, 2, 4, 10)),
+  set<TInstant<GeomPoint>> instants{
+      TInstant<GeomPoint>(GeomPoint(10, 12), unix_time_point(2012, 1, 1)),
+      TInstant<GeomPoint>(GeomPoint(20, 22), unix_time_point(2012, 1, 2, 4, 10)),
   };
-  return TSequence<Geometry>(instants, false, true, srid);
+  return TSequence<GeomPoint>(instants, false, true, srid);
 }
 
 auto getSampleSequenceGeom2(int srid = 0) {
-  set<TInstant<Geometry>> instants{
-      TInstant<Geometry>(Geometry(40, 42), unix_time_point(2012, 1, 7)),
-      TInstant<Geometry>(Geometry(50, 52), unix_time_point(2012, 1, 8)),
+  set<TInstant<GeomPoint>> instants{
+      TInstant<GeomPoint>(GeomPoint(40, 42), unix_time_point(2012, 1, 7)),
+      TInstant<GeomPoint>(GeomPoint(50, 52), unix_time_point(2012, 1, 8)),
   };
-  return TSequence<Geometry>(instants, false, true, srid);
+  return TSequence<GeomPoint>(instants, false, true, srid);
 }
 
-TEST_CASE("TSequenceSet<Geometry> constructors", "[tsequenceset]") {
-  TSequenceSet<Geometry> seqset;
+TEST_CASE("TSequenceSet<GeomPoint> constructors", "[tsequenceset]") {
+  TSequenceSet<GeomPoint> seqset;
   int expected_srid = 4326;
-  TSequence<Geometry> expected_seq_1 = getSampleSequenceGeom1(expected_srid);
-  TSequence<Geometry> expected_seq_2 = getSampleSequenceGeom2(expected_srid);
+  TSequence<GeomPoint> expected_seq_1 = getSampleSequenceGeom1(expected_srid);
+  TSequence<GeomPoint> expected_seq_2 = getSampleSequenceGeom2(expected_srid);
   // Setup sequence strings without SRID
   std::stringstream output;
   output.str("");
@@ -171,7 +171,7 @@ TEST_CASE("TSequenceSet<Geometry> constructors", "[tsequenceset]") {
   output << getSampleSequenceGeom2(5676);
   string expected_seq_s_2_ds = output.str();
 
-  set<TSequence<Geometry>> ss = {expected_seq_1, expected_seq_2};
+  set<TSequence<GeomPoint>> ss = {expected_seq_1, expected_seq_2};
   set<string> seq_s_set = {expected_seq_s_1, expected_seq_s_2};
   set<string> seq_s_set_s = {expected_seq_s_1_s, expected_seq_s_2_s};
   set<string> seq_s_set_ds = {expected_seq_s_1_ds, expected_seq_s_2_ds};
@@ -182,7 +182,7 @@ TEST_CASE("TSequenceSet<Geometry> constructors", "[tsequenceset]") {
   string expected_str_diff_srid = "SRID=5676;" + expected_str_without_srid;
 
   SECTION("without SRID") {
-    seqset = TSequenceSet<Geometry>(seq_s_set);
+    seqset = TSequenceSet<GeomPoint>(seq_s_set);
     REQUIRE(seqset.srid() == 0);
     output.str("");
     output << seqset;
@@ -190,19 +190,19 @@ TEST_CASE("TSequenceSet<Geometry> constructors", "[tsequenceset]") {
   }
 
   SECTION("with SRID") {
-    SECTION("no strings constructor") { seqset = TSequenceSet<Geometry>(ss, expected_srid); }
+    SECTION("no strings constructor") { seqset = TSequenceSet<GeomPoint>(ss, expected_srid); }
 
     SECTION("set of strings constructor") {
-      SECTION("with SRID int") { seqset = TSequenceSet<Geometry>(seq_s_set, expected_srid); }
+      SECTION("with SRID int") { seqset = TSequenceSet<GeomPoint>(seq_s_set, expected_srid); }
 
-      SECTION("with SRID in geom only") { seqset = TSequenceSet<Geometry>(seq_s_set_s, 0); }
+      SECTION("with SRID in geom only") { seqset = TSequenceSet<GeomPoint>(seq_s_set_s, 0); }
 
       SECTION("with SRID int and SRID in geom both") {
-        seqset = TSequenceSet<Geometry>(seq_s_set_s, expected_srid);
+        seqset = TSequenceSet<GeomPoint>(seq_s_set_s, expected_srid);
       }
 
       SECTION("conflicting SRIDs") {
-        REQUIRE_THROWS_AS((TSequenceSet<Geometry>{seq_s_set_ds, expected_srid}),
+        REQUIRE_THROWS_AS((TSequenceSet<GeomPoint>{seq_s_set_ds, expected_srid}),
                           std::invalid_argument);
         return;
       }
@@ -210,17 +210,17 @@ TEST_CASE("TSequenceSet<Geometry> constructors", "[tsequenceset]") {
 
     SECTION("one string constructor") {
       SECTION("with SRID int") {
-        seqset = TSequenceSet<Geometry>(expected_str_without_srid, expected_srid);
+        seqset = TSequenceSet<GeomPoint>(expected_str_without_srid, expected_srid);
       }
 
-      SECTION("with SRID in geom only") { seqset = TSequenceSet<Geometry>(expected_str, 0); }
+      SECTION("with SRID in geom only") { seqset = TSequenceSet<GeomPoint>(expected_str, 0); }
 
       SECTION("with SRID int and SRID in geom both") {
-        seqset = TSequenceSet<Geometry>(expected_str, expected_srid);
+        seqset = TSequenceSet<GeomPoint>(expected_str, expected_srid);
       }
 
       SECTION("conflicting SRIDs") {
-        REQUIRE_THROWS_AS((TSequenceSet<Geometry>{expected_str_diff_srid, expected_srid}),
+        REQUIRE_THROWS_AS((TSequenceSet<GeomPoint>{expected_str_diff_srid, expected_srid}),
                           std::invalid_argument);
         return;
       }
@@ -345,7 +345,7 @@ TEMPLATE_TEST_CASE("TSequenceSet comparision operators", "[tinstset]", int, floa
 }
 
 TEMPLATE_TEST_CASE("TSequenceSet duration function returns SequenceSet", "[tsequenceset]", int,
-                   float, bool, string, Geometry) {
+                   float, bool, string, GeomPoint) {
   TSequenceSet<TestType> sequence_set;
   REQUIRE(sequence_set.duration() == TemporalDuration::SequenceSet);
 }

@@ -1,7 +1,7 @@
 #ifndef MEOS_TYPES_TEMPORAL_TEMPORAL_HPP
 #define MEOS_TYPES_TEMPORAL_TEMPORAL_HPP
 
-#include <meos/types/geom/Geometry.hpp>
+#include <meos/types/geom/GeomPoint.hpp>
 #include <meos/types/geom/SRIDMembers.hpp>
 #include <meos/types/range/Range.hpp>
 #include <meos/types/temporal/TemporalDuration.hpp>
@@ -26,13 +26,13 @@ typedef tuple<> Empty;
  * TInstant, TInstantSet, TSequence and TSequenceSet.
  *
  * This is a template class and takes in a BaseType as the template parameter.
- * BaseType can be bool, int, float, string or Geometry.
+ * BaseType can be bool, int, float, string or GeomPoint.
  *
- * When the BaseType is Geometry, we add additional support for SRIDs.
+ * When the BaseType is GeomPoint, we add additional support for SRIDs.
  * We do this by conditionally inheriting from SRIDMembers.
  */
 template <typename BaseType = float> class Temporal
-    : public conditional_t<is_same<BaseType, Geometry>::value, SRIDMembers, Empty> {
+    : public conditional_t<is_same<BaseType, GeomPoint>::value, SRIDMembers, Empty> {
 public:
   Temporal();
   virtual ~Temporal();

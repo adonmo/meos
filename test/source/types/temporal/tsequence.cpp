@@ -98,9 +98,9 @@ TEMPLATE_TEST_CASE("TSequences are constructed and serialized properly", "[tsequ
   }
 }
 
-TEST_CASE("TSequence<Geometry> constructors", "[tsequence]") {
+TEST_CASE("TSequence<GeomPoint> constructors", "[tsequence]") {
   SECTION("without SRID") {
-    TInstant<Geometry> instant(Geometry(20, 30), unix_time_point(2012, 11, 1));
+    TInstant<GeomPoint> instant(GeomPoint(20, 30), unix_time_point(2012, 11, 1));
     REQUIRE(instant.srid() == 0);
 
     std::stringstream output;
@@ -110,19 +110,19 @@ TEST_CASE("TSequence<Geometry> constructors", "[tsequence]") {
   }
 
   SECTION("with SRID") {
-    TSequence<Geometry> seq;
+    TSequence<GeomPoint> seq;
     int expected_srid = 4326;
-    TInstant<Geometry> expected_inst_1(Geometry(20, 30, expected_srid),
-                                       unix_time_point(2012, 9, 20));
-    TInstant<Geometry> expected_inst_2(Geometry(24, 32, expected_srid),
-                                       unix_time_point(2012, 9, 21));
+    TInstant<GeomPoint> expected_inst_1(GeomPoint(20, 30, expected_srid),
+                                        unix_time_point(2012, 9, 20));
+    TInstant<GeomPoint> expected_inst_2(GeomPoint(24, 32, expected_srid),
+                                        unix_time_point(2012, 9, 21));
     string expected_inst_s_1 = "POINT (20 30)@2012-09-20T00:00:00+0000";
     string expected_inst_s_2 = "POINT (24 32)@2012-09-21T00:00:00+0000";
     string expected_inst_s_1_s = "SRID=4326;POINT (20 30)@2012-09-20T00:00:00+0000";
     string expected_inst_s_2_s = "SRID=4326;POINT (24 32)@2012-09-21T00:00:00+0000";
     string expected_inst_s_1_ds = "SRID=5676;POINT (20 30)@2012-09-20T00:00:00+0000";
     string expected_inst_s_2_ds = "SRID=5676;POINT (24 32)@2012-09-21T00:00:00+0000";
-    set<TInstant<Geometry>> inst_set = {expected_inst_1, expected_inst_2};
+    set<TInstant<GeomPoint>> inst_set = {expected_inst_1, expected_inst_2};
     set<string> inst_s_set = {expected_inst_s_1, expected_inst_s_2};
     set<string> inst_s_set_s = {expected_inst_s_1_s, expected_inst_s_2_s};
     set<string> inst_s_set_ds = {expected_inst_s_1_ds, expected_inst_s_2_ds};
@@ -133,22 +133,24 @@ TEST_CASE("TSequence<Geometry> constructors", "[tsequence]") {
     string expected_str_diff_srid = "SRID=5676;" + expected_str_without_srid;
 
     SECTION("no strings constructor") {
-      seq = TSequence<Geometry>(inst_set, true, false, expected_srid);
+      seq = TSequence<GeomPoint>(inst_set, true, false, expected_srid);
     }
 
     SECTION("set of strings constructor") {
       SECTION("with SRID int") {
-        seq = TSequence<Geometry>(inst_s_set, true, false, expected_srid);
+        seq = TSequence<GeomPoint>(inst_s_set, true, false, expected_srid);
       }
 
-      SECTION("with SRID in geom only") { seq = TSequence<Geometry>(inst_s_set_s, true, false, 0); }
+      SECTION("with SRID in geom only") {
+        seq = TSequence<GeomPoint>(inst_s_set_s, true, false, 0);
+      }
 
       SECTION("with SRID int and SRID in geom both") {
-        seq = TSequence<Geometry>(inst_s_set_s, true, false, expected_srid);
+        seq = TSequence<GeomPoint>(inst_s_set_s, true, false, expected_srid);
       }
 
       SECTION("conflicting SRIDs") {
-        REQUIRE_THROWS_AS((TSequence<Geometry>{inst_s_set_ds, true, false, expected_srid}),
+        REQUIRE_THROWS_AS((TSequence<GeomPoint>{inst_s_set_ds, true, false, expected_srid}),
                           std::invalid_argument);
         return;
       }
@@ -156,17 +158,17 @@ TEST_CASE("TSequence<Geometry> constructors", "[tsequence]") {
 
     SECTION("one string constructor") {
       SECTION("with SRID int") {
-        seq = TSequence<Geometry>(expected_str_without_srid, expected_srid);
+        seq = TSequence<GeomPoint>(expected_str_without_srid, expected_srid);
       }
 
-      SECTION("with SRID in geom only") { seq = TSequence<Geometry>(expected_str, 0); }
+      SECTION("with SRID in geom only") { seq = TSequence<GeomPoint>(expected_str, 0); }
 
       SECTION("with SRID int and SRID in geom both") {
-        seq = TSequence<Geometry>(expected_str, expected_srid);
+        seq = TSequence<GeomPoint>(expected_str, expected_srid);
       }
 
       SECTION("conflicting SRIDs") {
-        REQUIRE_THROWS_AS((TSequence<Geometry>{expected_str_diff_srid, expected_srid}),
+        REQUIRE_THROWS_AS((TSequence<GeomPoint>{expected_str_diff_srid, expected_srid}),
                           std::invalid_argument);
         return;
       }
@@ -305,7 +307,7 @@ TEMPLATE_TEST_CASE("TSequence comparision operators", "[tsequence]", int, float)
 }
 
 TEMPLATE_TEST_CASE("TSequence duration function returns Sequence", "[tsequence]", int, float, bool,
-                   string, Geometry) {
+                   string, GeomPoint) {
   TSequence<TestType> sequence;
   REQUIRE(sequence.duration() == TemporalDuration::Sequence);
 }
@@ -557,8 +559,8 @@ TEMPLATE_TEST_CASE("TSequence intersection functions", "[tsequence]", int, float
   }
 }
 
-TEST_CASE("TSequence<Geometry> with_srid", "[tsequence]") {
-  TSequence<Geometry> g(
+TEST_CASE("TSequence<GeomPoint> with_srid", "[tsequence]") {
+  TSequence<GeomPoint> g(
       "[POINT (10 12)@2011-01-01T00:00:00+0000, POINT (40 42)@2011-01-02T00:00:00+0000)");
   REQUIRE(g.srid() == 0);
   REQUIRE(g.startInstant().srid() == 0);

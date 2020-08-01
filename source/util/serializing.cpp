@@ -1,5 +1,5 @@
 #include <iomanip>
-#include <meos/types/geom/Geometry.hpp>
+#include <meos/types/geom/GeomPoint.hpp>
 #include <meos/util/serializing.hpp>
 #include <sstream>
 #include <string>

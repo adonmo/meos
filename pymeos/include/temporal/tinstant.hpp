@@ -58,10 +58,10 @@ void _def_tinstant_class_specializations(py_tinstant<BaseType> &c, std::string c
 }
 
 template <>
-void _def_tinstant_class_specializations(py_tinstant<Geometry> &c, std::string const &typesuffix) {
-  c.def(py::init<Geometry, time_point, int>(), py::arg("value"), py::arg("timestamp"),
+void _def_tinstant_class_specializations(py_tinstant<GeomPoint> &c, std::string const &typesuffix) {
+  c.def(py::init<GeomPoint, time_point, int>(), py::arg("value"), py::arg("timestamp"),
         py::arg("srid"))
-      .def(py::init<pair<Geometry, time_point>, int>(), py::arg("instant"), py::arg("srid"))
+      .def(py::init<pair<GeomPoint, time_point>, int>(), py::arg("instant"), py::arg("srid"))
       .def(py::init<string, string, int>(), py::arg("value"), py::arg("timestamp"), py::arg("srid"))
       .def(py::init<pair<string, string>, int>(), py::arg("instant"), py::arg("srid"))
       .def(py::init<string, int>(), py::arg("serialized"), py::arg("srid"));

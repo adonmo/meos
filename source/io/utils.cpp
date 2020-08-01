@@ -1,6 +1,6 @@
 #include <algorithm>
 #include <meos/io/utils.hpp>
-#include <meos/types/geom/Geometry.hpp>
+#include <meos/types/geom/GeomPoint.hpp>
 #include <meos/util/string.hpp>
 #include <sstream>
 #include <stdexcept>
@@ -64,11 +64,11 @@ template <> string nextValue(istream &in) {
   return input;
 }
 
-template <> Geometry nextValue(istream &in) {
+template <> GeomPoint nextValue(istream &in) {
   in >> std::ws;
   string input = read_until_one_of(in, "@");
 
-  Geometry value(input);
+  GeomPoint value(input);
 
   if (value.geom == nullptr) {
     throw std::invalid_argument("Could not parse geometry");
