@@ -72,9 +72,9 @@ POINT (2 1)
 
 ### Documentation
 
-Docs and API Reference: [https://pymeos.netlify.app](https://pymeos.netlify.app)
+Docs and API Reference: [https://pymeos.readthedocs.io/en/latest/](https://pymeos.readthedocs.io/en/latest/)
 
-More detailed usage guide/quickstart: [https://pymeos.netlify.app/quickstart.html](https://pymeos.netlify.app/quickstart.html)
+More detailed usage guide/quickstart: [https://pymeos.readthedocs.io/en/latest/quickstart.html](https://pymeos.readthedocs.io/en/latest/quickstart.html)
 
 ## C++
 

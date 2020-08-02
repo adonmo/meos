@@ -27,5 +27,5 @@
 
   <h2>About</h2>
   <p>Learn more <a href="about.html">about MEOS project</a></p>
-  <p>Looking for PyMEOS? Check the [python documentation](https://pymeos.netlify.app/) site instead.</p>
+  <p>Looking for PyMEOS? Check the [python documentation](https://pymeos.readthedocs.io/en/latest/) site instead.</p>
 */
