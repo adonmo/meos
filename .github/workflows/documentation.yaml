@@ -13,8 +13,16 @@ jobs:
         run: |
           sudo apt update
 
-          # GEOS, Doxygen
-          sudo apt install -y doxygen libgeos-dev
+          # GEOS
+          sudo apt install -y libgeos-dev
+
+          # Doxygen v1.8.18
+          #   Note: We do not get doxygen from apt, we instead install the precompiled binaries
+          #     This is becasue extenal image URLs are not supported properly in older versions
+          wget http://doxygen.nl/files/doxygen-1.8.18.linux.bin.tar.gz
+          tar xf doxygen-1.8.18.linux.bin.tar.gz
+          cd doxygen-1.8.18
+          sudo make install
 
           # m.css depedencies
           pip3 install jinja2 Pygments

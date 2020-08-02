@@ -4,8 +4,8 @@ MEOS uses the [CMake](https://cmake.org/) and [setuptools](https://setuptools.re
 ## Building
 
 ```sh
-$ cmake -B build -S .
-$ cmake --build build
+cmake -B build -S .
+cmake --build build
 ```
 
 ## Testing
@@ -13,17 +13,17 @@ $ cmake --build build
 ### C++
 
 ```sh
-$ cmake -B build/test -S test -DCMAKE_BUILD_TYPE=Release
-$ cmake --build build/test --config Release
-$ ./build/test/libmeos-tests
+cmake -B build/test -S test -DCMAKE_BUILD_TYPE=Release
+cmake --build build/test --config Release
+./build/test/libmeos-tests
 ```
 
 ### Python
 
 ```sh
-$ pip install .
-$ pip install -r tests/python/requirements.txt
-$ pytest
+pip install .
+pip install -r tests/python/requirements.txt
+pytest
 ```
 
 ## Building docs
@@ -31,24 +31,24 @@ $ pytest
 ### C++ (Doxygen)
 
 ```sh
-$ cmake -B build/docs -S documentation
-$ cmake --build build/docs
-$ cmake --build build/docs --target cppdocs
+cmake -B build/docs -S documentation
+cmake --build build/docs
+cmake --build build/docs --target cppdocs
 ```
-You can then proceed to host the docs locally, for example on http://0.0.0.0:8000/
+You can then proceed to host the docs locally, for example on [http://0.0.0.0:8000/](http://0.0.0.0:8000/)
 ```sh
-$ python -m http.server --directory build/docs/doxygen/html
+python -m http.server --directory build/docs/doxygen/html
 ```
 
 ### Python (Sphinx)
 
 ```sh
-$ pip install .[docs]
-$ cmake -B build/docs -S documentation
-$ cmake --build build/docs
-$ cmake --build build/docs --target pydocs
+pip install .[docs]
+cmake -B build/docs -S documentation
+cmake --build build/docs
+cmake --build build/docs --target pydocs
 ```
-You can then proceed to host the docs locally, for example on http://0.0.0.0:8000/
+You can then proceed to host the docs locally, for example on [http://0.0.0.0:8000/](http://0.0.0.0:8000/)
 ```sh
-$ python -m http.server --directory documentation/python/_build/html
+python -m http.server --directory documentation/python/_build/html
 ```

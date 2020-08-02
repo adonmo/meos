@@ -5,15 +5,15 @@
 **MEOS (Mobility Engine, Open Source)** is a C++ library which makes it easy to work with temporal and spatio-temporal data. It is based on [MobilityDB](https://github.com/MobilityDB/MobilityDB)'s data types and functions. MEOS's code is heavily inspired from a similar library called [GEOS](https://github.com/libgeos/geos) - hence the name. This repository also includes **PyMEOS** - python bindings to MEOS using [pybind11](https://github.com/pybind/pybind11).
 
 ### Design goals and tenets
-- Extensibility
-- Ease of use and getting started
-- Interoperability
-- Functionality over performance (for now)
+  - Extensibility
+  - Ease of use and getting started
+  - Interoperability
+  - Functionality over performance (for now)
 
 ### Projects built using MEOS
 MEOS aims to the base on which more libraries can be built. The following projects are built on top of (or experimenting with) MEOS/PyMEOS:
-- [mobilitydb-sqlalchemy](mobilitydb-sqlalchemy) - The SQLAlchemy bindings for MobilityDB.
-- [MobilityDB-python](https://github.com/MobilityDB/MobilityDB-python/) - The official python driver for MobilityDB. (WIP [pull request](https://github.com/MobilityDB/MobilityDB-python/pull/4))
+  - [mobilitydb-sqlalchemy](mobilitydb-sqlalchemy) - The SQLAlchemy bindings for MobilityDB.
+  - [MobilityDB-python](https://github.com/MobilityDB/MobilityDB-python/) - The official python driver for MobilityDB. (WIP [pull request](https://github.com/MobilityDB/MobilityDB-python/pull/4))
 
 # Usage
 
@@ -108,13 +108,12 @@ Minimalistic C++ app example: [https://github.com/adonmo/meos-cpp-example](https
 
 ### Documentation
 
-C++ API Reference: [https://meos.netlify.app](https://meos.netlify.app)
+C++ API Reference: [https://adonmo.github.io/meos/](https://adonmo.github.io/meos/)
 
 ## Contributing
 
 Issues and pull requests are welcome.
-
-* For proposing new features/improvements or reporting bugs, [create an issue](https://github.com/adonmo/meos/issues/new/choose).
-* Check [open issues](https://github.com/adonmo/meos/issues) for viewing existing ideas, verify if it is already proposed/being worked upon.
-* Instruction on how to build, test and generate documentation can be found in [DEVELOPMENT.md](DEVELOPMENT.md)
-* When implementing new features make sure to add relevant tests and documentation before sending pull requests.
+  - For proposing new features/improvements or reporting bugs, [create an issue](https://github.com/adonmo/meos/issues/new/choose).
+  - Check [open issues](https://github.com/adonmo/meos/issues) for viewing existing ideas, verify if it is already proposed/being worked upon.
+  - Instruction on how to build, test and generate documentation can be found in [DEVELOPMENT.md](DEVELOPMENT.md)
+  - When implementing new features make sure to add relevant tests and documentation before sending pull requests.
