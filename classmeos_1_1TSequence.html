@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>meos::TSequence class | meos C++
+Docs</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,400i,600,600i%7CSource+Code+Pro:400,400i,600" />
+  <link rel="stylesheet" href="m-dark+documentation.compiled.css" />
+  <link rel="icon" href="favicon-dark.png" type="image/png" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#22272e" />
+</head>
+<body>
+<header><nav id="navigation">
+  <div class="m-container">
+    <div class="m-row">
+      <a href="index.html" id="m-navbar-brand" class="m-col-t-8 m-col-m-none m-left-m">meos <span class="m-thin">C++
+Docs</span></a>
+      <div class="m-col-t-4 m-hide-m m-text-right m-nopadr">
+        <a href="#search" class="m-doc-search-icon" title="Search" onclick="return showSearch()"><svg style="height: 0.9rem;" viewBox="0 0 16 16">
+          <path id="m-doc-search-icon-path" d="m6 0c-3.31 0-6 2.69-6 6 0 3.31 2.69 6 6 6 1.49 0 2.85-0.541 3.89-1.44-0.0164 0.338 0.147 0.759 0.5 1.15l3.22 3.79c0.552 0.614 1.45 0.665 2 0.115 0.55-0.55 0.499-1.45-0.115-2l-3.79-3.22c-0.392-0.353-0.812-0.515-1.15-0.5 0.895-1.05 1.44-2.41 1.44-3.89 0-3.31-2.69-6-6-6zm0 1.56a4.44 4.44 0 0 1 4.44 4.44 4.44 4.44 0 0 1-4.44 4.44 4.44 4.44 0 0 1-4.44-4.44 4.44 4.44 0 0 1 4.44-4.44z"/>
+        </svg></a>
+        <a id="m-navbar-show" href="#navigation" title="Show navigation"></a>
+        <a id="m-navbar-hide" href="#" title="Hide navigation"></a>
+      </div>
+      <div id="m-navbar-collapse" class="m-col-t-12 m-show-m m-col-m-none m-right-m">
+        <div class="m-row">
+          <ol class="m-col-t-6 m-col-m-none">
+            <li>
+              <a href="pages.html">Pages</a>
+              <ol>
+                <li><a href="about.html">About</a></li>
+              </ol>
+            </li>
+            <li><a href="namespaces.html">Namespaces</a></li>
+          </ol>
+          <ol class="m-col-t-6 m-col-m-none" start="3">
+            <li><a href="annotated.html">Classes</a></li>
+            <li><a href="files.html">Files</a></li>
+            <li class="m-show-m"><a href="#search" class="m-doc-search-icon" title="Search" onclick="return showSearch()"><svg style="height: 0.9rem;" viewBox="0 0 16 16">
+              <use href="#m-doc-search-icon-path" />
+            </svg></a></li>
+          </ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</nav></header>
+<main><article>
+  <div class="m-container m-container-inflatable">
+    <div class="m-row">
+      <div class="m-col-l-10 m-push-l-1">
+        <h1>
+          <div class="m-doc-include m-code m-inverted m-right-m m-text-right"><span class="cp">#include</span> <a class="cpf" href="TSequence_8hpp.html">&lt;meos/types/temporal/TSequence.hpp&gt;</a></div>
+          <div class="m-doc-template">template&lt;typename BaseType = float&gt;</div>
+          <span class="m-breadcrumb"><a href="namespacemeos.html">meos</a>::<wbr/></span>TSequence <span class="m-thin">class</span>
+        </h1>
+        <p><span></span></p>
+        <div class="m-block m-default">
+          <h3>Contents</h3>
+          <ul>
+            <li>
+              Reference
+              <ul>
+                <li><a href="#base-classes">Base classes</a></li>
+                <li><a href="#typeless-methods">Constructors, destructors, conversion operators</a></li>
+                <li><a href="#pub-methods">Public functions</a></li>
+                <li><a href="#pri-methods">Private functions</a></li>
+                <li><a href="#friends">Friends</a></li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+        <section id="base-classes">
+          <h2><a href="#base-classes">Base classes</a></h2>
+          <dl class="m-doc">
+            <dt>
+              <div class="m-doc-template">template&lt;typename BaseType = float&gt;</div>
+              class <a href="classmeos_1_1TemporalSet.html" class="m-doc">TemporalSet&lt;BaseType&gt;</a>
+            </dt>
+            <dd><span></span></dd>
+          </dl>
+        </section>
+        <section id="typeless-methods">
+          <h2><a href="#typeless-methods">Constructors, destructors, conversion operators</a></h2>
+          <dl class="m-doc">
+            <dt id="a15a382d6a1a3ae80a98449a9dcbfa75a">
+              <span class="m-doc-wrap-bumper"><a href="#a15a382d6a1a3ae80a98449a9dcbfa75a" class="m-doc-self">TSequence</a>(</span><span class="m-doc-wrap">)</span>
+            </dt>
+            <dd><span></span></dd>
+            <dt id="a5e564f0c541ef337605ecf0a1cb0eec2">
+              <span class="m-doc-wrap-bumper"><a href="#a5e564f0c541ef337605ecf0a1cb0eec2" class="m-doc-self">TSequence</a>(</span><span class="m-doc-wrap">std::set&lt;<a href="classmeos_1_1TInstant.html" class="m-doc">TInstant</a>&lt;BaseType&gt;&gt;&amp; instants_,
+              bool lower_inc = true,
+              bool upper_inc = false,
+              <a href="namespacemeos.html#a1ce9fcf3a52a3d907df274e5680720f5" class="m-doc">Interpolation</a> interpolation = <a href="namespacemeos.html#a3aa497ac5bbc5be4915ee211b7321374" class="m-doc">default_<wbr />interp_<wbr />v</a>&lt;BaseType&gt;)</span>
+            </dt>
+            <dd><span></span></dd>
+            <dt id="acf7aa64d89400c3c13c2be16bff8db05">
+              <span class="m-doc-wrap-bumper"><a href="#acf7aa64d89400c3c13c2be16bff8db05" class="m-doc-self">TSequence</a>(</span><span class="m-doc-wrap">std::set&lt;std::string&gt; const&amp; instants,
+              bool lower_inc = true,
+              bool upper_inc = false,
+              <a href="namespacemeos.html#a1ce9fcf3a52a3d907df274e5680720f5" class="m-doc">Interpolation</a> interpolation = <a href="namespacemeos.html#a3aa497ac5bbc5be4915ee211b7321374" class="m-doc">default_<wbr />interp_<wbr />v</a>&lt;BaseType&gt;)</span>
+            </dt>
+            <dd><span></span></dd>
+            <dt id="a3f7883ced711b1d2138ee803f3f48192">
+              <span class="m-doc-wrap-bumper"><a href="#a3f7883ced711b1d2138ee803f3f48192" class="m-doc-self">TSequence</a>(</span><span class="m-doc-wrap">std::string const&amp; serialized)</span>
+            </dt>
+            <dd><span></span></dd>
+            <dt id="aa0c6580107bc794ead2eb72dbe58cb8c">
+              <div class="m-doc-template">template&lt;typename B = BaseType, typename <a href="structmeos_1_1is__geometry.html" class="m-doc">is_<wbr />geometry</a>&lt;B&gt;::type* = nullptr&gt;</div>
+              <span class="m-doc-wrap-bumper"><a href="#aa0c6580107bc794ead2eb72dbe58cb8c" class="m-doc-self">TSequence</a>(</span><span class="m-doc-wrap">std::set&lt;<a href="classmeos_1_1TInstant.html" class="m-doc">TInstant</a>&lt;BaseType&gt;&gt;&amp; instants_,
+              bool lower_inc = true,
+              bool upper_inc = false,
+              int srid = <a href="namespacemeos.html#ae3b2a481e2f2aa06767e42f6eda057ba" class="m-doc">SRID_<wbr />DEFAULT</a>,
+              <a href="namespacemeos.html#a1ce9fcf3a52a3d907df274e5680720f5" class="m-doc">Interpolation</a> interpolation = <a href="namespacemeos.html#a3aa497ac5bbc5be4915ee211b7321374" class="m-doc">default_<wbr />interp_<wbr />v</a>&lt;BaseType&gt;)</span>
+            </dt>
+            <dd><span></span></dd>
+            <dt id="a8eddc0fd61a8292e4b016181edc13d1e">
+              <div class="m-doc-template">template&lt;typename B = BaseType, typename <a href="structmeos_1_1is__geometry.html" class="m-doc">is_<wbr />geometry</a>&lt;B&gt;::type* = nullptr&gt;</div>
+              <span class="m-doc-wrap-bumper"><a href="#a8eddc0fd61a8292e4b016181edc13d1e" class="m-doc-self">TSequence</a>(</span><span class="m-doc-wrap">std::set&lt;std::string&gt; const&amp; instants,
+              bool lower_inc = true,
+              bool upper_inc = false,
+              int srid = <a href="namespacemeos.html#ae3b2a481e2f2aa06767e42f6eda057ba" class="m-doc">SRID_<wbr />DEFAULT</a>,
+              <a href="namespacemeos.html#a1ce9fcf3a52a3d907df274e5680720f5" class="m-doc">Interpolation</a> interpolation = <a href="namespacemeos.html#a3aa497ac5bbc5be4915ee211b7321374" class="m-doc">default_<wbr />interp_<wbr />v</a>&lt;BaseType&gt;)</span>
+            </dt>
+            <dd><span></span></dd>
+            <dt id="a7c51cef6fed426c44daea6f6cceacbbd">
+              <div class="m-doc-template">template&lt;typename B = BaseType, typename <a href="structmeos_1_1is__geometry.html" class="m-doc">is_<wbr />geometry</a>&lt;B&gt;::type* = nullptr&gt;</div>
+              <span class="m-doc-wrap-bumper"><a href="#a7c51cef6fed426c44daea6f6cceacbbd" class="m-doc-self">TSequence</a>(</span><span class="m-doc-wrap">std::string const&amp; serialized,
+              int srid)</span>
+            </dt>
+            <dd><span></span></dd>
+          </dl>
+        </section>
+        <section id="pub-methods">
+          <h2><a href="#pub-methods">Public functions</a></h2>
+          <dl class="m-doc">
+            <dt id="a6386c3af9fa5deb6467471467d08d4c0">
+              <div class="m-doc-template">template&lt;typename B = BaseType, typename <a href="structmeos_1_1is__geometry.html" class="m-doc">is_<wbr />geometry</a>&lt;B&gt;::type* = nullptr&gt;</div>
+              <span class="m-doc-wrap-bumper">auto <a href="#a6386c3af9fa5deb6467471467d08d4c0" class="m-doc-self">with_srid</a>(</span><span class="m-doc-wrap">int srid) const -&gt; <a href="classmeos_1_1TSequence.html" class="m-doc">TSequence</a>&lt;BaseType&gt;</span>
+            </dt>
+            <dd><span></span></dd>
+            <dt id="ad1afbca06a327d956cfe82b0614a7ebb">
+              <span class="m-doc-wrap-bumper">auto <a href="#ad1afbca06a327d956cfe82b0614a7ebb" class="m-doc-self">with_interp</a>(</span><span class="m-doc-wrap"><a href="namespacemeos.html#a1ce9fcf3a52a3d907df274e5680720f5" class="m-doc">Interpolation</a> interpolation) const -&gt; <a href="classmeos_1_1TSequence.html" class="m-doc">TSequence</a>&lt;BaseType&gt;</span>
+            </dt>
+            <dd><span></span></dd>
+            <dt id="aa26008a507cc5505be6086fa76c7fa53">
+              <span class="m-doc-wrap-bumper">auto <a href="#aa26008a507cc5505be6086fa76c7fa53" class="m-doc-self">compare</a>(</span><span class="m-doc-wrap"><a href="classmeos_1_1Temporal.html" class="m-doc">Temporal</a>&lt;BaseType&gt; const&amp; other) const -&gt; int <span class="m-label m-flat m-warning">override</span></span>
+            </dt>
+            <dd><span></span></dd>
+            <dt id="a69a3ffb3b613e09cff2619da24f4dd6d">
+              <span class="m-doc-wrap-bumper">auto <a href="#a69a3ffb3b613e09cff2619da24f4dd6d" class="m-doc-self">clone</a>(</span><span class="m-doc-wrap">) const -&gt; std::unique_ptr&lt;<a href="classmeos_1_1TSequence.html" class="m-doc">TSequence</a>&lt;BaseType&gt;&gt;</span>
+            </dt>
+            <dd><span></span></dd>
+            <dt id="aa70b74169eb7d0231bdc80d51affdb29">
+              <span class="m-doc-wrap-bumper">auto <a href="#aa70b74169eb7d0231bdc80d51affdb29" class="m-doc-self">lower_inc</a>(</span><span class="m-doc-wrap">) const -&gt; bool</span>
+            </dt>
+            <dd><span></span></dd>
+            <dt id="afa897a2aaba0e158e31054a78b5fc1b8">
+              <span class="m-doc-wrap-bumper">auto <a href="#afa897a2aaba0e158e31054a78b5fc1b8" class="m-doc-self">upper_inc</a>(</span><span class="m-doc-wrap">) const -&gt; bool</span>
+            </dt>
+            <dd><span></span></dd>
+            <dt>
+              <span class="m-doc-wrap-bumper">auto <a href="#ae3ef0ae535d9dd6148103df5d93e959f" class="m-doc">duration</a>(</span><span class="m-doc-wrap">) const -&gt; <a href="namespacemeos.html#ac9889d560d3170ee448c531b7378fc9d" class="m-doc">TemporalDuration</a> <span class="m-label m-flat m-warning">override</span></span>
+            </dt>
+            <dd></dd>
+            <dt id="a5b1c72f082739cd7faccd411340cd43b">
+              <span class="m-doc-wrap-bumper">auto <a href="#a5b1c72f082739cd7faccd411340cd43b" class="m-doc-self">interpolation</a>(</span><span class="m-doc-wrap">) const -&gt; <a href="namespacemeos.html#a1ce9fcf3a52a3d907df274e5680720f5" class="m-doc">Interpolation</a></span>
+            </dt>
+            <dd><span></span></dd>
+            <dt>
+              <span class="m-doc-wrap-bumper">auto <a href="#a1730ba7559eb3ac7d6e5277f9262af56" class="m-doc">timespan</a>(</span><span class="m-doc-wrap">) const -&gt; <a href="namespacemeos.html#a53a5f0fdb503d0ab6cb248871a8ce956" class="m-doc">duration_<wbr />ms</a> <span class="m-label m-flat m-warning">override</span></span>
+            </dt>
+            <dd></dd>
+            <dt>
+              <span class="m-doc-wrap-bumper">auto <a href="#a869dc8db3229e27b5555c7f1ab56388a" class="m-doc">getValues</a>(</span><span class="m-doc-wrap">) const -&gt; std::set&lt;<a href="classmeos_1_1Range.html" class="m-doc">Range</a>&lt;BaseType&gt;&gt; <span class="m-label m-flat m-warning">override</span></span>
+            </dt>
+            <dd></dd>
+            <dt>
+              <span class="m-doc-wrap-bumper">auto <a href="#af3ca3df2371aacf650045cd7c443f903" class="m-doc">getTime</a>(</span><span class="m-doc-wrap">) const -&gt; <a href="classmeos_1_1PeriodSet.html" class="m-doc">PeriodSet</a> <span class="m-label m-flat m-warning">override</span></span>
+            </dt>
+            <dd></dd>
+            <dt>
+              <span class="m-doc-wrap-bumper">auto <a href="#a818b4e846d37d71ea10b058eed7e61a5" class="m-doc">period</a>(</span><span class="m-doc-wrap">) const -&gt; <a href="classmeos_1_1Period.html" class="m-doc">Period</a> <span class="m-label m-flat m-warning">override</span></span>
+            </dt>
+            <dd></dd>
+            <dt id="a31fd64c4f77eabccad43a134f5cdacf2">
+              <span class="m-doc-wrap-bumper">auto <a href="#a31fd64c4f77eabccad43a134f5cdacf2" class="m-doc-self">shift</a>(</span><span class="m-doc-wrap"><a href="namespacemeos.html#a53a5f0fdb503d0ab6cb248871a8ce956" class="m-doc">duration_<wbr />ms</a> const timedelta) const -&gt; std::unique_ptr&lt;<a href="classmeos_1_1TSequence.html" class="m-doc">TSequence</a>&lt;BaseType&gt;&gt;</span>
+            </dt>
+            <dd><span></span></dd>
+            <dt id="a12203d5749467b4abd750bd8489311a6">
+              <span class="m-doc-wrap-bumper">auto <a href="#a12203d5749467b4abd750bd8489311a6" class="m-doc-self">shift_impl</a>(</span><span class="m-doc-wrap"><a href="namespacemeos.html#a53a5f0fdb503d0ab6cb248871a8ce956" class="m-doc">duration_<wbr />ms</a> const timedelta) const -&gt; <a href="classmeos_1_1TSequence.html" class="m-doc">TSequence</a>&lt;BaseType&gt;* <span class="m-label m-flat m-warning">override</span></span>
+            </dt>
+            <dd><span></span></dd>
+            <dt>
+              <span class="m-doc-wrap-bumper">auto <a href="#a1b1af62ee09e40767f13ea12543bec23" class="m-doc">intersectsTimestamp</a>(</span><span class="m-doc-wrap"><a href="namespacemeos.html#acafb45f4fa7ee1cc0d455cec341f8797" class="m-doc">time_<wbr />point</a> const datetime) const -&gt; bool <span class="m-label m-flat m-warning">override</span></span>
+            </dt>
+            <dd></dd>
+            <dt>
+              <span class="m-doc-wrap-bumper">auto <a href="#a9b6f5e19e7a9ebc645592ae769e4a331" class="m-doc">intersectsPeriod</a>(</span><span class="m-doc-wrap"><a href="classmeos_1_1Period.html" class="m-doc">Period</a> const period) const -&gt; bool <span class="m-label m-flat m-warning">override</span></span>
+            </dt>
+            <dd></dd>
+            <dt id="a17f11ecd50de1ae26bb84727065cee3e">
+              <span class="m-doc-wrap-bumper">auto <a href="#a17f11ecd50de1ae26bb84727065cee3e" class="m-doc-self">read</a>(</span><span class="m-doc-wrap">std::istream&amp; in,
+              bool with_interp = true,
+              bool with_srid = true) -&gt; std::istream&amp;</span>
+            </dt>
+            <dd><span></span></dd>
+            <dt id="a166e87c33a45d402fdadad54fd74db43">
+              <span class="m-doc-wrap-bumper">auto <a href="#a166e87c33a45d402fdadad54fd74db43" class="m-doc-self">write</a>(</span><span class="m-doc-wrap">std::ostream&amp; os,
+              bool with_interp = true,
+              bool with_srid = true) const -&gt; std::ostream&amp;</span>
+            </dt>
+            <dd><span></span></dd>
+            <dt id="a49bea1f51ee15746f49901aa4d0354b6">
+              <span class="m-doc-wrap-bumper">void <a href="#a49bea1f51ee15746f49901aa4d0354b6" class="m-doc-self">validate</a>(</span><span class="m-doc-wrap">)</span>
+            </dt>
+            <dd><span></span></dd>
+          </dl>
+        </section>
+        <section id="pri-methods">
+          <h2><a href="#pri-methods">Private functions</a></h2>
+          <dl class="m-doc">
+            <dt id="a2849dd43f0311acfd7b578c985a2cbc2">
+              <span class="m-doc-wrap-bumper">auto <a href="#a2849dd43f0311acfd7b578c985a2cbc2" class="m-doc-self">clone_impl</a>(</span><span class="m-doc-wrap">) const -&gt; <a href="classmeos_1_1TSequence.html" class="m-doc">TSequence</a>&lt;BaseType&gt;* <span class="m-label m-flat m-warning">override</span></span>
+            </dt>
+            <dd><span></span></dd>
+          </dl>
+        </section>
+        <section id="friends">
+          <h2><a href="#friends">Friends</a></h2>
+          <dl class="m-doc">
+            <dt id="a1cd57585e0fc752ef9faa6da9f603697">
+              <span class="m-doc-wrap-bumper">auto <a href="#a1cd57585e0fc752ef9faa6da9f603697" class="m-doc-self">operator&gt;&gt;</a>(</span><span class="m-doc-wrap">std::istream&amp; in,
+              <a href="classmeos_1_1TSequence.html" class="m-doc">TSequence</a>&amp; sequence) -&gt; std::istream&amp;</span>
+            </dt>
+            <dd><span></span></dd>
+            <dt id="aaf5961513b2d8562f97166a0a73a017d">
+              <span class="m-doc-wrap-bumper">auto <a href="#aaf5961513b2d8562f97166a0a73a017d" class="m-doc-self">operator&lt;&lt;</a>(</span><span class="m-doc-wrap">std::ostream&amp; os,
+              <a href="classmeos_1_1TSequence.html" class="m-doc">TSequence</a>&lt;BaseType&gt; const&amp; sequence) -&gt; std::ostream&amp;</span>
+            </dt>
+            <dd><span></span></dd>
+          </dl>
+        </section>
+        <section>
+          <h2>Function documentation</h2>
+          <section class="m-doc-details" id="ae3ef0ae535d9dd6148103df5d93e959f"><div>
+            <h3>
+              <div class="m-doc-template">
+                template&lt;typename BaseType&gt;
+              </div>
+              <span class="m-doc-wrap-bumper"><a href="namespacemeos.html#ac9889d560d3170ee448c531b7378fc9d" class="m-doc">TemporalDuration</a> meos::<wbr />TSequence&lt;BaseType&gt;::<wbr /></span><span class="m-doc-wrap"><span class="m-doc-wrap-bumper"><a href="#ae3ef0ae535d9dd6148103df5d93e959f" class="m-doc-self">duration</a>(</span><span class="m-doc-wrap">) const <span class="m-label m-warning">override</span></span></span>
+            </h3>
+<p>Duration of the temporal value, that is, one of Instant, InstantSet, Sequence, or SequenceSet.</p>
+          </div></section>
+          <section class="m-doc-details" id="a1730ba7559eb3ac7d6e5277f9262af56"><div>
+            <h3>
+              <div class="m-doc-template">
+                template&lt;typename BaseType&gt;
+              </div>
+              <span class="m-doc-wrap-bumper"><a href="namespacemeos.html#a53a5f0fdb503d0ab6cb248871a8ce956" class="m-doc">duration_<wbr />ms</a> meos::<wbr />TSequence&lt;BaseType&gt;::<wbr /></span><span class="m-doc-wrap"><span class="m-doc-wrap-bumper"><a href="#a1730ba7559eb3ac7d6e5277f9262af56" class="m-doc-self">timespan</a>(</span><span class="m-doc-wrap">) const <span class="m-label m-warning">override</span></span></span>
+            </h3>
+<p>Interval on which the temporal value is defined.</p>
+          </div></section>
+          <section class="m-doc-details" id="a869dc8db3229e27b5555c7f1ab56388a"><div>
+            <h3>
+              <div class="m-doc-template">
+                template&lt;typename BaseType&gt;
+              </div>
+              <span class="m-doc-wrap-bumper">std::set&lt;<a href="classmeos_1_1Range.html" class="m-doc">Range</a>&lt;BaseType&gt;&gt; meos::<wbr />TSequence&lt;BaseType&gt;::<wbr /></span><span class="m-doc-wrap"><span class="m-doc-wrap-bumper"><a href="#a869dc8db3229e27b5555c7f1ab56388a" class="m-doc-self">getValues</a>(</span><span class="m-doc-wrap">) const <span class="m-label m-warning">override</span></span></span>
+            </h3>
+<p>Set of values taken by the temporal value.</p>
+          </div></section>
+          <section class="m-doc-details" id="af3ca3df2371aacf650045cd7c443f903"><div>
+            <h3>
+              <div class="m-doc-template">
+                template&lt;typename BaseType&gt;
+              </div>
+              <span class="m-doc-wrap-bumper"><a href="classmeos_1_1PeriodSet.html" class="m-doc">PeriodSet</a> meos::<wbr />TSequence&lt;BaseType&gt;::<wbr /></span><span class="m-doc-wrap"><span class="m-doc-wrap-bumper"><a href="#af3ca3df2371aacf650045cd7c443f903" class="m-doc-self">getTime</a>(</span><span class="m-doc-wrap">) const <span class="m-label m-warning">override</span></span></span>
+            </h3>
+<p><a href="classmeos_1_1Period.html" class="m-doc">Period</a> set on which the temporal value is defined.</p>
+          </div></section>
+          <section class="m-doc-details" id="a818b4e846d37d71ea10b058eed7e61a5"><div>
+            <h3>
+              <div class="m-doc-template">
+                template&lt;typename BaseType&gt;
+              </div>
+              <span class="m-doc-wrap-bumper"><a href="classmeos_1_1Period.html" class="m-doc">Period</a> meos::<wbr />TSequence&lt;BaseType&gt;::<wbr /></span><span class="m-doc-wrap"><span class="m-doc-wrap-bumper"><a href="#a818b4e846d37d71ea10b058eed7e61a5" class="m-doc-self">period</a>(</span><span class="m-doc-wrap">) const <span class="m-label m-warning">override</span></span></span>
+            </h3>
+<p><a href="classmeos_1_1Period.html" class="m-doc">Period</a> on which the temporal value is defined ignoring potential time gaps.</p>
+          </div></section>
+          <section class="m-doc-details" id="a1b1af62ee09e40767f13ea12543bec23"><div>
+            <h3>
+              <div class="m-doc-template">
+                template&lt;typename BaseType&gt;
+              </div>
+              <span class="m-doc-wrap-bumper">bool meos::<wbr />TSequence&lt;BaseType&gt;::<wbr /></span><span class="m-doc-wrap"><span class="m-doc-wrap-bumper"><a href="#a1b1af62ee09e40767f13ea12543bec23" class="m-doc-self">intersectsTimestamp</a>(</span><span class="m-doc-wrap"><a href="namespacemeos.html#acafb45f4fa7ee1cc0d455cec341f8797" class="m-doc">time_<wbr />point</a> const datetime) const <span class="m-label m-warning">override</span></span></span>
+            </h3>
+<p>Does the temporal value intersect the timestamp?</p>
+          </div></section>
+          <section class="m-doc-details" id="a9b6f5e19e7a9ebc645592ae769e4a331"><div>
+            <h3>
+              <div class="m-doc-template">
+                template&lt;typename BaseType&gt;
+              </div>
+              <span class="m-doc-wrap-bumper">bool meos::<wbr />TSequence&lt;BaseType&gt;::<wbr /></span><span class="m-doc-wrap"><span class="m-doc-wrap-bumper"><a href="#a9b6f5e19e7a9ebc645592ae769e4a331" class="m-doc-self">intersectsPeriod</a>(</span><span class="m-doc-wrap"><a href="classmeos_1_1Period.html" class="m-doc">Period</a> const period) const <span class="m-label m-warning">override</span></span></span>
+            </h3>
+<p>Does the temporal value intersect the period?</p>
+          </div></section>
+        </section>
+      </div>
+    </div>
+  </div>
+</article></main>
+<div class="m-doc-search" id="search">
+  <a href="#!" onclick="return hideSearch()"></a>
+  <div class="m-container">
+    <div class="m-row">
+      <div class="m-col-m-8 m-push-m-2">
+        <div class="m-doc-search-header m-text m-small">
+          <div><span class="m-label m-default">Tab</span> / <span class="m-label m-default">T</span> to search, <span class="m-label m-default">Esc</span> to close</div>
+          <div id="search-symbolcount">&hellip;</div>
+        </div>
+        <div class="m-doc-search-content">
+          <form>
+            <input type="search" name="q" id="search-input" placeholder="Loading &hellip;" disabled="disabled" autofocus="autofocus" autocomplete="off" spellcheck="false" />
+          </form>
+          <noscript class="m-text m-danger m-text-center">Unlike everything else in the docs, the search functionality <em>requires</em> JavaScript.</noscript>
+          <div id="search-help" class="m-text m-dim m-text-center">
+            <p class="m-noindent">Search for symbols, directories, files, pages or
+            modules. You can omit any prefix from the symbol or file path; adding a
+            <code>:</code> or <code>/</code> suffix lists all members of given symbol or
+            directory.</p>
+            <p class="m-noindent">Use <span class="m-label m-dim">&darr;</span>
+            / <span class="m-label m-dim">&uarr;</span> to navigate through the list,
+            <span class="m-label m-dim">Enter</span> to go.
+            <span class="m-label m-dim">Tab</span> autocompletes common prefix, you can
+            copy a link to the result using <span class="m-label m-dim">⌘</span>
+            <span class="m-label m-dim">L</span> while <span class="m-label m-dim">⌘</span>
+            <span class="m-label m-dim">M</span> produces a Markdown link.</p>
+          </div>
+          <div id="search-notfound" class="m-text m-warning m-text-center">Sorry, nothing was found.</div>
+          <ul id="search-results"></ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="search-v1.js"></script>
+<script src="searchdata-v1.js" async="async"></script>
+<footer><nav>
+  <div class="m-container">
+    <div class="m-row">
+      <div class="m-col-l-10 m-push-l-1">
+        <p>meos C++
+Docs. Created with <a href="https://doxygen.org/">Doxygen</a> 1.8.13 and <a href="https://mcss.mosra.cz/">m.css</a>.</p>
+      </div>
+    </div>
+  </div>
+</nav></footer>
+</body>
+</html>

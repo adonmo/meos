@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>meos::Period class | meos C++
+Docs</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,400i,600,600i%7CSource+Code+Pro:400,400i,600" />
+  <link rel="stylesheet" href="m-dark+documentation.compiled.css" />
+  <link rel="icon" href="favicon-dark.png" type="image/png" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#22272e" />
+</head>
+<body>
+<header><nav id="navigation">
+  <div class="m-container">
+    <div class="m-row">
+      <a href="index.html" id="m-navbar-brand" class="m-col-t-8 m-col-m-none m-left-m">meos <span class="m-thin">C++
+Docs</span></a>
+      <div class="m-col-t-4 m-hide-m m-text-right m-nopadr">
+        <a href="#search" class="m-doc-search-icon" title="Search" onclick="return showSearch()"><svg style="height: 0.9rem;" viewBox="0 0 16 16">
+          <path id="m-doc-search-icon-path" d="m6 0c-3.31 0-6 2.69-6 6 0 3.31 2.69 6 6 6 1.49 0 2.85-0.541 3.89-1.44-0.0164 0.338 0.147 0.759 0.5 1.15l3.22 3.79c0.552 0.614 1.45 0.665 2 0.115 0.55-0.55 0.499-1.45-0.115-2l-3.79-3.22c-0.392-0.353-0.812-0.515-1.15-0.5 0.895-1.05 1.44-2.41 1.44-3.89 0-3.31-2.69-6-6-6zm0 1.56a4.44 4.44 0 0 1 4.44 4.44 4.44 4.44 0 0 1-4.44 4.44 4.44 4.44 0 0 1-4.44-4.44 4.44 4.44 0 0 1 4.44-4.44z"/>
+        </svg></a>
+        <a id="m-navbar-show" href="#navigation" title="Show navigation"></a>
+        <a id="m-navbar-hide" href="#" title="Hide navigation"></a>
+      </div>
+      <div id="m-navbar-collapse" class="m-col-t-12 m-show-m m-col-m-none m-right-m">
+        <div class="m-row">
+          <ol class="m-col-t-6 m-col-m-none">
+            <li>
+              <a href="pages.html">Pages</a>
+              <ol>
+                <li><a href="about.html">About</a></li>
+              </ol>
+            </li>
+            <li><a href="namespaces.html">Namespaces</a></li>
+          </ol>
+          <ol class="m-col-t-6 m-col-m-none" start="3">
+            <li><a href="annotated.html">Classes</a></li>
+            <li><a href="files.html">Files</a></li>
+            <li class="m-show-m"><a href="#search" class="m-doc-search-icon" title="Search" onclick="return showSearch()"><svg style="height: 0.9rem;" viewBox="0 0 16 16">
+              <use href="#m-doc-search-icon-path" />
+            </svg></a></li>
+          </ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</nav></header>
+<main><article>
+  <div class="m-container m-container-inflatable">
+    <div class="m-row">
+      <div class="m-col-l-10 m-push-l-1">
+        <h1>
+          <span class="m-breadcrumb"><a href="namespacemeos.html">meos</a>::<wbr/></span>Period <span class="m-thin">class</span>
+          <div class="m-doc-include m-code m-inverted m-text-right"><span class="cp">#include</span> <a class="cpf" href="Period_8hpp.html">&lt;meos/types/time/Period.hpp&gt;</a></div>
+        </h1>
+        <p><span></span></p>
+        <div class="m-block m-default">
+          <h3>Contents</h3>
+          <ul>
+            <li>
+              Reference
+              <ul>
+                <li><a href="#typeless-methods">Constructors, destructors, conversion operators</a></li>
+                <li><a href="#pub-methods">Public functions</a></li>
+                <li><a href="#friends">Friends</a></li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+        <section id="typeless-methods">
+          <h2><a href="#typeless-methods">Constructors, destructors, conversion operators</a></h2>
+          <dl class="m-doc">
+            <dt id="a6833a45a410195d351a3bf2ac1bf3cbc">
+              <span class="m-doc-wrap-bumper"><a href="#a6833a45a410195d351a3bf2ac1bf3cbc" class="m-doc-self">Period</a>(</span><span class="m-doc-wrap">)</span>
+            </dt>
+            <dd><span></span></dd>
+            <dt id="a160e466d3b37600fe815399595771a06">
+              <span class="m-doc-wrap-bumper"><a href="#a160e466d3b37600fe815399595771a06" class="m-doc-self">Period</a>(</span><span class="m-doc-wrap"><a href="namespacemeos.html#acafb45f4fa7ee1cc0d455cec341f8797" class="m-doc">time_<wbr />point</a> const lower,
+              <a href="namespacemeos.html#acafb45f4fa7ee1cc0d455cec341f8797" class="m-doc">time_<wbr />point</a> const upper,
+              bool const lower_inc = true,
+              bool const upper_inc = false)</span>
+            </dt>
+            <dd><span></span></dd>
+            <dt id="a219df0083b332de362a04a8fa6143df6">
+              <span class="m-doc-wrap-bumper"><a href="#a219df0083b332de362a04a8fa6143df6" class="m-doc-self">Period</a>(</span><span class="m-doc-wrap">std::string const&amp; lower,
+              std::string const&amp; upper,
+              bool const lower_inc = true,
+              bool const upper_inc = false)</span>
+            </dt>
+            <dd><span></span></dd>
+            <dt id="a6c97f9a59b618aedf8b97f4106590fcd">
+              <span class="m-doc-wrap-bumper"><a href="#a6c97f9a59b618aedf8b97f4106590fcd" class="m-doc-self">Period</a>(</span><span class="m-doc-wrap">std::string const&amp; serialized)</span>
+            </dt>
+            <dd><span></span></dd>
+          </dl>
+        </section>
+        <section id="pub-methods">
+          <h2><a href="#pub-methods">Public functions</a></h2>
+          <dl class="m-doc">
+            <dt id="ad2554f16d6cb71e8b4727d6bc21753f4">
+              <span class="m-doc-wrap-bumper">auto <a href="#ad2554f16d6cb71e8b4727d6bc21753f4" class="m-doc-self">clone</a>(</span><span class="m-doc-wrap">) -&gt; std::unique_ptr&lt;<a href="classmeos_1_1Period.html" class="m-doc">Period</a>&gt;</span>
+            </dt>
+            <dd><span></span></dd>
+            <dt id="aaad4da39d109e90af1431656e5bc48a7">
+              <span class="m-doc-wrap-bumper">auto <a href="#aaad4da39d109e90af1431656e5bc48a7" class="m-doc-self">lower</a>(</span><span class="m-doc-wrap">) const -&gt; <a href="namespacemeos.html#acafb45f4fa7ee1cc0d455cec341f8797" class="m-doc">time_<wbr />point</a></span>
+            </dt>
+            <dd><span></span></dd>
+            <dt id="a7a5d388eb2e91cca1df6db00319134c5">
+              <span class="m-doc-wrap-bumper">auto <a href="#a7a5d388eb2e91cca1df6db00319134c5" class="m-doc-self">upper</a>(</span><span class="m-doc-wrap">) const -&gt; <a href="namespacemeos.html#acafb45f4fa7ee1cc0d455cec341f8797" class="m-doc">time_<wbr />point</a></span>
+            </dt>
+            <dd><span></span></dd>
+            <dt id="afcac7561c9784d4ff2dc51e7b926f62a">
+              <span class="m-doc-wrap-bumper">auto <a href="#afcac7561c9784d4ff2dc51e7b926f62a" class="m-doc-self">lower_inc</a>(</span><span class="m-doc-wrap">) const -&gt; bool</span>
+            </dt>
+            <dd><span></span></dd>
+            <dt id="a4b7cc40cfaac05d99ffde32f64ac098b">
+              <span class="m-doc-wrap-bumper">auto <a href="#a4b7cc40cfaac05d99ffde32f64ac098b" class="m-doc-self">upper_inc</a>(</span><span class="m-doc-wrap">) const -&gt; bool</span>
+            </dt>
+            <dd><span></span></dd>
+            <dt id="a826ce6b95ab0e540147085075e28bf07">
+              <span class="m-doc-wrap-bumper">auto <a href="#a826ce6b95ab0e540147085075e28bf07" class="m-doc-self">timespan</a>(</span><span class="m-doc-wrap">) const -&gt; <a href="namespacemeos.html#a53a5f0fdb503d0ab6cb248871a8ce956" class="m-doc">duration_<wbr />ms</a></span>
+            </dt>
+            <dd><span></span></dd>
+            <dt id="a39de4d5f5a949245b0d71300a0ccce44">
+              <span class="m-doc-wrap-bumper">auto <a href="#a39de4d5f5a949245b0d71300a0ccce44" class="m-doc-self">shift</a>(</span><span class="m-doc-wrap"><a href="namespacemeos.html#a53a5f0fdb503d0ab6cb248871a8ce956" class="m-doc">duration_<wbr />ms</a> const timedelta) const -&gt; std::unique_ptr&lt;<a href="classmeos_1_1Period.html" class="m-doc">Period</a>&gt;</span>
+            </dt>
+            <dd><span></span></dd>
+            <dt id="ab52d77de0dfecd4e093581e4b81f10ba">
+              <span class="m-doc-wrap-bumper">auto <a href="#ab52d77de0dfecd4e093581e4b81f10ba" class="m-doc-self">overlap</a>(</span><span class="m-doc-wrap"><a href="classmeos_1_1Period.html" class="m-doc">Period</a> const&amp; period) const -&gt; bool</span>
+            </dt>
+            <dd><span></span></dd>
+            <dt id="a363a0a578cc13aeadf4c6a57aaaae0ed">
+              <span class="m-doc-wrap-bumper">auto <a href="#a363a0a578cc13aeadf4c6a57aaaae0ed" class="m-doc-self">contains_timestamp</a>(</span><span class="m-doc-wrap"><a href="namespacemeos.html#acafb45f4fa7ee1cc0d455cec341f8797" class="m-doc">time_<wbr />point</a> const timestamp) const -&gt; bool</span>
+            </dt>
+            <dd><span></span></dd>
+          </dl>
+        </section>
+        <section id="friends">
+          <h2><a href="#friends">Friends</a></h2>
+          <dl class="m-doc">
+            <dt id="a7380f99f75fcd94914b5a9978dd93c16">
+              <span class="m-doc-wrap-bumper">auto <a href="#a7380f99f75fcd94914b5a9978dd93c16" class="m-doc-self">operator==</a>(</span><span class="m-doc-wrap"><a href="classmeos_1_1Period.html" class="m-doc">Period</a> const&amp; lhs,
+              <a href="classmeos_1_1Period.html" class="m-doc">Period</a> const&amp; rhs) -&gt; bool</span>
+            </dt>
+            <dd><span></span></dd>
+            <dt id="a55f01bcefdbeb0b1db60f099ce905e69">
+              <span class="m-doc-wrap-bumper">auto <a href="#a55f01bcefdbeb0b1db60f099ce905e69" class="m-doc-self">operator!=</a>(</span><span class="m-doc-wrap"><a href="classmeos_1_1Period.html" class="m-doc">Period</a> const&amp; lhs,
+              <a href="classmeos_1_1Period.html" class="m-doc">Period</a> const&amp; rhs) -&gt; bool</span>
+            </dt>
+            <dd><span></span></dd>
+            <dt id="a4b3a32b738efc6b066bef8fd6b2a0496">
+              <span class="m-doc-wrap-bumper">auto <a href="#a4b3a32b738efc6b066bef8fd6b2a0496" class="m-doc-self">operator&lt;</a>(</span><span class="m-doc-wrap"><a href="classmeos_1_1Period.html" class="m-doc">Period</a> const&amp; lhs,
+              <a href="classmeos_1_1Period.html" class="m-doc">Period</a> const&amp; rhs) -&gt; bool</span>
+            </dt>
+            <dd><span></span></dd>
+            <dt id="a952e612108bfd2122c2bb7426e887a2a">
+              <span class="m-doc-wrap-bumper">auto <a href="#a952e612108bfd2122c2bb7426e887a2a" class="m-doc-self">operator&gt;</a>(</span><span class="m-doc-wrap"><a href="classmeos_1_1Period.html" class="m-doc">Period</a> const&amp; lhs,
+              <a href="classmeos_1_1Period.html" class="m-doc">Period</a> const&amp; rhs) -&gt; bool</span>
+            </dt>
+            <dd><span></span></dd>
+            <dt id="ad09dc852f252a11c3c6f0df6a748cbb2">
+              <span class="m-doc-wrap-bumper">auto <a href="#ad09dc852f252a11c3c6f0df6a748cbb2" class="m-doc-self">operator&gt;=</a>(</span><span class="m-doc-wrap"><a href="classmeos_1_1Period.html" class="m-doc">Period</a> const&amp; lhs,
+              <a href="classmeos_1_1Period.html" class="m-doc">Period</a> const&amp; rhs) -&gt; bool</span>
+            </dt>
+            <dd><span></span></dd>
+            <dt id="a7d05cce35d20047c724d4b09e965588a">
+              <span class="m-doc-wrap-bumper">auto <a href="#a7d05cce35d20047c724d4b09e965588a" class="m-doc-self">operator&lt;=</a>(</span><span class="m-doc-wrap"><a href="classmeos_1_1Period.html" class="m-doc">Period</a> const&amp; lhs,
+              <a href="classmeos_1_1Period.html" class="m-doc">Period</a> const&amp; rhs) -&gt; bool</span>
+            </dt>
+            <dd><span></span></dd>
+            <dt id="a3268be5cbd8a7926e740616454fc472c">
+              <span class="m-doc-wrap-bumper">auto <a href="#a3268be5cbd8a7926e740616454fc472c" class="m-doc-self">operator&gt;&gt;</a>(</span><span class="m-doc-wrap">std::istream&amp; in,
+              <a href="classmeos_1_1Period.html" class="m-doc">Period</a>&amp; period) -&gt; std::istream&amp;</span>
+            </dt>
+            <dd><span></span></dd>
+            <dt id="a604e4b76ae4981d69066c71453736fe9">
+              <span class="m-doc-wrap-bumper">auto <a href="#a604e4b76ae4981d69066c71453736fe9" class="m-doc-self">operator&lt;&lt;</a>(</span><span class="m-doc-wrap">std::ostream&amp; os,
+              <a href="classmeos_1_1Period.html" class="m-doc">Period</a> const&amp; period) -&gt; std::ostream&amp;</span>
+            </dt>
+            <dd><span></span></dd>
+          </dl>
+        </section>
+      </div>
+    </div>
+  </div>
+</article></main>
+<div class="m-doc-search" id="search">
+  <a href="#!" onclick="return hideSearch()"></a>
+  <div class="m-container">
+    <div class="m-row">
+      <div class="m-col-m-8 m-push-m-2">
+        <div class="m-doc-search-header m-text m-small">
+          <div><span class="m-label m-default">Tab</span> / <span class="m-label m-default">T</span> to search, <span class="m-label m-default">Esc</span> to close</div>
+          <div id="search-symbolcount">&hellip;</div>
+        </div>
+        <div class="m-doc-search-content">
+          <form>
+            <input type="search" name="q" id="search-input" placeholder="Loading &hellip;" disabled="disabled" autofocus="autofocus" autocomplete="off" spellcheck="false" />
+          </form>
+          <noscript class="m-text m-danger m-text-center">Unlike everything else in the docs, the search functionality <em>requires</em> JavaScript.</noscript>
+          <div id="search-help" class="m-text m-dim m-text-center">
+            <p class="m-noindent">Search for symbols, directories, files, pages or
+            modules. You can omit any prefix from the symbol or file path; adding a
+            <code>:</code> or <code>/</code> suffix lists all members of given symbol or
+            directory.</p>
+            <p class="m-noindent">Use <span class="m-label m-dim">&darr;</span>
+            / <span class="m-label m-dim">&uarr;</span> to navigate through the list,
+            <span class="m-label m-dim">Enter</span> to go.
+            <span class="m-label m-dim">Tab</span> autocompletes common prefix, you can
+            copy a link to the result using <span class="m-label m-dim">⌘</span>
+            <span class="m-label m-dim">L</span> while <span class="m-label m-dim">⌘</span>
+            <span class="m-label m-dim">M</span> produces a Markdown link.</p>
+          </div>
+          <div id="search-notfound" class="m-text m-warning m-text-center">Sorry, nothing was found.</div>
+          <ul id="search-results"></ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="search-v1.js"></script>
+<script src="searchdata-v1.js" async="async"></script>
+<footer><nav>
+  <div class="m-container">
+    <div class="m-row">
+      <div class="m-col-l-10 m-push-l-1">
+        <p>meos C++
+Docs. Created with <a href="https://doxygen.org/">Doxygen</a> 1.8.13 and <a href="https://mcss.mosra.cz/">m.css</a>.</p>
+      </div>
+    </div>
+  </div>
+</nav></footer>
+</body>
+</html>

@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>meos::GeomPoint class | meos C++
+Docs</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,400i,600,600i%7CSource+Code+Pro:400,400i,600" />
+  <link rel="stylesheet" href="m-dark+documentation.compiled.css" />
+  <link rel="icon" href="favicon-dark.png" type="image/png" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#22272e" />
+</head>
+<body>
+<header><nav id="navigation">
+  <div class="m-container">
+    <div class="m-row">
+      <a href="index.html" id="m-navbar-brand" class="m-col-t-8 m-col-m-none m-left-m">meos <span class="m-thin">C++
+Docs</span></a>
+      <div class="m-col-t-4 m-hide-m m-text-right m-nopadr">
+        <a href="#search" class="m-doc-search-icon" title="Search" onclick="return showSearch()"><svg style="height: 0.9rem;" viewBox="0 0 16 16">
+          <path id="m-doc-search-icon-path" d="m6 0c-3.31 0-6 2.69-6 6 0 3.31 2.69 6 6 6 1.49 0 2.85-0.541 3.89-1.44-0.0164 0.338 0.147 0.759 0.5 1.15l3.22 3.79c0.552 0.614 1.45 0.665 2 0.115 0.55-0.55 0.499-1.45-0.115-2l-3.79-3.22c-0.392-0.353-0.812-0.515-1.15-0.5 0.895-1.05 1.44-2.41 1.44-3.89 0-3.31-2.69-6-6-6zm0 1.56a4.44 4.44 0 0 1 4.44 4.44 4.44 4.44 0 0 1-4.44 4.44 4.44 4.44 0 0 1-4.44-4.44 4.44 4.44 0 0 1 4.44-4.44z"/>
+        </svg></a>
+        <a id="m-navbar-show" href="#navigation" title="Show navigation"></a>
+        <a id="m-navbar-hide" href="#" title="Hide navigation"></a>
+      </div>
+      <div id="m-navbar-collapse" class="m-col-t-12 m-show-m m-col-m-none m-right-m">
+        <div class="m-row">
+          <ol class="m-col-t-6 m-col-m-none">
+            <li>
+              <a href="pages.html">Pages</a>
+              <ol>
+                <li><a href="about.html">About</a></li>
+              </ol>
+            </li>
+            <li><a href="namespaces.html">Namespaces</a></li>
+          </ol>
+          <ol class="m-col-t-6 m-col-m-none" start="3">
+            <li><a href="annotated.html">Classes</a></li>
+            <li><a href="files.html">Files</a></li>
+            <li class="m-show-m"><a href="#search" class="m-doc-search-icon" title="Search" onclick="return showSearch()"><svg style="height: 0.9rem;" viewBox="0 0 16 16">
+              <use href="#m-doc-search-icon-path" />
+            </svg></a></li>
+          </ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</nav></header>
+<main><article>
+  <div class="m-container m-container-inflatable">
+    <div class="m-row">
+      <div class="m-col-l-10 m-push-l-1">
+        <h1>
+          <span class="m-breadcrumb"><a href="namespacemeos.html">meos</a>::<wbr/></span>GeomPoint <span class="m-thin">class</span>
+          <div class="m-doc-include m-code m-inverted m-text-right"><span class="cp">#include</span> <a class="cpf" href="GeomPoint_8hpp.html">&lt;meos/types/geom/GeomPoint.hpp&gt;</a></div>
+        </h1>
+        <div class="m-block m-default">
+          <h3>Contents</h3>
+          <ul>
+            <li>
+              Reference
+              <ul>
+                <li><a href="#typeless-methods">Constructors, destructors, conversion operators</a></li>
+                <li><a href="#pub-methods">Public functions</a></li>
+                <li><a href="#pub-attribs">Public variables</a></li>
+                <li><a href="#friends">Friends</a></li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+<p>Mostly a wrapper on top of GEOSGeometry* Additionally, we allow specifying SRID, similar to how PostGIS EWKT does.</p><p>Main reason we have this is that pybind11 can&#x27;t work with GEOSGeometry* directly, as it is exposed as an opaque type from the GEOS C API.</p>
+        <section id="typeless-methods">
+          <h2><a href="#typeless-methods">Constructors, destructors, conversion operators</a></h2>
+          <dl class="m-doc">
+            <dt id="a1be5867db290d167ab56fddf94c09c1d">
+              <span class="m-doc-wrap-bumper"><a href="#a1be5867db290d167ab56fddf94c09c1d" class="m-doc-self">GeomPoint</a>(</span><span class="m-doc-wrap">)</span>
+            </dt>
+            <dd><span></span></dd>
+            <dt id="a40d1f7777b0427865be75838eefd18a6">
+              <span class="m-doc-wrap-bumper"><a href="#a40d1f7777b0427865be75838eefd18a6" class="m-doc-self">GeomPoint</a>(</span><span class="m-doc-wrap">std::string serialized)</span>
+            </dt>
+            <dd><span></span></dd>
+            <dt id="a0374cd0f6ec0b6f93c3922dfa18b1864">
+              <span class="m-doc-wrap-bumper"><a href="#a0374cd0f6ec0b6f93c3922dfa18b1864" class="m-doc-self">GeomPoint</a>(</span><span class="m-doc-wrap">double x,
+              double y)</span>
+            </dt>
+            <dd><span></span></dd>
+            <dt id="a4b9295aa6ebca9e39dd9d462662b88dd">
+              <span class="m-doc-wrap-bumper"><a href="#a4b9295aa6ebca9e39dd9d462662b88dd" class="m-doc-self">GeomPoint</a>(</span><span class="m-doc-wrap">std::string serialized,
+              int srid)</span>
+            </dt>
+            <dd><span></span></dd>
+            <dt id="a552770d4db3006f47ed639ca8da86de0">
+              <span class="m-doc-wrap-bumper"><a href="#a552770d4db3006f47ed639ca8da86de0" class="m-doc-self">GeomPoint</a>(</span><span class="m-doc-wrap">double x,
+              double y,
+              int srid)</span>
+            </dt>
+            <dd><span></span></dd>
+            <dt id="aebac3de6ce4f9e2bd794837822dae942">
+              <span class="m-doc-wrap-bumper"><a href="#aebac3de6ce4f9e2bd794837822dae942" class="m-doc-self">GeomPoint</a>(</span><span class="m-doc-wrap"><a href="classmeos_1_1GeomPoint.html" class="m-doc">GeomPoint</a> const&amp; g)</span>
+            </dt>
+            <dd><span></span></dd>
+            <dt id="ac89ca09fdace0dfd8fc0122626bd4c99">
+              <span class="m-doc-wrap-bumper"><a href="#ac89ca09fdace0dfd8fc0122626bd4c99" class="m-doc-self">~GeomPoint</a>(</span><span class="m-doc-wrap">)</span>
+            </dt>
+            <dd><span></span></dd>
+          </dl>
+        </section>
+        <section id="pub-methods">
+          <h2><a href="#pub-methods">Public functions</a></h2>
+          <dl class="m-doc">
+            <dt id="a7dccf2516db40f3fcf819482662a703e">
+              <span class="m-doc-wrap-bumper">void <a href="#a7dccf2516db40f3fcf819482662a703e" class="m-doc-self">operator=</a>(</span><span class="m-doc-wrap"><a href="classmeos_1_1GeomPoint.html" class="m-doc">GeomPoint</a> const&amp; g)</span>
+            </dt>
+            <dd><span></span></dd>
+            <dt id="abebeccdca2dcb42be35c2de52e13f516">
+              <span class="m-doc-wrap-bumper">void <a href="#abebeccdca2dcb42be35c2de52e13f516" class="m-doc-self">fromWKB</a>(</span><span class="m-doc-wrap">std::istream&amp; is)</span>
+            </dt>
+            <dd><span></span></dd>
+            <dt id="a1d0aec379a1c4eee9e90234dd7dea351">
+              <span class="m-doc-wrap-bumper">void <a href="#a1d0aec379a1c4eee9e90234dd7dea351" class="m-doc-self">toWKB</a>(</span><span class="m-doc-wrap">std::ostream&amp; os) const</span>
+            </dt>
+            <dd><span></span></dd>
+            <dt id="a29dace0da6274428ead7fd472110ce6c">
+              <span class="m-doc-wrap-bumper">void <a href="#a29dace0da6274428ead7fd472110ce6c" class="m-doc-self">fromWKT</a>(</span><span class="m-doc-wrap">std::string wkt)</span>
+            </dt>
+            <dd><span></span></dd>
+            <dt id="ac43c95e02993de9bdbb915ff468bcbe9">
+              <span class="m-doc-wrap-bumper">auto <a href="#ac43c95e02993de9bdbb915ff468bcbe9" class="m-doc-self">toWKT</a>(</span><span class="m-doc-wrap">) const -&gt; std::string</span>
+            </dt>
+            <dd><span></span></dd>
+            <dt id="a836e8f3f4d8ae2fedb99f2d909113ddb">
+              <span class="m-doc-wrap-bumper">void <a href="#a836e8f3f4d8ae2fedb99f2d909113ddb" class="m-doc-self">fromHEX</a>(</span><span class="m-doc-wrap">std::istream&amp; is)</span>
+            </dt>
+            <dd><span></span></dd>
+            <dt id="a9551cad143494c68bd24db1b4580a5cf">
+              <span class="m-doc-wrap-bumper">void <a href="#a9551cad143494c68bd24db1b4580a5cf" class="m-doc-self">toHEX</a>(</span><span class="m-doc-wrap">std::ostream&amp; os) const</span>
+            </dt>
+            <dd><span></span></dd>
+            <dt id="a7ef31a8c0f5dc0f5c401edf6f7d53a65">
+              <span class="m-doc-wrap-bumper">auto <a href="#a7ef31a8c0f5dc0f5c401edf6f7d53a65" class="m-doc-self">x</a>(</span><span class="m-doc-wrap">) const -&gt; double</span>
+            </dt>
+            <dd><span></span></dd>
+            <dt id="a3a8c43bd0c5d13a1e95e7a16ca103911">
+              <span class="m-doc-wrap-bumper">auto <a href="#a3a8c43bd0c5d13a1e95e7a16ca103911" class="m-doc-self">y</a>(</span><span class="m-doc-wrap">) const -&gt; double</span>
+            </dt>
+            <dd><span></span></dd>
+            <dt id="ac861fa8e39c0c9dc2770626f40367a1f">
+              <span class="m-doc-wrap-bumper">auto <a href="#ac861fa8e39c0c9dc2770626f40367a1f" class="m-doc-self">srid</a>(</span><span class="m-doc-wrap">) const -&gt; int</span>
+            </dt>
+            <dd><span></span></dd>
+            <dt id="a250f71e28163de85c267605dc4d794c2">
+              <span class="m-doc-wrap-bumper">auto <a href="#a250f71e28163de85c267605dc4d794c2" class="m-doc-self">operator+</a>(</span><span class="m-doc-wrap"><a href="classmeos_1_1GeomPoint.html" class="m-doc">GeomPoint</a> const&amp; g) const -&gt; <a href="classmeos_1_1GeomPoint.html" class="m-doc">GeomPoint</a></span>
+            </dt>
+            <dd><span></span></dd>
+            <dt id="a83e284fa88079ee18ea3f379398c487b">
+              <span class="m-doc-wrap-bumper">auto <a href="#a83e284fa88079ee18ea3f379398c487b" class="m-doc-self">operator-</a>(</span><span class="m-doc-wrap"><a href="classmeos_1_1GeomPoint.html" class="m-doc">GeomPoint</a> const&amp; g) const -&gt; <a href="classmeos_1_1GeomPoint.html" class="m-doc">GeomPoint</a></span>
+            </dt>
+            <dd><span></span></dd>
+            <dt id="a2ba7072b248a961e69abd130aaf4c124">
+              <span class="m-doc-wrap-bumper">auto <a href="#a2ba7072b248a961e69abd130aaf4c124" class="m-doc-self">compare</a>(</span><span class="m-doc-wrap"><a href="classmeos_1_1GeomPoint.html" class="m-doc">GeomPoint</a> const&amp; other) const -&gt; int</span>
+            </dt>
+            <dd><span></span></dd>
+          </dl>
+        </section>
+        <section id="pub-attribs">
+          <h2><a href="#pub-attribs">Public variables</a></h2>
+          <dl class="m-doc">
+            <dt id="a6b78e277d105e90b7379f3f428f38af7">
+              GEOSGeometry* <a href="#a6b78e277d105e90b7379f3f428f38af7" class="m-doc-self">geom</a>
+            </dt>
+            <dd><span></span></dd>
+          </dl>
+        </section>
+        <section id="friends">
+          <h2><a href="#friends">Friends</a></h2>
+          <dl class="m-doc">
+            <dt id="a7fc023881bc66e8dd82ff8daee034d99">
+              <span class="m-doc-wrap-bumper">auto <a href="#a7fc023881bc66e8dd82ff8daee034d99" class="m-doc-self">operator==</a>(</span><span class="m-doc-wrap"><a href="classmeos_1_1GeomPoint.html" class="m-doc">GeomPoint</a> const&amp; lhs,
+              <a href="classmeos_1_1GeomPoint.html" class="m-doc">GeomPoint</a> const&amp; rhs) -&gt; bool</span>
+            </dt>
+            <dd><span></span></dd>
+            <dt id="a15982d87e185fb9657f2bde0d6123249">
+              <span class="m-doc-wrap-bumper">auto <a href="#a15982d87e185fb9657f2bde0d6123249" class="m-doc-self">operator!=</a>(</span><span class="m-doc-wrap"><a href="classmeos_1_1GeomPoint.html" class="m-doc">GeomPoint</a> const&amp; lhs,
+              <a href="classmeos_1_1GeomPoint.html" class="m-doc">GeomPoint</a> const&amp; rhs) -&gt; bool</span>
+            </dt>
+            <dd><span></span></dd>
+            <dt id="afc45027748144406ae6cf74d3c17c28a">
+              <span class="m-doc-wrap-bumper">auto <a href="#afc45027748144406ae6cf74d3c17c28a" class="m-doc-self">operator&lt;</a>(</span><span class="m-doc-wrap"><a href="classmeos_1_1GeomPoint.html" class="m-doc">GeomPoint</a> const&amp; lhs,
+              <a href="classmeos_1_1GeomPoint.html" class="m-doc">GeomPoint</a> const&amp; rhs) -&gt; bool</span>
+            </dt>
+            <dd><span></span></dd>
+            <dt id="a0b942e20396d74150666d945f0ebf5e9">
+              <span class="m-doc-wrap-bumper">auto <a href="#a0b942e20396d74150666d945f0ebf5e9" class="m-doc-self">operator&lt;=</a>(</span><span class="m-doc-wrap"><a href="classmeos_1_1GeomPoint.html" class="m-doc">GeomPoint</a> const&amp; lhs,
+              <a href="classmeos_1_1GeomPoint.html" class="m-doc">GeomPoint</a> const&amp; rhs) -&gt; bool</span>
+            </dt>
+            <dd><span></span></dd>
+            <dt id="ad4ab15ad3893e869cf44b95f7739504d">
+              <span class="m-doc-wrap-bumper">auto <a href="#ad4ab15ad3893e869cf44b95f7739504d" class="m-doc-self">operator&gt;</a>(</span><span class="m-doc-wrap"><a href="classmeos_1_1GeomPoint.html" class="m-doc">GeomPoint</a> const&amp; lhs,
+              <a href="classmeos_1_1GeomPoint.html" class="m-doc">GeomPoint</a> const&amp; rhs) -&gt; bool</span>
+            </dt>
+            <dd><span></span></dd>
+            <dt id="a3512f015100974fb57759a62c5b9c06c">
+              <span class="m-doc-wrap-bumper">auto <a href="#a3512f015100974fb57759a62c5b9c06c" class="m-doc-self">operator&gt;=</a>(</span><span class="m-doc-wrap"><a href="classmeos_1_1GeomPoint.html" class="m-doc">GeomPoint</a> const&amp; lhs,
+              <a href="classmeos_1_1GeomPoint.html" class="m-doc">GeomPoint</a> const&amp; rhs) -&gt; bool</span>
+            </dt>
+            <dd><span></span></dd>
+            <dt id="af7574c55e4363b03047eff3bc8f683ea">
+              <span class="m-doc-wrap-bumper">auto <a href="#af7574c55e4363b03047eff3bc8f683ea" class="m-doc-self">operator&gt;&gt;</a>(</span><span class="m-doc-wrap">std::istream&amp; in,
+              <a href="classmeos_1_1GeomPoint.html" class="m-doc">GeomPoint</a>&amp; g) -&gt; std::istream&amp;</span>
+            </dt>
+            <dd><span></span></dd>
+            <dt id="aa0a6f5b572699f5af8d9efe3b2cd6aba">
+              <span class="m-doc-wrap-bumper">auto <a href="#aa0a6f5b572699f5af8d9efe3b2cd6aba" class="m-doc-self">operator&lt;&lt;</a>(</span><span class="m-doc-wrap">std::ostream&amp; os,
+              <a href="classmeos_1_1GeomPoint.html" class="m-doc">GeomPoint</a> const&amp; g) -&gt; std::ostream&amp;</span>
+            </dt>
+            <dd><span></span></dd>
+          </dl>
+        </section>
+      </div>
+    </div>
+  </div>
+</article></main>
+<div class="m-doc-search" id="search">
+  <a href="#!" onclick="return hideSearch()"></a>
+  <div class="m-container">
+    <div class="m-row">
+      <div class="m-col-m-8 m-push-m-2">
+        <div class="m-doc-search-header m-text m-small">
+          <div><span class="m-label m-default">Tab</span> / <span class="m-label m-default">T</span> to search, <span class="m-label m-default">Esc</span> to close</div>
+          <div id="search-symbolcount">&hellip;</div>
+        </div>
+        <div class="m-doc-search-content">
+          <form>
+            <input type="search" name="q" id="search-input" placeholder="Loading &hellip;" disabled="disabled" autofocus="autofocus" autocomplete="off" spellcheck="false" />
+          </form>
+          <noscript class="m-text m-danger m-text-center">Unlike everything else in the docs, the search functionality <em>requires</em> JavaScript.</noscript>
+          <div id="search-help" class="m-text m-dim m-text-center">
+            <p class="m-noindent">Search for symbols, directories, files, pages or
+            modules. You can omit any prefix from the symbol or file path; adding a
+            <code>:</code> or <code>/</code> suffix lists all members of given symbol or
+            directory.</p>
+            <p class="m-noindent">Use <span class="m-label m-dim">&darr;</span>
+            / <span class="m-label m-dim">&uarr;</span> to navigate through the list,
+            <span class="m-label m-dim">Enter</span> to go.
+            <span class="m-label m-dim">Tab</span> autocompletes common prefix, you can
+            copy a link to the result using <span class="m-label m-dim">⌘</span>
+            <span class="m-label m-dim">L</span> while <span class="m-label m-dim">⌘</span>
+            <span class="m-label m-dim">M</span> produces a Markdown link.</p>
+          </div>
+          <div id="search-notfound" class="m-text m-warning m-text-center">Sorry, nothing was found.</div>
+          <ul id="search-results"></ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="search-v1.js"></script>
+<script src="searchdata-v1.js" async="async"></script>
+<footer><nav>
+  <div class="m-container">
+    <div class="m-row">
+      <div class="m-col-l-10 m-push-l-1">
+        <p>meos C++
+Docs. Created with <a href="https://doxygen.org/">Doxygen</a> 1.8.13 and <a href="https://mcss.mosra.cz/">m.css</a>.</p>
+      </div>
+    </div>
+  </div>
+</nav></footer>
+</body>
+</html>
