@@ -65,7 +65,6 @@ Docs</span></a>
                 <li><a href="#base-classes">Base classes</a></li>
                 <li><a href="#typeless-methods">Constructors, destructors, conversion operators</a></li>
                 <li><a href="#pub-methods">Public functions</a></li>
-                <li><a href="#pri-methods">Private functions</a></li>
                 <li><a href="#friends">Friends</a></li>
               </ul>
             </li>
@@ -76,17 +75,17 @@ Docs</span></a>
           <dl class="m-doc">
             <dt>
               <div class="m-doc-template">template&lt;typename BaseType = float&gt;</div>
-              class <a href="classmeos_1_1Temporal.html" class="m-doc">Temporal&lt;BaseType&gt;</a>
+              class <a href="classmeos_1_1Temporal.html" class="m-doc">Temporal&lt;float&gt;</a>
             </dt>
             <dd></dd>
             <dt>
               <div class="m-doc-template">template&lt;typename TemporalType&gt;</div>
-              struct <a href="structmeos_1_1TemporalComparators.html" class="m-doc">TemporalComparators&lt;TSequenceSet&lt;BaseType&gt;&gt;</a>
+              struct <a href="structmeos_1_1TemporalComparators.html" class="m-doc">TemporalComparators&lt;TSequenceSet&lt;float&gt;&gt;</a>
             </dt>
             <dd></dd>
             <dt>
               <div class="m-doc-template">template&lt;typename TemporalType, typename TInstantType, typename BaseType&gt;</div>
-              struct <a href="structmeos_1_1TInstantFunctions.html" class="m-doc">TInstantFunctions&lt;TSequenceSet&lt;BaseType&gt;, TInstant&lt;BaseType&gt;, BaseType&gt;</a>
+              struct <a href="structmeos_1_1TInstantFunctions.html" class="m-doc">TInstantFunctions&lt;TSequenceSet&lt;float&gt;, TInstant&lt;float&gt;, float&gt;</a>
             </dt>
             <dd></dd>
           </dl>
@@ -145,10 +144,10 @@ Docs</span></a>
               <span class="m-doc-wrap-bumper">auto <a href="#a4bbbd1927ba22dc255198cdad38b4487" class="m-doc-self">clone</a>(</span><span class="m-doc-wrap">) const -&gt; std::unique_ptr&lt;<a href="classmeos_1_1TSequenceSet.html" class="m-doc">TSequenceSet</a>&lt;BaseType&gt;&gt;</span>
             </dt>
             <dd><span></span></dd>
-            <dt>
-              <span class="m-doc-wrap-bumper">auto <a href="#a59245d0001c3953aa93552c41e9005dd" class="m-doc">duration</a>(</span><span class="m-doc-wrap">) const -&gt; <a href="namespacemeos.html#ac9889d560d3170ee448c531b7378fc9d" class="m-doc">TemporalDuration</a> <span class="m-label m-flat m-warning">override</span></span>
+            <dt id="a59245d0001c3953aa93552c41e9005dd">
+              <span class="m-doc-wrap-bumper">auto <a href="#a59245d0001c3953aa93552c41e9005dd" class="m-doc-self">duration</a>(</span><span class="m-doc-wrap">) const -&gt; <a href="namespacemeos.html#ac9889d560d3170ee448c531b7378fc9d" class="m-doc">TemporalDuration</a> <span class="m-label m-flat m-warning">override</span></span>
             </dt>
-            <dd></dd>
+            <dd><span></span></dd>
             <dt id="a1c3718ed3918d9e05b676c27fcef2c51">
               <span class="m-doc-wrap-bumper">auto <a href="#a1c3718ed3918d9e05b676c27fcef2c51" class="m-doc-self">interpolation</a>(</span><span class="m-doc-wrap">) const -&gt; <a href="namespacemeos.html#a1ce9fcf3a52a3d907df274e5680720f5" class="m-doc">Interpolation</a></span>
             </dt>
@@ -177,26 +176,26 @@ Docs</span></a>
               <span class="m-doc-wrap-bumper">auto <a href="#a622b826843679acdd80163e43361dba2" class="m-doc">instants</a>(</span><span class="m-doc-wrap">) const -&gt; std::set&lt;<a href="classmeos_1_1TInstant.html" class="m-doc">TInstant</a>&lt;BaseType&gt;&gt;</span>
             </dt>
             <dd></dd>
-            <dt>
-              <span class="m-doc-wrap-bumper">auto <a href="#a1178b75781fa5011fe28c83dc1c1145f" class="m-doc">timespan</a>(</span><span class="m-doc-wrap">) const -&gt; <a href="namespacemeos.html#a53a5f0fdb503d0ab6cb248871a8ce956" class="m-doc">duration_<wbr />ms</a> <span class="m-label m-flat m-warning">override</span></span>
+            <dt id="a1178b75781fa5011fe28c83dc1c1145f">
+              <span class="m-doc-wrap-bumper">auto <a href="#a1178b75781fa5011fe28c83dc1c1145f" class="m-doc-self">timespan</a>(</span><span class="m-doc-wrap">) const -&gt; <a href="namespacemeos.html#a53a5f0fdb503d0ab6cb248871a8ce956" class="m-doc">duration_<wbr />ms</a> <span class="m-label m-flat m-warning">override</span></span>
             </dt>
-            <dd></dd>
-            <dt>
-              <span class="m-doc-wrap-bumper">auto <a href="#acd75a59f7fa47c857041db476c3390bb" class="m-doc">getValues</a>(</span><span class="m-doc-wrap">) const -&gt; std::set&lt;<a href="classmeos_1_1Range.html" class="m-doc">Range</a>&lt;BaseType&gt;&gt; <span class="m-label m-flat m-warning">override</span></span>
+            <dd><span></span></dd>
+            <dt id="acd75a59f7fa47c857041db476c3390bb">
+              <span class="m-doc-wrap-bumper">auto <a href="#acd75a59f7fa47c857041db476c3390bb" class="m-doc-self">getValues</a>(</span><span class="m-doc-wrap">) const -&gt; std::set&lt;<a href="classmeos_1_1Range.html" class="m-doc">Range</a>&lt;BaseType&gt;&gt; <span class="m-label m-flat m-warning">override</span></span>
             </dt>
-            <dd></dd>
-            <dt>
-              <span class="m-doc-wrap-bumper">auto <a href="#ae52ecde2d357dfb710eab3f3e2f627a0" class="m-doc">timestamps</a>(</span><span class="m-doc-wrap">) const -&gt; std::set&lt;<a href="namespacemeos.html#acafb45f4fa7ee1cc0d455cec341f8797" class="m-doc">time_<wbr />point</a>&gt; <span class="m-label m-flat m-warning">override</span></span>
+            <dd><span></span></dd>
+            <dt id="ae52ecde2d357dfb710eab3f3e2f627a0">
+              <span class="m-doc-wrap-bumper">auto <a href="#ae52ecde2d357dfb710eab3f3e2f627a0" class="m-doc-self">timestamps</a>(</span><span class="m-doc-wrap">) const -&gt; std::set&lt;<a href="namespacemeos.html#acafb45f4fa7ee1cc0d455cec341f8797" class="m-doc">time_<wbr />point</a>&gt; <span class="m-label m-flat m-warning">override</span></span>
             </dt>
-            <dd></dd>
-            <dt>
-              <span class="m-doc-wrap-bumper">auto <a href="#af03dfcc0c47c1ab3b57648f1344039c9" class="m-doc">getTime</a>(</span><span class="m-doc-wrap">) const -&gt; <a href="classmeos_1_1PeriodSet.html" class="m-doc">PeriodSet</a> <span class="m-label m-flat m-warning">override</span></span>
+            <dd><span></span></dd>
+            <dt id="af03dfcc0c47c1ab3b57648f1344039c9">
+              <span class="m-doc-wrap-bumper">auto <a href="#af03dfcc0c47c1ab3b57648f1344039c9" class="m-doc-self">getTime</a>(</span><span class="m-doc-wrap">) const -&gt; <a href="classmeos_1_1PeriodSet.html" class="m-doc">PeriodSet</a> <span class="m-label m-flat m-warning">override</span></span>
             </dt>
-            <dd></dd>
-            <dt>
-              <span class="m-doc-wrap-bumper">auto <a href="#acb6229f2bacaf09fe720cfc435613f3a" class="m-doc">period</a>(</span><span class="m-doc-wrap">) const -&gt; <a href="classmeos_1_1Period.html" class="m-doc">Period</a> <span class="m-label m-flat m-warning">override</span></span>
+            <dd><span></span></dd>
+            <dt id="acb6229f2bacaf09fe720cfc435613f3a">
+              <span class="m-doc-wrap-bumper">auto <a href="#acb6229f2bacaf09fe720cfc435613f3a" class="m-doc-self">period</a>(</span><span class="m-doc-wrap">) const -&gt; <a href="classmeos_1_1Period.html" class="m-doc">Period</a> <span class="m-label m-flat m-warning">override</span></span>
             </dt>
-            <dd></dd>
+            <dd><span></span></dd>
             <dt id="a4e3406f9e2136cb66e325d832046282a">
               <span class="m-doc-wrap-bumper">auto <a href="#a4e3406f9e2136cb66e325d832046282a" class="m-doc-self">shift</a>(</span><span class="m-doc-wrap"><a href="namespacemeos.html#a53a5f0fdb503d0ab6cb248871a8ce956" class="m-doc">duration_<wbr />ms</a> const timedelta) const -&gt; std::unique_ptr&lt;<a href="classmeos_1_1TSequenceSet.html" class="m-doc">TSequenceSet</a>&lt;BaseType&gt;&gt;</span>
             </dt>
@@ -223,15 +222,6 @@ Docs</span></a>
             <dd><span></span></dd>
           </dl>
         </section>
-        <section id="pri-methods">
-          <h2><a href="#pri-methods">Private functions</a></h2>
-          <dl class="m-doc">
-            <dt id="ac675432b7337fb080396d5c22237dedf">
-              <span class="m-doc-wrap-bumper">auto <a href="#ac675432b7337fb080396d5c22237dedf" class="m-doc-self">clone_impl</a>(</span><span class="m-doc-wrap">) const -&gt; <a href="classmeos_1_1TSequenceSet.html" class="m-doc">TSequenceSet</a>&lt;BaseType&gt;* <span class="m-label m-flat m-warning">override</span></span>
-            </dt>
-            <dd><span></span></dd>
-          </dl>
-        </section>
         <section id="friends">
           <h2><a href="#friends">Friends</a></h2>
           <dl class="m-doc">
@@ -249,15 +239,6 @@ Docs</span></a>
         </section>
         <section>
           <h2>Function documentation</h2>
-          <section class="m-doc-details" id="a59245d0001c3953aa93552c41e9005dd"><div>
-            <h3>
-              <div class="m-doc-template">
-                template&lt;typename BaseType&gt;
-              </div>
-              <span class="m-doc-wrap-bumper"><a href="namespacemeos.html#ac9889d560d3170ee448c531b7378fc9d" class="m-doc">TemporalDuration</a> meos::<wbr />TSequenceSet&lt;BaseType&gt;::<wbr /></span><span class="m-doc-wrap"><span class="m-doc-wrap-bumper"><a href="#a59245d0001c3953aa93552c41e9005dd" class="m-doc-self">duration</a>(</span><span class="m-doc-wrap">) const <span class="m-label m-warning">override</span></span></span>
-            </h3>
-<p>Duration of the temporal value, that is, one of Instant, InstantSet, Sequence, or SequenceSet.</p>
-          </div></section>
           <section class="m-doc-details" id="ab3d9208f38083a82ab184e575bdd4aab"><div>
             <h3>
               <div class="m-doc-template">
@@ -311,51 +292,6 @@ Docs</span></a>
               <span class="m-doc-wrap-bumper">std::set&lt;<a href="classmeos_1_1TInstant.html" class="m-doc">TInstant</a>&lt;BaseType&gt;&gt; meos::<wbr />TSequenceSet&lt;BaseType&gt;::<wbr /></span><span class="m-doc-wrap"><span class="m-doc-wrap-bumper"><a href="#a622b826843679acdd80163e43361dba2" class="m-doc-self">instants</a>(</span><span class="m-doc-wrap">) const</span></span>
             </h3>
 <p>Set of instants.</p>
-          </div></section>
-          <section class="m-doc-details" id="a1178b75781fa5011fe28c83dc1c1145f"><div>
-            <h3>
-              <div class="m-doc-template">
-                template&lt;typename BaseType&gt;
-              </div>
-              <span class="m-doc-wrap-bumper"><a href="namespacemeos.html#a53a5f0fdb503d0ab6cb248871a8ce956" class="m-doc">duration_<wbr />ms</a> meos::<wbr />TSequenceSet&lt;BaseType&gt;::<wbr /></span><span class="m-doc-wrap"><span class="m-doc-wrap-bumper"><a href="#a1178b75781fa5011fe28c83dc1c1145f" class="m-doc-self">timespan</a>(</span><span class="m-doc-wrap">) const <span class="m-label m-warning">override</span></span></span>
-            </h3>
-<p>Interval on which the temporal value is defined.</p>
-          </div></section>
-          <section class="m-doc-details" id="acd75a59f7fa47c857041db476c3390bb"><div>
-            <h3>
-              <div class="m-doc-template">
-                template&lt;typename BaseType&gt;
-              </div>
-              <span class="m-doc-wrap-bumper">std::set&lt;<a href="classmeos_1_1Range.html" class="m-doc">Range</a>&lt;BaseType&gt;&gt; meos::<wbr />TSequenceSet&lt;BaseType&gt;::<wbr /></span><span class="m-doc-wrap"><span class="m-doc-wrap-bumper"><a href="#acd75a59f7fa47c857041db476c3390bb" class="m-doc-self">getValues</a>(</span><span class="m-doc-wrap">) const <span class="m-label m-warning">override</span></span></span>
-            </h3>
-<p>Set of values taken by the temporal value.</p>
-          </div></section>
-          <section class="m-doc-details" id="ae52ecde2d357dfb710eab3f3e2f627a0"><div>
-            <h3>
-              <div class="m-doc-template">
-                template&lt;typename BaseType&gt;
-              </div>
-              <span class="m-doc-wrap-bumper">std::set&lt;<a href="namespacemeos.html#acafb45f4fa7ee1cc0d455cec341f8797" class="m-doc">time_<wbr />point</a>&gt; meos::<wbr />TSequenceSet&lt;BaseType&gt;::<wbr /></span><span class="m-doc-wrap"><span class="m-doc-wrap-bumper"><a href="#ae52ecde2d357dfb710eab3f3e2f627a0" class="m-doc-self">timestamps</a>(</span><span class="m-doc-wrap">) const <span class="m-label m-warning">override</span></span></span>
-            </h3>
-<p>Set of timestamps.</p>
-          </div></section>
-          <section class="m-doc-details" id="af03dfcc0c47c1ab3b57648f1344039c9"><div>
-            <h3>
-              <div class="m-doc-template">
-                template&lt;typename BaseType&gt;
-              </div>
-              <span class="m-doc-wrap-bumper"><a href="classmeos_1_1PeriodSet.html" class="m-doc">PeriodSet</a> meos::<wbr />TSequenceSet&lt;BaseType&gt;::<wbr /></span><span class="m-doc-wrap"><span class="m-doc-wrap-bumper"><a href="#af03dfcc0c47c1ab3b57648f1344039c9" class="m-doc-self">getTime</a>(</span><span class="m-doc-wrap">) const <span class="m-label m-warning">override</span></span></span>
-            </h3>
-<p><a href="classmeos_1_1Period.html" class="m-doc">Period</a> set on which the temporal value is defined.</p>
-          </div></section>
-          <section class="m-doc-details" id="acb6229f2bacaf09fe720cfc435613f3a"><div>
-            <h3>
-              <div class="m-doc-template">
-                template&lt;typename BaseType&gt;
-              </div>
-              <span class="m-doc-wrap-bumper"><a href="classmeos_1_1Period.html" class="m-doc">Period</a> meos::<wbr />TSequenceSet&lt;BaseType&gt;::<wbr /></span><span class="m-doc-wrap"><span class="m-doc-wrap-bumper"><a href="#acb6229f2bacaf09fe720cfc435613f3a" class="m-doc-self">period</a>(</span><span class="m-doc-wrap">) const <span class="m-label m-warning">override</span></span></span>
-            </h3>
-<p><a href="classmeos_1_1Period.html" class="m-doc">Period</a> on which the temporal value is defined ignoring potential time gaps.</p>
           </div></section>
           <section class="m-doc-details" id="a947f14ca2dcb0d39a1172c08e80e1e3c"><div>
             <h3>
@@ -421,7 +357,7 @@ Docs</span></a>
     <div class="m-row">
       <div class="m-col-l-10 m-push-l-1">
         <p>meos C++
-Docs. Created with <a href="https://doxygen.org/">Doxygen</a> 1.8.13 and <a href="https://mcss.mosra.cz/">m.css</a>.</p>
+Docs. Created with <a href="https://doxygen.org/">Doxygen</a> 1.8.18 and <a href="https://mcss.mosra.cz/">m.css</a>.</p>
       </div>
     </div>
   </div>
