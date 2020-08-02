@@ -2,6 +2,6 @@ name: pymeos-docs
 channels:
     - default
 dependencies:
-    - cmake
+    - geos==3.8.0
     - pybind11
     - numpydoc
