@@ -77,7 +77,7 @@ Docs</span></a>
               <div class="m-doc-template">template&lt;typename BaseType = float&gt;</div>
               class <a href="classmeos_1_1Temporal.html" class="m-doc">Temporal&lt;float&gt;</a>
             </dt>
-            <dd></dd>
+            <dd><a href="classmeos_1_1Temporal.html" class="m-doc">Temporal</a> is the base class for all the temporal types.</dd>
             <dt>
               <div class="m-doc-template">template&lt;typename TemporalType&gt;</div>
               struct <a href="structmeos_1_1TemporalComparators.html" class="m-doc">TemporalComparators&lt;TSequenceSet&lt;float&gt;&gt;</a>
@@ -204,14 +204,14 @@ Docs</span></a>
               <span class="m-doc-wrap-bumper">auto <a href="#ac8f19a2de2247b25966d0681863c7d56" class="m-doc-self">shift_impl</a>(</span><span class="m-doc-wrap"><a href="namespacemeos.html#a53a5f0fdb503d0ab6cb248871a8ce956" class="m-doc">duration_<wbr />ms</a> const timedelta) const -&gt; <a href="classmeos_1_1TSequenceSet.html" class="m-doc">TSequenceSet</a>&lt;BaseType&gt;* <span class="m-label m-flat m-warning">override</span></span>
             </dt>
             <dd><span></span></dd>
-            <dt>
-              <span class="m-doc-wrap-bumper">auto <a href="#a947f14ca2dcb0d39a1172c08e80e1e3c" class="m-doc">intersectsTimestamp</a>(</span><span class="m-doc-wrap"><a href="namespacemeos.html#acafb45f4fa7ee1cc0d455cec341f8797" class="m-doc">time_<wbr />point</a> const datetime) const -&gt; bool <span class="m-label m-flat m-warning">override</span></span>
+            <dt id="a947f14ca2dcb0d39a1172c08e80e1e3c">
+              <span class="m-doc-wrap-bumper">auto <a href="#a947f14ca2dcb0d39a1172c08e80e1e3c" class="m-doc-self">intersectsTimestamp</a>(</span><span class="m-doc-wrap"><a href="namespacemeos.html#acafb45f4fa7ee1cc0d455cec341f8797" class="m-doc">time_<wbr />point</a> const datetime) const -&gt; bool <span class="m-label m-flat m-warning">override</span></span>
             </dt>
-            <dd></dd>
-            <dt>
-              <span class="m-doc-wrap-bumper">auto <a href="#af8a0ea7010870fa334ed9cbd9a40a062" class="m-doc">intersectsPeriod</a>(</span><span class="m-doc-wrap"><a href="classmeos_1_1Period.html" class="m-doc">Period</a> const period) const -&gt; bool <span class="m-label m-flat m-warning">override</span></span>
+            <dd>Does the temporal value intersect the timestamp?</dd>
+            <dt id="af8a0ea7010870fa334ed9cbd9a40a062">
+              <span class="m-doc-wrap-bumper">auto <a href="#af8a0ea7010870fa334ed9cbd9a40a062" class="m-doc-self">intersectsPeriod</a>(</span><span class="m-doc-wrap"><a href="classmeos_1_1Period.html" class="m-doc">Period</a> const period) const -&gt; bool <span class="m-label m-flat m-warning">override</span></span>
             </dt>
-            <dd></dd>
+            <dd>Does the temporal value intersect the period?</dd>
             <dt id="a638e5f28ca080ad55fca4496f566c1a9">
               <span class="m-doc-wrap-bumper">auto <a href="#a638e5f28ca080ad55fca4496f566c1a9" class="m-doc-self">read</a>(</span><span class="m-doc-wrap">std::istream&amp; in) -&gt; std::istream&amp;</span>
             </dt>
@@ -292,24 +292,6 @@ Docs</span></a>
               <span class="m-doc-wrap-bumper">std::set&lt;<a href="classmeos_1_1TInstant.html" class="m-doc">TInstant</a>&lt;BaseType&gt;&gt; meos::<wbr />TSequenceSet&lt;BaseType&gt;::<wbr /></span><span class="m-doc-wrap"><span class="m-doc-wrap-bumper"><a href="#a622b826843679acdd80163e43361dba2" class="m-doc-self">instants</a>(</span><span class="m-doc-wrap">) const</span></span>
             </h3>
 <p>Set of instants.</p>
-          </div></section>
-          <section class="m-doc-details" id="a947f14ca2dcb0d39a1172c08e80e1e3c"><div>
-            <h3>
-              <div class="m-doc-template">
-                template&lt;typename BaseType&gt;
-              </div>
-              <span class="m-doc-wrap-bumper">bool meos::<wbr />TSequenceSet&lt;BaseType&gt;::<wbr /></span><span class="m-doc-wrap"><span class="m-doc-wrap-bumper"><a href="#a947f14ca2dcb0d39a1172c08e80e1e3c" class="m-doc-self">intersectsTimestamp</a>(</span><span class="m-doc-wrap"><a href="namespacemeos.html#acafb45f4fa7ee1cc0d455cec341f8797" class="m-doc">time_<wbr />point</a> const datetime) const <span class="m-label m-warning">override</span></span></span>
-            </h3>
-<p>Does the temporal value intersect the timestamp?</p>
-          </div></section>
-          <section class="m-doc-details" id="af8a0ea7010870fa334ed9cbd9a40a062"><div>
-            <h3>
-              <div class="m-doc-template">
-                template&lt;typename BaseType&gt;
-              </div>
-              <span class="m-doc-wrap-bumper">bool meos::<wbr />TSequenceSet&lt;BaseType&gt;::<wbr /></span><span class="m-doc-wrap"><span class="m-doc-wrap-bumper"><a href="#af8a0ea7010870fa334ed9cbd9a40a062" class="m-doc-self">intersectsPeriod</a>(</span><span class="m-doc-wrap"><a href="classmeos_1_1Period.html" class="m-doc">Period</a> const period) const <span class="m-label m-warning">override</span></span></span>
-            </h3>
-<p>Does the temporal value intersect the period?</p>
           </div></section>
         </section>
       </div>

@@ -55,6 +55,7 @@ Docs</span></a>
           <div class="m-doc-template">template&lt;typename BaseType = float&gt;</div>
           <span class="m-breadcrumb"><a href="namespacemeos.html">meos</a>::<wbr/></span>Temporal <span class="m-thin">class</span>
         </h1>
+        <p><a href="classmeos_1_1Temporal.html" class="m-doc">Temporal</a> is the base class for all the temporal types.</p>
         <div class="m-block m-default">
           <h3>Contents</h3>
           <ul>
@@ -69,7 +70,7 @@ Docs</span></a>
             </li>
           </ul>
         </div>
-<p><a href="classmeos_1_1Temporal.html" class="m-doc">Temporal</a> is the base class for all the temporal types which are <a href="classmeos_1_1TInstant.html" class="m-doc">TInstant</a>, <a href="classmeos_1_1TInstantSet.html" class="m-doc">TInstantSet</a>, <a href="classmeos_1_1TSequence.html" class="m-doc">TSequence</a> and <a href="classmeos_1_1TSequenceSet.html" class="m-doc">TSequenceSet</a>.</p><p>This is a template class and takes in a BaseType as the template parameter. BaseType can be bool, int, float, string or <a href="classmeos_1_1GeomPoint.html" class="m-doc">GeomPoint</a>.</p><p>When the BaseType is <a href="classmeos_1_1GeomPoint.html" class="m-doc">GeomPoint</a>, we add additional support for SRIDs. We do this by conditionally inheriting from <a href="structmeos_1_1SRIDMembers.html" class="m-doc">SRIDMembers</a>.</p>
+<p>This is a template class and takes in a BaseType as the template parameter. BaseType can be bool, int, float, string or <a href="classmeos_1_1GeomPoint.html" class="m-doc">GeomPoint</a>.</p><p>When the BaseType is <a href="classmeos_1_1GeomPoint.html" class="m-doc">GeomPoint</a>, we add additional support for SRIDs. We do this by conditionally inheriting from <a href="structmeos_1_1SRIDMembers.html" class="m-doc">SRIDMembers</a>.</p>
         <section id="derived-classes">
           <h2><a href="#derived-classes">Derived classes</a></h2>
           <dl class="m-doc">
@@ -77,7 +78,7 @@ Docs</span></a>
               <div class="m-doc-template">template&lt;typename BaseType&gt;</div>
               class <a href="classmeos_1_1TInstant.html" class="m-doc">TInstant</a>
             </dt>
-            <dd></dd>
+            <dd>Class for representing temporals of instant duration.</dd>
           </dl>
         </section>
         <section id="typeless-methods">
@@ -107,75 +108,75 @@ Docs</span></a>
             <dt>
               <span class="m-doc-wrap-bumper">auto <a href="#a62949846614fca6f2a269b522ee77c49" class="m-doc">duration</a>(</span><span class="m-doc-wrap">) const -&gt; <a href="namespacemeos.html#ac9889d560d3170ee448c531b7378fc9d" class="m-doc">TemporalDuration</a> <span class="m-label m-flat m-warning">virtual</span></span>
             </dt>
-            <dd></dd>
-            <dt>
-              <span class="m-doc-wrap-bumper">auto <a href="#af07f6a6f6efda87a007a4d90b80a988a" class="m-doc">getValues</a>(</span><span class="m-doc-wrap">) const -&gt; std::set&lt;<a href="classmeos_1_1Range.html" class="m-doc">Range</a>&lt;BaseType&gt;&gt; <span class="m-label m-flat m-warning">pure virtual</span></span>
+            <dd>Duration of the temporal value, that is, one of Instant, InstantSet, Sequence, or SequenceSet.</dd>
+            <dt id="af07f6a6f6efda87a007a4d90b80a988a">
+              <span class="m-doc-wrap-bumper">auto <a href="#af07f6a6f6efda87a007a4d90b80a988a" class="m-doc-self">getValues</a>(</span><span class="m-doc-wrap">) const -&gt; std::set&lt;<a href="classmeos_1_1Range.html" class="m-doc">Range</a>&lt;BaseType&gt;&gt; <span class="m-label m-flat m-warning">pure virtual</span></span>
             </dt>
-            <dd></dd>
-            <dt>
-              <span class="m-doc-wrap-bumper">auto <a href="#a13adab385c693ae5450b161337729659" class="m-doc">minValue</a>(</span><span class="m-doc-wrap">) const -&gt; BaseType</span>
+            <dd>Set of values taken by the temporal value.</dd>
+            <dt id="a13adab385c693ae5450b161337729659">
+              <span class="m-doc-wrap-bumper">auto <a href="#a13adab385c693ae5450b161337729659" class="m-doc-self">minValue</a>(</span><span class="m-doc-wrap">) const -&gt; BaseType</span>
             </dt>
-            <dd></dd>
-            <dt>
-              <span class="m-doc-wrap-bumper">auto <a href="#a623cd4030d17a3200ba5e785e986fb49" class="m-doc">maxValue</a>(</span><span class="m-doc-wrap">) const -&gt; BaseType</span>
+            <dd>Minimum value, irrespective of whether the bounds are inclusive or not.</dd>
+            <dt id="a623cd4030d17a3200ba5e785e986fb49">
+              <span class="m-doc-wrap-bumper">auto <a href="#a623cd4030d17a3200ba5e785e986fb49" class="m-doc-self">maxValue</a>(</span><span class="m-doc-wrap">) const -&gt; BaseType</span>
             </dt>
-            <dd></dd>
-            <dt>
-              <span class="m-doc-wrap-bumper">auto <a href="#ad29724f2927cb323ddc228f334fedf83" class="m-doc">getTime</a>(</span><span class="m-doc-wrap">) const -&gt; <a href="classmeos_1_1PeriodSet.html" class="m-doc">PeriodSet</a> <span class="m-label m-flat m-warning">pure virtual</span></span>
+            <dd>Maximum value, irrespective of whether the bounds are inclusive or not.</dd>
+            <dt id="ad29724f2927cb323ddc228f334fedf83">
+              <span class="m-doc-wrap-bumper">auto <a href="#ad29724f2927cb323ddc228f334fedf83" class="m-doc-self">getTime</a>(</span><span class="m-doc-wrap">) const -&gt; <a href="classmeos_1_1PeriodSet.html" class="m-doc">PeriodSet</a> <span class="m-label m-flat m-warning">pure virtual</span></span>
             </dt>
-            <dd></dd>
-            <dt>
-              <span class="m-doc-wrap-bumper">auto <a href="#a405bd473c78d961772b6c9e5a661a91e" class="m-doc">timespan</a>(</span><span class="m-doc-wrap">) const -&gt; <a href="namespacemeos.html#a53a5f0fdb503d0ab6cb248871a8ce956" class="m-doc">duration_<wbr />ms</a> <span class="m-label m-flat m-warning">pure virtual</span></span>
+            <dd><a href="classmeos_1_1Period.html" class="m-doc">Period</a> set on which the temporal value is defined.</dd>
+            <dt id="a405bd473c78d961772b6c9e5a661a91e">
+              <span class="m-doc-wrap-bumper">auto <a href="#a405bd473c78d961772b6c9e5a661a91e" class="m-doc-self">timespan</a>(</span><span class="m-doc-wrap">) const -&gt; <a href="namespacemeos.html#a53a5f0fdb503d0ab6cb248871a8ce956" class="m-doc">duration_<wbr />ms</a> <span class="m-label m-flat m-warning">pure virtual</span></span>
             </dt>
-            <dd></dd>
-            <dt>
-              <span class="m-doc-wrap-bumper">auto <a href="#a2b3981192574237f884afa3008fbdb4c" class="m-doc">period</a>(</span><span class="m-doc-wrap">) const -&gt; <a href="classmeos_1_1Period.html" class="m-doc">Period</a> <span class="m-label m-flat m-warning">pure virtual</span></span>
+            <dd>Interval on which the temporal value is defined.</dd>
+            <dt id="a2b3981192574237f884afa3008fbdb4c">
+              <span class="m-doc-wrap-bumper">auto <a href="#a2b3981192574237f884afa3008fbdb4c" class="m-doc-self">period</a>(</span><span class="m-doc-wrap">) const -&gt; <a href="classmeos_1_1Period.html" class="m-doc">Period</a> <span class="m-label m-flat m-warning">pure virtual</span></span>
             </dt>
-            <dd></dd>
-            <dt>
-              <span class="m-doc-wrap-bumper">auto <a href="#ac42f5b83d8a2b1e8cbee31753b437015" class="m-doc">instants</a>(</span><span class="m-doc-wrap">) const -&gt; std::set&lt;<a href="classmeos_1_1Temporal.html" class="m-doc">Temporal</a>&gt;</span>
+            <dd><a href="classmeos_1_1Period.html" class="m-doc">Period</a> on which the temporal value is defined ignoring potential time gaps.</dd>
+            <dt id="ac42f5b83d8a2b1e8cbee31753b437015">
+              <span class="m-doc-wrap-bumper">auto <a href="#ac42f5b83d8a2b1e8cbee31753b437015" class="m-doc-self">instants</a>(</span><span class="m-doc-wrap">) const -&gt; std::set&lt;<a href="classmeos_1_1Temporal.html" class="m-doc">Temporal</a>&gt;</span>
             </dt>
-            <dd></dd>
-            <dt>
-              <span class="m-doc-wrap-bumper">auto <a href="#aed23c827a4f1f1eb1cd161bb68dcf5ca" class="m-doc">numTimestamps</a>(</span><span class="m-doc-wrap">) const -&gt; size_t</span>
+            <dd>Set of instants.</dd>
+            <dt id="aed23c827a4f1f1eb1cd161bb68dcf5ca">
+              <span class="m-doc-wrap-bumper">auto <a href="#aed23c827a4f1f1eb1cd161bb68dcf5ca" class="m-doc-self">numTimestamps</a>(</span><span class="m-doc-wrap">) const -&gt; size_t</span>
             </dt>
-            <dd></dd>
-            <dt>
-              <span class="m-doc-wrap-bumper">auto <a href="#a66372daf26361ff588d339403191ca6e" class="m-doc">startTimestamp</a>(</span><span class="m-doc-wrap">) const -&gt; <a href="namespacemeos.html#acafb45f4fa7ee1cc0d455cec341f8797" class="m-doc">time_<wbr />point</a></span>
+            <dd>Number of distinct timestamps.</dd>
+            <dt id="a66372daf26361ff588d339403191ca6e">
+              <span class="m-doc-wrap-bumper">auto <a href="#a66372daf26361ff588d339403191ca6e" class="m-doc-self">startTimestamp</a>(</span><span class="m-doc-wrap">) const -&gt; <a href="namespacemeos.html#acafb45f4fa7ee1cc0d455cec341f8797" class="m-doc">time_<wbr />point</a></span>
             </dt>
-            <dd></dd>
-            <dt>
-              <span class="m-doc-wrap-bumper">auto <a href="#a4d3c98e8a1dd8d8073ddea23cfef1f94" class="m-doc">endTimestamp</a>(</span><span class="m-doc-wrap">) const -&gt; <a href="namespacemeos.html#acafb45f4fa7ee1cc0d455cec341f8797" class="m-doc">time_<wbr />point</a></span>
+            <dd>Start timestamp.</dd>
+            <dt id="a4d3c98e8a1dd8d8073ddea23cfef1f94">
+              <span class="m-doc-wrap-bumper">auto <a href="#a4d3c98e8a1dd8d8073ddea23cfef1f94" class="m-doc-self">endTimestamp</a>(</span><span class="m-doc-wrap">) const -&gt; <a href="namespacemeos.html#acafb45f4fa7ee1cc0d455cec341f8797" class="m-doc">time_<wbr />point</a></span>
             </dt>
-            <dd></dd>
-            <dt>
-              <span class="m-doc-wrap-bumper">auto <a href="#a06e3fa80d14cb8aa2917a6f80e0e7380" class="m-doc">timestampN</a>(</span><span class="m-doc-wrap">size_t n) const -&gt; <a href="namespacemeos.html#acafb45f4fa7ee1cc0d455cec341f8797" class="m-doc">time_<wbr />point</a></span>
+            <dd>End timestamp.</dd>
+            <dt id="a06e3fa80d14cb8aa2917a6f80e0e7380">
+              <span class="m-doc-wrap-bumper">auto <a href="#a06e3fa80d14cb8aa2917a6f80e0e7380" class="m-doc-self">timestampN</a>(</span><span class="m-doc-wrap">size_t n) const -&gt; <a href="namespacemeos.html#acafb45f4fa7ee1cc0d455cec341f8797" class="m-doc">time_<wbr />point</a></span>
             </dt>
-            <dd></dd>
-            <dt>
-              <span class="m-doc-wrap-bumper">auto <a href="#ae0d736782369d6c1fb8e5baafbfd5c90" class="m-doc">timestamps</a>(</span><span class="m-doc-wrap">) const -&gt; std::set&lt;<a href="namespacemeos.html#acafb45f4fa7ee1cc0d455cec341f8797" class="m-doc">time_<wbr />point</a>&gt; <span class="m-label m-flat m-warning">pure virtual</span></span>
+            <dd>N-th timestamp.</dd>
+            <dt id="ae0d736782369d6c1fb8e5baafbfd5c90">
+              <span class="m-doc-wrap-bumper">auto <a href="#ae0d736782369d6c1fb8e5baafbfd5c90" class="m-doc-self">timestamps</a>(</span><span class="m-doc-wrap">) const -&gt; std::set&lt;<a href="namespacemeos.html#acafb45f4fa7ee1cc0d455cec341f8797" class="m-doc">time_<wbr />point</a>&gt; <span class="m-label m-flat m-warning">pure virtual</span></span>
             </dt>
-            <dd></dd>
-            <dt>
-              <span class="m-doc-wrap-bumper">auto <a href="#a4bf813342d3e37b56707d41d7438a97a" class="m-doc">shift</a>(</span><span class="m-doc-wrap"><a href="namespacemeos.html#a53a5f0fdb503d0ab6cb248871a8ce956" class="m-doc">duration_<wbr />ms</a> const timedelta) const -&gt; std::unique_ptr&lt;<a href="classmeos_1_1Temporal.html" class="m-doc">Temporal</a>&lt;BaseType&gt;&gt;</span>
+            <dd>Set of timestamps.</dd>
+            <dt id="a4bf813342d3e37b56707d41d7438a97a">
+              <span class="m-doc-wrap-bumper">auto <a href="#a4bf813342d3e37b56707d41d7438a97a" class="m-doc-self">shift</a>(</span><span class="m-doc-wrap"><a href="namespacemeos.html#a53a5f0fdb503d0ab6cb248871a8ce956" class="m-doc">duration_<wbr />ms</a> const timedelta) const -&gt; std::unique_ptr&lt;<a href="classmeos_1_1Temporal.html" class="m-doc">Temporal</a>&lt;BaseType&gt;&gt;</span>
             </dt>
-            <dd></dd>
-            <dt>
-              <span class="m-doc-wrap-bumper">auto <a href="#ae465711f6246b629066666f2a7aca591" class="m-doc">intersectsTimestamp</a>(</span><span class="m-doc-wrap"><a href="namespacemeos.html#acafb45f4fa7ee1cc0d455cec341f8797" class="m-doc">time_<wbr />point</a> const datetime) const -&gt; bool <span class="m-label m-flat m-warning">pure virtual</span></span>
+            <dd>Shift the temporal value by a time interval.</dd>
+            <dt id="ae465711f6246b629066666f2a7aca591">
+              <span class="m-doc-wrap-bumper">auto <a href="#ae465711f6246b629066666f2a7aca591" class="m-doc-self">intersectsTimestamp</a>(</span><span class="m-doc-wrap"><a href="namespacemeos.html#acafb45f4fa7ee1cc0d455cec341f8797" class="m-doc">time_<wbr />point</a> const datetime) const -&gt; bool <span class="m-label m-flat m-warning">pure virtual</span></span>
             </dt>
-            <dd></dd>
-            <dt>
-              <span class="m-doc-wrap-bumper">auto <a href="#a87a0b48fbad82a99e43de64e06814774" class="m-doc">intersectsTimestampSet</a>(</span><span class="m-doc-wrap"><a href="classmeos_1_1TimestampSet.html" class="m-doc">TimestampSet</a> const timestampset) const -&gt; bool</span>
+            <dd>Does the temporal value intersect the timestamp?</dd>
+            <dt id="a87a0b48fbad82a99e43de64e06814774">
+              <span class="m-doc-wrap-bumper">auto <a href="#a87a0b48fbad82a99e43de64e06814774" class="m-doc-self">intersectsTimestampSet</a>(</span><span class="m-doc-wrap"><a href="classmeos_1_1TimestampSet.html" class="m-doc">TimestampSet</a> const timestampset) const -&gt; bool</span>
             </dt>
-            <dd></dd>
-            <dt>
-              <span class="m-doc-wrap-bumper">auto <a href="#a7e1fb8f7754dd9cd3627ab38c227e5f4" class="m-doc">intersectsPeriod</a>(</span><span class="m-doc-wrap"><a href="classmeos_1_1Period.html" class="m-doc">Period</a> const period) const -&gt; bool <span class="m-label m-flat m-warning">pure virtual</span></span>
+            <dd>Does the temporal value intersect the timestamp set?</dd>
+            <dt id="a7e1fb8f7754dd9cd3627ab38c227e5f4">
+              <span class="m-doc-wrap-bumper">auto <a href="#a7e1fb8f7754dd9cd3627ab38c227e5f4" class="m-doc-self">intersectsPeriod</a>(</span><span class="m-doc-wrap"><a href="classmeos_1_1Period.html" class="m-doc">Period</a> const period) const -&gt; bool <span class="m-label m-flat m-warning">pure virtual</span></span>
             </dt>
-            <dd></dd>
-            <dt>
-              <span class="m-doc-wrap-bumper">auto <a href="#ae1e1c55da31d69e66a8ffc804519143e" class="m-doc">intersectsPeriodSet</a>(</span><span class="m-doc-wrap"><a href="classmeos_1_1PeriodSet.html" class="m-doc">PeriodSet</a> const periodset) const -&gt; bool</span>
+            <dd>Does the temporal value intersect the period?</dd>
+            <dt id="ae1e1c55da31d69e66a8ffc804519143e">
+              <span class="m-doc-wrap-bumper">auto <a href="#ae1e1c55da31d69e66a8ffc804519143e" class="m-doc-self">intersectsPeriodSet</a>(</span><span class="m-doc-wrap"><a href="classmeos_1_1PeriodSet.html" class="m-doc">PeriodSet</a> const periodset) const -&gt; bool</span>
             </dt>
-            <dd></dd>
+            <dd>Does the temporal value intersect the period set?</dd>
           </dl>
         </section>
         <section id="pri-methods">
@@ -200,160 +201,15 @@ Docs</span></a>
               </div>
               <span class="m-doc-wrap-bumper"><a href="namespacemeos.html#ac9889d560d3170ee448c531b7378fc9d" class="m-doc">TemporalDuration</a> meos::<wbr />Temporal&lt;BaseType&gt;::<wbr /></span><span class="m-doc-wrap"><span class="m-doc-wrap-bumper"><a href="#a62949846614fca6f2a269b522ee77c49" class="m-doc-self">duration</a>(</span><span class="m-doc-wrap">) const <span class="m-label m-warning">virtual</span></span></span>
             </h3>
-<p>Duration of the temporal value, that is, one of Instant, InstantSet, Sequence, or SequenceSet.</p>
-          </div></section>
-          <section class="m-doc-details" id="af07f6a6f6efda87a007a4d90b80a988a"><div>
-            <h3>
-              <div class="m-doc-template">
-                template&lt;typename BaseType&gt;
-              </div>
-              <span class="m-doc-wrap-bumper">std::set&lt;<a href="classmeos_1_1Range.html" class="m-doc">Range</a>&lt;BaseType&gt;&gt; meos::<wbr />Temporal&lt;BaseType&gt;::<wbr /></span><span class="m-doc-wrap"><span class="m-doc-wrap-bumper"><a href="#af07f6a6f6efda87a007a4d90b80a988a" class="m-doc-self">getValues</a>(</span><span class="m-doc-wrap">) const <span class="m-label m-warning">pure virtual</span></span></span>
-            </h3>
-<p>Set of values taken by the temporal value.</p>
-          </div></section>
-          <section class="m-doc-details" id="a13adab385c693ae5450b161337729659"><div>
-            <h3>
-              <div class="m-doc-template">
-                template&lt;typename BaseType&gt;
-              </div>
-              <span class="m-doc-wrap-bumper">BaseType meos::<wbr />Temporal&lt;BaseType&gt;::<wbr /></span><span class="m-doc-wrap"><span class="m-doc-wrap-bumper"><a href="#a13adab385c693ae5450b161337729659" class="m-doc-self">minValue</a>(</span><span class="m-doc-wrap">) const</span></span>
-            </h3>
-<p>Minimum value.</p><p>The function does not take into account whether the bounds are inclusive or not.</p>
-          </div></section>
-          <section class="m-doc-details" id="a623cd4030d17a3200ba5e785e986fb49"><div>
-            <h3>
-              <div class="m-doc-template">
-                template&lt;typename BaseType&gt;
-              </div>
-              <span class="m-doc-wrap-bumper">BaseType meos::<wbr />Temporal&lt;BaseType&gt;::<wbr /></span><span class="m-doc-wrap"><span class="m-doc-wrap-bumper"><a href="#a623cd4030d17a3200ba5e785e986fb49" class="m-doc-self">maxValue</a>(</span><span class="m-doc-wrap">) const</span></span>
-            </h3>
-<p>Maximum value.</p><p>The function does not take into account whether the bounds are inclusive or not.</p>
-          </div></section>
-          <section class="m-doc-details" id="ad29724f2927cb323ddc228f334fedf83"><div>
-            <h3>
-              <div class="m-doc-template">
-                template&lt;typename BaseType&gt;
-              </div>
-              <span class="m-doc-wrap-bumper"><a href="classmeos_1_1PeriodSet.html" class="m-doc">PeriodSet</a> meos::<wbr />Temporal&lt;BaseType&gt;::<wbr /></span><span class="m-doc-wrap"><span class="m-doc-wrap-bumper"><a href="#ad29724f2927cb323ddc228f334fedf83" class="m-doc-self">getTime</a>(</span><span class="m-doc-wrap">) const <span class="m-label m-warning">pure virtual</span></span></span>
-            </h3>
-<p><a href="classmeos_1_1Period.html" class="m-doc">Period</a> set on which the temporal value is defined.</p>
-          </div></section>
-          <section class="m-doc-details" id="a405bd473c78d961772b6c9e5a661a91e"><div>
-            <h3>
-              <div class="m-doc-template">
-                template&lt;typename BaseType&gt;
-              </div>
-              <span class="m-doc-wrap-bumper"><a href="namespacemeos.html#a53a5f0fdb503d0ab6cb248871a8ce956" class="m-doc">duration_<wbr />ms</a> meos::<wbr />Temporal&lt;BaseType&gt;::<wbr /></span><span class="m-doc-wrap"><span class="m-doc-wrap-bumper"><a href="#a405bd473c78d961772b6c9e5a661a91e" class="m-doc-self">timespan</a>(</span><span class="m-doc-wrap">) const <span class="m-label m-warning">pure virtual</span></span></span>
-            </h3>
-<p>Interval on which the temporal value is defined.</p>
-          </div></section>
-          <section class="m-doc-details" id="a2b3981192574237f884afa3008fbdb4c"><div>
-            <h3>
-              <div class="m-doc-template">
-                template&lt;typename BaseType&gt;
-              </div>
-              <span class="m-doc-wrap-bumper"><a href="classmeos_1_1Period.html" class="m-doc">Period</a> meos::<wbr />Temporal&lt;BaseType&gt;::<wbr /></span><span class="m-doc-wrap"><span class="m-doc-wrap-bumper"><a href="#a2b3981192574237f884afa3008fbdb4c" class="m-doc-self">period</a>(</span><span class="m-doc-wrap">) const <span class="m-label m-warning">pure virtual</span></span></span>
-            </h3>
-<p><a href="classmeos_1_1Period.html" class="m-doc">Period</a> on which the temporal value is defined ignoring potential time gaps.</p>
-          </div></section>
-          <section class="m-doc-details" id="ac42f5b83d8a2b1e8cbee31753b437015"><div>
-            <h3>
-              <div class="m-doc-template">
-                template&lt;typename BaseType&gt;
-              </div>
-              <span class="m-doc-wrap-bumper">std::set&lt;<a href="classmeos_1_1Temporal.html" class="m-doc">Temporal</a>&gt; meos::<wbr />Temporal&lt;BaseType&gt;::<wbr /></span><span class="m-doc-wrap"><span class="m-doc-wrap-bumper"><a href="#ac42f5b83d8a2b1e8cbee31753b437015" class="m-doc-self">instants</a>(</span><span class="m-doc-wrap">) const</span></span>
-            </h3>
-<p>Set of instants.</p>
-          </div></section>
-          <section class="m-doc-details" id="aed23c827a4f1f1eb1cd161bb68dcf5ca"><div>
-            <h3>
-              <div class="m-doc-template">
-                template&lt;typename BaseType&gt;
-              </div>
-              <span class="m-doc-wrap-bumper">size_t meos::<wbr />Temporal&lt;BaseType&gt;::<wbr /></span><span class="m-doc-wrap"><span class="m-doc-wrap-bumper"><a href="#aed23c827a4f1f1eb1cd161bb68dcf5ca" class="m-doc-self">numTimestamps</a>(</span><span class="m-doc-wrap">) const</span></span>
-            </h3>
-<p>Number of distinct timestamps.</p>
-          </div></section>
-          <section class="m-doc-details" id="a66372daf26361ff588d339403191ca6e"><div>
-            <h3>
-              <div class="m-doc-template">
-                template&lt;typename BaseType&gt;
-              </div>
-              <span class="m-doc-wrap-bumper"><a href="namespacemeos.html#acafb45f4fa7ee1cc0d455cec341f8797" class="m-doc">time_<wbr />point</a> meos::<wbr />Temporal&lt;BaseType&gt;::<wbr /></span><span class="m-doc-wrap"><span class="m-doc-wrap-bumper"><a href="#a66372daf26361ff588d339403191ca6e" class="m-doc-self">startTimestamp</a>(</span><span class="m-doc-wrap">) const</span></span>
-            </h3>
-<p>Start timestamp.</p>
-          </div></section>
-          <section class="m-doc-details" id="a4d3c98e8a1dd8d8073ddea23cfef1f94"><div>
-            <h3>
-              <div class="m-doc-template">
-                template&lt;typename BaseType&gt;
-              </div>
-              <span class="m-doc-wrap-bumper"><a href="namespacemeos.html#acafb45f4fa7ee1cc0d455cec341f8797" class="m-doc">time_<wbr />point</a> meos::<wbr />Temporal&lt;BaseType&gt;::<wbr /></span><span class="m-doc-wrap"><span class="m-doc-wrap-bumper"><a href="#a4d3c98e8a1dd8d8073ddea23cfef1f94" class="m-doc-self">endTimestamp</a>(</span><span class="m-doc-wrap">) const</span></span>
-            </h3>
-<p>End timestamp.</p>
-          </div></section>
-          <section class="m-doc-details" id="a06e3fa80d14cb8aa2917a6f80e0e7380"><div>
-            <h3>
-              <div class="m-doc-template">
-                template&lt;typename BaseType&gt;
-              </div>
-              <span class="m-doc-wrap-bumper"><a href="namespacemeos.html#acafb45f4fa7ee1cc0d455cec341f8797" class="m-doc">time_<wbr />point</a> meos::<wbr />Temporal&lt;BaseType&gt;::<wbr /></span><span class="m-doc-wrap"><span class="m-doc-wrap-bumper"><a href="#a06e3fa80d14cb8aa2917a6f80e0e7380" class="m-doc-self">timestampN</a>(</span><span class="m-doc-wrap">size_t n) const</span></span>
-            </h3>
-<p>N-th timestamp.</p>
-          </div></section>
-          <section class="m-doc-details" id="ae0d736782369d6c1fb8e5baafbfd5c90"><div>
-            <h3>
-              <div class="m-doc-template">
-                template&lt;typename BaseType&gt;
-              </div>
-              <span class="m-doc-wrap-bumper">std::set&lt;<a href="namespacemeos.html#acafb45f4fa7ee1cc0d455cec341f8797" class="m-doc">time_<wbr />point</a>&gt; meos::<wbr />Temporal&lt;BaseType&gt;::<wbr /></span><span class="m-doc-wrap"><span class="m-doc-wrap-bumper"><a href="#ae0d736782369d6c1fb8e5baafbfd5c90" class="m-doc-self">timestamps</a>(</span><span class="m-doc-wrap">) const <span class="m-label m-warning">pure virtual</span></span></span>
-            </h3>
-<p>Set of timestamps.</p>
-          </div></section>
-          <section class="m-doc-details" id="a4bf813342d3e37b56707d41d7438a97a"><div>
-            <h3>
-              <div class="m-doc-template">
-                template&lt;typename BaseType&gt;
-              </div>
-              <span class="m-doc-wrap-bumper">std::unique_ptr&lt;<a href="classmeos_1_1Temporal.html" class="m-doc">Temporal</a>&lt;BaseType&gt;&gt; meos::<wbr />Temporal&lt;BaseType&gt;::<wbr /></span><span class="m-doc-wrap"><span class="m-doc-wrap-bumper"><a href="#a4bf813342d3e37b56707d41d7438a97a" class="m-doc-self">shift</a>(</span><span class="m-doc-wrap"><a href="namespacemeos.html#a53a5f0fdb503d0ab6cb248871a8ce956" class="m-doc">duration_<wbr />ms</a> const timedelta) const</span></span>
-            </h3>
-<p>Shift the temporal value by a time interval</p>
-          </div></section>
-          <section class="m-doc-details" id="ae465711f6246b629066666f2a7aca591"><div>
-            <h3>
-              <div class="m-doc-template">
-                template&lt;typename BaseType&gt;
-              </div>
-              <span class="m-doc-wrap-bumper">bool meos::<wbr />Temporal&lt;BaseType&gt;::<wbr /></span><span class="m-doc-wrap"><span class="m-doc-wrap-bumper"><a href="#ae465711f6246b629066666f2a7aca591" class="m-doc-self">intersectsTimestamp</a>(</span><span class="m-doc-wrap"><a href="namespacemeos.html#acafb45f4fa7ee1cc0d455cec341f8797" class="m-doc">time_<wbr />point</a> const datetime) const <span class="m-label m-warning">pure virtual</span></span></span>
-            </h3>
-<p>Does the temporal value intersect the timestamp?</p>
-          </div></section>
-          <section class="m-doc-details" id="a87a0b48fbad82a99e43de64e06814774"><div>
-            <h3>
-              <div class="m-doc-template">
-                template&lt;typename BaseType&gt;
-              </div>
-              <span class="m-doc-wrap-bumper">bool meos::<wbr />Temporal&lt;BaseType&gt;::<wbr /></span><span class="m-doc-wrap"><span class="m-doc-wrap-bumper"><a href="#a87a0b48fbad82a99e43de64e06814774" class="m-doc-self">intersectsTimestampSet</a>(</span><span class="m-doc-wrap"><a href="classmeos_1_1TimestampSet.html" class="m-doc">TimestampSet</a> const timestampset) const</span></span>
-            </h3>
-<p>Does the temporal value intersect the timestamp set?</p>
-          </div></section>
-          <section class="m-doc-details" id="a7e1fb8f7754dd9cd3627ab38c227e5f4"><div>
-            <h3>
-              <div class="m-doc-template">
-                template&lt;typename BaseType&gt;
-              </div>
-              <span class="m-doc-wrap-bumper">bool meos::<wbr />Temporal&lt;BaseType&gt;::<wbr /></span><span class="m-doc-wrap"><span class="m-doc-wrap-bumper"><a href="#a7e1fb8f7754dd9cd3627ab38c227e5f4" class="m-doc-self">intersectsPeriod</a>(</span><span class="m-doc-wrap"><a href="classmeos_1_1Period.html" class="m-doc">Period</a> const period) const <span class="m-label m-warning">pure virtual</span></span></span>
-            </h3>
-<p>Does the temporal value intersect the period?</p>
-          </div></section>
-          <section class="m-doc-details" id="ae1e1c55da31d69e66a8ffc804519143e"><div>
-            <h3>
-              <div class="m-doc-template">
-                template&lt;typename BaseType&gt;
-              </div>
-              <span class="m-doc-wrap-bumper">bool meos::<wbr />Temporal&lt;BaseType&gt;::<wbr /></span><span class="m-doc-wrap"><span class="m-doc-wrap-bumper"><a href="#ae1e1c55da31d69e66a8ffc804519143e" class="m-doc-self">intersectsPeriodSet</a>(</span><span class="m-doc-wrap"><a href="classmeos_1_1PeriodSet.html" class="m-doc">PeriodSet</a> const periodset) const</span></span>
-            </h3>
-<p>Does the temporal value intersect the period set?</p>
+            <p>Duration of the temporal value, that is, one of Instant, InstantSet, Sequence, or SequenceSet.</p>
+            <table class="m-table m-fullwidth m-flat">
+              <tfoot>
+                <tr>
+                  <th style="width: 1%">Returns</th>
+                  <td>The temporal duration of the current object.</td>
+                </tr>
+              </tfoot>
+            </table>
           </div></section>
         </section>
       </div>
