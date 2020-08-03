@@ -34,6 +34,7 @@ std::ostream &operator<<(std::ostream &os, const Interpolation &i);
 template <typename BaseType> struct default_interp {
   static const Interpolation value = Interpolation::Linear;
 };
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 template <> struct default_interp<bool> {
   static const Interpolation value = Interpolation::Stepwise;
 };
@@ -43,6 +44,7 @@ template <> struct default_interp<int> {
 template <> struct default_interp<std::string> {
   static const Interpolation value = Interpolation::Stepwise;
 };
+#endif
 
 /**
  * @brief Shorthand for default_interp<BaseType>::value
@@ -56,9 +58,11 @@ template <typename BaseType> constexpr Interpolation default_interp_v
  * Also check is_discrete_v<BaseType>, which should be more easy to use
  */
 template <typename BaseType> struct is_discrete { static const bool value = false; };
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 template <> struct is_discrete<bool> { static const bool value = true; };
 template <> struct is_discrete<int> { static const bool value = true; };
 template <> struct is_discrete<std::string> { static const bool value = true; };
+#endif
 
 /**
  * @brief Shorthand for is_discrete<BaseType>::value

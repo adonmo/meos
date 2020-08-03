@@ -6,6 +6,8 @@
 namespace meos {
 
 /**
+ * @brief A point in space
+ *
  * Mostly a wrapper on top of GEOSGeometry*
  * Additionally, we allow specifying SRID, similar to how PostGIS EWKT does.
  *
@@ -64,10 +66,13 @@ private:
  * Also check is_geometry_v<BaseType>, which should be more easy to use
  */
 template <typename BaseType> struct is_geometry { static const bool value = false; };
+
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 template <> struct is_geometry<GeomPoint> {
   static const bool value = true;
   typedef GeomPoint type;
 };
+#endif
 
 /**
  * @brief Shorthand for is_geometry<BaseType>::value

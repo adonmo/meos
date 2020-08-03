@@ -15,9 +15,7 @@ using time_point = std::chrono::system_clock::time_point;
 using duration_ms = std::chrono::milliseconds;
 
 /**
- * @brief Class for representing temporals of instant duration.
- *
- * A temporal instant represents a value at a particular instant in time.
+ * @brief A value at a particular instant in time.
  */
 template <typename BaseType> class TInstant
     : public Temporal<BaseType>,

@@ -7,6 +7,9 @@
 namespace meos {
 using time_point = std::chrono::system_clock::time_point;
 
+/**
+ * @brief %Temporal box - bounding box with value and/or time dimensions.
+ */
 class TBox {
 public:
   TBox();

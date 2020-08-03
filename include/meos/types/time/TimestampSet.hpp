@@ -12,6 +12,9 @@ namespace meos {
 using time_point = std::chrono::system_clock::time_point;
 using duration_ms = std::chrono::milliseconds;
 
+/**
+ * @brief Set of one or more \link time_point \endlink objects.
+ */
 class TimestampSet {
 public:
   TimestampSet();

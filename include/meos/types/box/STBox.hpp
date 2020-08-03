@@ -7,6 +7,9 @@
 namespace meos {
 using time_point = std::chrono::system_clock::time_point;
 
+/**
+ * @brief Spatio-temporal box - bounding box with value and/or space/time dimensions.
+ */
 class STBox : public SRIDMembers {
 public:
   STBox();

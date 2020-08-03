@@ -9,6 +9,13 @@ namespace meos {
 using time_point = std::chrono::system_clock::time_point;
 using duration_ms = std::chrono::milliseconds;
 
+/**
+ * @brief Time interval with either inclusive or exlusive bounds.
+ *
+ *   - Empty periods are not allowed.
+ *   - Periods with lower == upper are called instant periods.
+ *   - Instant periods can only have inclusive bounds.
+ */
 class Period {
 private:
   time_point m_lower;

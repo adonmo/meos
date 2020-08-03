@@ -13,6 +13,9 @@ namespace meos {
 using time_point = std::chrono::system_clock::time_point;
 using duration_ms = std::chrono::milliseconds;
 
+/**
+ * @brief Set of TInstant objects, with exclusive/inclusive bounds and \link Interpolation \endlink.
+ */
 template <typename BaseType = float> class TSequence : public TemporalSet<BaseType> {
 public:
   TSequence();

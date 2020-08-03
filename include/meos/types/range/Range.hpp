@@ -5,6 +5,9 @@
 
 namespace meos {
 
+/**
+ * @brief %Range of values with either inclusive or exlusive bounds.
+ */
 template <typename T> class Range {
 private:
   T const m_lower;

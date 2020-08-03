@@ -17,6 +17,9 @@ namespace meos {
 using time_point = std::chrono::system_clock::time_point;
 using duration_ms = std::chrono::milliseconds;
 
+/**
+ * @brief Set of TSequence objects.
+ */
 template <typename BaseType = float> class TSequenceSet
     : public Temporal<BaseType>,
       public TemporalComparators<TSequenceSet<BaseType>>,
@@ -52,32 +55,32 @@ public:
   Interpolation interpolation() const;
 
   /**
-   * Set of sequences.
+   * @brief Set of sequences.
    */
   std::set<TSequence<BaseType>> sequences() const;
 
   /**
-   * Number of distinct sequences.
+   * @brief Number of distinct sequences.
    */
   size_t numSequences() const;
 
   /**
-   * Start sequence.
+   * @brief Start sequence.
    */
   TSequence<BaseType> startSequence() const;
 
   /**
-   * End sequence.
+   * @brief End sequence.
    */
   TSequence<BaseType> endSequence() const;
 
   /**
-   * N-th distinct sequence.
+   * @brief N-th distinct sequence.
    */
   TSequence<BaseType> sequenceN(size_t n) const;
 
   /**
-   * Set of instants.
+   * @brief Set of instants.
    */
   std::set<TInstant<BaseType>> instants() const;
 

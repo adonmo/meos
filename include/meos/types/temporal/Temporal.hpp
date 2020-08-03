@@ -21,7 +21,7 @@ using duration_ms = std::chrono::milliseconds;
 typedef std::tuple<> Empty;
 
 /**
- * @brief Temporal is the base class for all the temporal types.
+ * @brief Base for all the temporal types - TInstant, TInstantSet, TSequence, TSequenceSet.
  *
  * This is a template class and takes in a BaseType as the template parameter.
  * BaseType can be bool, int, float, string or GeomPoint.
