@@ -59,7 +59,7 @@ private:
 };
 
 /**
- * Helps find out if a base type is geometry or not
+ * @brief Helps find out if a base type is geometry or not
  *
  * Also check is_geometry_v<BaseType>, which should be more easy to use
  */
@@ -70,7 +70,7 @@ template <> struct is_geometry<GeomPoint> {
 };
 
 /**
- * Shorthand for is_geometry<BaseType>::value
+ * @brief Shorthand for is_geometry<BaseType>::value
  */
 template <typename BaseType> constexpr bool is_geometry_v = is_geometry<BaseType>::value;
 

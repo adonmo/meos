@@ -21,8 +21,7 @@ using duration_ms = std::chrono::milliseconds;
 typedef std::tuple<> Empty;
 
 /**
- * Temporal is the base class for all the temporal types which are
- * TInstant, TInstantSet, TSequence and TSequenceSet.
+ * @brief Temporal is the base class for all the temporal types.
  *
  * This is a template class and takes in a BaseType as the template parameter.
  * BaseType can be bool, int, float, string or GeomPoint.
@@ -43,99 +42,94 @@ public:
   virtual int compare(Temporal const &other) const = 0;
 
   /**
-   * Duration of the temporal value, that is, one of Instant, InstantSet,
+   * @brief Duration of the temporal value, that is, one of Instant, InstantSet,
    * Sequence, or SequenceSet.
+   * @returns The temporal duration of the current object.
    */
   virtual TemporalDuration duration() const { return TemporalDuration::Temporal; };
 
   /**
-   * Set of values taken by the temporal value.
+   * @brief Set of values taken by the temporal value.
    */
   virtual std::set<Range<BaseType>> getValues() const = 0;
 
   /**
-   * Minimum value.
-   *
-   * The function does not take into account whether the bounds are inclusive or
-   * not.
+   * @brief Minimum value, irrespective of whether the bounds are inclusive or not.
    */
   BaseType minValue() const;
 
   /**
-   * Maximum value.
-   *
-   * The function does not take into account whether the bounds are inclusive or
-   * not.
+   * @brief Maximum value, irrespective of whether the bounds are inclusive or not.
    */
   BaseType maxValue() const;
 
   /**
-   * Period set on which the temporal value is defined.
+   * @brief Period set on which the temporal value is defined.
    */
   virtual PeriodSet getTime() const = 0;
 
   /**
-   * Interval on which the temporal value is defined.
+   * @brief Interval on which the temporal value is defined.
    */
   virtual duration_ms timespan() const = 0;
 
   /**
-   * Period on which the temporal value is defined ignoring potential time gaps.
+   * @brief Period on which the temporal value is defined ignoring potential time gaps.
    */
   virtual Period period() const = 0;
 
   /**
-   * Set of instants.
+   * @brief Set of instants.
    */
   std::set<Temporal> instants() const;
 
   /**
-   * Number of distinct timestamps.
+   * @brief Number of distinct timestamps.
    */
   size_t numTimestamps() const;
 
   /**
-   * Start timestamp.
+   * @brief Start timestamp.
    */
   time_point startTimestamp() const;
 
   /**
-   * End timestamp.
+   * @brief End timestamp.
    */
   time_point endTimestamp() const;
 
   /**
-   * N-th timestamp.
+   * @brief N-th timestamp.
    */
   time_point timestampN(size_t n) const;
 
   /**
-   * Set of timestamps.
+   * @brief Set of timestamps.
    */
   virtual std::set<time_point> timestamps() const = 0;
 
   /**
-   * Shift the temporal value by a time interval
+   * @brief Shift the temporal value by a time interval
    */
   std::unique_ptr<Temporal<BaseType>> shift(duration_ms const timedelta) const;
 
   /**
-   * Does the temporal value intersect the timestamp?
+   * @brief Does the temporal value intersect the timestamp?
    */
   virtual bool intersectsTimestamp(time_point const datetime) const = 0;
 
   /**
-   * Does the temporal value intersect the timestamp set?
+   * @brief Does the temporal value intersect the timestamp set?
    */
   bool intersectsTimestampSet(TimestampSet const timestampset) const;
 
   /**
-   * Does the temporal value intersect the period?
+   * @brief Does the temporal value intersect the period?
    */
   virtual bool intersectsPeriod(Period const period) const = 0;
 
   /**
-   * Does the temporal value intersect the period set?
+   * @brief Does the temporal value intersect the period set?
    */
   bool intersectsPeriodSet(PeriodSet const periodset) const;
 

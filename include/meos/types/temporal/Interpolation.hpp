@@ -22,12 +22,12 @@ enum class Interpolation {
 };
 
 /**
- * Outputs a string representation of the Interpolation to the stream
+ * @brief Outputs a string representation of the Interpolation to the stream
  */
 std::ostream &operator<<(std::ostream &os, const Interpolation &i);
 
 /**
- * Helps decide the appropriate interpolation for specified base type
+ * @brief Helps decide the appropriate Interpolation for specified base type
  *
  * Also check default_interp_v<BaseType>, which should be more easy to use
  */
@@ -45,13 +45,13 @@ template <> struct default_interp<std::string> {
 };
 
 /**
- * Shorthand for default_interp<BaseType>::value
+ * @brief Shorthand for default_interp<BaseType>::value
  */
 template <typename BaseType> constexpr Interpolation default_interp_v
     = default_interp<BaseType>::value;
 
 /**
- * Helps find out if a base type is discrete or not
+ * @brief Helps find out if a base type is discrete or not
  *
  * Also check is_discrete_v<BaseType>, which should be more easy to use
  */
@@ -61,7 +61,7 @@ template <> struct is_discrete<int> { static const bool value = true; };
 template <> struct is_discrete<std::string> { static const bool value = true; };
 
 /**
- * Shorthand for is_discrete<BaseType>::value
+ * @brief Shorthand for is_discrete<BaseType>::value
  */
 template <typename BaseType> constexpr bool is_discrete_v = is_discrete<BaseType>::value;
 

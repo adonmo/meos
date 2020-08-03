@@ -13,6 +13,9 @@ namespace meos {
 using time_point = std::chrono::system_clock::time_point;
 using duration_ms = std::chrono::milliseconds;
 
+/**
+ * @brief TemporalSet is the base class for TInstantSet and TSequence.
+ */
 template <typename BaseType = float> class TemporalSet
     : public Temporal<BaseType>,
       public TemporalComparators<TemporalSet<BaseType>>,

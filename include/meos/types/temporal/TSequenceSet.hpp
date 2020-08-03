@@ -109,28 +109,26 @@ private:
   void validate();
 
   /**
-   * Only does validations common accross all base types.
+   * @brief Only does validations common accross all base types.
    * Use validate() for validating in general. It internally uses this.
    */
   void validate_common();
 
   /**
-   * Compares instants. Does not take SRID into account.
+   * @brief Compares instants. Does not take SRID into account.
    * Use compare(Temporal<BaseType> const &other) for comparing in general. It
    * internally uses this.
    */
   int compare_internal(Temporal<BaseType> const &other) const;
 
   /**
-   * Contains common logic accross all base types.
-   * Does not take SRID into account.
+   * @brief Contains common logic accross all base types. Does not take SRID into account.
    * Use read(std::istream &in) for reading in general. It internally uses this.
    */
   std::istream &read_internal(std::istream &in);
 
   /**
-   * Contains common logic accross all base types.
-   * Does not take SRID into account.
+   * @brief Contains common logic accross all base types. Does not take SRID into account.
    * Use write(std::ostream &os) for writing in general. It internally uses this.
    */
   std::ostream &write_internal(std::ostream &os) const;

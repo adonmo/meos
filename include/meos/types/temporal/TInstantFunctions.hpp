@@ -14,12 +14,12 @@ namespace meos {
 template <typename TemporalType, typename TInstantType, typename BaseType>
 struct TInstantFunctions {
   /**
-   * Number of distinct instants.
+   * @brief Number of distinct instants.
    */
   size_t numInstants() const { return this->temporal().instants().size(); };
 
   /**
-   * Start instant.
+   * @brief Start instant, irrespective of whether the bounds are inclusive or not.
    */
   TInstantType startInstant() const {
     auto s = this->temporal().instants();
@@ -30,7 +30,7 @@ struct TInstantFunctions {
   };
 
   /**
-   * End instant.
+   * @brief End instant, irrespective of whether the bounds are inclusive or not.
    */
   TInstantType endInstant() const {
     auto s = this->temporal().instants();
@@ -41,7 +41,7 @@ struct TInstantFunctions {
   };
 
   /**
-   * N-th distinct instant.
+   * @brief N-th distinct instant, irrespective of whether the bounds are inclusive or not.
    */
   TInstantType instantN(size_t n) const {
     auto s = this->temporal().instants();
@@ -52,10 +52,7 @@ struct TInstantFunctions {
   };
 
   /**
-   * Start value.
-   *
-   * The function does not take into account whether the bounds are inclusive or
-   * not.
+   * @brief Start value, irrespective of whether the bounds are inclusive or not.
    */
   BaseType startValue() const {
     auto s = this->temporal().instants();
@@ -66,10 +63,7 @@ struct TInstantFunctions {
   }
 
   /**
-   * End value.
-   *
-   * The function does not take into account whether the bounds are inclusive or
-   * not.
+   * @brief End value, irrespective of whether the bounds are inclusive or not.
    */
   BaseType endValue() const {
     auto s = this->temporal().instants();
@@ -80,10 +74,7 @@ struct TInstantFunctions {
   }
 
   /**
-   * N-th value.
-   *
-   * The function does not take into account whether the bounds are inclusive or
-   * not.
+   * @brief N-th value, irrespective of whether the bounds are inclusive or not.
    */
   BaseType valueN(size_t n) const {
     auto s = this->temporal().instants();

@@ -15,7 +15,7 @@ using time_point = std::chrono::system_clock::time_point;
 using duration_ms = std::chrono::milliseconds;
 
 /**
- * Class for representing temporals of instant duration.
+ * @brief Class for representing temporals of instant duration.
  *
  * A temporal instant represents a value at a particular instant in time.
  */
@@ -65,7 +65,7 @@ public:
   TemporalDuration duration() const override { return TemporalDuration::Instant; };
 
   /**
-   * Set of instants.
+   * @brief Set of instants.
    */
   std::set<TInstant> instants() const;
 
@@ -95,7 +95,7 @@ private:
   void validate();
 
   /**
-   * Compares timestamp and value. Does not take SRID into account.
+   * @brief Compares timestamp and value. Does not take SRID into account.
    */
   int compare_internal(Temporal<BaseType> const &other) const;
 
