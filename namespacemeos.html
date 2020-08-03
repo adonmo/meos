@@ -78,21 +78,6 @@ Docs</span></a>
             </dt>
             <dd>Helps decide the appropriate Interpolation for specified base type.</dd>
             <dt>
-              <div class="m-doc-template">template&lt;&gt;</div>
-              struct <a href="structmeos_1_1default__interp_3_01bool_01_4.html" class="m-doc">default_interp&lt;bool&gt;</a>
-            </dt>
-            <dd><span></span></dd>
-            <dt>
-              <div class="m-doc-template">template&lt;&gt;</div>
-              struct <a href="structmeos_1_1default__interp_3_01int_01_4.html" class="m-doc">default_interp&lt;int&gt;</a>
-            </dt>
-            <dd><span></span></dd>
-            <dt>
-              <div class="m-doc-template">template&lt;&gt;</div>
-              struct <a href="structmeos_1_1default__interp_3_01std_1_1string_01_4.html" class="m-doc">default_interp&lt;std::string&gt;</a>
-            </dt>
-            <dd><span></span></dd>
-            <dt>
               class <a href="classmeos_1_1DeserializationException.html" class="m-doc">DeserializationException</a>
             </dt>
             <dd><span></span></dd>
@@ -104,50 +89,30 @@ Docs</span></a>
             <dt>
               class <a href="classmeos_1_1GeomPoint.html" class="m-doc">GeomPoint</a>
             </dt>
-            <dd></dd>
+            <dd>A point in space.</dd>
             <dt>
               <div class="m-doc-template">template&lt;typename BaseType&gt;</div>
               struct <a href="structmeos_1_1is__discrete.html" class="m-doc">is_discrete</a>
             </dt>
             <dd>Helps find out if a base type is discrete or not.</dd>
             <dt>
-              <div class="m-doc-template">template&lt;&gt;</div>
-              struct <a href="structmeos_1_1is__discrete_3_01bool_01_4.html" class="m-doc">is_discrete&lt;bool&gt;</a>
-            </dt>
-            <dd><span></span></dd>
-            <dt>
-              <div class="m-doc-template">template&lt;&gt;</div>
-              struct <a href="structmeos_1_1is__discrete_3_01int_01_4.html" class="m-doc">is_discrete&lt;int&gt;</a>
-            </dt>
-            <dd><span></span></dd>
-            <dt>
-              <div class="m-doc-template">template&lt;&gt;</div>
-              struct <a href="structmeos_1_1is__discrete_3_01std_1_1string_01_4.html" class="m-doc">is_discrete&lt;std::string&gt;</a>
-            </dt>
-            <dd><span></span></dd>
-            <dt>
               <div class="m-doc-template">template&lt;typename BaseType&gt;</div>
               struct <a href="structmeos_1_1is__geometry.html" class="m-doc">is_geometry</a>
             </dt>
             <dd>Helps find out if a base type is geometry or not.</dd>
             <dt>
-              <div class="m-doc-template">template&lt;&gt;</div>
-              struct <a href="structmeos_1_1is__geometry_3_01GeomPoint_01_4.html" class="m-doc">is_geometry&lt;GeomPoint&gt;</a>
-            </dt>
-            <dd><span></span></dd>
-            <dt>
               class <a href="classmeos_1_1Period.html" class="m-doc">Period</a>
             </dt>
-            <dd><span></span></dd>
+            <dd>Time interval with either inclusive or exlusive bounds.</dd>
             <dt>
               class <a href="classmeos_1_1PeriodSet.html" class="m-doc">PeriodSet</a>
             </dt>
-            <dd><span></span></dd>
+            <dd>Set of one or more <a href="classmeos_1_1Period.html" class="m-doc">Period</a> objects.</dd>
             <dt>
               <div class="m-doc-template">template&lt;typename T&gt;</div>
               class <a href="classmeos_1_1Range.html" class="m-doc">Range</a>
             </dt>
-            <dd><span></span></dd>
+            <dd>Range of values with either inclusive or exlusive bounds.</dd>
             <dt>
               class <a href="classmeos_1_1SerializationException.html" class="m-doc">SerializationException</a>
             </dt>
@@ -164,16 +129,16 @@ Docs</span></a>
             <dt>
               class <a href="classmeos_1_1STBox.html" class="m-doc">STBox</a>
             </dt>
-            <dd><span></span></dd>
+            <dd>Spatio-temporal box - bounding box with value and/or space/time dimensions.</dd>
             <dt>
               class <a href="classmeos_1_1TBox.html" class="m-doc">TBox</a>
             </dt>
-            <dd><span></span></dd>
+            <dd>Temporal box - bounding box with value and/or time dimensions.</dd>
             <dt>
               <div class="m-doc-template">template&lt;typename BaseType = float&gt;</div>
               class <a href="classmeos_1_1Temporal.html" class="m-doc">Temporal</a>
             </dt>
-            <dd><a href="classmeos_1_1Temporal.html" class="m-doc">Temporal</a> is the base class for all the temporal types.</dd>
+            <dd>Base for all the temporal types - <a href="classmeos_1_1TInstant.html" class="m-doc">TInstant</a>, <a href="classmeos_1_1TInstantSet.html" class="m-doc">TInstantSet</a>, <a href="classmeos_1_1TSequence.html" class="m-doc">TSequence</a>, <a href="classmeos_1_1TSequenceSet.html" class="m-doc">TSequenceSet</a>.</dd>
             <dt>
               <div class="m-doc-template">template&lt;typename TemporalType&gt;</div>
               struct <a href="structmeos_1_1TemporalComparators.html" class="m-doc">TemporalComparators</a>
@@ -183,16 +148,16 @@ Docs</span></a>
               <div class="m-doc-template">template&lt;typename BaseType = float&gt;</div>
               class <a href="classmeos_1_1TemporalSet.html" class="m-doc">TemporalSet</a>
             </dt>
-            <dd><a href="classmeos_1_1TemporalSet.html" class="m-doc">TemporalSet</a> is the base class for <a href="classmeos_1_1TInstantSet.html" class="m-doc">TInstantSet</a> and <a href="classmeos_1_1TSequence.html" class="m-doc">TSequence</a>.</dd>
+            <dd>Base class for <a href="classmeos_1_1TInstantSet.html" class="m-doc">TInstantSet</a> and <a href="classmeos_1_1TSequence.html" class="m-doc">TSequence</a>.</dd>
             <dt>
               class <a href="classmeos_1_1TimestampSet.html" class="m-doc">TimestampSet</a>
             </dt>
-            <dd><span></span></dd>
+            <dd>Set of one or more <a href="namespacemeos.html#acafb45f4fa7ee1cc0d455cec341f8797" class="m-doc">time_<wbr />point</a> objects.</dd>
             <dt>
               <div class="m-doc-template">template&lt;typename BaseType&gt;</div>
               class <a href="classmeos_1_1TInstant.html" class="m-doc">TInstant</a>
             </dt>
-            <dd>Class for representing temporals of instant duration.</dd>
+            <dd>A value at a particular instant in time.</dd>
             <dt>
               <div class="m-doc-template">template&lt;typename TemporalType, typename TInstantType, typename BaseType&gt;</div>
               struct <a href="structmeos_1_1TInstantFunctions.html" class="m-doc">TInstantFunctions</a>
@@ -202,17 +167,17 @@ Docs</span></a>
               <div class="m-doc-template">template&lt;typename BaseType = float&gt;</div>
               class <a href="classmeos_1_1TInstantSet.html" class="m-doc">TInstantSet</a>
             </dt>
-            <dd><span></span></dd>
+            <dd>Set of <a href="classmeos_1_1TInstant.html" class="m-doc">TInstant</a> objects.</dd>
             <dt>
               <div class="m-doc-template">template&lt;typename BaseType = float&gt;</div>
               class <a href="classmeos_1_1TSequence.html" class="m-doc">TSequence</a>
             </dt>
-            <dd><span></span></dd>
+            <dd>Set of <a href="classmeos_1_1TInstant.html" class="m-doc">TInstant</a> objects, with exclusive/inclusive bounds and <a href="namespacemeos.html#a1ce9fcf3a52a3d907df274e5680720f5" class="m-doc">Interpolation</a>.</dd>
             <dt>
               <div class="m-doc-template">template&lt;typename BaseType = float&gt;</div>
               class <a href="classmeos_1_1TSequenceSet.html" class="m-doc">TSequenceSet</a>
             </dt>
-            <dd><span></span></dd>
+            <dd>Set of <a href="classmeos_1_1TSequence.html" class="m-doc">TSequence</a> objects.</dd>
           </dl>
         </section>
         <section id="enum-members">

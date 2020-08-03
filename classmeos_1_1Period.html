@@ -54,7 +54,7 @@ Docs</span></a>
           <span class="m-breadcrumb"><a href="namespacemeos.html">meos</a>::<wbr/></span>Period <span class="m-thin">class</span>
           <div class="m-doc-include m-code m-inverted m-text-right"><span class="cp">#include</span> <a class="cpf" href="Period_8hpp.html">&lt;meos/types/time/Period.hpp&gt;</a></div>
         </h1>
-        <p><span></span></p>
+        <p>Time interval with either inclusive or exlusive bounds.</p>
         <div class="m-block m-default">
           <h3>Contents</h3>
           <ul>
@@ -68,6 +68,7 @@ Docs</span></a>
             </li>
           </ul>
         </div>
+<ul><li>Empty periods are not allowed.</li><li>Periods with lower == upper are called instant periods.</li><li>Instant periods can only have inclusive bounds.</li></ul>
         <section id="typeless-methods">
           <h2><a href="#typeless-methods">Constructors, destructors, conversion operators</a></h2>
           <dl class="m-doc">
