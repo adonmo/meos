@@ -8,7 +8,7 @@ Installation (Python)
 
 .. code-block:: bash
 
-    pip install git+https://github.com/adonmo/meos
+    pip install pymeos
 
 
 .. toctree::
