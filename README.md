@@ -1,4 +1,4 @@
-[![Tests Status](https://github.com/adonmo/meos/workflows/Tests/badge.svg)](https://github.com/adonmo/meos/actions) [![Codacy Badge](https://app.codacy.com/project/badge/Grade/7e51e8a09bdd424f83af953585fd14b9)](https://www.codacy.com/gh/adonmo/meos?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=adonmo/meos&amp;utm_campaign=Badge_Grade) [![MIT License](https://img.shields.io/github/license/adonmo/meos.svg)](https://github.com/adonmo/meos/blob/master/LICENSE.txt)
+[![Tests Status](https://github.com/adonmo/meos/workflows/Tests/badge.svg)](https://github.com/adonmo/meos/actions) [![Codacy Badge](https://app.codacy.com/project/badge/Grade/7e51e8a09bdd424f83af953585fd14b9)](https://www.codacy.com/gh/adonmo/meos?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=adonmo/meos&amp;utm_campaign=Badge_Grade) [![Downloads](https://pepy.tech/badge/pymeos)](https://pepy.tech/project/pymeos) [![MIT License](https://img.shields.io/github/license/adonmo/meos.svg)](https://github.com/adonmo/meos/blob/master/LICENSE.txt)
 
 ![MEOS Logo](https://i.imgur.com/ppfYUeT.png)
 
@@ -14,6 +14,8 @@
 MEOS aims to the base on which more libraries can be built. The following projects are built on top of (or experimenting with) MEOS/PyMEOS:
   - [mobilitydb-sqlalchemy](mobilitydb-sqlalchemy) - The SQLAlchemy bindings for MobilityDB.
   - [MobilityDB-python](https://github.com/MobilityDB/MobilityDB-python/) - The official python driver for MobilityDB. (WIP [pull request](https://github.com/MobilityDB/MobilityDB-python/pull/4))
+
+Built a project using MEOS? Contact us to get it included here.
 
 # Usage
 
