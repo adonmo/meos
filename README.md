@@ -33,7 +33,7 @@ Note: libgeos-dev might need to be installed on your system.
 
 ```python
 import datetime
-from pymeos import GeomPoint
+from shapely.geometry import Point
 from pymeos.temporal import TGeomPointInst, TGeomPointSeq
 
 
@@ -43,9 +43,9 @@ def datetime_utc(year, month, day, hour=0, minute=0, second=0):
 
 # Example creation of trajectory (temporal sequence of geometries)
 trajectory = TGeomPointSeq({
-    TGeomPointInst(GeomPoint(0, 0), datetime_utc(2012, 1, 1, 8, 0)),
-    TGeomPointInst(GeomPoint(2, 0), datetime_utc(2012, 1, 1, 8, 10)),
-    TGeomPointInst(GeomPoint(2, 1), datetime_utc(2012, 1, 1, 8, 15)),
+    TGeomPointInst(Point(0, 0), datetime_utc(2012, 1, 1, 8, 0)),
+    TGeomPointInst(Point(2, 0), datetime_utc(2012, 1, 1, 8, 10)),
+    TGeomPointInst(Point(2, 1), datetime_utc(2012, 1, 1, 8, 15)),
 })
 
 print(trajectory)
