@@ -112,6 +112,41 @@ Minimalistic C++ app example: [https://github.com/adonmo/meos-cpp-example](https
 
 C++ API Reference: [https://adonmo.github.io/meos/](https://adonmo.github.io/meos/)
 
+## C
+
+MEOS can also be accessed from C.
+
+Here is an example code on how to do this:
+
+```c
+#include "meos/meos_c.h"
+#include <stdio.h>
+
+int main(int argc, char* argv[]) {
+    struct TBox* tbox = newTBox(12.34, 56.78);
+    double xmin = TBox_xmin(tbox);
+    printf("%lf\n", xmin);
+    deleteTBox(tbox);
+}
+```
+To compile the above code, you would need `libmeos_c.so`. If you do not have it, build it first by running:
+```sh
+cmake -B build/capi -S capi
+cmake --build build/capi
+```
+
+After saving the above file as `main.c`, run the following commands to build and run it:
+
+```sh
+gcc -I/<path_to_meos>/capi/include -c main.c -o main.o
+g++ -L/<path_to_meos>/build/capi main.o -l:libmeos_c.so -o main
+LD_LIBRARY_PATH=/<path_to_meos>/build/capi ./main
+```
+If you see the following output, you have succesfully used MEOS from C!
+```
+12.340000
+```
+
 ## Contributing
 
 Issues and pull requests are welcome.
