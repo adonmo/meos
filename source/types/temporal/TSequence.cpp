@@ -363,6 +363,7 @@ istream &TSequence<BaseType>::read_internal(istream &in, bool with_interp) {
 template <typename BaseType>
 istream &TSequence<BaseType>::read(istream &in, bool with_interp, bool) {
   read_internal(in, with_interp);
+  validate();
   return in;
 }
 
@@ -386,6 +387,7 @@ template <> istream &TSequence<GeomPoint>::read(istream &in, bool with_interp, b
 
   read_internal(in, with_interp);
   this->m_srid = srid;
+  validate();
   return in;
 }
 

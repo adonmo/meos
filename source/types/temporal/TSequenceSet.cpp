@@ -372,7 +372,6 @@ template <typename BaseType> istream &TSequenceSet<BaseType>::read_internal(istr
 
   TSequence<BaseType> seq;
   in >> seq;
-  seq.validate();  // TODO can we avoid this?
   s.insert(seq);
 
   while (true) {
@@ -395,6 +394,7 @@ template <typename BaseType> istream &TSequenceSet<BaseType>::read_internal(istr
 
 template <typename BaseType> istream &TSequenceSet<BaseType>::read(istream &in) {
   read_internal(in);
+  validate();
   return in;
 }
 
@@ -416,6 +416,7 @@ template <> istream &TSequenceSet<GeomPoint>::read(istream &in) {
 
   read_internal(in);
   this->m_srid = srid;
+  validate();
   return in;
 }
 

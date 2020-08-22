@@ -1,6 +1,7 @@
 import pytest
 
 from pymeos import GeomPoint
+from pymeos.io import DeserializerFloat
 from pymeos.temporal import (Interpolation, TemporalDuration, TFloatInst,
                              TGeomPointInst, TIntInst, TFloatSeq,
                              TGeomPointSeq, TIntSeq, TFloatSeqSet,
@@ -165,6 +166,21 @@ def test_different_geom_constructors(expected_srid, actual):
 def test_constructors_with_conflicting_srids(args):
     with pytest.raises(ValueError, match="Conflicting SRIDs provided. Given: 4326, while (Sequence|Geometry) contains: 5676"):
         TGeomPointSeqSet(*args)
+
+
+@pytest.mark.parametrize('seqset', [
+    TFloatSeqSet('Interp=Stepwise;{[10.0@2019-09-01 00:00:00+01], [20.0@2019-09-02 00:00:00+01, 10.0@2019-09-03 00:00:00+01]}'),
+    DeserializerFloat('Interp=Stepwise;{[10.0@2019-09-01 00:00:00+01], [20.0@2019-09-02 00:00:00+01, 10.0@2019-09-03 00:00:00+01]}').nextTemporal(),
+    DeserializerFloat('Interp=Stepwise;{[10.0@2019-09-01 00:00:00+01], [20.0@2019-09-02 00:00:00+01, 10.0@2019-09-03 00:00:00+01]}').nextTSequenceSet(),
+])
+def test_interpolation_is_maintained_in_sequences(seqset):
+    assert seqset.sequences == {
+        TFloatSeq('Interp=Stepwise;[10.0@2019-09-01 00:00:00+01]'),
+        TFloatSeq('Interp=Stepwise;[20.0@2019-09-02 00:00:00+01, 10.0@2019-09-03 00:00:00+01]')
+    }
+    assert seqset.interpolation == Interpolation.Stepwise
+    for seq in seqset.sequences:
+        assert seq.interpolation == seqset.interpolation
 
 
 def test_constructor():

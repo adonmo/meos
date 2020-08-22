@@ -1,4 +1,5 @@
 #include <catch2/catch.hpp>
+#include <meos/io/Deserializer.hpp>
 #include <meos/types/temporal/Interpolation.hpp>
 #include <meos/types/temporal/TSequenceSet.hpp>
 #include <sstream>
@@ -551,5 +552,27 @@ TEMPLATE_TEST_CASE("TSequenceSet intersection functions", "[tsequenceset]", int,
     // Negative cases
     s = {Period(unix_time_point(2012, 2, 2), unix_time_point(2012, 2, 3), true, true)};
     REQUIRE(sset.intersectsPeriodSet(PeriodSet(s)) == false);
+  }
+}
+
+TEST_CASE("interpolation is maintained in sequences", "[tsequenceset]") {
+  TFloatSeqSet seqset;
+
+  const std::string EXP_TSEQSET
+      = "Interp=Stepwise;{[10.0@2019-09-01 00:00:00+01], [20.0@2019-09-02 00:00:00+01, "
+        "10.0@2019-09-03 00:00:00+01]}";
+
+  std::tie(seqset) = GENERATE_COPY(table<TFloatSeqSet>({
+      // String constructor
+      {TFloatSeqSet(EXP_TSEQSET)},
+      // Copy constructor
+      {TFloatSeqSet(TFloatSeqSet(EXP_TSEQSET))},
+      // Construct via deserializer
+      {*(new Deserializer<float>(EXP_TSEQSET))->nextTSequenceSet().release()},
+  }));
+
+  REQUIRE(seqset.interpolation() == Interpolation::Stepwise);
+  for (auto seq : seqset.sequences()) {
+    REQUIRE(seq.interpolation() == Interpolation::Stepwise);
   }
 }
