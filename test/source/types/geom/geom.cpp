@@ -15,8 +15,18 @@ TEST_CASE("Geometries are constructed and serialized properly", "[geometry]") {
   SECTION("<double, double> constructor") { geometry = GeomPoint(2, 3); }
 
   SECTION("<string> constructor") {
-    SECTION("WKT") { geometry = GeomPoint("POINT (2 3)"); }
+    SECTION("EWKT") {
+      geometry = GeomPoint("SRID=4326;POINT (2 3)");
+      REQUIRE(geometry.srid() == 4326);
+      expected = "SRID=4326;POINT (2 3)";
+    }
+    SECTION("EWKB (Hex)") {
+      geometry = GeomPoint("0101000020E610000000000000000000400000000000000840");
+      REQUIRE(geometry.srid() == 4326);
+      expected = "SRID=4326;POINT (2 3)";
+    }
 
+    SECTION("WKT") { geometry = GeomPoint("POINT (2 3)"); }
     SECTION("WKB (Hex)") { geometry = GeomPoint("010100000000000000000000400000000000000840"); }
   }
 
@@ -56,7 +66,7 @@ TEST_CASE("test read and write to WKB", "[geometry]") {
   GeomPoint g(2, 3, 4326);
   std::stringstream output;
   REQUIRE(g.srid() == 4326);
-  g.toWKB(output);  // SRID would be lost in this process
+  g.toWKB(output, false);  // SRID would be lost in this process
 
   output.seekg(0);
   g.fromWKB(output);
@@ -68,7 +78,7 @@ TEST_CASE("test read and write to WKB", "[geometry]") {
 TEST_CASE("test read and write to WKT", "[geometry]") {
   GeomPoint g(2, 3, 4326);
   REQUIRE(g.srid() == 4326);
-  std::string output = g.toWKT();  // SRID would be lost in this process
+  std::string output = g.toWKT(false);  // SRID would be lost in this process
 
   g.fromWKT(output);
   REQUIRE(g.x() == 2);
@@ -80,7 +90,7 @@ TEST_CASE("test read and write to HEX", "[geometry]") {
   GeomPoint g(2, 3, 4326);
   std::stringstream output;
   REQUIRE(g.srid() == 4326);
-  g.toHEX(output);  // SRID would be lost in this process
+  g.toHEX(output, false);  // SRID would be lost in this process
 
   output.seekg(0);
   g.fromHEX(output);
@@ -101,6 +111,22 @@ TEST_CASE("fromHex", "[geometry]") {
 TEST_CASE("toHex", "[geometry]") {
   GeomPoint g(2, 3, 4326);
   std::stringstream output;
-  g.toHEX(output);  // SRID would be lost in this process
+  g.toHEX(output, false);  // SRID would be lost in this process
   REQUIRE(output.str() == "010100000000000000000000400000000000000840");
+}
+
+TEST_CASE("fromHex EWKB", "[geometry]") {
+  GeomPoint g;
+  std::stringstream is("0101000020E610000000000000000000400000000000000840");
+  g.fromHEX(is);
+  REQUIRE(g.x() == 2);
+  REQUIRE(g.y() == 3);
+  REQUIRE(g.srid() == 4326);
+}
+
+TEST_CASE("toHex EWKB", "[geometry]") {
+  GeomPoint g(2, 3, 4326);
+  std::stringstream output;
+  g.toHEX(output, true);
+  REQUIRE(output.str() == "0101000020E610000000000000000000400000000000000840");
 }

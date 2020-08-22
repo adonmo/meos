@@ -63,6 +63,14 @@ void GeomPoint::point(double x, double y) {
   geom = GEOSGeom_createPoint_r(geos_context, seq);
 }
 
+void GeomPoint::fromEWKB(std::istream &is) { this->fromWKB(is); }
+
+void GeomPoint::toEWKB(std::ostream &os) const { this->toWKB(os, true); }
+
+void GeomPoint::fromEWKT(std::string wkt) { this->fromWKT(wkt); }
+
+std::string GeomPoint::toEWKT() const { return this->toWKT(true); }
+
 void GeomPoint::fromWKB(std::istream &is) {
   free();
   const size_t BUFFER_SIZE = 2048;
@@ -79,9 +87,12 @@ void GeomPoint::fromWKB(std::istream &is) {
   }
 }
 
-void GeomPoint::toWKB(std::ostream &os) const {
+void GeomPoint::toWKB(std::ostream &os, bool extended) const {
   if (geom != nullptr) {
     GEOSWKBWriter *wkbw_ = GEOSWKBWriter_create_r(geos_context);
+    if (extended) {
+      GEOSWKBWriter_setIncludeSRID_r(geos_context, wkbw_, true);
+    }
     size_t size;
     unsigned char *wkb_c = GEOSWKBWriter_write_r(geos_context, wkbw_, geom, &size);
     os.write(reinterpret_cast<char *>(wkb_c), size);
@@ -100,13 +111,17 @@ void GeomPoint::fromWKT(std::string wkt) {
   }
 }
 
-std::string GeomPoint::toWKT() const {
+std::string GeomPoint::toWKT(bool extended) const {
   if (geom != nullptr) {
     GEOSWKTWriter *wktw_ = GEOSWKTWriter_create_r(geos_context);
     GEOSWKTWriter_setTrim_r(geos_context, wktw_, 1);
     GEOSWKTWriter_setRoundingPrecision_r(geos_context, wktw_, 8);
     char *wkt_c = GEOSWKTWriter_write_r(geos_context, wktw_, geom);
-    std::string s(wkt_c);
+    std::string s;
+    if (extended && this->srid() != 0) {
+      s += "SRID=" + std::to_string(this->srid()) + ";";
+    }
+    s += wkt_c;
     std::free(wkt_c);
     GEOSWKTWriter_destroy_r(geos_context, wktw_);
     return s;
@@ -130,9 +145,12 @@ void GeomPoint::fromHEX(std::istream &is) {
   }
 }
 
-void GeomPoint::toHEX(std::ostream &os) const {
+void GeomPoint::toHEX(std::ostream &os, bool extended) const {
   if (geom != nullptr) {
     GEOSWKBWriter *wkbw_ = GEOSWKBWriter_create_r(geos_context);
+    if (extended) {
+      GEOSWKBWriter_setIncludeSRID_r(geos_context, wkbw_, true);
+    }
     size_t size;
     unsigned char *wkb_c = GEOSWKBWriter_writeHEX_r(geos_context, wkbw_, geom, &size);
     os.write(reinterpret_cast<char *>(wkb_c), size);
@@ -277,20 +295,17 @@ std::istream &operator>>(std::istream &in, GeomPoint &g) {
     g.geom = GEOSGeomFromWKT_r(geos_context, buf);
 
     delete[] buf;
+
+    GEOSSetSRID_r(geos_context, g.geom, srid);
   } else {
     std::stringstream ss(buffer);
     g.fromHEX(ss);
   }
 
-  GEOSSetSRID_r(geos_context, g.geom, srid);
   return in;
 }
 
 std::ostream &operator<<(std::ostream &os, GeomPoint const &g) {
-  if (g.srid() != 0) {
-    os << "SRID=" << g.srid() << ";";
-  }
-
   os << g.toWKT();
   return os;
 }

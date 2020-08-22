@@ -249,11 +249,7 @@ template <> ostream &TInstant<bool>::write(ostream &os, bool) const {
 }
 
 template <> ostream &TInstant<GeomPoint>::write(ostream &os, bool with_srid) const {
-  if (with_srid) {
-    os << this->getValue() << "@" << write_ISO8601_time(this->getTimestamp());
-  } else {
-    os << this->getValue().toWKT() << "@" << write_ISO8601_time(this->getTimestamp());
-  }
+  os << this->getValue().toWKT(with_srid) << "@" << write_ISO8601_time(this->getTimestamp());
   return os;
 }
 

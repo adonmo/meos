@@ -27,14 +27,20 @@ public:
   void operator=(GeomPoint const &g);
   ~GeomPoint();
 
+  void fromEWKB(std::istream &is);
+  void toEWKB(std::ostream &os) const;
+
+  void fromEWKT(std::string wkt);
+  std::string toEWKT() const;
+
   void fromWKB(std::istream &is);
-  void toWKB(std::ostream &os) const;
+  void toWKB(std::ostream &os, bool extended = true) const;
 
   void fromWKT(std::string wkt);
-  std::string toWKT() const;
+  std::string toWKT(bool extended = true) const;
 
   void fromHEX(std::istream &is);
-  void toHEX(std::ostream &os) const;
+  void toHEX(std::ostream &os, bool extended = true) const;
 
   double x() const;
   double y() const;

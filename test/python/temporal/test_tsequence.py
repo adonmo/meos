@@ -1,6 +1,7 @@
 import pytest
 
 from pymeos import GeomPoint
+from pymeos.io import DeserializerGeom
 from pymeos.temporal import (Interpolation, TemporalDuration, TFloatInst,
                              TGeomPointInst, TIntInst, TFloatSeq,
                              TGeomPointSeq, TIntSeq)
@@ -127,6 +128,22 @@ def test_constructor():
       TFloatInst(6.25, unix_dt(2011, 1, 2)),
     }
     assert (tseqf.lower_inc, tseqf.upper_inc) == (False, True)
+
+
+@pytest.mark.parametrize('seq', [
+    TGeomPointSeq('SRID=5676;[Point (20 20)@2019-09-02 00:00:00+01, Point (10 10)@2019-09-03 00:00:00+01]'),
+    DeserializerGeom('SRID=5676;[Point (20 20)@2019-09-02 00:00:00+01, Point (10 10)@2019-09-03 00:00:00+01]').nextTemporal(),
+    DeserializerGeom('SRID=5676;[Point (20 20)@2019-09-02 00:00:00+01, Point (10 10)@2019-09-03 00:00:00+01]').nextTSequence(),
+])
+def test_srid_is_maintained_in_instants(seq):
+    assert seq.srid == 5676
+    assert seq.interpolation == Interpolation.Linear
+    for instant in seq.instants:
+        assert instant.srid == seq.srid
+    assert seq.instants == {
+        TGeomPointInst('SRID=5676;Point (20 20)@2019-09-02 00:00:00+01'),
+        TGeomPointInst('SRID=5676;Point (10 10)@2019-09-03 00:00:00+01'),
+    }
 
 
 def test_str():

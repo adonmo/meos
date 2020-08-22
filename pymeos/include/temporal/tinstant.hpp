@@ -35,8 +35,11 @@ py_tinstant<BaseType> _def_tinstant_class_basic(py::module &m, std::string const
       .def("__str__", &to_ostream<TInstant<BaseType>>)
       .def("__repr__", &to_ostream<TInstant<BaseType>>)
       .def("__hash__",
-           [](TInstant<BaseType> const &instant) {
-             return py::hash(py::make_tuple(instant.getValue(), instant.getTimestamp()));
+           [](TInstant<BaseType> const &self) {
+             // TODO is there a better way?
+             std::ostringstream s;
+             s << self;
+             return py::hash(py::make_tuple(s.str()));
            })
       .def("compare", &TInstant<BaseType>::compare, py::arg("other"))
       .def_property_readonly("getTimestamp", &TInstant<BaseType>::getTimestamp)

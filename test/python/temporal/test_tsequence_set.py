@@ -1,7 +1,7 @@
 import pytest
 
 from pymeos import GeomPoint
-from pymeos.io import DeserializerFloat
+from pymeos.io import DeserializerFloat, DeserializerGeom
 from pymeos.temporal import (Interpolation, TemporalDuration, TFloatInst,
                              TGeomPointInst, TIntInst, TFloatSeq,
                              TGeomPointSeq, TIntSeq, TFloatSeqSet,
@@ -168,6 +168,17 @@ def test_constructors_with_conflicting_srids(args):
         TGeomPointSeqSet(*args)
 
 
+def test_constructor():
+    seq_1 = get_sample_int_tseq_1()
+    seq_2 = get_sample_int_tseq_2()
+    seq_3 = get_sample_int_tseq_1() # Repeating
+    tseqset = TIntSeqSet({seq_1, seq_2, seq_3})
+
+    sequences = tseqset.sequences
+    assert len(sequences) == 2
+    assert sequences == {seq_1, seq_2}
+
+
 @pytest.mark.parametrize('seqset', [
     TFloatSeqSet('Interp=Stepwise;{[10.0@2019-09-01 00:00:00+01], [20.0@2019-09-02 00:00:00+01, 10.0@2019-09-03 00:00:00+01]}'),
     DeserializerFloat('Interp=Stepwise;{[10.0@2019-09-01 00:00:00+01], [20.0@2019-09-02 00:00:00+01, 10.0@2019-09-03 00:00:00+01]}').nextTemporal(),
@@ -183,15 +194,21 @@ def test_interpolation_is_maintained_in_sequences(seqset):
         assert seq.interpolation == seqset.interpolation
 
 
-def test_constructor():
-    seq_1 = get_sample_int_tseq_1()
-    seq_2 = get_sample_int_tseq_2()
-    seq_3 = get_sample_int_tseq_1() # Repeating
-    tseqset = TIntSeqSet({seq_1, seq_2, seq_3})
-
-    sequences = tseqset.sequences
-    assert len(sequences) == 2
-    assert sequences == {seq_1, seq_2}
+@pytest.mark.parametrize('seqset', [
+    TGeomPointSeqSet('SRID=5676;{[Point (10 10)@2019-09-01 00:00:00+01], [Point (20 20)@2019-09-02 00:00:00+01, Point (10 10)@2019-09-03 00:00:00+01]}'),
+    DeserializerGeom('SRID=5676;{[Point (10 10)@2019-09-01 00:00:00+01], [Point (20 20)@2019-09-02 00:00:00+01, Point (10 10)@2019-09-03 00:00:00+01]}').nextTemporal(),
+    DeserializerGeom('SRID=5676;{[Point (10 10)@2019-09-01 00:00:00+01], [Point (20 20)@2019-09-02 00:00:00+01, Point (10 10)@2019-09-03 00:00:00+01]}').nextTSequenceSet(),
+])
+def test_srid_is_maintained_in_sequences(seqset):
+    assert seqset.sequences == {
+        TGeomPointSeq('SRID=5676;[Point (10 10)@2019-09-01 00:00:00+01]'),
+        TGeomPointSeq('SRID=5676;[Point (20 20)@2019-09-02 00:00:00+01, Point (10 10)@2019-09-03 00:00:00+01]')
+    }
+    assert seqset.srid == 5676
+    assert seqset.interpolation == Interpolation.Linear
+    for seq in seqset.sequences:
+        assert seq.srid == seqset.srid
+        assert seq.interpolation == seqset.interpolation
 
 
 def test_str():
