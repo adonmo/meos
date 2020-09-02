@@ -1,6 +1,7 @@
 #pragma once
 
 #include <iomanip>
+#include <meos/io/utils.hpp>
 #include <meos/types/geom/GeomPoint.hpp>
 
 namespace meos {
@@ -10,13 +11,17 @@ namespace meos {
  */
 template <typename T> class Range {
 private:
-  T const m_lower;
-  T const m_upper;
-  bool const m_lower_inc;
-  bool const m_upper_inc;
+  T m_lower;
+  T m_upper;
+  bool m_lower_inc;
+  bool m_upper_inc;
+
+  void validate() const;
 
 public:
+  Range();
   Range(T const &lower, T const &upper, bool const lower_inc = true, bool const upper_inc = false);
+  Range(std::string const &serialized);
   virtual ~Range();
 
   virtual std::unique_ptr<Range> clone() { return std::make_unique<Range>(*this); }
@@ -43,6 +48,25 @@ public:
 
   friend bool operator<=(Range<T> const &lhs, Range<T> const &rhs) { return !(rhs < lhs); }
 
+  friend std::istream &operator>>(std::istream &in, Range<T> &range) {
+    char c;
+
+    c = consume_one_of(in, "[(");
+    bool const lower_inc = c == '[';
+    auto lower = nextValue<T>(in);
+    consume(in, ",");
+    auto upper = nextValue<T>(in);
+    c = consume_one_of(in, ")]");
+    bool const upper_inc = c == ']';
+
+    range.m_lower = lower;
+    range.m_upper = upper;
+    range.m_lower_inc = lower_inc;
+    range.m_upper_inc = upper_inc;
+
+    return in;
+  };
+
   friend std::ostream &operator<<(std::ostream &os, Range<T> const &range) {
     auto opening = range.lower_inc() ? "[" : "(";
     auto closing = range.upper_inc() ? "]" : ")";
@@ -50,5 +74,11 @@ public:
     return os;
   }
 };
+
+typedef Range<bool> RangeBool;
+typedef Range<int> RangeInt;
+typedef Range<float> RangeFloat;
+typedef Range<std::string> RangeText;
+typedef Range<GeomPoint> RangeGeomPoint;
 
 }  // namespace meos

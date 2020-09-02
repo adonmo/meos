@@ -9,11 +9,37 @@
 namespace meos {
 using namespace std;
 
+template <typename T> Range<T>::Range() {}
+
 template <typename T>
 Range<T>::Range(T const &lower, T const &upper, bool const lower_inc, bool const upper_inc)
     : m_lower(lower), m_upper(upper), m_lower_inc(lower_inc), m_upper_inc(upper_inc) {}
 
+template <typename T> Range<T>::Range(string const &serialized) {
+  stringstream ss(serialized);
+  Range<T> range;
+  ss >> range;
+  this->m_lower = range.lower();
+  this->m_upper = range.upper();
+  this->m_lower_inc = range.lower_inc();
+  this->m_upper_inc = range.upper_inc();
+  validate();
+}
+
 template <typename T> Range<T>::~Range() {}
+
+template <typename T> void Range<T>::validate() const {
+  if (this->lower() > this->upper()) {
+    throw invalid_argument("The lower bound must be less than or equal to the upper bound");
+  }
+
+  if (this->lower() == this->upper()) {
+    bool both_inclusive = this->lower_inc() && this->upper_inc();
+    if (!both_inclusive) {
+      throw invalid_argument("The lower and upper bounds must be inclusive for an instant period");
+    }
+  }
+}
 
 template <typename T> int Range<T>::compare(Range<T> const &other) const {
   if (lower() < other.lower())

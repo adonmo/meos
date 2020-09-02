@@ -5,6 +5,72 @@
 
 using namespace meos;
 
+TEST_CASE("ranges are validated and constructed properly", "[range]") {
+  SECTION("reads from istream") {
+    RangeInt range;
+    stringstream ss("  [  10  ,      20 )");
+    ss >> range;
+    REQUIRE(range.lower() == 10);
+    REQUIRE(range.upper() == 20);
+    REQUIRE(range.lower_inc() == true);
+    REQUIRE(range.upper_inc() == false);
+  }
+
+  SECTION("all constructors work") {
+    unique_ptr<RangeInt> range;
+    SECTION("constructors with bounds specified") {
+      SECTION("normal constructor") { range = make_unique<RangeInt>(10, 20, false, true); }
+      SECTION("string constructor") { range = make_unique<RangeInt>("(10, 20]"); }
+      REQUIRE(range->lower_inc() == false);
+      REQUIRE(range->upper_inc() == true);
+    }
+    SECTION("constructors with default bounds") {
+      SECTION("normal constructor") { range = make_unique<RangeInt>(10, 20); }
+      SECTION("string constructor") { range = make_unique<RangeInt>("[10, 20)"); }
+      REQUIRE(range->lower_inc() == true);
+      REQUIRE(range->upper_inc() == false);
+    }
+    REQUIRE(range->lower() == 10);
+    REQUIRE(range->upper() == 20);
+  }
+
+  SECTION("clearly valid") {
+    auto lower_inc = GENERATE(true, false);
+    auto upper_inc = GENERATE(true, false);
+    auto lower = 10;
+    auto upper = 20;
+    RangeInt range(lower, upper, lower_inc, upper_inc);
+    REQUIRE(range.lower() == lower);
+    REQUIRE(range.upper() == upper);
+    REQUIRE(range.lower_inc() == lower_inc);
+    REQUIRE(range.upper_inc() == upper_inc);
+  }
+
+  SECTION("clearly invalid") {
+    auto lower_inc = GENERATE(true, false);
+    auto upper_inc = GENERATE(true, false);
+    auto lower = 20;
+    auto upper = 10;
+    REQUIRE_THROWS_AS((RangeInt{lower, upper, lower_inc, upper_inc}), std::invalid_argument);
+  }
+
+  SECTION("edge case where lower == upper") {
+    int v;
+    bool lower_inc, upper_inc, should_be_valid;
+    std::tie(v, lower_inc, upper_inc, should_be_valid) = GENERATE(table<int, bool, bool, bool>({
+        {10, true, true, true},
+        {10, true, false, false},
+        {10, false, false, false},
+        {10, false, true, false},
+    }));
+    if (!should_be_valid) {
+      REQUIRE_THROWS_AS((RangeInt{v, v, lower_inc, upper_inc}), std::invalid_argument);
+    } else {
+      REQUIRE_NOTHROW(RangeInt{v, v, lower_inc, upper_inc});
+    }
+  }
+}
+
 TEMPLATE_TEST_CASE("Range shift", "[range]", int, float) {
   auto lower_inc = GENERATE(true, false);
   auto upper_inc = GENERATE(true, false);

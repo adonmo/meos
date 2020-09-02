@@ -1,5 +1,17 @@
+import pytest
 from pymeos import GeomPoint
 from pymeos.range import RangeInt, RangeBool, RangeFloat, RangeText, RangeGeom
+
+
+@pytest.mark.parametrize("actual", [
+    RangeInt(10, 20),
+    RangeInt("[10, 20)"),
+])
+def test_different_constructors(actual):
+    assert actual.lower == 10
+    assert actual.upper == 20
+    assert actual.lower_inc == True
+    assert actual.upper_inc == False
 
 
 def test_constructor_different_base_types():

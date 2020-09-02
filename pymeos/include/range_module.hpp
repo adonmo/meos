@@ -20,6 +20,7 @@ template <typename T> void def_range_type(py::module &m, std::string const &type
   py::class_<Range<T>>(m, ("Range" + typesuffix).c_str())
       .def(py::init<T, T, bool, bool>(), py::arg("lower"), py::arg("upper"),
            py::arg("lower_inc") = true, py::arg("upper_inc") = false)
+      .def(py::init<std::string>(), py::arg("serialized"))
       .def(py::self == py::self)
       .def(py::self != py::self)
       .def(py::self < py::self)
