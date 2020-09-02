@@ -1,4 +1,6 @@
+#include <meos/io/utils.hpp>
 #include <meos/types/range/Range.hpp>
+#include <sstream>
 #include <string>
 
 // For min() and max() to work on MSVC
@@ -13,7 +15,9 @@ template <typename T> Range<T>::Range() {}
 
 template <typename T>
 Range<T>::Range(T const &lower, T const &upper, bool const lower_inc, bool const upper_inc)
-    : m_lower(lower), m_upper(upper), m_lower_inc(lower_inc), m_upper_inc(upper_inc) {}
+    : m_lower(lower), m_upper(upper), m_lower_inc(lower_inc), m_upper_inc(upper_inc) {
+  validate();
+}
 
 template <typename T> Range<T>::Range(string const &serialized) {
   stringstream ss(serialized);
@@ -89,6 +93,32 @@ template <typename T> bool Range<T>::overlap(Range const &p) const {
 template <typename T> bool Range<T>::contains(T const &t) const {
   return ((this->lower() < t && t < this->upper()) || (this->lower_inc() && this->lower() == t)
           || (this->upper_inc() && this->upper() == t));
+}
+
+template <typename T> std::istream &Range<T>::read(std::istream &in) {
+  char c;
+
+  c = consume_one_of(in, "[(");
+  bool const lower_inc = c == '[';
+  auto lower = nextValue<T>(in);
+  consume(in, ",");
+  auto upper = nextValue<T>(in);
+  c = consume_one_of(in, ")]");
+  bool const upper_inc = c == ']';
+
+  this->m_lower = lower;
+  this->m_upper = upper;
+  this->m_lower_inc = lower_inc;
+  this->m_upper_inc = upper_inc;
+
+  return in;
+}
+
+template <typename T> std::ostream &Range<T>::write(std::ostream &os) const {
+  auto opening = this->lower_inc() ? "[" : "(";
+  auto closing = this->upper_inc() ? "]" : ")";
+  os << opening << this->lower() << ", " << this->upper() << closing;
+  return os;
 }
 
 template class Range<bool>;

@@ -15,16 +15,16 @@ def test_different_constructors(actual):
 
 
 def test_constructor_different_base_types():
-    rb = RangeBool(True, False)
+    rb = RangeBool(False, True)
     ri = RangeInt(10, 20)
     rf = RangeFloat(1.25, 6.25)
-    rt = RangeText("testing", "example")
+    rt = RangeText("example", "testing")
     rg = RangeGeom(GeomPoint(10.0, 15.0), GeomPoint(20, 24))
 
-    assert (rb.lower, rb.upper) == (True, False)
+    assert (rb.lower, rb.upper) == (False, True)
     assert (ri.lower, ri.upper) == (10, 20)
     assert (rf.lower, rf.upper) == (1.25, 6.25)
-    assert (rt.lower, rt.upper) == ("testing", "example")
+    assert (rt.lower, rt.upper) == ("example", "testing")
     assert (rg.lower.toWKT(), rg.upper.toWKT()) == ("POINT (10 15)", "POINT (20 24)")
 
 

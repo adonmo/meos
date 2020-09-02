@@ -55,7 +55,7 @@ TEST_CASE("ranges are validated and constructed properly", "[range]") {
   }
 
   SECTION("edge case where lower == upper") {
-    int v;
+    float v;
     bool lower_inc, upper_inc, should_be_valid;
     std::tie(v, lower_inc, upper_inc, should_be_valid) = GENERATE(table<int, bool, bool, bool>({
         {10, true, true, true},
@@ -64,9 +64,9 @@ TEST_CASE("ranges are validated and constructed properly", "[range]") {
         {10, false, true, false},
     }));
     if (!should_be_valid) {
-      REQUIRE_THROWS_AS((RangeInt{v, v, lower_inc, upper_inc}), std::invalid_argument);
+      REQUIRE_THROWS_AS((RangeFloat{v, v, lower_inc, upper_inc}), std::invalid_argument);
     } else {
-      REQUIRE_NOTHROW(RangeInt{v, v, lower_inc, upper_inc});
+      REQUIRE_NOTHROW(RangeFloat{v, v, lower_inc, upper_inc});
     }
   }
 }
@@ -76,11 +76,11 @@ TEMPLATE_TEST_CASE("Range shift", "[range]", int, float) {
   auto upper_inc = GENERATE(true, false);
   TestType lower = 0;
   TestType upper = 1000;
-  auto range_in = Range<TestType>(upper, lower, lower_inc, upper_inc);
+  auto range_in = Range<TestType>(lower, upper, lower_inc, upper_inc);
   TestType const offset = 100L;
   auto range_out = *range_in.shift(offset).get();
-  REQUIRE(range_out.lower() == upper + offset);
-  REQUIRE(range_out.upper() == lower + offset);
+  REQUIRE(range_out.lower() == lower + offset);
+  REQUIRE(range_out.upper() == upper + offset);
   REQUIRE(range_out.lower_inc() == lower_inc);
   REQUIRE(range_out.upper_inc() == upper_inc);
 }

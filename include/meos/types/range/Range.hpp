@@ -1,8 +1,8 @@
 #pragma once
 
 #include <iomanip>
-#include <meos/io/utils.hpp>
 #include <meos/types/geom/GeomPoint.hpp>
+#include <string>
 
 namespace meos {
 
@@ -48,30 +48,14 @@ public:
 
   friend bool operator<=(Range<T> const &lhs, Range<T> const &rhs) { return !(rhs < lhs); }
 
-  friend std::istream &operator>>(std::istream &in, Range<T> &range) {
-    char c;
+  // IO functions
+  std::istream &read(std::istream &in);
+  std::ostream &write(std::ostream &os) const;
 
-    c = consume_one_of(in, "[(");
-    bool const lower_inc = c == '[';
-    auto lower = nextValue<T>(in);
-    consume(in, ",");
-    auto upper = nextValue<T>(in);
-    c = consume_one_of(in, ")]");
-    bool const upper_inc = c == ']';
-
-    range.m_lower = lower;
-    range.m_upper = upper;
-    range.m_lower_inc = lower_inc;
-    range.m_upper_inc = upper_inc;
-
-    return in;
-  };
+  friend std::istream &operator>>(std::istream &in, Range<T> &range) { return range.read(in); }
 
   friend std::ostream &operator<<(std::ostream &os, Range<T> const &range) {
-    auto opening = range.lower_inc() ? "[" : "(";
-    auto closing = range.upper_inc() ? "]" : ")";
-    os << opening << range.lower() << ", " << range.upper() << closing;
-    return os;
+    return range.write(os);
   }
 };
 
