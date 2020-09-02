@@ -19,7 +19,7 @@ jobs:
           # Doxygen v1.8.18
           #   Note: We do not get doxygen from apt, we instead install the precompiled binaries
           #     This is becasue extenal image URLs are not supported properly in older versions
-          wget http://doxygen.nl/files/doxygen-1.8.18.linux.bin.tar.gz
+          wget https://excellmedia.dl.sourceforge.net/project/doxygen/rel-1.8.18/doxygen-1.8.18.linux.bin.tar.gz
           tar xf doxygen-1.8.18.linux.bin.tar.gz
           cd doxygen-1.8.18
           sudo make install
