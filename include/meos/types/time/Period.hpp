@@ -43,7 +43,9 @@ public:
   duration_ms timespan() const;
   std::unique_ptr<Period> shift(duration_ms const timedelta) const;
   bool overlap(Period const &period) const;
+  bool contains(Period const &period) const;
   bool contains_timestamp(time_point const timestamp) const;
+  Period intersection(Period const &period) const;
 
   friend bool operator==(Period const &lhs, Period const &rhs);
   friend bool operator!=(Period const &lhs, Period const &rhs);

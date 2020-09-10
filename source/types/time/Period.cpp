@@ -84,10 +84,36 @@ bool Period::overlap(Period const &period) const {
                                         : period.upper_inc() && this->lower_inc();
 }
 
+bool Period::contains(Period const &period) const {
+  bool c1 = this->lower() < period.lower();
+  bool c2 = this->upper() > period.upper();
+  if ((c1 || (this->lower() == period.lower() && (this->lower_inc() || !period.lower_inc())))
+      && (c2 || (this->upper() == period.upper() && (this->upper_inc() || !period.upper_inc())))) {
+    return true;
+  }
+  return false;
+}
+
 bool Period::contains_timestamp(time_point const timestamp) const {
   return ((this->lower() < timestamp && timestamp < this->upper())
           || (this->lower_inc() && this->lower() == timestamp)
           || (this->upper_inc() && this->upper() == timestamp));
+}
+
+Period Period::intersection(Period const &other) const {
+  /* Bounding box test */
+  if (!this->overlap(other))
+    throw invalid_argument("Specified period does not overlap with this period");
+
+  time_point lower = max(this->lower(), other.lower());
+  time_point upper = min(this->upper(), other.upper());
+  bool lower_inc = this->lower() == other.lower()
+                       ? this->lower_inc() && other.lower_inc()
+                       : (lower == this->lower() ? this->lower_inc() : other.lower_inc());
+  bool upper_inc = this->upper() == other.upper()
+                       ? this->upper_inc() && other.upper_inc()
+                       : (upper == this->upper() ? this->upper_inc() : other.upper_inc());
+  return Period(lower, upper, lower_inc, upper_inc);
 }
 
 int Period::compare(Period const &other) const {
