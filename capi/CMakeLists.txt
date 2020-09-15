@@ -2,8 +2,13 @@ cmake_minimum_required(VERSION 3.5 FATAL_ERROR)
 
 project(
   meos_c
-  LANGUAGES CXX
+  LANGUAGES C CXX
 )
+# Get version from VERSION file instead of hardcoding here
+# This is so that we can maintain a single version across C/C++ and Python
+file(STRINGS ../VERSION LIBMEOS_VERSION)
+set(PROJECT_VERSION ${LIBMEOS_VERSION})
+message(STATUS "MEOS: v${LIBMEOS_VERSION}")
 
 # ---- Dependencies ----
 
@@ -32,4 +37,16 @@ target_include_directories(meos_c
   PUBLIC
     $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
     $<INSTALL_INTERFACE:include/${PROJECT_NAME}-${PROJECT_VERSION}>
+)
+
+message(${PROJECT_SOURCE_DIR}/include)
+
+packageProject(
+  NAME ${PROJECT_NAME}
+  VERSION ${PROJECT_VERSION}
+  BINARY_DIR ${PROJECT_BINARY_DIR}
+  INCLUDE_DIR ${PROJECT_SOURCE_DIR}/include
+  INCLUDE_DESTINATION include/${PROJECT_NAME}-${PROJECT_VERSION}
+  VERSION_HEADER "${VERSION_HEADER_LOCATION}"
+  DEPENDENCIES ""
 )
