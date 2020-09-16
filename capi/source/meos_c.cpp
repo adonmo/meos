@@ -10,51 +10,52 @@ extern "C" {
 
 // TBox
 
-TBox *newTBox(double const xmin, double const xmax) {
-  return reinterpret_cast<TBox *>(new meos::TBox(xmin, xmax));
+MEOS_TBox *MEOS_newTBox(double const xmin, double const xmax) {
+  return reinterpret_cast<MEOS_TBox *>(new meos::TBox(xmin, xmax));
 }
 
-double TBox_xmin(TBox *tbox) {
+double MEOS_TBox_xmin(MEOS_TBox *tbox) {
   auto t = reinterpret_cast<meos::TBox *>(tbox);
   return t->xmin();
 }
 
-double TBox_xmax(TBox *tbox) {
+double MEOS_TBox_xmax(MEOS_TBox *tbox) {
   auto t = reinterpret_cast<meos::TBox *>(tbox);
   return t->xmax();
 }
 
-void deleteTBox(TBox *tbox) {
+void MEOS_deleteTBox(MEOS_TBox *tbox) {
   auto t = reinterpret_cast<meos::TBox *>(tbox);
   delete t;
 }
 
 // Period
 
-Period *newPeriod(char *serialized) {
-  return reinterpret_cast<Period *>(new meos::Period(serialized));
+MEOS_Period *MEOS_newPeriod(char *serialized) {
+  return reinterpret_cast<MEOS_Period *>(new meos::Period(serialized));
 }
 
-void deletePeriod(Period *period) {
+void MEOS_deletePeriod(MEOS_Period *period) {
   auto t = reinterpret_cast<meos::Period *>(period);
   delete t;
 }
 
 // TFloatSeqSet
 
-TFloatSeqSet *newTFloatSeqSet(char *serialized) {
-  return reinterpret_cast<TFloatSeqSet *>(new meos::TFloatSeqSet(serialized));
+MEOS_TFloatSeqSet *MEOS_newTFloatSeqSet(char *serialized) {
+  return reinterpret_cast<MEOS_TFloatSeqSet *>(new meos::TFloatSeqSet(serialized));
 }
 
-TFloatSeqSet *TFloatSeqSet_atPeriod(TFloatSeqSet *tfloatseqset, Period *period) {
+MEOS_TFloatSeqSet *MEOS_TFloatSeqSet_atPeriod(MEOS_TFloatSeqSet *tfloatseqset,
+                                              MEOS_Period *period) {
   auto t = reinterpret_cast<meos::TFloatSeqSet *>(tfloatseqset);
   auto p = reinterpret_cast<meos::Period *>(period);
   auto r = t->atPeriod(*p);
-  return reinterpret_cast<TFloatSeqSet *>(new meos::TFloatSeqSet(r));
+  return reinterpret_cast<MEOS_TFloatSeqSet *>(new meos::TFloatSeqSet(r));
 }
 
 // Remember to free the result!
-unsigned char *TFloatSeqSet_str(TFloatSeqSet *tfloatseqset, size_t *size) {
+unsigned char *MEOS_TFloatSeqSet_str(MEOS_TFloatSeqSet *tfloatseqset, size_t *size) {
   auto t = reinterpret_cast<meos::TFloatSeqSet *>(tfloatseqset);
   std::stringstream output;
   output << *t;
@@ -68,7 +69,7 @@ unsigned char *TFloatSeqSet_str(TFloatSeqSet *tfloatseqset, size_t *size) {
   return result;
 }
 
-void deleteTFloatSeqSet(TFloatSeqSet *tfloatseqset) {
+void MEOS_deleteTFloatSeqSet(MEOS_TFloatSeqSet *tfloatseqset) {
   auto t = reinterpret_cast<meos::TFloatSeqSet *>(tfloatseqset);
   delete t;
 }

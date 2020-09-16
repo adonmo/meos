@@ -123,10 +123,10 @@ Here is an example code on how to do this:
 #include <stdio.h>
 
 int main(int argc, char* argv[]) {
-    struct TBox* tbox = newTBox(12.34, 56.78);
-    double xmin = TBox_xmin(tbox);
+    struct MEOS_TBox* tbox = MEOS_newTBox(12.34, 56.78);
+    double xmin = MEOS_TBox_xmin(tbox);
     printf("%lf\n", xmin);
-    deleteTBox(tbox);
+    MEOS_deleteTBox(tbox);
 }
 ```
 To compile the above code, you would need `libmeos_c.so`. If you do not have it, build it first by running:

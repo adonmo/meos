@@ -6,33 +6,33 @@
 extern "C" {
 #endif
 
-typedef struct TBox TBox;
-typedef struct Period Period;
-typedef struct TFloatSeqSet TFloatSeqSet;
+typedef struct MEOS_TBox MEOS_TBox;
+typedef struct MEOS_Period MEOS_Period;
+typedef struct MEOS_TFloatSeqSet MEOS_TFloatSeqSet;
 
 // TBox
 
-TBox *newTBox(double const xmin, double const xmax);
+MEOS_TBox *MEOS_newTBox(double const xmin, double const xmax);
 
-double TBox_xmin(TBox *tbox);
-double TBox_xmax(TBox *tbox);
+double MEOS_TBox_xmin(MEOS_TBox *tbox);
+double MEOS_TBox_xmax(MEOS_TBox *tbox);
 
-void deleteTBox(TBox *tbox);
+void MEOS_deleteTBox(MEOS_TBox *tbox);
 
 // Period
 
-Period *newPeriod(char *serialized);
+MEOS_Period *MEOS_newPeriod(char *serialized);
 
-void deletePeriod(Period *period);
+void MEOS_deletePeriod(MEOS_Period *period);
 
 // TFloatSeqSet
 
-TFloatSeqSet *newTFloatSeqSet(char *serialized);
+MEOS_TFloatSeqSet *MEOS_newTFloatSeqSet(char *serialized);
 
-TFloatSeqSet *TFloatSeqSet_atPeriod(TFloatSeqSet *tfloatseqset, Period *period);
-unsigned char *TFloatSeqSet_str(TFloatSeqSet *tfloatseqset, size_t *size);
+MEOS_TFloatSeqSet *MEOS_TFloatSeqSet_atPeriod(MEOS_TFloatSeqSet *tfloatseqset, MEOS_Period *period);
+unsigned char *MEOS_TFloatSeqSet_str(MEOS_TFloatSeqSet *tfloatseqset, size_t *size);
 
-void deleteTFloatSeqSet(TFloatSeqSet *tfloatseqset);
+void MEOS_deleteTFloatSeqSet(MEOS_TFloatSeqSet *tfloatseqset);
 
 #ifdef __cplusplus
 }
