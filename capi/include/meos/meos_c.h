@@ -23,6 +23,8 @@ void MEOS_deleteTBox(MEOS_TBox *tbox);
 
 MEOS_Period *MEOS_newPeriod(char *serialized);
 
+unsigned char *MEOS_Period_str(MEOS_Period *period, size_t *size);
+
 void MEOS_deletePeriod(MEOS_Period *period);
 
 // TFloatSeqSet

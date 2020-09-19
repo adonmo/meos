@@ -35,6 +35,21 @@ MEOS_Period *MEOS_newPeriod(char *serialized) {
   return reinterpret_cast<MEOS_Period *>(new meos::Period(serialized));
 }
 
+// Remember to free the result!
+unsigned char *MEOS_Period_str(MEOS_Period *period, size_t *size) {
+  auto t = reinterpret_cast<meos::Period *>(period);
+  std::stringstream output;
+  output << *t;
+  auto s = output.str();
+  const std::size_t len = s.length();
+  unsigned char *result = static_cast<unsigned char *>(malloc(len));
+  if (result) {
+    std::memcpy(result, s.c_str(), len);
+    *size = len;
+  }
+  return result;
+}
+
 void MEOS_deletePeriod(MEOS_Period *period) {
   auto t = reinterpret_cast<meos::Period *>(period);
   delete t;
