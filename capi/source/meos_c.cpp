@@ -36,16 +36,15 @@ MEOS_Period *MEOS_newPeriod(char *serialized) {
 }
 
 // Remember to free the result!
-unsigned char *MEOS_Period_str(MEOS_Period *period, size_t *size) {
+char *MEOS_Period_str(MEOS_Period *period) {
   auto t = reinterpret_cast<meos::Period *>(period);
   std::stringstream output;
   output << *t;
   auto s = output.str();
   const std::size_t len = s.length();
-  unsigned char *result = static_cast<unsigned char *>(malloc(len));
+  char *result = new char[len + 1];
   if (result) {
-    std::memcpy(result, s.c_str(), len);
-    *size = len;
+    std::strcpy(result, s.c_str());
   }
   return result;
 }
@@ -70,16 +69,15 @@ MEOS_TFloatSeqSet *MEOS_TFloatSeqSet_atPeriod(MEOS_TFloatSeqSet *tfloatseqset,
 }
 
 // Remember to free the result!
-unsigned char *MEOS_TFloatSeqSet_str(MEOS_TFloatSeqSet *tfloatseqset, size_t *size) {
+char *MEOS_TFloatSeqSet_str(MEOS_TFloatSeqSet *tfloatseqset) {
   auto t = reinterpret_cast<meos::TFloatSeqSet *>(tfloatseqset);
   std::stringstream output;
   output << *t;
   auto s = output.str();
   const std::size_t len = s.length();
-  unsigned char *result = static_cast<unsigned char *>(malloc(len));
+  char *result = new char[len + 1];
   if (result) {
-    std::memcpy(result, s.c_str(), len);
-    *size = len;
+    std::strcpy(result, s.c_str());
   }
   return result;
 }

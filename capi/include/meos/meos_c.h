@@ -23,7 +23,7 @@ void MEOS_deleteTBox(MEOS_TBox *tbox);
 
 MEOS_Period *MEOS_newPeriod(char *serialized);
 
-unsigned char *MEOS_Period_str(MEOS_Period *period, size_t *size);
+char *MEOS_Period_str(MEOS_Period *period);
 
 void MEOS_deletePeriod(MEOS_Period *period);
 
@@ -32,7 +32,7 @@ void MEOS_deletePeriod(MEOS_Period *period);
 MEOS_TFloatSeqSet *MEOS_newTFloatSeqSet(char *serialized);
 
 MEOS_TFloatSeqSet *MEOS_TFloatSeqSet_atPeriod(MEOS_TFloatSeqSet *tfloatseqset, MEOS_Period *period);
-unsigned char *MEOS_TFloatSeqSet_str(MEOS_TFloatSeqSet *tfloatseqset, size_t *size);
+char *MEOS_TFloatSeqSet_str(MEOS_TFloatSeqSet *tfloatseqset);
 
 void MEOS_deleteTFloatSeqSet(MEOS_TFloatSeqSet *tfloatseqset);
 
