@@ -3,6 +3,7 @@
 #include <cstring>
 #include <ctime>
 #include <meos/types/box/TBox.hpp>
+#include <meos/types/temporal/TSequence.hpp>
 #include <meos/types/temporal/TSequenceSet.hpp>
 #include <meos/types/time/Period.hpp>
 #include <sstream>
@@ -71,6 +72,30 @@ void MEOS_deletePeriod(MEOS_Period *period) {
 
 MEOS_TFloatSeqSet *MEOS_newTFloatSeqSet(char *serialized) {
   return reinterpret_cast<MEOS_TFloatSeqSet *>(new meos::TFloatSeqSet(serialized));
+}
+
+MEOS_TFloatSeqSet *MEOS_newTFloatSeqSet_SI(MEOS_TFloatSeq **sequences, int count,
+                                           MEOS_Interpolation interpolation) {
+  std::set<meos::TFloatSeq> s;
+  for (size_t i = 0; i < count; i++) {
+    auto seq = reinterpret_cast<meos::TFloatSeq *>(sequences[i]);
+    s.insert(*seq);
+  }
+  auto interp = interpolation == MEOS_Interpolation_Linear ? meos::Interpolation::Linear
+                                                           : meos::Interpolation::Stepwise;
+  return reinterpret_cast<MEOS_TFloatSeqSet *>(new meos::TFloatSeqSet(s, interp));
+}
+
+MEOS_TFloatSeqSet *MEOS_newTFloatSeqSet_SsI(char **sequences, int count,
+                                            MEOS_Interpolation interpolation) {
+  std::set<meos::TFloatSeq> s;
+  for (size_t i = 0; i < count; i++) {
+    meos::TFloatSeq seq(sequences[i]);
+    s.insert(seq);
+  }
+  auto interp = interpolation == MEOS_Interpolation_Linear ? meos::Interpolation::Linear
+                                                           : meos::Interpolation::Stepwise;
+  return reinterpret_cast<MEOS_TFloatSeqSet *>(new meos::TFloatSeqSet(s, interp));
 }
 
 MEOS_TFloatSeqSet *MEOS_TFloatSeqSet_atPeriod(MEOS_TFloatSeqSet *tfloatseqset,

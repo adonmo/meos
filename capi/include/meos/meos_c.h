@@ -7,9 +7,15 @@
 extern "C" {
 #endif
 
-typedef struct MEOS_TBox MEOS_TBox;
 typedef struct MEOS_Period MEOS_Period;
+typedef struct MEOS_TBox MEOS_TBox;
+typedef struct MEOS_TFloatSeq MEOS_TFloatSeq;
 typedef struct MEOS_TFloatSeqSet MEOS_TFloatSeqSet;
+
+enum MEOS_Interpolation {
+  MEOS_Interpolation_Stepwise,
+  MEOS_Interpolation_Linear,
+};
 
 // TBox
 
@@ -35,7 +41,14 @@ void MEOS_deletePeriod(MEOS_Period *period);
 
 // TFloatSeqSet
 
+// Constructor with a string
 MEOS_TFloatSeqSet *MEOS_newTFloatSeqSet(char *serialized);
+// Constructor with a set of sequences and interpolation
+MEOS_TFloatSeqSet *MEOS_newTFloatSeqSet_SI(MEOS_TFloatSeq **sequences, int count,
+                                           MEOS_Interpolation interpolation);
+// Constructor with a set of sequences as strings and interpolation
+MEOS_TFloatSeqSet *MEOS_newTFloatSeqSet_SsI(char **sequences, int count,
+                                            MEOS_Interpolation interpolation);
 
 MEOS_TFloatSeqSet *MEOS_TFloatSeqSet_atPeriod(MEOS_TFloatSeqSet *tfloatseqset, MEOS_Period *period);
 char *MEOS_TFloatSeqSet_str(MEOS_TFloatSeqSet *tfloatseqset);
