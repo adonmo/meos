@@ -1,6 +1,7 @@
 #include <meos/meos_c.h>
 
 #include <cstring>
+#include <ctime>
 #include <meos/types/box/TBox.hpp>
 #include <meos/types/temporal/TSequenceSet.hpp>
 #include <meos/types/time/Period.hpp>
@@ -33,6 +34,18 @@ void MEOS_deleteTBox(MEOS_TBox *tbox) {
 
 MEOS_Period *MEOS_newPeriod(char *serialized) {
   return reinterpret_cast<MEOS_Period *>(new meos::Period(serialized));
+}
+
+MEOS_Period *MEOS_newPeriod_TT(time_t lower, time_t upper) {
+  return reinterpret_cast<MEOS_Period *>(
+      new meos::Period(std::chrono::system_clock::from_time_t(lower),
+                       std::chrono::system_clock::from_time_t(upper)));
+}
+
+MEOS_Period *MEOS_newPeriod_TTBB(time_t lower, time_t upper, bool lower_inc, bool upper_inc) {
+  return reinterpret_cast<MEOS_Period *>(
+      new meos::Period(std::chrono::system_clock::from_time_t(lower),
+                       std::chrono::system_clock::from_time_t(upper), lower_inc, upper_inc));
 }
 
 // Remember to free the result!

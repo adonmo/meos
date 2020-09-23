@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string.h>
+#include <time.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -21,7 +22,12 @@ void MEOS_deleteTBox(MEOS_TBox *tbox);
 
 // Period
 
+// Constructor with a string
 MEOS_Period *MEOS_newPeriod(char *serialized);
+// Constructor with two timestamps
+MEOS_Period *MEOS_newPeriod_TT(time_t lower, time_t upper);
+// Constructor with two timestamps and two boolean bounds
+MEOS_Period *MEOS_newPeriod_TTBB(time_t lower, time_t upper, bool lower_inc, bool upper_inc);
 
 char *MEOS_Period_str(MEOS_Period *period);
 
