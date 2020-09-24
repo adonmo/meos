@@ -45,6 +45,19 @@ char *MEOS_Period_str(MEOS_Period *period);
 void MEOS_deletePeriod(MEOS_Period *period);
 
 /*****************************************************************************
+ * TFloatInst
+ *****************************************************************************/
+
+// Constructor with a string
+MEOS_TFloatInst *MEOS_newTFloatInst(char *serialized);
+// Constructor with a value and timestamp
+MEOS_TFloatInst *MEOS_newTFloatInst_VT(float value, time_t timestamp);
+
+char *MEOS_TFloatInst_str(MEOS_TFloatInst *tfloatinst);
+
+void MEOS_deleteTFloatInst(MEOS_TFloatInst *tfloatinst);
+
+/*****************************************************************************
  * TFloatSeq
  *****************************************************************************/
 
@@ -57,9 +70,9 @@ MEOS_TFloatSeq *MEOS_newTFloatSeq_IBBI(MEOS_TFloatInst **instants, int count, bo
 MEOS_TFloatSeq *MEOS_newTFloatSeq_IsBBI(char **instants, int count, bool lower_inc, bool upper_inc,
                                         MEOS_Interpolation interpolation);
 
-char *MEOS_TFloatSeq_str(MEOS_TFloatSeq *tfloatseqset);
+char *MEOS_TFloatSeq_str(MEOS_TFloatSeq *tfloatseq);
 
-void MEOS_deleteTFloatSeq(MEOS_TFloatSeq *tfloatseqset);
+void MEOS_deleteTFloatSeq(MEOS_TFloatSeq *tfloatseq);
 
 /*****************************************************************************
  * TFloatSeqSet

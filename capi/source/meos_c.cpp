@@ -73,6 +73,38 @@ void MEOS_deletePeriod(MEOS_Period *period) {
 }
 
 /*****************************************************************************
+ * TFloatInst
+ *****************************************************************************/
+
+MEOS_TFloatInst *MEOS_newTFloatInst(char *serialized) {
+  return reinterpret_cast<MEOS_TFloatInst *>(new meos::TFloatInst(serialized));
+}
+
+MEOS_TFloatInst *MEOS_newTFloatInst_VT(float value, time_t timestamp) {
+  return reinterpret_cast<MEOS_TFloatInst *>(
+      new meos::TFloatInst(value, std::chrono::system_clock::from_time_t(timestamp)));
+}
+
+// Remember to free the result!
+char *MEOS_TFloatInst_str(MEOS_TFloatInst *tfloatinst) {
+  auto t = reinterpret_cast<meos::TFloatInst *>(tfloatinst);
+  std::stringstream output;
+  output << *t;
+  auto s = output.str();
+  const std::size_t len = s.length();
+  char *result = new char[len + 1];
+  if (result) {
+    std::strcpy(result, s.c_str());
+  }
+  return result;
+}
+
+void MEOS_deleteTFloatInst(MEOS_TFloatInst *tfloatinst) {
+  auto t = reinterpret_cast<meos::TFloatInst *>(tfloatinst);
+  delete t;
+}
+
+/*****************************************************************************
  * TFloatSeq
  *****************************************************************************/
 
