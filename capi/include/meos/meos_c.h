@@ -9,15 +9,18 @@ extern "C" {
 
 typedef struct MEOS_Period MEOS_Period;
 typedef struct MEOS_TBox MEOS_TBox;
+typedef struct MEOS_TFloatInst MEOS_TFloatInst;
 typedef struct MEOS_TFloatSeq MEOS_TFloatSeq;
 typedef struct MEOS_TFloatSeqSet MEOS_TFloatSeqSet;
 
-enum MEOS_Interpolation {
+typedef enum {
   MEOS_Interpolation_Stepwise,
   MEOS_Interpolation_Linear,
-};
+} MEOS_Interpolation;
 
-// TBox
+/*****************************************************************************
+ * TBox
+ *****************************************************************************/
 
 MEOS_TBox *MEOS_newTBox(double const xmin, double const xmax);
 
@@ -26,7 +29,9 @@ double MEOS_TBox_xmax(MEOS_TBox *tbox);
 
 void MEOS_deleteTBox(MEOS_TBox *tbox);
 
-// Period
+/*****************************************************************************
+ * Period
+ *****************************************************************************/
 
 // Constructor with a string
 MEOS_Period *MEOS_newPeriod(char *serialized);
@@ -39,7 +44,26 @@ char *MEOS_Period_str(MEOS_Period *period);
 
 void MEOS_deletePeriod(MEOS_Period *period);
 
-// TFloatSeqSet
+/*****************************************************************************
+ * TFloatSeq
+ *****************************************************************************/
+
+// Constructor with a string
+MEOS_TFloatSeq *MEOS_newTFloatSeq(char *serialized);
+// Constructor with a set of instants, two boolean bounds and interpolation
+MEOS_TFloatSeq *MEOS_newTFloatSeq_IBBI(MEOS_TFloatInst **instants, int count, bool lower_inc,
+                                       bool upper_inc, MEOS_Interpolation interpolation);
+// Constructor with a set of instants as strings, two boolean bounds and interpolation
+MEOS_TFloatSeq *MEOS_newTFloatSeq_IsBBI(char **instants, int count, bool lower_inc, bool upper_inc,
+                                        MEOS_Interpolation interpolation);
+
+char *MEOS_TFloatSeq_str(MEOS_TFloatSeq *tfloatseqset);
+
+void MEOS_deleteTFloatSeq(MEOS_TFloatSeq *tfloatseqset);
+
+/*****************************************************************************
+ * TFloatSeqSet
+ *****************************************************************************/
 
 // Constructor with a string
 MEOS_TFloatSeqSet *MEOS_newTFloatSeqSet(char *serialized);

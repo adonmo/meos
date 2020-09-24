@@ -10,7 +10,9 @@
 
 extern "C" {
 
-// TBox
+/*****************************************************************************
+ * TBox
+ *****************************************************************************/
 
 MEOS_TBox *MEOS_newTBox(double const xmin, double const xmax) {
   return reinterpret_cast<MEOS_TBox *>(new meos::TBox(xmin, xmax));
@@ -31,7 +33,9 @@ void MEOS_deleteTBox(MEOS_TBox *tbox) {
   delete t;
 }
 
-// Period
+/*****************************************************************************
+ * Period
+ *****************************************************************************/
 
 MEOS_Period *MEOS_newPeriod(char *serialized) {
   return reinterpret_cast<MEOS_Period *>(new meos::Period(serialized));
@@ -68,7 +72,60 @@ void MEOS_deletePeriod(MEOS_Period *period) {
   delete t;
 }
 
-// TFloatSeqSet
+/*****************************************************************************
+ * TFloatSeq
+ *****************************************************************************/
+
+MEOS_TFloatSeq *MEOS_newTFloatSeq(char *serialized) {
+  return reinterpret_cast<MEOS_TFloatSeq *>(new meos::TFloatSeq(serialized));
+}
+
+MEOS_TFloatSeq *MEOS_newTFloatSeq_IBBI(MEOS_TFloatInst **instants, int count, bool lower_inc,
+                                       bool upper_inc, MEOS_Interpolation interpolation) {
+  std::set<meos::TFloatInst> s;
+  for (size_t i = 0; i < count; i++) {
+    auto inst = reinterpret_cast<meos::TFloatInst *>(instants[i]);
+    s.insert(*inst);
+  }
+  auto interp = interpolation == MEOS_Interpolation_Linear ? meos::Interpolation::Linear
+                                                           : meos::Interpolation::Stepwise;
+  return reinterpret_cast<MEOS_TFloatSeq *>(new meos::TFloatSeq(s, lower_inc, upper_inc, interp));
+}
+
+MEOS_TFloatSeq *MEOS_newTFloatSeq_IsBBI(char **instants, int count, bool lower_inc, bool upper_inc,
+                                        MEOS_Interpolation interpolation) {
+  std::set<meos::TFloatInst> s;
+  for (size_t i = 0; i < count; i++) {
+    meos::TFloatInst inst(instants[i]);
+    s.insert(inst);
+  }
+  auto interp = interpolation == MEOS_Interpolation_Linear ? meos::Interpolation::Linear
+                                                           : meos::Interpolation::Stepwise;
+  return reinterpret_cast<MEOS_TFloatSeq *>(new meos::TFloatSeq(s, lower_inc, upper_inc, interp));
+}
+
+// Remember to free the result!
+char *MEOS_TFloatSeq_str(MEOS_TFloatSeq *tfloatseq) {
+  auto t = reinterpret_cast<meos::TFloatSeq *>(tfloatseq);
+  std::stringstream output;
+  output << *t;
+  auto s = output.str();
+  const std::size_t len = s.length();
+  char *result = new char[len + 1];
+  if (result) {
+    std::strcpy(result, s.c_str());
+  }
+  return result;
+}
+
+void MEOS_deleteTFloatSeq(MEOS_TFloatSeq *tfloatseq) {
+  auto t = reinterpret_cast<meos::TFloatSeq *>(tfloatseq);
+  delete t;
+}
+
+/*****************************************************************************
+ * TFloatSeqSet
+ *****************************************************************************/
 
 MEOS_TFloatSeqSet *MEOS_newTFloatSeqSet(char *serialized) {
   return reinterpret_cast<MEOS_TFloatSeqSet *>(new meos::TFloatSeqSet(serialized));
