@@ -70,6 +70,7 @@ MEOS_TFloatSeq *MEOS_newTFloatSeq_IBBI(MEOS_TFloatInst **instants, int count, bo
 MEOS_TFloatSeq *MEOS_newTFloatSeq_IsBBI(char **instants, int count, bool lower_inc, bool upper_inc,
                                         MEOS_Interpolation interpolation);
 
+MEOS_TFloatInst **MEOS_TFloatSeq_instants(MEOS_TFloatSeq *tfloatseq, int *count);
 char *MEOS_TFloatSeq_str(MEOS_TFloatSeq *tfloatseq);
 
 void MEOS_deleteTFloatSeq(MEOS_TFloatSeq *tfloatseq);
