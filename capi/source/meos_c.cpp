@@ -136,6 +136,16 @@ MEOS_TFloatSeq *MEOS_newTFloatSeq_IsBBI(char **instants, int count, bool lower_i
   return reinterpret_cast<MEOS_TFloatSeq *>(new meos::TFloatSeq(s, lower_inc, upper_inc, interp));
 }
 
+bool MEOS_TFloatSeq_lower_inc(MEOS_TFloatSeq *tfloatseq) {
+  auto t = reinterpret_cast<meos::TFloatSeq *>(tfloatseq);
+  return t->lower_inc();
+}
+
+bool MEOS_TFloatSeq_upper_inc(MEOS_TFloatSeq *tfloatseq) {
+  auto t = reinterpret_cast<meos::TFloatSeq *>(tfloatseq);
+  return t->upper_inc();
+}
+
 MEOS_TFloatInst **MEOS_TFloatSeq_instants(MEOS_TFloatSeq *tfloatseq, int *count) {
   auto t = reinterpret_cast<meos::TFloatSeq *>(tfloatseq);
   auto r = t->instants();
