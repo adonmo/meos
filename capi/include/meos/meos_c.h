@@ -87,6 +87,7 @@ MEOS_TFloatSeqSet *MEOS_newTFloatSeqSet_SI(MEOS_TFloatSeq **sequences, int count
 MEOS_TFloatSeqSet *MEOS_newTFloatSeqSet_SsI(char **sequences, int count,
                                             MEOS_Interpolation interpolation);
 
+MEOS_TFloatSeq **MEOS_TFloatSeqSet_sequences(MEOS_TFloatSeqSet *tfloatseqset, int *count);
 MEOS_TFloatSeqSet *MEOS_TFloatSeqSet_atPeriod(MEOS_TFloatSeqSet *tfloatseqset, MEOS_Period *period);
 char *MEOS_TFloatSeqSet_str(MEOS_TFloatSeqSet *tfloatseqset);
 

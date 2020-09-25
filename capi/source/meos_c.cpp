@@ -187,6 +187,19 @@ MEOS_TFloatSeqSet *MEOS_newTFloatSeqSet_SsI(char **sequences, int count,
   return reinterpret_cast<MEOS_TFloatSeqSet *>(new meos::TFloatSeqSet(s, interp));
 }
 
+MEOS_TFloatSeq **MEOS_TFloatSeqSet_sequences(MEOS_TFloatSeqSet *tfloatseqset, int *count) {
+  auto t = reinterpret_cast<meos::TFloatSeqSet *>(tfloatseqset);
+  auto r = t->sequences();
+  *count = r.size();
+  MEOS_TFloatSeq **sequences = new MEOS_TFloatSeq *[*count];
+  size_t i = 0;
+  for (auto const &it : r) {
+    auto x = new meos::TFloatSeq(it);
+    sequences[i++] = reinterpret_cast<MEOS_TFloatSeq *>(x);
+  }
+  return sequences;
+}
+
 MEOS_TFloatSeqSet *MEOS_TFloatSeqSet_atPeriod(MEOS_TFloatSeqSet *tfloatseqset,
                                               MEOS_Period *period) {
   auto t = reinterpret_cast<meos::TFloatSeqSet *>(tfloatseqset);
