@@ -53,6 +53,8 @@ MEOS_TFloatInst *MEOS_newTFloatInst(char *serialized);
 // Constructor with a value and timestamp
 MEOS_TFloatInst *MEOS_newTFloatInst_VT(float value, time_t timestamp);
 
+float MEOS_TFloatInst_value(MEOS_TFloatInst *tfloatinst);
+time_t MEOS_TFloatInst_timestamp(MEOS_TFloatInst *tfloatinst);
 char *MEOS_TFloatInst_str(MEOS_TFloatInst *tfloatinst);
 
 void MEOS_deleteTFloatInst(MEOS_TFloatInst *tfloatinst);

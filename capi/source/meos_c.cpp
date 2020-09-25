@@ -85,6 +85,16 @@ MEOS_TFloatInst *MEOS_newTFloatInst_VT(float value, time_t timestamp) {
       new meos::TFloatInst(value, std::chrono::system_clock::from_time_t(timestamp)));
 }
 
+float MEOS_TFloatInst_value(MEOS_TFloatInst *tfloatinst) {
+  auto t = reinterpret_cast<meos::TFloatInst *>(tfloatinst);
+  return t->getValue();
+}
+
+time_t MEOS_TFloatInst_timestamp(MEOS_TFloatInst *tfloatinst) {
+  auto t = reinterpret_cast<meos::TFloatInst *>(tfloatinst);
+  return std::chrono::system_clock::to_time_t(t->getTimestamp());
+}
+
 // Remember to free the result!
 char *MEOS_TFloatInst_str(MEOS_TFloatInst *tfloatinst) {
   auto t = reinterpret_cast<meos::TFloatInst *>(tfloatinst);
