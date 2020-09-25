@@ -146,6 +146,12 @@ bool MEOS_TFloatSeq_upper_inc(MEOS_TFloatSeq *tfloatseq) {
   return t->upper_inc();
 }
 
+MEOS_Interpolation MEOS_TFloatSeq_interpolation(MEOS_TFloatSeq *tfloatseq) {
+  auto t = reinterpret_cast<meos::TFloatSeq *>(tfloatseq);
+  return t->interpolation() == meos::Interpolation::Linear ? MEOS_Interpolation_Linear
+                                                           : MEOS_Interpolation_Stepwise;
+}
+
 MEOS_TFloatInst **MEOS_TFloatSeq_instants(MEOS_TFloatSeq *tfloatseq, int *count) {
   auto t = reinterpret_cast<meos::TFloatSeq *>(tfloatseq);
   auto r = t->instants();
