@@ -182,6 +182,19 @@ int TSequence<BaseType>::compare_internal(Temporal<BaseType> const &other) const
   }
 
   TSequence<BaseType> const *that = dynamic_cast<TSequence<BaseType> const *>(&other);
+
+  // Compare instant by instant
+  auto lhs_instants = this->instants();
+  auto rhs_instants = that->instants();
+  auto lhs = lhs_instants.begin();
+  auto rhs = rhs_instants.begin();
+  while (lhs != lhs_instants.end() && rhs != rhs_instants.end()) {
+    if (*lhs < *rhs) return -1;
+    if (*lhs > *rhs) return 1;
+    lhs++;
+    rhs++;
+  }
+
   // Compare number of instants
   if (this->m_instants.size() < that->m_instants.size()) return -1;
   if (this->m_instants.size() > that->m_instants.size()) return 1;
@@ -193,18 +206,6 @@ int TSequence<BaseType>::compare_internal(Temporal<BaseType> const &other) const
   // ( > [, ] > )
   if ((that->m_lower_inc && !this->m_lower_inc) || (!that->m_upper_inc && this->m_upper_inc))
     return 1;
-
-  // Compare instant by instant
-  auto lhs_instants = this->instants();
-  auto rhs_instants = that->instants();
-  auto lhs = lhs_instants.begin();
-  auto rhs = rhs_instants.begin();
-  while (lhs != lhs_instants.end()) {
-    if (*lhs < *rhs) return -1;
-    if (*lhs > *rhs) return 1;
-    lhs++;
-    rhs++;
-  }
 
   // Compare Interpolation
   if (this->interpolation() < that->interpolation()) return -1;
@@ -308,7 +309,7 @@ TSequence<BaseType> TSequence<BaseType>::atPeriod(Period const &period) const {
     set<TInstant<BaseType>> instants;
     TInstant<BaseType> instant = this->atTimestamp(inter.lower());
     instants.insert(instant);
-    return TSequence<BaseType>(instants);
+    return TSequence<BaseType>(instants, true, true, interp);
   }
 
   int n = this->findTimestamp(inter.lower());
