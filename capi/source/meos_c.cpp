@@ -124,11 +124,11 @@ MEOS_TFloatSeq *MEOS_newTFloatSeq(char *serialized) {
 
 MEOS_TFloatSeq *MEOS_newTFloatSeq_IBBI(MEOS_TFloatInst **instants, int count, bool lower_inc,
                                        bool upper_inc, MEOS_Interpolation interpolation) {
-  std::set<meos::TFloatInst> s;
+  meos::TFloatInst *insts = new meos::TFloatInst[count];
   for (size_t i = 0; i < count; i++) {
-    auto inst = reinterpret_cast<meos::TFloatInst *>(instants[i]);
-    s.insert(*inst);
+    insts[i] = *reinterpret_cast<meos::TFloatInst *>(instants[i]);
   }
+  std::set<meos::TFloatInst> s(insts, insts + count);
   auto interp = interpolation == MEOS_Interpolation_Linear ? meos::Interpolation::Linear
                                                            : meos::Interpolation::Stepwise;
   return reinterpret_cast<MEOS_TFloatSeq *>(new meos::TFloatSeq(s, lower_inc, upper_inc, interp));
@@ -204,11 +204,11 @@ MEOS_TFloatSeqSet *MEOS_newTFloatSeqSet(char *serialized) {
 
 MEOS_TFloatSeqSet *MEOS_newTFloatSeqSet_SI(MEOS_TFloatSeq **sequences, int count,
                                            MEOS_Interpolation interpolation) {
-  std::set<meos::TFloatSeq> s;
+  meos::TFloatSeq *seqs = new meos::TFloatSeq[count];
   for (size_t i = 0; i < count; i++) {
-    auto seq = reinterpret_cast<meos::TFloatSeq *>(sequences[i]);
-    s.insert(*seq);
+    seqs[i] = *reinterpret_cast<meos::TFloatSeq *>(sequences[i]);
   }
+  std::set<meos::TFloatSeq> s(seqs, seqs + count);
   auto interp = interpolation == MEOS_Interpolation_Linear ? meos::Interpolation::Linear
                                                            : meos::Interpolation::Stepwise;
   return reinterpret_cast<MEOS_TFloatSeqSet *>(new meos::TFloatSeqSet(s, interp));
