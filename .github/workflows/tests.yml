@@ -20,7 +20,7 @@ jobs:
     - name: Set up conda path
       # Using this would mean we should use bash -l {0} in all the other steps instead
       # of just bash for the conda (and its packages) path to properly reflected
-      uses: goanpeca/setup-miniconda@v1
+      uses: conda-incubator/setup-miniconda@v2
 
     - name: Download Pybind11
       run: conda install pybind11 -c conda-forge
