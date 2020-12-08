@@ -182,10 +182,10 @@ Docs</span></a>
         <section id="pri-methods">
           <h2><a href="#pri-methods">Private functions</a></h2>
           <dl class="m-doc">
-            <dt>
-              <span class="m-doc-wrap-bumper">auto <a href="#abaf6489233786077a3565c62a57c31ab" class="m-doc">clone_impl</a>(</span><span class="m-doc-wrap">) const -&gt; <a href="classmeos_1_1Temporal.html" class="m-doc">Temporal</a>&lt;BaseType&gt;* <span class="m-label m-flat m-warning">pure virtual</span></span>
+            <dt id="abaf6489233786077a3565c62a57c31ab">
+              <span class="m-doc-wrap-bumper">auto <a href="#abaf6489233786077a3565c62a57c31ab" class="m-doc-self">clone_impl</a>(</span><span class="m-doc-wrap">) const -&gt; <a href="classmeos_1_1Temporal.html" class="m-doc">Temporal</a>&lt;BaseType&gt;* <span class="m-label m-flat m-warning">pure virtual</span></span>
             </dt>
-            <dd>Restrict to a period.</dd>
+            <dd><span></span></dd>
             <dt id="aace4ea1253d422ca8eac81f6ce50eb27">
               <span class="m-doc-wrap-bumper">auto <a href="#aace4ea1253d422ca8eac81f6ce50eb27" class="m-doc-self">shift_impl</a>(</span><span class="m-doc-wrap"><a href="namespacemeos.html#a53a5f0fdb503d0ab6cb248871a8ce956" class="m-doc">duration_<wbr />ms</a> const timedelta) const -&gt; <a href="classmeos_1_1Temporal.html" class="m-doc">Temporal</a>&lt;BaseType&gt;* <span class="m-label m-flat m-warning">pure virtual</span></span>
             </dt>
@@ -210,19 +210,6 @@ Docs</span></a>
                 </tr>
               </tfoot>
             </table>
-          </div></section>
-          <section class="m-doc-details" id="abaf6489233786077a3565c62a57c31ab"><div>
-            <h3>
-              <div class="m-doc-template">
-                template&lt;typename BaseType&gt;
-              </div>
-              <span class="m-doc-wrap-bumper"><a href="classmeos_1_1Temporal.html" class="m-doc">Temporal</a>&lt;BaseType&gt;* meos::<wbr />Temporal&lt;BaseType&gt;::<wbr /></span><span class="m-doc-wrap"><span class="m-doc-wrap-bumper"><a href="#abaf6489233786077a3565c62a57c31ab" class="m-doc-self">clone_impl</a>(</span><span class="m-doc-wrap">) const <span class="m-label m-warning">pure virtual</span> <span class="m-label m-danger">private</span></span></span>
-            </h3>
-            <p>Restrict to a period.</p>
-<pre class="m-code"><span class="n">TFloatSeqSet</span> <span class="nf">t</span><span class="p">(</span><span class="s">&quot;{[1@2012-01-01, 3@2012-01-03)</span><span class="p">,</span> <span class="p">[</span><span class="mi">3</span><span class="err">@</span><span class="mi">2012</span><span class="mo">-01-04</span><span class="p">,</span> <span class="mi">1</span><span class="err">@</span><span class="mi">2012</span><span class="mo">-01-06</span><span class="p">)}</span><span class="s">&quot;)</span><span class="p">;</span>
-<span class="n">Period</span> <span class="nf">p</span><span class="p">(</span><span class="s">&quot;[2012-01-02,2012-01-05)&quot;)</span><span class="p">;</span>
-
-<span class="n">t</span><span class="p">.</span><span class="n">atPeriod</span><span class="p">(</span><span class="n">p</span><span class="p">);</span>  <span class="c1">// &lt;TFloatSeqSet {[2@2012-01-02, 3@2012-01-03), [3@2012-01-04, 2@2012-01-05)}&gt;</span></pre>
           </div></section>
         </section>
       </div>
