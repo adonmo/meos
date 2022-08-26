@@ -2,6 +2,8 @@
 
 ![MEOS Logo](https://i.imgur.com/ppfYUeT.png)
 
+> :warning: **MEOS and PyMEOS are moving!**: Both the projects MEOS and PyMEOS are currently in the process of being re-implemented much more closely to the original MobilityDB codebase. They should eventually be available via the [MobilityDB](https://github.com/MobilityDB/MobilityDB) and [PyMEOS](https://github.com/MobilityDB/PyMEOS) repositories. It is strongly recommended to prefer them instead of this project. As once released, we hope they will become the go-to industry standards for the spatiotemporal community.
+
 **MEOS (Mobility Engine, Open Source)** is a C++ library which makes it easy to work with temporal and spatio-temporal data. It is based on [MobilityDB](https://github.com/MobilityDB/MobilityDB)'s data types and functions. MEOS's code is heavily inspired from a similar library called [GEOS](https://github.com/libgeos/geos) - hence the name. This repository also includes **PyMEOS** - python bindings to MEOS using [pybind11](https://github.com/pybind/pybind11).
 
 ### Design goals and tenets
