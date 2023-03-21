@@ -93,6 +93,7 @@ public:
   TSequenceSet<BaseType> *shift_impl(duration_ms const timedelta) const override;
   bool intersectsTimestamp(time_point const datetime) const override;
   bool intersectsPeriod(Period const period) const override;
+  TSequenceSet<BaseType> atPeriod(Period const &period) const;
 
   std::istream &read(std::istream &in);
   std::ostream &write(std::ostream &os) const;
@@ -137,6 +138,8 @@ private:
   std::ostream &write_internal(std::ostream &os) const;
 
   TSequenceSet<BaseType> *clone_impl() const override { return new TSequenceSet<BaseType>(*this); };
+
+  int findTimestamp(time_point t) const;
 };
 
 typedef TSequenceSet<bool> TBoolSeqSet;

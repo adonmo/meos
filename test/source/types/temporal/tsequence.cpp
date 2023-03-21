@@ -216,8 +216,8 @@ TEMPLATE_TEST_CASE("TSequence comparision operators", "[tsequence]", int, float)
   SECTION("lhs < rhs") {
     SECTION("different sizes") {
       set<TInstant<TestType>> lhs_instants = {
-          TInstant<TestType>(4, unix_time_point(2012, 1, 4)),
-          TInstant<TestType>(5, unix_time_point(2012, 1, 5)),
+          TInstant<TestType>(1, unix_time_point(2012, 1, 1)),
+          TInstant<TestType>(2, unix_time_point(2012, 1, 2)),
       };
       TSequence<TestType> lhs(lhs_instants, true, false);
       set<TInstant<TestType>> rhs_instants = {

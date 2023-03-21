@@ -576,3 +576,25 @@ TEST_CASE("interpolation is maintained in sequences", "[tsequenceset]") {
     REQUIRE(seq.interpolation() == Interpolation::Stepwise);
   }
 }
+
+TEST_CASE("atPeriod", "[tsequenceset]") {
+  SECTION("no overlap at sequence level") {
+    TFloatSeqSet seqset("{[1@2012-01-02, 3@2012-01-03), [3@2012-01-04, 1@2012-01-06)}");
+    Period period("[2012-01-01,2012-01-07)");
+    TFloatSeqSet result = seqset.atPeriod(period);
+
+    stringstream output;
+    output << result;
+    REQUIRE(output.str() == "{[1@2012-01-02T00:00:00+0000, 3@2012-01-03T00:00:00+0000), [3@2012-01-04T00:00:00+0000, 1@2012-01-06T00:00:00+0000)}");
+  }
+
+  SECTION("overlap at sequence level") {
+    TFloatSeqSet seqset("{[1@2012-01-01, 3@2012-01-03), [3@2012-01-04, 1@2012-01-06)}");
+    Period period("[2012-01-02,2012-01-05)");
+    TFloatSeqSet result = seqset.atPeriod(period);
+
+    stringstream output;
+    output << result;
+    REQUIRE(output.str() == "{[2@2012-01-02T00:00:00+0000, 3@2012-01-03T00:00:00+0000), [3@2012-01-04T00:00:00+0000, 2@2012-01-05T00:00:00+0000)}");
+  }
+}

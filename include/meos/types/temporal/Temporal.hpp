@@ -133,6 +133,17 @@ public:
    */
   bool intersectsPeriodSet(PeriodSet const periodset) const;
 
+  /**
+   * @brief Restrict to a period
+   * @code
+   * TFloatSeqSet t("{[1@2012-01-01, 3@2012-01-03), [3@2012-01-04, 1@2012-01-06)}");
+   * Period p("[2012-01-02,2012-01-05)");
+   *
+   * t.atPeriod(p);  // <TFloatSeqSet {[2@2012-01-02, 3@2012-01-03), [3@2012-01-04, 2@2012-01-05)}>
+   * @endcode
+   */
+  // virtual BaseType atPeriod(Period period) const = 0;
+
 private:
   virtual Temporal<BaseType> *clone_impl() const = 0;
 

@@ -337,6 +337,53 @@ bool TSequenceSet<BaseType>::intersectsPeriod(Period const period) const {
   return false;
 }
 
+template <typename BaseType>
+TSequenceSet<BaseType> TSequenceSet<BaseType>::atPeriod(Period const &period) const {
+  int loc = this->findTimestamp(period.lower());
+  int const seq_size = this->m_sequences.size();
+  if (loc >= seq_size) {
+    throw invalid_argument("no value at specified period");
+  }
+  TSequence<BaseType> seq;
+  set<TSequence<BaseType>> sequences;
+  for (int i = loc; i < seq_size; i++) {
+    seq = this->sequenceN(i);
+    auto seq_period = seq.period();
+    if (period.contains(seq_period)) {
+      sequences.insert(seq);
+    } else if (period.overlap(seq_period)) {
+      sequences.insert(seq.atPeriod(period));
+    }
+    if ((period.upper() < seq_period.upper())
+        || ((period.upper() == seq_period.upper()) && seq_period.upper_inc())) {
+      break;
+    }
+  }
+  if (sequences.size() == 0) {
+    throw invalid_argument("no value at specified period");
+  }
+  return TSequenceSet<BaseType>(sequences);
+}
+
+template <typename BaseType> int TSequenceSet<BaseType>::findTimestamp(time_point t) const {
+  int first = 0, middle = 0, last = this->m_sequences.size() - 1;
+  TSequence<BaseType> seq;
+  while (first <= last) {
+    middle = (first + last) / 2;
+    seq = this->sequenceN(middle);
+    Period p = seq.period();
+    if (p.contains_timestamp(t)) {
+      return middle;
+    }
+    if (t <= p.lower())
+      last = middle - 1;
+    else
+      first = middle + 1;
+  }
+  if (t >= seq.period().upper()) middle++;
+  return middle;
+}
+
 template <typename BaseType> istream &TSequenceSet<BaseType>::read_internal(istream &in) {
   char c;
 
